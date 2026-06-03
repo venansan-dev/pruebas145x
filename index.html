@@ -2466,8 +2466,24 @@ function initMapa() {
         statusEl.innerHTML = (T[idiomaActual]||T.es).ubicNoDisp;
         setTimeout(function(){statusEl.classList.remove('visible');},3000);
       },
-      { enableHighAccuracy:true, timeout:10000 }
+      { enableHighAccuracy:true, timeout:15000, maximumAge:30000 }
     );
+    // Fallback: watchPosition por si getCurrentPosition tarda demasiado
+    var _watchId = navigator.geolocation.watchPosition(function(pos) {
+      if (!userLat) {
+        userLat = pos.coords.latitude; userLng = pos.coords.longitude;
+        window._userMarker = L.marker([userLat,userLng],{icon:iconoUsuario,zIndexOffset:1000}).addTo(mapa).bindPopup('<strong>'+(T[idiomaActual]||T.es).tuUbicacion+'</strong>');
+        mapa.setView([userLat,userLng],15);
+        aplicarRadio(radioKm);
+        calcularDistancias();
+        cargarTiempo(userLat, userLng);
+      } else {
+        // Ya tenemos posición, solo actualizar marcador y círculo
+        if (window._userMarker) window._userMarker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
+        userLat = pos.coords.latitude; userLng = pos.coords.longitude;
+        aplicarRadio(radioKm);
+      }
+    }, function(){}, { enableHighAccuracy:true });
   } else {
     statusEl.innerHTML = (T[idiomaActual]||T.es).noGeolocal;
     setTimeout(function(){statusEl.classList.remove('visible');},3000);
