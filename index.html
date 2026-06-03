@@ -285,7 +285,10 @@
       </div>
     </div>
     <div id='poi-ruta-vacia' style='font-size:13px;color:var(--texto-suave);font-style:italic;margin-bottom:0.75rem'>Añade puntos desde las tarjetas o el mapa 👆</div>
-    <div id='poi-ruta-lista2' style='display:none;flex-direction:column;gap:4px;margin-bottom:0.75rem;max-height:120px;overflow-y:auto'></div>
+    <div style='position:relative;margin-bottom:0.75rem'>
+      <div id='poi-ruta-lista2' style='display:none;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto;padding-right:8px' onscroll='var el=this,bar=document.getElementById("ruta-scroll-bar");if(bar){var pct=el.scrollTop/(el.scrollHeight-el.clientHeight||1)*100;bar.style.top=pct*0.72+"%"}'></div>
+      <div id='ruta-scroll-track' style='display:none;position:absolute;top:0;right:1px;width:3px;height:100%;background:rgba(0,0,0,0.07);border-radius:3px'><div id='ruta-scroll-bar' style='position:absolute;top:0;width:3px;height:28%;background:rgba(29,158,117,0.6);border-radius:3px;transition:top 0.1s'></div></div>
+    </div>
     <div style='display:flex;gap:8px;flex-wrap:wrap'>
       <button onclick='iniciarRuta()' id='poi-ruta-btn-ir' style='display:flex;align-items:center;gap:6px;background:var(--verde);color:#fff;border:none;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;transition:background 0.2s;opacity:0.4'>▶ Ir</button>
       <button onclick='limpiarRuta()' id='poi-ruta-btn-clear' style='background:none;border:1px solid #fca5a5;color:#dc2626;padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif;transition:all 0.15s;opacity:0.4'>🗑</button>
@@ -2917,9 +2920,8 @@ function actualizarRuta() {
           '<span style="flex:1;font-weight:500;color:var(--texto)">'+p.nombre+'</span>' +
           '</div>';
       }).join('');
-      // Mostrar barra de scroll cuando hay 5 o más puntos
-      var track = document.getElementById('ruta-scroll-track');
-      if (track) track.style.display = rutaPuntos.length >= 5 ? 'block' : 'none';
+      var track=document.getElementById('ruta-scroll-track');
+      if(track) track.style.display=rutaPuntos.length>=5?'block':'none';
     }
     if (btnIr)    { btnIr.style.opacity  = '1'; btnIr.style.cursor  = 'pointer'; }
     if (btnClr)   { btnClr.style.opacity = '1'; btnClr.style.cursor = 'pointer'; }
