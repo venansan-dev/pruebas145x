@@ -2901,6 +2901,9 @@ function actualizarRuta() {
           '<span style="flex:1;font-weight:500;color:var(--texto)">'+p.nombre+'</span>' +
           '</div>';
       }).join('');
+      // Mostrar barra de scroll cuando hay 5 o más puntos
+      var track = document.getElementById('ruta-scroll-track');
+      if (track) track.style.display = rutaPuntos.length >= 5 ? 'block' : 'none';
     }
     if (btnIr)    { btnIr.style.opacity  = '1'; btnIr.style.cursor  = 'pointer'; }
     if (btnClr)   { btnClr.style.opacity = '1'; btnClr.style.cursor = 'pointer'; }
