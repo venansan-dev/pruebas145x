@@ -1,6 +1,6 @@
-const CACHE_NAME = 'guia-compostelana-v141';
-const TILE_CACHE = 'guia-tiles-v1';
-const IMG_CACHE  = 'guia-imgs-v1';
+const CACHE_NAME = 'guia-compostelana-v458';
+const TILE_CACHE = 'guia-tiles-v5';
+const IMG_CACHE  = 'guia-imgs-v5';
 
 const STATIC_ASSETS = [
   '/',
