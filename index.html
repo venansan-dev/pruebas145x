@@ -2034,7 +2034,9 @@ function _renderPoiDrawerCarrusel() {
   var car = document.getElementById('poi-drawer-carousel');
   if (!car) return;
   var t = T[idiomaActual] || T.es;
-  var todos = (typeof PUNTOS !== 'undefined' ? PUNTOS : []).concat(typeof PUNTOS_USUARIO !== 'undefined' ? PUNTOS_USUARIO : []);
+  var _todosRaw = (typeof PUNTOS !== 'undefined' ? PUNTOS : []).concat(typeof PUNTOS_USUARIO !== 'undefined' ? PUNTOS_USUARIO : []);
+  var _vistos = {};
+  var todos = _todosRaw.filter(function(p){ if(_vistos[p.id]) return false; _vistos[p.id]=true; return true; });
   var filtrados = todos.filter(function(p) {
     if (_poiDrawerCatActual === 'todos') return !p.esUsuario && !(p.id && p.id.indexOf('u_')===0) && p.categoria !== 'etapa';
     if (_poiDrawerCatActual === 'alerta') return p.esAlerta;
@@ -3167,10 +3169,18 @@ function guardarPOIUsuario() {
 
   // Registrar en álbum automáticamente (el usuario creó este punto, ya lo "visitó")
   if (window._albumRegistrarVisita) window._albumRegistrarVisita(poi);
-  // Si tiene foto, guardarla en IndexedDB
+  // Si tiene foto, guardarla en IndexedDB y refrescar la tarjeta cuando esté lista
   if (window._poiFormFotoBlob) {
-    if (window._albumGuardarFoto) window._albumGuardarFoto(poi.id, window._poiFormFotoBlob);
+    var _blobParaGuardar = window._poiFormFotoBlob;
     window._poiFormFotoBlob = null;
+    if (window._albumGuardarFoto) {
+      window._albumGuardarFoto(poi.id, _blobParaGuardar, function() {
+        // Actualizar imagen en tarjetas ya renderizadas con la foto propia
+        var url = URL.createObjectURL(_blobParaGuardar);
+        document.querySelectorAll('#cromo-img-'+poi.id).forEach(function(el){ el.src = url; });
+        document.querySelectorAll('#foto-btn-'+poi.id).forEach(function(el){ el.innerHTML = '✏️ cambiar'; });
+      });
+    }
   }
 
   if (!valoraciones[id]) valoraciones[id] = {total:0, votos:0, miVoto:0};
@@ -6904,6 +6914,8 @@ if ('serviceWorker' in navigator) {
 
   // Guardar visita
   window._albumRegistrarVisita = function(poi) {
+    // Actualizar caché síncrono inmediatamente para que el render lo vea al instante
+    window._albumVisitasSet[poi.id] = true;
     _abrirDB(function(db) {
       var tx = db.transaction('visitas', 'readwrite');
       var store = tx.objectStore('visitas');
@@ -6913,7 +6925,6 @@ if ('serviceWorker' in navigator) {
         store.put({ poiId: poi.id, nombre: poi.nombre, emoji: poi.emoji || '📍',
                     imagen: poi.imagen || null, categoria: poi.categoria,
                     lat: poi.lat, lng: poi.lng, fecha: Date.now() });
-        window._albumVisitasSet[poi.id] = true;
         // Actualizar imagen en las tarjetas ya renderizadas
         if (window._albumRefrescarImgCard) window._albumRefrescarImgCard(poi.id);
         // Toast de cromo desbloqueado
@@ -7296,6 +7307,6 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v464</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v465</div>
 </body>
 </html>
