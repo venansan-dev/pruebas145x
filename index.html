@@ -651,7 +651,7 @@
             <button onclick='activarMarcarEnMapa()' id='btn-marcar-mapa' style='flex:1;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.2);border-radius:7px;padding:5px 6px;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap'>🗺️ <span id='btn-marcar-mapa-txt'>Mapa</span></button>
           </div>
         </div>
-        <div style='flex:1'>
+        <div style='flex:1' id='poi-foto-campo' style='display:none'>
           <label style='font-size:10px;font-weight:600;color:rgba(255,255,255,0.6);display:block;margin-bottom:2px' id='lbl-poi-foto'>Foto <span style='font-weight:400;color:rgba(255,255,255,0.35)'>(opcional)</span></label>
           <button type='button' onclick='_poiFormPedirFoto()' id='btn-poi-foto' style='width:100%;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.2);border-radius:7px;padding:5px 6px;font-size:11px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif'>📷 Añadir foto</button>
         </div>
@@ -2888,6 +2888,9 @@ function selPoiCat(btn, cat) {
   document.getElementById('poi-form-msg').textContent = '';
   var lbl = document.getElementById('poi-cat-seleccionada');
   if (lbl) lbl.style.display = 'none';
+  // Mostrar campo foto solo para "mis puntos"
+  var fotoCampo = document.getElementById('poi-foto-campo');
+  if (fotoCampo) fotoCampo.style.display = (cat === 'punto de control') ? 'block' : 'none';
 }
 
 function resetAllPoiCatBtns() {
@@ -2954,6 +2957,7 @@ function cerrarFormPOI() {
   window._poiFormFotoBlob = null;
   var st = document.getElementById('poi-foto-status'); if (st) st.textContent = '';
   var btn = document.getElementById('btn-poi-foto'); if (btn) btn.innerHTML = '📷 Añadir foto';
+  var fotoCampo = document.getElementById('poi-foto-campo'); if (fotoCampo) fotoCampo.style.display = 'none';
 }
 
 // Foto para el formulario de nuevo POI
@@ -7313,6 +7317,6 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v466</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v467</div>
 </body>
 </html>
