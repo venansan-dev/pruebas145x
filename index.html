@@ -3168,32 +3168,38 @@ function guardarPOIUsuario() {
   try { localStorage.setItem('poi_usuario', JSON.stringify(PUNTOS_USUARIO)); } catch(e) {}
 
   // Registrar en álbum automáticamente (el usuario creó este punto, ya lo "visitó")
-  if (window._albumRegistrarVisita) window._albumRegistrarVisita(poi);
-  // Si tiene foto, guardarla en IndexedDB y refrescar la tarjeta cuando esté lista
-  if (window._poiFormFotoBlob) {
-    var _blobParaGuardar = window._poiFormFotoBlob;
-    window._poiFormFotoBlob = null;
-    if (window._albumGuardarFoto) {
-      window._albumGuardarFoto(poi.id, _blobParaGuardar, function() {
-        // Actualizar imagen en tarjetas ya renderizadas con la foto propia
-        var url = URL.createObjectURL(_blobParaGuardar);
-        document.querySelectorAll('#cromo-img-'+poi.id).forEach(function(el){ el.src = url; });
-        document.querySelectorAll('#foto-btn-'+poi.id).forEach(function(el){ el.innerHTML = '✏️ cambiar'; });
-      });
+  // Marcamos como visitado síncronamente para que el render lo vea de inmediato
+  window._albumVisitasSet[poi.id] = true;
+
+  // Si tiene foto, guardarla ANTES de renderizar — así la precarga del render la encuentra
+  var _blobParaGuardar = window._poiFormFotoBlob || null;
+  window._poiFormFotoBlob = null;
+
+  function _finalizarGuardado() {
+    if (!valoraciones[id]) valoraciones[id] = {total:0, votos:0, miVoto:0};
+    if (!opiniones[id]) opiniones[id] = [];
+    PUNTOS.push(poi);
+    if (typeof mapa !== 'undefined' && mapa) añadirMarcadorUsuario(poi);
+    if (typeof userLat !== 'undefined' && userLat) {
+      PUNTOS.forEach(function(p){p.distancia=haversine(userLat,userLng,p.lat,p.lng);});
+      PUNTOS.sort(function(a,b){return a.distancia-b.distancia;});
     }
+    cerrarFormPOI();
+    btn.disabled = false;
+    renderCarrusel(categoriaActiva);
+    // Persistir en IndexedDB y disparar logros tras render
+    if (window._albumRegistrarVisita) window._albumRegistrarVisita(poi, true);
+    mostrarToast('📌 Punto añadido a tu álbum');
   }
 
-  if (!valoraciones[id]) valoraciones[id] = {total:0, votos:0, miVoto:0};
-  if (!opiniones[id]) opiniones[id] = [];
-  PUNTOS.push(poi);
-  if (typeof mapa !== 'undefined' && mapa) añadirMarcadorUsuario(poi);
-  if (typeof userLat !== 'undefined' && userLat) {
-    PUNTOS.forEach(function(p){p.distancia=haversine(userLat,userLng,p.lat,p.lng);});
-    PUNTOS.sort(function(a,b){return a.distancia-b.distancia;});
+  if (_blobParaGuardar && window._albumGuardarFoto) {
+    // Guardar foto primero, luego renderizar — así el render encuentra la foto en IDB
+    window._albumGuardarFoto(poi.id, _blobParaGuardar, function() {
+      _finalizarGuardado();
+    });
+  } else {
+    _finalizarGuardado();
   }
-  cerrarFormPOI();
-  btn.disabled = false;
-  renderCarrusel(categoriaActiva);
 
   // Firebase: alertas van a rama 'alertas' (pública, tiempo real); resto a poi_usuarios (moderación)
   try {
@@ -6913,7 +6919,7 @@ if ('serviceWorker' in navigator) {
   }
 
   // Guardar visita
-  window._albumRegistrarVisita = function(poi) {
+  window._albumRegistrarVisita = function(poi, silencioso) {
     // Actualizar caché síncrono inmediatamente para que el render lo vea al instante
     window._albumVisitasSet[poi.id] = true;
     _abrirDB(function(db) {
@@ -6927,9 +6933,9 @@ if ('serviceWorker' in navigator) {
                     lat: poi.lat, lng: poi.lng, fecha: Date.now() });
         // Actualizar imagen en las tarjetas ya renderizadas
         if (window._albumRefrescarImgCard) window._albumRefrescarImgCard(poi.id);
-        // Toast de cromo desbloqueado
-        mostrarToast('🏅 ¡Cromo desbloqueado! ' + (poi.emoji||'📍') + ' ' + poi.nombre);
-        // Comprobar logros
+        // Toast solo si no es silencioso (POIs de usuario gestionan su propio toast)
+        if (!silencioso) mostrarToast('🏅 ¡Cromo desbloqueado! ' + (poi.emoji||'📍') + ' ' + poi.nombre);
+        // Comprobar logros siempre
         _albumComprobarLogros();
       };
     });
@@ -7307,6 +7313,6 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v465</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v466</div>
 </body>
 </html>
