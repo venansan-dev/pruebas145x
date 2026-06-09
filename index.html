@@ -382,6 +382,9 @@
   <!-- Botón meteorología (izquierda, segundo) -->
   <button id='btn-meteo-mapa' onclick='abrirMeteoDrawer()' title='Previsión meteorológica'
     style='display:flex;position:absolute;top:54px;left:10px;z-index:400;width:36px;height:36px;background:#fff;border:1.5px solid rgba(0,0,0,0.15);border-radius:8px;cursor:pointer;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,0.12);padding:0'>&#9925;</button>
+  <!-- Botón Seguimiento GPS para álbum -->
+  <button id='btn-seguimiento' onclick='toggleSeguimiento()' title='Seguimiento GPS'
+    style='display:flex;position:absolute;bottom:212px;right:10px;z-index:400;width:36px;height:36px;background:#fff;border:1.5px solid rgba(0,0,0,0.15);border-radius:8px;cursor:pointer;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,0.12);padding:0'>🚶</button>
   <!-- Botón Ranking derecha bottom:124px (entre POI y Buscar) -->
   <button id='btn-album-mapa' onclick='abrirAlbumPanel()' title='Ranking'
     style='display:flex;position:absolute;bottom:124px;right:10px;z-index:400;width:36px;height:36px;background:#fff;border:1.5px solid rgba(0,0,0,0.15);border-radius:8px;cursor:pointer;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,0.12);padding:0'>🏅</button>
@@ -7518,7 +7521,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = 'v601';
+var _APP_VERSION = 'v602';
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8193,6 +8196,6 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v601</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v602</div>
 </body>
 </html>
