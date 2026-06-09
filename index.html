@@ -4634,6 +4634,21 @@ function toggleSeguimiento() {
   }
 }
 
+function mostrarToastGrande(msg) {
+  var t = document.getElementById('map-toast-grande');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'map-toast-grande';
+    t.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(160deg,#1a0e2e,#3b1f6a);color:#fff;padding:2rem 2.5rem;border-radius:20px;font-size:18px;font-weight:700;font-family:DM Sans,sans-serif;z-index:9999;text-align:center;border:1px solid rgba(255,255,255,0.2);max-width:85vw;line-height:1.5';
+    document.body.appendChild(t);
+  }
+  t.innerHTML = '<div style="font-size:48px;margin-bottom:0.5rem">\uD83C\uDF89</div>' + msg + '<div style="font-size:13px;font-weight:400;color:rgba(255,255,255,0.6);margin-top:8px">Toca para cerrar</div>';
+  t.style.display = 'block';
+  t.onclick = function(){ t.style.display='none'; };
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function(){ t.style.display='none'; }, 8000);
+}
+
 function mostrarToast(msg) {
   var t = document.getElementById('map-toast');
   if (!t) {
@@ -4646,25 +4661,6 @@ function mostrarToast(msg) {
   t.style.opacity = '1';
   clearTimeout(t._timer);
   t._timer = setTimeout(function(){ t.style.opacity = '0'; }, 2000);
-}
-
-function mostrarCromoModal(poi) {
-  var existing = document.getElementById('cromo-modal');
-  if (existing) existing.remove();
-  var m = document.createElement('div');
-  m.id = 'cromo-modal';
-  m.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);font-family:DM Sans,sans-serif';
-  m.innerHTML = '<div style="background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:2rem 2rem 1.5rem;max-width:300px;width:88%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.15)">'
-    + '<div style="font-size:56px;margin-bottom:0.5rem">' + (poi.emoji||'🏅') + '</div>'
-    + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.5);margin-bottom:6px">¡Cromo desbloqueado!</div>'
-    + '<div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:6px">' + poi.nombre + '</div>'
-    + '<div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:1.5rem;font-style:italic">' + (poi.subtitulo||'') + '</div>'
-    + '<div style="font-size:28px;margin-bottom:1rem">🎉</div>'
-    + '<button onclick="document.getElementById('cromo-modal').remove()" style="background:#1D9E75;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:15px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">¡Genial!</button>'
-    + '</div>';
-  document.body.appendChild(m);
-  m.addEventListener('click', function(e){ if(e.target===m) m.remove(); });
-  setTimeout(function(){ if(document.getElementById('cromo-modal')) document.getElementById('cromo-modal').remove(); }, 8000);
 }
 
 function desactivarSeguimientoYBrujula() {
@@ -7539,7 +7535,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = 'v606';
+var _APP_VERSION = 'v607';
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -7556,7 +7552,7 @@ if ('serviceWorker' in navigator) {
     });
   }
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/pruebas145x/sw.js').then(function(reg) {
+    navigator.serviceWorker.register('/guia-compostelana/sw.js').then(function(reg) {
     }).catch(function(err) {
       console.warn('SW error:', err);
     });
@@ -7610,7 +7606,7 @@ if ('serviceWorker' in navigator) {
           mostrarToast('📌 Punto añadido a tu álbum');
         } else {
           // Visita GPS — toast de cromo y comprobar logros
-          mostrarCromoModal(poi);
+          mostrarToast('🏅 ¡Cromo desbloqueado! ' + (poi.emoji||'📍') + ' ' + poi.nombre);
           _albumComprobarLogros();
         }
       };
@@ -8214,6 +8210,6 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v606</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v607</div>
 </body>
 </html>
