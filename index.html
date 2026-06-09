@@ -4630,7 +4630,19 @@ function toggleSeguimiento() {
   }
 }
 
+var _cromoCola = [];
+var _cromoMostrando = false;
+function _cromoSiguiente() {
+  if (_cromoCola.length === 0) { _cromoMostrando = false; return; }
+  _cromoMostrando = true;
+  var poi = _cromoCola.shift();
+  _mostrarUnCromo(poi, function(){ setTimeout(_cromoSiguiente, 400); });
+}
 function mostrarToastCromo(poi) {
+  _cromoCola.push(poi);
+  if (!_cromoMostrando) _cromoSiguiente();
+}
+function _mostrarUnCromo(poi, onClose) {
   var existing = document.getElementById('cromo-celebracion');
   if (existing) existing.remove();
   var overlay = document.createElement('div');
@@ -4646,9 +4658,10 @@ function mostrarToastCromo(poi) {
     +'<div id="cromo-btn-cerrar" style="background:#1D9E75;color:#fff;border:none;border-radius:24px;padding:12px 32px;font-size:15px;font-weight:600;cursor:pointer;display:inline-block">Genial!</div>';
   overlay.appendChild(box);
   document.body.appendChild(overlay);
-  overlay.querySelector('#cromo-btn-cerrar').addEventListener('click', function(){ overlay.remove(); });
-  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
-  setTimeout(function(){ if(document.getElementById('cromo-celebracion')) document.getElementById('cromo-celebracion').remove(); }, 12000);
+  function cerrar(){ if(document.getElementById('cromo-celebracion')) document.getElementById('cromo-celebracion').remove(); if(onClose) onClose(); }
+  overlay.querySelector('#cromo-btn-cerrar').addEventListener('click', cerrar);
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) cerrar(); });
+  // Sin timeout — solo se cierra al pulsar
 }
 
 function mostrarToast(msg) {
@@ -7537,7 +7550,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = 'v614';
+var _APP_VERSION = 'v616';
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8212,6 +8225,6 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v614</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v616</div>
 </body>
 </html>
