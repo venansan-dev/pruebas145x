@@ -368,7 +368,6 @@
     <div id='ar-status' style='position:absolute;top:20px;left:20px;color:#fff;font-size:12px;font-family:DM Sans,sans-serif;background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:8px'></div>
   </div>
   <!-- Botón añadir punto (derecha) -->
-  <button onclick='mostrarToastGrande("🏅 Cromo desbloqueado! * prueba")' style='position:absolute;top:54px;right:10px;z-index:400;height:36px;background:#7C3AED;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.18);padding:0 12px;font-family:DM Sans,sans-serif'>TEST</button>
   <button id='btn-add-poi-map' onclick='abrirFormPOI()' title='Añadir un punto' style='position:absolute;top:10px;right:10px;z-index:400;height:36px;background:#1D9E75;color:#fff;border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.18);padding:0 12px;font-family:DM Sans,sans-serif;white-space:nowrap'>➕ <span id='btn-add-poi-map-txt'>Punto</span></button>
   <!-- Panel radio en mapa (columna derecha bajo +punto) -->
   <div id='map-radio-control' style='display:flex;position:absolute;top:54px;right:10px;z-index:400;flex-direction:column;align-items:stretch;gap:4px;font-family:DM Sans,sans-serif'>
@@ -1899,7 +1898,7 @@ var PUNTOS = [
 
   { id:'catedral-santiago', nombre:'Catedral de Santiago de Compostela', categoria:'edificación religiosa', descripcion:'Destino final del Camino y meta de millones de peregrinos desde el siglo IX. Sobre la tumba del Apóstol Santiago, el templo combina románico, gótico, barroco y neoclásico en una arquitectura que ha crecido durante mil años. El Pórtico de la Gloria de Maestro Mateo, el Botafumeiro y el abrazo al Apóstol esperan al final de la ruta.', subtitulo:'La meta de un millón de pasos', subtitulo_gl:'A meta dun millón de pasos', subtitulo_en:'The destination of a million steps', descripcion_gl:'Destino final do Camiño e meta de millóns de peregrinos desde o século IX. Sobre a tumba do Apóstolo Santiago, o templo combina románico, gótico, barroco e neoclásico nunha arquitectura que creceu durante mil anos. O Pórtico da Gloria do Mestre Mateo, o Botafumeiro e o abrazo ao Apóstolo esperan ao final da ruta.', descripcion_en:'The final destination of the Way and the goal of millions of pilgrims since the 9th century. Above the tomb of the Apostle James, the temple combines Romanesque, Gothic, Baroque, and Neoclassical in an architecture that has grown over a thousand years. The Portico of Glory by Master Mateo, the Botafumeiro, and the embrace of the Apostle await at the end of the route.', lat:42.8805, lng:-8.5457, emoji:'✨', color:'verde', imagen:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Catedral_de_Santiago_de_Compostela,_la_Praza_do_Obradoiro.jpg/800px-Catedral_de_Santiago_de_Compostela,_la_Praza_do_Obradoiro.jpg' },
 
-  { id:'prueba', nombre:'prueba', nombre_gl:'prueba', nombre_en:'prueba', categoria:'albergue', subtitulo:'prueba', subtitulo_gl:'prueba', subtitulo_en:'prueba', descripcion:'prueba', descripcion_gl:'prueba', descripcion_en:'prueba', lat:42.2177, lng:-8.74669, emoji:'*', color:'azul' }
+  { id:'prueba', nombre:'prueba', nombre_gl:'prueba', nombre_en:'prueba', categoria:'albergue', subtitulo:'prueba', subtitulo_gl:'prueba', subtitulo_en:'prueba', descripcion:'prueba', descripcion_gl:'prueba', descripcion_en:'prueba', lat:42.2177, lng:-8.74669, emoji:'+', color:'azul' }
 ];
 
 // PUNTOS — definidos en el HTML del array PUNTOS global
@@ -4631,19 +4630,25 @@ function toggleSeguimiento() {
   }
 }
 
-function mostrarToastGrande(msg) {
-  var t = document.getElementById('map-toast-grande');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'map-toast-grande';
-    t.style.position='fixed'; t.style.top='0'; t.style.left='0'; t.style.right='0'; t.style.bottom='0'; t.style.display='flex'; t.style.alignItems='center'; t.style.justifyContent='center'; t.style.zIndex='9999'; t.style.background='rgba(0,0,0,0.75)'; t.style.fontFamily='DM Sans,sans-serif';
-    document.body.appendChild(t);
-  }
-  t.innerHTML = '<div style="background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:2rem 2.5rem;max-width:85vw;text-align:center;border:1px solid rgba(255,255,255,0.2)"><div style="font-size:48px;margin-bottom:0.75rem">\uD83C\uDF89</div><div style="font-size:18px;font-weight:700;color:#fff;line-height:1.5">' + msg + '</div><div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:8px">Toca para cerrar</div></div>';
-  t.style.display = 'flex';
-  t.onclick = function(){ t.style.display='none'; };
-  clearTimeout(t._timer);
-  t._timer = setTimeout(function(){ t.style.display='none'; }, 10000);
+function mostrarToastCromo(poi) {
+  var existing = document.getElementById('cromo-celebracion');
+  if (existing) existing.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'cromo-celebracion';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:2rem;max-width:85vw;width:280px;text-align:center;border:1px solid rgba(255,255,255,0.2)';
+  var nombre = (poi.nombre||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  var subtitulo = (poi.subtitulo||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  box.innerHTML = '<div style="font-size:14px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.5);margin-bottom:12px">Cromo desbloqueado</div>'
+    +'<div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">'+nombre+'</div>'
+    +'<div style="font-size:14px;color:rgba(255,255,255,0.6);font-style:italic;margin-bottom:24px">'+subtitulo+'</div>'
+    +'<div id="cromo-btn-cerrar" style="background:#1D9E75;color:#fff;border:none;border-radius:24px;padding:12px 32px;font-size:15px;font-weight:600;cursor:pointer;display:inline-block">Genial!</div>';
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  overlay.querySelector('#cromo-btn-cerrar').addEventListener('click', function(){ overlay.remove(); });
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
+  setTimeout(function(){ if(document.getElementById('cromo-celebracion')) document.getElementById('cromo-celebracion').remove(); }, 12000);
 }
 
 function mostrarToast(msg) {
@@ -7532,7 +7537,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = 'v613';
+var _APP_VERSION = 'v614';
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -7603,7 +7608,7 @@ if ('serviceWorker' in navigator) {
           mostrarToast('📌 Punto añadido a tu álbum');
         } else {
           // Visita GPS — toast de cromo y comprobar logros
-          mostrarToast('🏅 ¡Cromo desbloqueado! ' + (poi.emoji||'📍') + ' ' + poi.nombre);
+          mostrarToastCromo(poi);
           _albumComprobarLogros();
         }
       };
@@ -7921,10 +7926,7 @@ if ('serviceWorker' in navigator) {
   function _refrescarCacheVisitas(cb) {
     _albumGetVisitas(function(v) {
       window._albumVisitasSet = {};
-      v.forEach(function(x){
-        window._albumVisitasSet[x.poiId] = true;
-        _albumYaNotificado[x.poiId] = true; // no re-notificar visitas ya guardadas
-      });
+      v.forEach(function(x){ window._albumVisitasSet[x.poiId] = true; _albumYaNotificado[x.poiId] = true; });
       if (cb) cb();
     });
   }
@@ -8210,6 +8212,6 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v613</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v614</div>
 </body>
 </html>
