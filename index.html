@@ -4520,6 +4520,7 @@ function initMapa() {
         // Ya tenemos posición, actualizar marcador y círculo SIN cambiar vista
         userLat = pos.coords.latitude; userLng = pos.coords.longitude;
         _lastKnownLat = userLat; _lastKnownLng = userLng;
+        if (window._albumCheckProximidad) window._albumCheckProximidad(userLat, userLng);
         if (window._userMarker) {
           window._userMarker.setLatLng([userLat, userLng]);
           // Mantener icono correcto según estado
@@ -5977,6 +5978,7 @@ function _navTick(pos) {
   var lat = pos.coords.latitude;
   var lng = pos.coords.longitude;
   userLat = lat; userLng = lng;
+  if (window._albumCheckProximidad) window._albumCheckProximidad(lat, lng);
 
   // Centrar mapa en usuario
   mapa.panTo([lat, lng], {animate:true, duration:0.8});
@@ -7521,7 +7523,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = 'v602';
+var _APP_VERSION = 'v603';
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8196,6 +8198,6 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v602</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v603</div>
 </body>
 </html>
