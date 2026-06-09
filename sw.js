@@ -14,10 +14,6 @@ const MAP_TILES = ['https://a.tile.openstreetmap.org/13/3896/3032.png', 'https:/
 // Imágenes POIs
 const POI_IMAGES = ['https://i.postimg.cc/zBRhnbGj/santiagodeparada.jpg', 'https://i.postimg.cc/vmb63LGX/IMG-0208.jpg', 'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png', 'https://i.postimg.cc/4xhHQ5pL/IMG-0859.jpg', 'https://i.postimg.cc/wBqhc9S5/santacristinalavadores.jpg', 'https://i.postimg.cc/Xq5Y9wt7/santamariadeguizan.jpg', 'https://i.postimg.cc/Y9XFxcYN/santiagodeparada.jpg', 'https://i.postimg.cc/sXqGy3bD/torrelavandeira.jpg', 'https://i.postimg.cc/Qd8KzMpZ/torrepadin.jpg', 'https://i.postimg.cc/Y9c4PKQZ/IMG-1026.jpg'];
 
-self.addEventListener('message', function(e) {
-  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
-});
-
 self.addEventListener('install', function(e) {
   e.waitUntil(
     Promise.all([
