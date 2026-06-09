@@ -4639,10 +4639,10 @@ function mostrarToastGrande(msg) {
     document.body.appendChild(t);
   }
   t.innerHTML = '<div style="background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:2rem 2.5rem;max-width:85vw;text-align:center;border:1px solid rgba(255,255,255,0.2)"><div style="font-size:48px;margin-bottom:0.75rem">\uD83C\uDF89</div><div style="font-size:18px;font-weight:700;color:#fff;line-height:1.5">' + msg + '</div><div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:8px">Toca para cerrar</div></div>';
-  t.style.display = 'block';
+  t.style.display = 'flex';
   t.onclick = function(){ t.style.display='none'; };
   clearTimeout(t._timer);
-  t._timer = setTimeout(function(){ t.style.display='none'; }, 8000);
+  t._timer = setTimeout(function(){ t.style.display='none'; }, 10000);
 }
 
 function mostrarToast(msg) {
@@ -7531,7 +7531,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = 'v611';
+var _APP_VERSION = 'v612';
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8209,6 +8209,6 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v611</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v612</div>
 </body>
 </html>
