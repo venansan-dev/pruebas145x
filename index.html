@@ -7531,7 +7531,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = 'v610';
+var _APP_VERSION = 'v611';
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -7920,7 +7920,10 @@ if ('serviceWorker' in navigator) {
   function _refrescarCacheVisitas(cb) {
     _albumGetVisitas(function(v) {
       window._albumVisitasSet = {};
-      v.forEach(function(x){ window._albumVisitasSet[x.poiId] = true; });
+      v.forEach(function(x){
+        window._albumVisitasSet[x.poiId] = true;
+        _albumYaNotificado[x.poiId] = true; // no re-notificar visitas ya guardadas
+      });
       if (cb) cb();
     });
   }
@@ -8206,6 +8209,6 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v610</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v611</div>
 </body>
 </html>
