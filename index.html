@@ -7535,7 +7535,7 @@ if ('serviceWorker' in navigator) {
     });
   }
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/guia-compostelana/sw.js?v=601').then(function(reg) {
+    navigator.serviceWorker.register('/pruebas145x/sw.js?v=601').then(function(reg) {
       reg.addEventListener('updatefound', function() {
         var newWorker = reg.installing;
         newWorker.addEventListener('statechange', function() {
