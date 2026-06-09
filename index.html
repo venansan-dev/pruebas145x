@@ -574,7 +574,28 @@
       <div class='cat-chip' onclick='_poiDrawerFiltrar(this,"mirador")'>🔭 Miradores</div>
     </div>
   </div>
-  <div id='poi-drawer-carousel' style='display:flex;gap:0.75rem;overflow-x:auto;overflow-y:visible;padding:0.75rem 1rem 0.75rem 1.25rem;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scroll-padding-left:1.25rem;width:100%;box-sizing:border-box;touch-action:pan-x;overscroll-behavior-x:contain'></div>
+  <!-- Tarjeta ranking álbum — visible solo en filtro Mi Álbum -->
+  <div id='poi-drawer-carousel' style='display:flex;gap:0.75rem;overflow-x:auto;overflow-y:visible;padding:0.75rem 1rem 0.75rem 1.25rem;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scroll-padding-left:1.25rem;width:100%;box-sizing:border-box;touch-action:pan-x;overscroll-behavior-x:contain'>
+    <!-- Tarjeta ranking — primer elemento fijo del carousel, visible solo en Mi Álbum -->
+    <div id='album-ranking-card' style='display:none;flex-shrink:0;width:200px;border-radius:14px;overflow:hidden;background:linear-gradient(160deg,#0e2038 0%,#1a3a5c 60%,#1e4570 100%);border:1px solid rgba(255,255,255,0.15);scroll-snap-align:start;flex-direction:column'>
+      <div style='padding:0.85rem 0.9rem 0.65rem;border-bottom:1px solid rgba(255,255,255,0.08)'>
+        <div style='display:flex;align-items:center;gap:8px;margin-bottom:8px'>
+          <div id='rank-emoji' style='font-size:30px;line-height:1'>🌱</div>
+          <div style='flex:1;min-width:0'>
+            <div id='rank-label' style='font-size:14px;font-weight:700;color:#fff'>Aspirante</div>
+            <div id='rank-count' style='font-size:10px;color:rgba(255,255,255,0.4)'>0 cromos</div>
+          </div>
+        </div>
+        <div id='rank-siguiente' style='font-size:9px;color:rgba(255,255,255,0.35);margin-bottom:8px;line-height:1.4'>Visita tu primer lugar para comenzar</div>
+        <div style='background:rgba(255,255,255,0.08);border-radius:20px;height:4px;overflow:hidden;margin-bottom:8px'>
+          <div id='rank-barra' style='height:100%;width:0%;background:linear-gradient(90deg,#1D9E75,#6ee7b7);border-radius:20px;transition:width 0.6s ease'></div>
+        </div>
+        <div id='rank-escalera' style='display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px'></div>
+        <div style='font-size:8px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px'>Logros</div>
+        <div id='rank-logros' style='display:flex;flex-wrap:wrap;gap:4px'></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- PANEL DONACIONES -->
@@ -641,26 +662,16 @@
       </div>
       <div id='poi-cat-seleccionada' style='display:none;margin-top:3px;font-size:11px;color:#6ee7b7;font-weight:500'></div>
     </div>
-    <!-- Ubicación + Foto en la misma fila -->
+    <!-- Ubicación -->
     <div style='flex-shrink:0'>
-      <div style='display:flex;gap:6px;margin-bottom:2px'>
-        <div style='flex:1'>
-          <label style='font-size:10px;font-weight:600;color:rgba(255,255,255,0.6);display:block;margin-bottom:2px' id='lbl-poi-ubic'>Ubicación *</label>
-          <div style='display:flex;gap:5px'>
-            <button onclick='usarMiUbicacion()' id='btn-mi-ubic' style='flex:1;background:rgba(29,158,117,0.3);color:#6ee7b7;border:1px solid rgba(29,158,117,0.5);border-radius:7px;padding:5px 6px;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap'>📍 <span id='btn-mi-ubic-txt'>Mi GPS</span></button>
-            <button onclick='activarMarcarEnMapa()' id='btn-marcar-mapa' style='flex:1;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.2);border-radius:7px;padding:5px 6px;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap'>🗺️ <span id='btn-marcar-mapa-txt'>Mapa</span></button>
-          </div>
-        </div>
-        <div style='flex:1' id='poi-foto-campo' style='display:none'>
-          <label style='font-size:10px;font-weight:600;color:rgba(255,255,255,0.6);display:block;margin-bottom:2px' id='lbl-poi-foto'>Foto <span style='font-weight:400;color:rgba(255,255,255,0.35)'>(opcional)</span></label>
-          <button type='button' onclick='_poiFormPedirFoto()' id='btn-poi-foto' style='width:100%;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.2);border-radius:7px;padding:5px 6px;font-size:11px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif'>📷 Añadir foto</button>
-        </div>
+      <label style='font-size:10px;font-weight:600;color:rgba(255,255,255,0.6);display:block;margin-bottom:2px' id='lbl-poi-ubic'>Ubicación *</label>
+      <div style='display:flex;gap:5px'>
+        <button onclick='usarMiUbicacion()' id='btn-mi-ubic' style='flex:1;background:rgba(29,158,117,0.3);color:#6ee7b7;border:1px solid rgba(29,158,117,0.5);border-radius:7px;padding:5px 6px;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap'>📍 <span id='btn-mi-ubic-txt'>Mi GPS</span></button>
+        <button onclick='activarMarcarEnMapa()' id='btn-marcar-mapa' style='flex:1;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.2);border-radius:7px;padding:5px 6px;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap'>🗺️ <span id='btn-marcar-mapa-txt'>Mapa</span></button>
       </div>
-      <div style='display:flex;gap:6px'>
-        <div id='poi-coords-display' style='flex:1;font-size:10px;color:rgba(255,255,255,0.4);min-height:13px'></div>
-        <div id='poi-foto-status' style='flex:1;font-size:10px;color:rgba(255,255,255,0.4);text-align:right'></div>
-      </div>
-      <canvas id='poi-foto-canvas' style='display:none'></canvas>
+      <div id='poi-coords-display' style='margin-top:3px;font-size:10px;color:rgba(255,255,255,0.4);min-height:13px'></div>
+      <!-- Foto oculta — IDs necesarios para el JS -->
+      <div style='display:none'><label id='lbl-poi-foto'></label><button type='button' id='btn-poi-foto' disabled></button><span id='poi-foto-status'></span><canvas id='poi-foto-canvas'></canvas></div>
     </div>
     <!-- Botones acción -->
     <div style='display:flex;gap:8px;flex-shrink:0;margin-top:auto;padding-top:4px'>
@@ -718,6 +729,10 @@
       <div style='background:#fff;border:0.5px solid rgba(0,0,0,0.08);border-radius:12px;padding:1rem 1.1rem;display:flex;gap:12px;align-items:flex-start'>
         <div style='width:32px;height:32px;background:#F3F4F6;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0'>📴</div>
         <div><div style='font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:2px'>Funciona sin conexión</div><div style='font-size:11px;color:#6b7280;font-weight:500;margin-bottom:2px'>Primera visita con WiFi · Se descarga automáticamente</div><div style='font-size:11px;color:#6b7280;line-height:1.6'>La primera vez que abres la guía con WiFi se descarga el mapa. Después puedes consultarla sin datos — ideal en zonas sin cobertura. Alertas y puntos nuevos sí requieren conexión.</div></div>
+      </div>
+      <div style='background:#fff;border:0.5px solid rgba(0,0,0,0.08);border-radius:12px;padding:1rem 1.1rem;display:flex;gap:12px;align-items:flex-start'>
+        <div style='width:32px;height:32px;background:#EDE9FE;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0'>📷</div>
+        <div><div style='font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:2px'>Álbum del peregrino</div><div style='font-size:11px;color:#6b7280;line-height:1.6'>Cada lugar que visites físicamente <strong style='color:#1a1a1a'>desbloquea su cromo</strong> — la imagen de la tarjeta se revela cuando el GPS detecta tu presencia. Accede desde el chip <strong style='color:#1a1a1a'>📷 Mi Álbum</strong> en la sección Puntos de interés para ver tu colección. Puedes añadir tu propia foto a cada cromo desbloqueado pulsando el botón de cámara en la tarjeta. Los puntos que tú mismo creas aparecen también en tu álbum.</div></div>
       </div>
       <div style='background:#1D9E75;border-radius:12px;padding:1rem 1.1rem;display:flex;gap:12px;align-items:flex-start'>
         <div style='font-size:24px;flex-shrink:0'>📲</div>
@@ -798,8 +813,29 @@
     </div>
   </div>
   <div style='padding:0.75rem 1rem 1.5rem'>
-    <!-- Logros / badges -->
-    <div id='album-badges' style='display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:1rem;scrollbar-width:none'></div>
+    <!-- Tarjeta ranking — siempre visible -->
+    <div id='album-ranking-card' style='border-radius:14px;overflow:hidden;margin-bottom:10px;background:linear-gradient(160deg,#0e2038 0%,#1a3a5c 50%,#1e4570 100%);border:1px solid rgba(255,255,255,0.12)'>
+      <div style='padding:0.9rem 1rem 0.7rem;border-bottom:1px solid rgba(255,255,255,0.08)'>
+        <div style='display:flex;align-items:center;gap:12px;margin-bottom:10px'>
+          <div id='rank-emoji' style='font-size:36px;line-height:1'>🌱</div>
+          <div style='flex:1'>
+            <div style='display:flex;align-items:baseline;gap:8px'>
+              <span id='rank-label' style='font-size:16px;font-weight:700;color:#fff'>Aspirante</span>
+              <span id='rank-count' style='font-size:11px;color:rgba(255,255,255,0.4)'>0 cromos</span>
+            </div>
+            <div id='rank-siguiente' style='font-size:10px;color:rgba(255,255,255,0.38);margin-top:2px'>Visita tu primer lugar para comenzar</div>
+          </div>
+        </div>
+        <div style='background:rgba(255,255,255,0.08);border-radius:20px;height:5px;overflow:hidden;margin-bottom:10px'>
+          <div id='rank-barra' style='height:100%;width:0%;background:linear-gradient(90deg,#1D9E75,#6ee7b7);border-radius:20px;transition:width 0.6s ease'></div>
+        </div>
+        <div id='rank-escalera' style='display:flex;justify-content:space-between;align-items:flex-end;padding:0 2px'></div>
+      </div>
+      <div style='padding:0.65rem 1rem'>
+        <div style='font-size:9px;font-weight:700;color:rgba(255,255,255,0.3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px'>Logros</div>
+        <div id='rank-logros' style='display:flex;flex-wrap:wrap;gap:5px'></div>
+      </div>
+    </div>
     <!-- Mosaico de cromos -->
     <div id='album-grid' style='display:grid;grid-template-columns:repeat(3,1fr);gap:8px'></div>
     <div id='album-vacio' style='display:none;text-align:center;padding:2.5rem 1rem'>
@@ -1937,6 +1973,8 @@ function abrirAlbumDrawer() {
   // Activa el filtro "Mi Álbum" en el poi-drawer (ya abierto)
   var chip = document.getElementById('chip-album-drawer');
   _poiDrawerFiltrar(chip, 'album');
+  // Actualizar tarjeta de ranking
+  if (window._renderAlbum) window._renderAlbum();
 }
 function cerrarAlbumDrawer() { _cerrarSlide('album-drawer'); }
 
@@ -2027,6 +2065,9 @@ function _poiDrawerFiltrar(chip, cat) {
   _poiDrawerCatActual = cat;
   document.querySelectorAll('#poi-drawer-chips .cat-chip').forEach(function(c){ c.classList.remove('active'); });
   if (chip) chip.classList.add('active');
+  // Mostrar/ocultar tarjeta de ranking
+  var rankCard = document.getElementById('album-ranking-card');
+  if (rankCard) rankCard.style.display = (cat === 'album') ? 'flex' : 'none';
   _renderPoiDrawerCarrusel();
 }
 
@@ -2047,9 +2088,18 @@ function _renderPoiDrawerCarrusel() {
   });
   if (!filtrados.length) {
     if (_poiDrawerCatActual === 'album') {
-      car.innerHTML = '<div style="width:100%;padding:2rem 1.5rem;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:36px;margin-bottom:10px">🐚</div><div style="color:rgba(255,255,255,0.75);font-size:13px;font-weight:600;margin-bottom:6px">Tu álbum está vacío</div><div style="color:rgba(255,255,255,0.4);font-size:12px;line-height:1.6;max-width:240px">Activa el seguimiento GPS y acércate a los puntos del Camino. Cada visita desbloquea el cromo.</div></div>';
+      // Preservar ranking card y añadir mensaje vacío a continuación
+      var _rk = document.getElementById('album-ranking-card');
+      car.innerHTML = '';
+      if (_rk) car.appendChild(_rk);
+      var emptyEl = document.createElement('div');
+      emptyEl.style.cssText = 'flex-shrink:0;width:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:1rem 0.5rem;text-align:center';
+      emptyEl.innerHTML = '<div style="font-size:32px">🐚</div>'
+        + '<div style="color:rgba(255,255,255,0.7);font-size:12px;font-weight:600;line-height:1.4">Tu álbum está vacío</div>'
+        + '<div style="color:rgba(255,255,255,0.38);font-size:10px;line-height:1.5">Acércate a los lugares del Camino con el GPS activo</div>';
+      car.appendChild(emptyEl);
     } else {
-      car.innerHTML = '<div style="color:var(--texto-suave);font-size:13px;padding:16px;font-style:italic">No hay puntos en esta categoría</div>';
+      car.innerHTML = '<div style="width:100%;padding:2rem 1.5rem;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:36px;margin-bottom:10px">🐚</div><div style="color:rgba(255,255,255,0.75);font-size:13px;font-weight:600;margin-bottom:6px">Ningún punto cerca</div><div style="color:rgba(255,255,255,0.4);font-size:12px;line-height:1.6;max-width:240px">No hay lugares de esta categoría en el radio actual. Amplía el radio o explora otra categoría del Camino.</div></div>';
     }
     return;
   }
@@ -2111,10 +2161,10 @@ function _renderPoiDrawerCarrusel() {
     card.innerHTML =
       (window._imgCromo ? window._imgCromo(p, enRuta, T, idiomaActual) : '<div class="poi-img '+p.color+'" style="position:relative;overflow:hidden">'+
         '<img src="'+(p.imagen||'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png')+'" alt="'+p.nombre+'" class="poi-img-cover" decoding="async" fetchpriority="low"/>'+
-        (!p.esAlerta ? '<button id="rbtn-'+p.id+'" class="poi-ruta-btn" data-poi="'+p.id+'" style="position:absolute;top:8px;right:8px;z-index:10;font-size:11px;padding:4px 10px;border-radius:10px;backdrop-filter:blur(4px);background:'+(enRuta?'#1D9E75':'rgba(255,255,255,0.92)')+';color:'+(enRuta?'#fff':'#0F6E56')+';border:1px solid '+(enRuta?'#1D9E75':'rgba(29,158,117,0.4)')+'">'+
+        (!p.esAlerta && !p.esUsuario ? '<button id="rbtn-'+p.id+'" class="poi-ruta-btn" data-poi="'+p.id+'" style="position:absolute;top:8px;right:8px;z-index:10;font-size:11px;padding:4px 10px;border-radius:10px;backdrop-filter:blur(4px);background:'+(enRuta?'#1D9E75':'rgba(255,255,255,0.92)')+';color:'+(enRuta?'#fff':'#0F6E56')+';border:1px solid '+(enRuta?'#1D9E75':'rgba(29,158,117,0.4)')+'">'+
           (enRuta?'&#10003; '+(T[idiomaActual]||T.es).enRuta.replace('✓ ',''):(T[idiomaActual]||T.es).añadirRuta)+'</button>' : '')+
       '</div>')+
-      '<div class="poi-ranking" id="rank-'+p.id+'" style="left:8px;right:auto">&#9733; '+(val.votos>0?media:'-')+'</div>'+
+      (!p.esUsuario ? '<div class="poi-ranking" id="rank-'+p.id+'" style="left:8px;right:auto">&#9733; '+(val.votos>0?media:'-')+'</div>' : '')+
       '<div class="poi-body">'+
         '<div class="poi-category">'+( p.categoria||'')+'</div>'+
         '<div class="poi-nombre-row"><span class="poi-emoji">'+p.emoji+'</span><span class="poi-nombre">'+pNombre+'</span></div>'+
@@ -2128,14 +2178,14 @@ function _renderPoiDrawerCarrusel() {
         )+
         '<p class="poi-desc" id="desc-'+p.id+'">'+pDesc+'</p>'+
         '<button class="poi-leer-mas" id="leer-mas-'+p.id+'">'+(T[idiomaActual]||T.es).leerMas+'</button>'+
-        '<div class="poi-stars"><div class="stars" id="stars-'+p.id+'"></div><span class="stars-count" id="scount-'+p.id+'">'+(val.votos>0?media+' &middot; '+val.votos+' votos':'')+'</span></div>'+
-        '<div class="poi-share">'+
+        (!p.esUsuario ? '<div class="poi-stars"><div class="stars" id="stars-'+p.id+'"></div><span class="stars-count" id="scount-'+p.id+'">'+(val.votos>0?media+' &middot; '+val.votos+' votos':'')+'</span></div>' : '')+
+        (!p.esUsuario ? '<div class="poi-share">'+
           '<a class="poi-share-btn" href="https://wa.me/?text='+texto+'%20'+pageUrl+'" target="_blank">&#128172;</a>'+
           '<a class="poi-share-btn" href="https://www.facebook.com/sharer/sharer.php?u='+pageUrl+'" target="_blank">&#128248;</a>'+
           '<a class="poi-share-btn" href="https://twitter.com/intent/tweet?text='+texto+'&url='+pageUrl+'" target="_blank">&#128038;</a>'+
           '<a class="poi-share-btn" href="https://t.me/share/url?url='+pageUrl+'&text='+texto+'" target="_blank">&#9992;</a>'+
-        '</div>'+
-        (p.esAlerta ? '' :
+        '</div>' : '')+
+        (p.esAlerta || p.esUsuario ? '' :
           '<div class="poi-opiniones">'+
             '<div class="poi-opiniones-lista" id="ops-'+p.id+'">'+opsList+'</div>'+
             '<div class="opinion-form">'+
@@ -2145,6 +2195,7 @@ function _renderPoiDrawerCarrusel() {
           '</div>'
         )+
         '<button class="poi-detail-btn" data-poi-id="'+p.id+'" style="margin-top:6px;width:100%;background:var(--verde-claro);border:1px solid rgba(29,158,117,0.3);border-radius:8px;padding:5px 8px;font-size:11px;font-weight:600;color:var(--verde-oscuro);cursor:pointer;font-family:DM Sans,sans-serif">💬 '+(T[idiomaActual]||T.es).verDetalle+'</button>'+
+        (p.esUsuario ? '<button data-poi-del="'+p.id+'" style="margin-top:5px;width:100%;background:rgba(239,68,68,0.08);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">🗑️ Eliminar este punto</button>' : '')+
       '</div>';
     frag.appendChild(card);
     // Si ya tiene foto propia guardada, aplicarla
@@ -2156,7 +2207,7 @@ function _renderPoiDrawerCarrusel() {
         var btn = document.getElementById('foto-btn-'+pid); if (btn) btn.innerHTML = '✏️ cambiar';
       }); })(p.id);
     }
-    var starsContainer = card.querySelector('.stars');
+    if (!p.esUsuario) { var starsContainer = card.querySelector('.stars');
     if (starsContainer) {
       starsContainer.innerHTML = '';
       for (var sn = 1; sn <= 5; sn++) {
@@ -2168,7 +2219,7 @@ function _renderPoiDrawerCarrusel() {
         star.setAttribute('data-star', '1');
         starsContainer.appendChild(star);
       }
-    }
+    } }
     var sendBtn = card.querySelector('.opinion-send');
     if (sendBtn) sendBtn.addEventListener('click', function(e) { e.stopPropagation(); enviarOpinion(sendBtn); });
     var opInput = card.querySelector('.opinion-input');
@@ -2201,7 +2252,10 @@ function _renderPoiDrawerCarrusel() {
       _poiDrawerToggleRuta(p.id, rutaBtn);
     });
   });
+  // Limpiar carousel preservando la tarjeta de ranking
+  var _rankCard = document.getElementById('album-ranking-card');
   car.innerHTML = '';
+  if (_rankCard) car.appendChild(_rankCard);
   car.appendChild(frag);
   // Sincronizar botones ruta con estado actual
   var t2 = T[idiomaActual] || T.es;
@@ -2888,9 +2942,6 @@ function selPoiCat(btn, cat) {
   document.getElementById('poi-form-msg').textContent = '';
   var lbl = document.getElementById('poi-cat-seleccionada');
   if (lbl) lbl.style.display = 'none';
-  // Mostrar campo foto solo para "mis puntos"
-  var fotoCampo = document.getElementById('poi-foto-campo');
-  if (fotoCampo) fotoCampo.style.display = (cat === 'punto de control') ? 'block' : 'none';
 }
 
 function resetAllPoiCatBtns() {
@@ -2954,40 +3005,6 @@ function selSubcat(cat, label) {
 
 function cerrarFormPOI() {
   _cerrarSlide('modal-add-poi');
-  window._poiFormFotoBlob = null;
-  var st = document.getElementById('poi-foto-status'); if (st) st.textContent = '';
-  var btn = document.getElementById('btn-poi-foto'); if (btn) btn.innerHTML = '📷 Añadir foto';
-  var fotoCampo = document.getElementById('poi-foto-campo'); if (fotoCampo) fotoCampo.style.display = 'none';
-}
-
-// Foto para el formulario de nuevo POI
-window._poiFormFotoBlob = null;
-function _poiFormPedirFoto() {
-  var inp = document.createElement('input');
-  inp.type = 'file'; inp.accept = 'image/*'; inp.capture = 'environment';
-  inp.onchange = function() {
-    var file = inp.files[0]; if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      var img = new Image();
-      img.onload = function() {
-        var canvas = document.getElementById('poi-foto-canvas');
-        var MAX = 800; var ratio = Math.min(MAX/img.width, MAX/img.height, 1);
-        canvas.width = Math.round(img.width*ratio); canvas.height = Math.round(img.height*ratio);
-        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob(function(blob) {
-          window._poiFormFotoBlob = blob;
-          var st = document.getElementById('poi-foto-status');
-          if (st) st.textContent = '✅ ' + file.name.substring(0,28);
-          var btn = document.getElementById('btn-poi-foto');
-          if (btn) btn.innerHTML = '✏️ Cambiar foto';
-        }, 'image/jpeg', 0.82);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  };
-  inp.click();
 }
 
 // Usar GPS actual
@@ -3172,38 +3189,19 @@ function guardarPOIUsuario() {
   try { localStorage.setItem('poi_usuario', JSON.stringify(PUNTOS_USUARIO)); } catch(e) {}
 
   // Registrar en álbum automáticamente (el usuario creó este punto, ya lo "visitó")
-  // Marcamos como visitado síncronamente para que el render lo vea de inmediato
-  window._albumVisitasSet[poi.id] = true;
+  if (window._albumRegistrarVisita) window._albumRegistrarVisita(poi, true);
 
-  // Si tiene foto, guardarla ANTES de renderizar — así la precarga del render la encuentra
-  var _blobParaGuardar = window._poiFormFotoBlob || null;
-  window._poiFormFotoBlob = null;
-
-  function _finalizarGuardado() {
-    if (!valoraciones[id]) valoraciones[id] = {total:0, votos:0, miVoto:0};
-    if (!opiniones[id]) opiniones[id] = [];
-    PUNTOS.push(poi);
-    if (typeof mapa !== 'undefined' && mapa) añadirMarcadorUsuario(poi);
-    if (typeof userLat !== 'undefined' && userLat) {
-      PUNTOS.forEach(function(p){p.distancia=haversine(userLat,userLng,p.lat,p.lng);});
-      PUNTOS.sort(function(a,b){return a.distancia-b.distancia;});
-    }
-    cerrarFormPOI();
-    btn.disabled = false;
-    renderCarrusel(categoriaActiva);
-    // Persistir en IndexedDB y disparar logros tras render
-    if (window._albumRegistrarVisita) window._albumRegistrarVisita(poi, true);
-    mostrarToast('📌 Punto añadido a tu álbum');
+  if (!valoraciones[id]) valoraciones[id] = {total:0, votos:0, miVoto:0};
+  if (!opiniones[id]) opiniones[id] = [];
+  PUNTOS.push(poi);
+  if (typeof mapa !== 'undefined' && mapa) añadirMarcadorUsuario(poi);
+  if (typeof userLat !== 'undefined' && userLat) {
+    PUNTOS.forEach(function(p){p.distancia=haversine(userLat,userLng,p.lat,p.lng);});
+    PUNTOS.sort(function(a,b){return a.distancia-b.distancia;});
   }
-
-  if (_blobParaGuardar && window._albumGuardarFoto) {
-    // Guardar foto primero, luego renderizar — así el render encuentra la foto en IDB
-    window._albumGuardarFoto(poi.id, _blobParaGuardar, function() {
-      _finalizarGuardado();
-    });
-  } else {
-    _finalizarGuardado();
-  }
+  cerrarFormPOI();
+  btn.disabled = false;
+  renderCarrusel(categoriaActiva);
 
   // Firebase: alertas van a rama 'alertas' (pública, tiempo real); resto a poi_usuarios (moderación)
   try {
@@ -3488,8 +3486,10 @@ function eliminarPOIUsuario(poiId) {
   // 5. Eliminar de Firebase
   db.ref('poi_usuarios/' + poiId).remove().catch(function(e){ console.warn('No se pudo eliminar de Firebase:', e); });
 
-  // 6. Actualizar carrusel
+  // 6. Actualizar carrusel y poi-drawer
   renderCarrusel(categoriaActiva);
+  if (typeof _renderPoiDrawerCarrusel === 'function') _renderPoiDrawerCarrusel();
+  mostrarToast('🗑️ Punto eliminado');
 }
 
 // Delegación de eventos para el botón eliminar
@@ -4365,11 +4365,28 @@ function renderCarrusel(categoria) {
   }
   if (!filtrados.length) {
     var msgs = {
-      'alerta': { es:'🚨 Sin alertas activas en este momento', gl:'🚨 Sen alertas activas neste momento', en:'🚨 No active alerts at this time' },
-      'fiesta': { es:'🎉 Sin fiestas activas hoy · consulta el calendario', gl:'🎉 Sen festas activas hoxe · consulta o calendario', en:'🎉 No active festivals today · check the calendar' }
+      'alerta':   { es:'🚨 Sin alertas activas en este momento', gl:'🚨 Sen alertas activas neste momento', en:'🚨 No active alerts at this time' },
+      'fiesta':   { es:'🎉 Sin fiestas activas hoy · consulta el calendario', gl:'🎉 Sen festas activas hoxe · consulta o calendario', en:'🎉 No active festivals today · check the calendar' }
     };
-    var msg = (msgs[categoria] && msgs[categoria][idiomaActual]) || (msgs[categoria] && msgs[categoria].es) || 'No hay puntos en esta categoría.';
-    carousel.innerHTML = '<p style="color:#6b7280;padding:1rem;font-style:italic">' + msg + '</p>';
+    var iconos = {
+      'naturaleza':'🌿','monumento':'🏛️','edificación religiosa':'⛪','localización histórica':'📜',
+      'vestigio arqueológico':'🔍','albergue':'🏠','mirador':'🔭','etapa-costa':'🌊','etapa-interior':'🥾'
+    };
+    var icono = iconos[categoria] || '🐚';
+    var textoEs = (msgs[categoria] && msgs[categoria].es) || 'No hay puntos en esta categoría';
+    var textoGl = (msgs[categoria] && msgs[categoria].gl) || textoEs;
+    var textoEn = (msgs[categoria] && msgs[categoria].en) || textoEs;
+    var texto = idiomaActual==='gl' ? textoGl : idiomaActual==='en' ? textoEn : textoEs;
+    var subEs = 'Prueba con otra categoría o amplía el radio de búsqueda en el mapa.';
+    var subGl = 'Proba con outra categoría ou amplía o radio de busca no mapa.';
+    var subEn = 'Try another category or widen the search radius on the map.';
+    if (msgs[categoria]) { subEs = ''; subGl = ''; subEn = ''; }
+    var sub = idiomaActual==='gl' ? subGl : idiomaActual==='en' ? subEn : subEs;
+    carousel.innerHTML = '<div style="width:100%;padding:2rem 1.5rem;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">'
+      + '<div style="font-size:36px;margin-bottom:10px">'+icono+'</div>'
+      + '<div style="color:#6b7280;font-size:13px;font-weight:600;margin-bottom:6px">'+texto+'</div>'
+      + (sub ? '<div style="color:#9ca3af;font-size:12px;line-height:1.6;max-width:240px">'+sub+'</div>' : '')
+      + '</div>';
     return;
   }
   var _frag = document.createDocumentFragment();
@@ -4412,9 +4429,9 @@ function renderCarrusel(categoria) {
     card.innerHTML =
       (window._imgCromo ? window._imgCromo(p, enRuta, T, idiomaActual) : '<div class="poi-img '+p.color+'" style="position:relative;overflow:hidden">' +
         '<img src="'+(p.imagen||'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png')+'" alt="'+p.nombre+'" class="poi-img-cover" decoding="async" fetchpriority="low"/>' +
-        (mostrarBtnRuta && !p.esAlerta ? '<button id="rbtn-'+p.id+'" class="poi-ruta-btn" data-poi="'+p.id+'" style="position:absolute;top:8px;right:8px;z-index:10;font-size:11px;padding:4px 10px;border-radius:10px;backdrop-filter:blur(4px);background:'+(enRuta?'#1D9E75':'rgba(255,255,255,0.92)')+';color:'+(enRuta?'#fff':'#0F6E56')+';border:1px solid '+(enRuta?'#1D9E75':'rgba(29,158,117,0.4)')+'">'+  (enRuta?'&#10003; '+(T[idiomaActual]||T.es).enRuta.replace('✓ ',''):(T[idiomaActual]||T.es).añadirRuta)+'</button>' : '') +
+        (mostrarBtnRuta && !p.esAlerta && !p.esUsuario ? '<button id="rbtn-'+p.id+'" class="poi-ruta-btn" data-poi="'+p.id+'" style="position:absolute;top:8px;right:8px;z-index:10;font-size:11px;padding:4px 10px;border-radius:10px;backdrop-filter:blur(4px);background:'+(enRuta?'#1D9E75':'rgba(255,255,255,0.92)')+';color:'+(enRuta?'#fff':'#0F6E56')+';border:1px solid '+(enRuta?'#1D9E75':'rgba(29,158,117,0.4)')+'">'+  (enRuta?'&#10003; '+(T[idiomaActual]||T.es).enRuta.replace('✓ ',''):(T[idiomaActual]||T.es).añadirRuta)+'</button>' : '') +
       '</div>')+
-      '<div class="poi-ranking" id="rank-'+p.id+'" style="left:8px;right:auto">&#9733; '+(val.votos>0?media:'-')+'</div>'+
+      (!p.esUsuario ? '<div class="poi-ranking" id="rank-'+p.id+'" style="left:8px;right:auto">&#9733; '+(val.votos>0?media:'-')+'</div>' : '')+
       '<div class="poi-body">'+
         '<div class="poi-category">'+(function(c){var t2=T[idiomaActual]||T.es;var cm={'naturaleza':t2.chipNaturaleza,'monumento':t2.chipMonumento,'albergue':t2.chipAlbergue,'mirador':t2.chipMirador,'edificación religiosa':t2.chipEdif,'localización histórica':t2.chipHist,'vestigio arqueológico':t2.chipVest,'edificación histórica':t2.chipEdifH,'naturaleza':t2.chipNat};return cm[c]||c;})(p.categoria)+'</div>'+
         '<div class="poi-nombre-row"><span class="poi-emoji">'+p.emoji+'</span><span class="poi-nombre">'+pNombre+'</span></div>'+
@@ -4435,13 +4452,13 @@ function renderCarrusel(categoria) {
         )+
         '<p class="poi-desc" id="desc-'+p.id+'">'+pDesc+'</p>'+
         '<button class="poi-leer-mas" id="leer-mas-'+p.id+'">'+(T[idiomaActual]||T.es).leerMas+'</button>'+
-        '<div class="poi-stars"><div class="stars" id="stars-'+p.id+'"></div><span class="stars-count" id="scount-'+p.id+'">'+(val.votos>0?media+' &middot; '+val.votos+' votos':'')+'</span></div>'+
-        '<div class="poi-share">'+
+        (!p.esUsuario ? '<div class="poi-stars"><div class="stars" id="stars-'+p.id+'"></div><span class="stars-count" id="scount-'+p.id+'">'+(val.votos>0?media+' &middot; '+val.votos+' votos':'')+'</span></div>' : '')+
+        (!p.esUsuario ? '<div class="poi-share">'+
           '<a class="poi-share-btn" href="https://wa.me/?text='+texto+'%20'+pageUrl+'" target="_blank">&#128172;</a>'+
           '<a class="poi-share-btn" href="https://www.facebook.com/sharer/sharer.php?u='+pageUrl+'" target="_blank">&#128248;</a>'+
           '<a class="poi-share-btn" href="https://twitter.com/intent/tweet?text='+texto+'&url='+pageUrl+'" target="_blank">&#128038;</a>'+
           '<a class="poi-share-btn" href="https://t.me/share/url?url='+pageUrl+'&text='+texto+'" target="_blank">&#9992;</a>'+
-        '</div>'+
+        '</div>' : '')+
         (p.esAlerta
           ? '<div style="margin:8px 0 4px">' +
               '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
@@ -4467,7 +4484,7 @@ function renderCarrusel(categoria) {
               '</div>'+
             '</div>'
         )+
-
+        (p.esUsuario ? '<button data-poi-del="'+p.id+'" style="margin-top:6px;width:100%;background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.35);border-radius:8px;padding:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">🗑️ Eliminar este punto</button>' : '')+
       '</div>';
     _frag.appendChild(card);
 
@@ -4481,7 +4498,7 @@ function renderCarrusel(categoria) {
         var btn = document.getElementById('foto-btn-'+pid); if (btn) btn.innerHTML = '✏️ cambiar';
       }); })(p.id);
     }
-    var starsContainer = card.querySelector('.stars');
+    if (!p.esUsuario) { var starsContainer = card.querySelector('.stars');
     if (starsContainer) {
       starsContainer.innerHTML = '';
       for (var sn = 1; sn <= 5; sn++) {
@@ -4494,7 +4511,7 @@ function renderCarrusel(categoria) {
         star.setAttribute('data-star', '1');
         starsContainer.appendChild(star);
       }
-    }
+    } }
     // Listener directo en botón enviar
     var sendBtn = card.querySelector('.opinion-send');
     if (sendBtn) sendBtn.addEventListener('click', function(e) {
@@ -6923,7 +6940,7 @@ if ('serviceWorker' in navigator) {
   }
 
   // Guardar visita
-  window._albumRegistrarVisita = function(poi, silencioso) {
+  window._albumRegistrarVisita = function(poi, esCreado) {
     // Actualizar caché síncrono inmediatamente para que el render lo vea al instante
     window._albumVisitasSet[poi.id] = true;
     _abrirDB(function(db) {
@@ -6937,10 +6954,14 @@ if ('serviceWorker' in navigator) {
                     lat: poi.lat, lng: poi.lng, fecha: Date.now() });
         // Actualizar imagen en las tarjetas ya renderizadas
         if (window._albumRefrescarImgCard) window._albumRefrescarImgCard(poi.id);
-        // Toast solo si no es silencioso (POIs de usuario gestionan su propio toast)
-        if (!silencioso) mostrarToast('🏅 ¡Cromo desbloqueado! ' + (poi.emoji||'📍') + ' ' + poi.nombre);
-        // Comprobar logros siempre
-        _albumComprobarLogros();
+        if (esCreado) {
+          // Punto creado por el usuario — toast neutro, sin logros
+          mostrarToast('📌 Punto añadido a tu álbum');
+        } else {
+          // Visita GPS — toast de cromo y comprobar logros
+          mostrarToast('🏅 ¡Cromo desbloqueado! ' + (poi.emoji||'📍') + ' ' + poi.nombre);
+          _albumComprobarLogros();
+        }
       };
     });
   };
@@ -6982,14 +7003,35 @@ if ('serviceWorker' in navigator) {
   };
 
   // Definición de badges
+  // Rangos por número de visitas
+  var RANGOS = [
+    { min:1,  max:4,  emoji:'🌱', label:'Aspirante' },
+    { min:5,  max:14, emoji:'🎒', label:'Mochilero' },
+    { min:15, max:29, emoji:'👣', label:'Caminante' },
+    { min:30, max:49, emoji:'🐚', label:'Peregrino' },
+    { min:50, max:96, emoji:'⭐', label:'Veterano'  },
+    { min:97, max:999,emoji:'🏆', label:'Ultreia'   }
+  ];
+
+  function _getRango(n) {
+    for (var i = RANGOS.length-1; i >= 0; i--) {
+      if (n >= RANGOS[i].min) return RANGOS[i];
+    }
+    return { emoji:'🌱', label:'Aspirante', min:1, max:4 };
+  }
+
+  // Logros especiales por categoría
   var BADGES = [
-    { id:'primer-cromo',  emoji:'🌱', label:'Primer paso',    desc:'Primera visita registrada',            test: function(v){ return v.length >= 1; } },
-    { id:'5-cromos',      emoji:'⭐', label:'Cinco estrellas', desc:'5 visitas registradas',                test: function(v){ return v.length >= 5; } },
-    { id:'10-cromos',     emoji:'🏆', label:'Peregrino',       desc:'10 visitas registradas',               test: function(v){ return v.length >= 10; } },
-    { id:'templario',     emoji:'✝️', label:'Templario',       desc:'Visitaste 3 lugares templarios',
-      test: function(v){ return v.filter(function(x){ return x.categoria==='localización histórica'||x.categoria==='vestigio arqueológico'; }).length >= 3; } },
-    { id:'costero',       emoji:'🌊', label:'Marinero',        desc:'Visitaste 3 puntos de la costa',
-      test: function(v){ return v.filter(function(x){ return x.categoria==='mirador'||x.categoria==='naturaleza'; }).length >= 3; } }
+    { id:'templario',   emoji:'✝️', label:'Custodio Templario',     desc:'5 lugares históricos o arqueológicos',
+      test: function(v){ return v.filter(function(x){ return x.categoria==='localización histórica'||x.categoria==='vestigio arqueológico'; }).length >= 5; } },
+    { id:'marinero',    emoji:'🌊', label:'Marinero del Atlántico', desc:'3 miradores o lugares naturales',
+      test: function(v){ return v.filter(function(x){ return x.categoria==='mirador'||x.categoria==='naturaleza'; }).length >= 3; } },
+    { id:'hospitalero', emoji:'🏠', label:'Hospitalero',            desc:'3 albergues visitados',
+      test: function(v){ return v.filter(function(x){ return x.categoria==='albergue'; }).length >= 3; } },
+    { id:'devoto',      emoji:'⛪', label:'Devoto',                 desc:'5 edificaciones religiosas',
+      test: function(v){ return v.filter(function(x){ return x.categoria==='edificación religiosa'; }).length >= 5; } },
+    { id:'compostela',  emoji:'🌟', label:'Compostela',             desc:'¡Todos los puntos del Camino!',
+      test: function(v){ return v.filter(function(x){ return !(x.poiId||'').startsWith('u_'); }).length >= 97; } }
   ];
 
   window._albumComprobarLogros = function() {
@@ -7013,6 +7055,30 @@ if ('serviceWorker' in navigator) {
   };
 
   // ---- Render del álbum ----
+  function _renderRankingCard(grid, n, rango, nextRango) {
+    var card = document.createElement('div');
+    card.style.cssText = 'grid-column:span 3;border-radius:12px;background:linear-gradient(135deg,rgba(29,158,117,0.25),rgba(29,158,117,0.1));border:1px solid rgba(29,158,117,0.4);padding:0.85rem 1rem;margin-bottom:4px';
+    var pct = nextRango ? Math.min(Math.round((n - rango.min) / (nextRango.min - rango.min) * 100), 99) : 100;
+    var siguienteTexto = nextRango
+      ? (nextRango.min - n) + ' cromo' + (nextRango.min - n !== 1 ? 's' : '') + ' para ' + nextRango.emoji + ' ' + nextRango.label
+      : '🌟 ¡Rango máximo alcanzado!';
+    card.innerHTML =
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
+      + '<div style="font-size:32px;line-height:1">'+rango.emoji+'</div>'
+      + '<div style="flex:1">'
+        + '<div style="display:flex;align-items:baseline;gap:8px">'
+          + '<span style="font-size:15px;font-weight:700;color:#fff">'+rango.label+'</span>'
+          + '<span style="font-size:11px;color:rgba(255,255,255,0.45)">'+n+' cromo'+(n!==1?'s':'')+'</span>'
+        + '</div>'
+        + '<div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px">'+siguienteTexto+'</div>'
+      + '</div>'
+      + '</div>'
+      + '<div style="background:rgba(255,255,255,0.1);border-radius:20px;height:5px;overflow:hidden">'
+        + '<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#1D9E75,#6ee7b7);border-radius:20px;transition:width 0.6s ease"></div>'
+      + '</div>';
+    grid.appendChild(card);
+  }
+
   window._renderAlbum = function() {
     _albumGetVisitas(function(visitas) {
       var grid = document.getElementById('album-grid');
@@ -7020,12 +7086,69 @@ if ('serviceWorker' in navigator) {
       var contador = document.getElementById('album-contador');
       if (!grid) return;
       grid.innerHTML = '';
+
+      // --- Ranking card (estática en HTML) ---
+      var n = visitas.filter(function(v){ return !(v.poiId||'').startsWith('u_'); }).length;
+      var rango = _getRango(n);
+      var nextRango = null;
+      for (var ri = 0; ri < RANGOS.length; ri++) {
+        if (RANGOS[ri].min > n) { nextRango = RANGOS[ri]; break; }
+      }
+      var pct = nextRango ? Math.min(Math.round((n - rango.min) / (nextRango.min - rango.min) * 100), 99) : 100;
+
+      var elEmoji    = document.getElementById('rank-emoji');
+      var elLabel    = document.getElementById('rank-label');
+      var elCount    = document.getElementById('rank-count');
+      var elSig      = document.getElementById('rank-siguiente');
+      var elBarra    = document.getElementById('rank-barra');
+      var elEscalera = document.getElementById('rank-escalera');
+      var elLogros   = document.getElementById('rank-logros');
+
+      if (elEmoji) elEmoji.textContent = rango.emoji;
+      if (elLabel) elLabel.textContent = rango.label;
+      if (elCount) elCount.textContent = n + ' cromo' + (n!==1?'s':'');
+      if (elSig)   elSig.textContent   = nextRango
+        ? (nextRango.min-n)+' cromo'+(nextRango.min-n!==1?'s':'')+' para '+nextRango.emoji+' '+nextRango.label
+        : '🌟 ¡Rango máximo alcanzado!';
+      if (elBarra) elBarra.style.width = pct + '%';
+
+      if (elEscalera) {
+        elEscalera.innerHTML = RANGOS.map(function(r) {
+          var activo  = r.label === rango.label;
+          var superado = n >= r.min && !activo;
+          return '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;opacity:'+(superado||activo?'1':'0.3')+'">'
+            + '<div style="font-size:'+(activo?'22':'14')+'px;line-height:1">'+r.emoji+'</div>'
+            + (activo ? '<div style="font-size:8px;color:#6ee7b7;font-weight:700;white-space:nowrap">'+r.label+'</div>' : '')
+            + '</div>';
+        }).join('');
+      }
+
+      if (elLogros) {
+        elLogros.innerHTML = BADGES.map(function(b) {
+          return '<div id="rank-badge-'+b.id+'" title="'+b.desc+'" style="display:flex;align-items:center;gap:4px;padding:4px 9px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.28)">'+b.emoji+' '+b.label+'</div>';
+        }).join('');
+        _albumGetLogros(function(logros) {
+          var desbloqueados = logros.map(function(l){ return l.badgeId; });
+          BADGES.forEach(function(b) {
+            var pill = document.getElementById('rank-badge-'+b.id);
+            if (pill && desbloqueados.indexOf(b.id) !== -1) {
+              pill.style.background = 'rgba(255,215,0,0.12)';
+              pill.style.border     = '1px solid rgba(255,215,0,0.45)';
+              pill.style.color      = '#FFD700';
+            }
+          });
+        });
+      }
       if (visitas.length === 0) {
         vacio.style.display = 'block';
         contador.textContent = 'Visita lugares para desbloquear cromos';
+        // Tarjeta ranking incluso sin cromos
+        _renderRankingCard(grid, n, rango, nextRango);
       } else {
         vacio.style.display = 'none';
         contador.textContent = visitas.length + ' cromo' + (visitas.length!==1?'s':'') + ' desbloqueado' + (visitas.length!==1?'s':'');
+        // Tarjeta ranking siempre primera
+        _renderRankingCard(grid, n, rango, nextRango);
         // Ordenar por fecha
         visitas.sort(function(a,b){ return a.fecha - b.fecha; });
         visitas.forEach(function(v) {
@@ -7182,7 +7305,7 @@ if ('serviceWorker' in navigator) {
         : ((T[idiomaActual]||T.es).añadirRuta||'+ Ruta');
       return '<div class="poi-img '+p.color+'" style="position:relative;overflow:hidden" data-cromo-id="'+p.id+'">' +
         '<img id="cromo-img-'+p.id+'" src="'+( p.imagen||'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png')+'" alt="'+p.nombre+'" class="poi-img-cover" decoding="async" fetchpriority="low"/>' +
-        (!p.esAlerta ? '<button id="rbtn-'+p.id+'" class="poi-ruta-btn" data-poi="'+p.id+'" style="position:absolute;top:8px;right:8px;z-index:10;font-size:11px;padding:4px 10px;border-radius:10px;backdrop-filter:blur(4px);'+enRutaStyle+'">'+enRutaLabel+'</button>' : '') +
+        (!p.esAlerta && !p.esUsuario ? '<button id="rbtn-'+p.id+'" class="poi-ruta-btn" data-poi="'+p.id+'" style="position:absolute;top:8px;right:8px;z-index:10;font-size:11px;padding:4px 10px;border-radius:10px;backdrop-filter:blur(4px);'+enRutaStyle+'">'+enRutaLabel+'</button>' : '') +
         '<button onclick="event.stopPropagation();_albumPedirFotoCard(\''+p.id+'\')" style="position:absolute;bottom:7px;right:7px;z-index:10;background:rgba(0,0,0,0.52);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:3px 9px;color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;backdrop-filter:blur(4px)" id="foto-btn-'+p.id+'">📷 mi foto</button>' +
       '</div>';
     } else {
@@ -7317,6 +7440,6 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v467</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v490</div>
 </body>
 </html>
