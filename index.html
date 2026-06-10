@@ -8666,7 +8666,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v705";
+var _APP_VERSION = "v706";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8879,6 +8879,7 @@ if ('serviceWorker' in navigator) {
   })();
 
   // Generar número de cromo aleatorio según contexto del POI
+  window._OCA_TABLERO = _OCA_TABLERO;
   window._ocaGenerarNumero = function(poiId, cb) {
     // Santiago → solo cromo 63
     if (_POI_SANTIAGO.indexOf(poiId) >= 0) { cb(63); return; }
@@ -8998,62 +8999,11 @@ if ('serviceWorker' in navigator) {
 
   // Procesar cromo obtenido — lógica completa
   window._ocaProcesarCromo = function(num, poiId, cb) {
-    var casilla = window._OCA_TABLERO ? window._OCA_TABLERO[num] : _OCA_TABLERO[num];
-    var tipo = casilla.tipo;
-
-    if (tipo === 'normal' || tipo === 'santiago') {
-      window._ocaGuardarCromo(num, poiId, function() { if (cb) cb(num, tipo, []); });
-
-    } else if (tipo === 'oca') {
-      // Guardar la oca + 1 cromo extra aleatorio
-      var extra = Math.floor(Math.random()*62)+1;
-      window._ocaGuardarCromo(num, poiId, function() {
-        window._ocaGuardarCromo(extra, poiId, function() {
-          if (cb) cb(num, tipo, [extra]);
-        });
-      });
-
-    } else if (tipo === 'puente') {
-      // ±1 cromo aleatorio
-      if (Math.random() < 0.5) {
-        // +1 extra
-        var extra2 = Math.floor(Math.random()*62)+1;
-        window._ocaGuardarCromo(num, poiId, function() {
-          window._ocaGuardarCromo(extra2, poiId, function() {
-            if (cb) cb(num, tipo, [extra2]);
-          });
-        });
-      } else {
-        // Guardar el puente pero disparar pérdida de 1
-        window._ocaGuardarCromo(num, poiId, function() {
-          if (cb) cb(num, tipo+'_menos', []);
-        });
-      }
-
-    } else if (tipo === 'posada') {
-      // Sin cromo ahora, doble en el próximo
-      window._ocaGuardarCromo(num, poiId, function() {
-        window._ocaSetPosada(true, function() {
-          if (cb) cb(num, tipo, []);
-        });
-      });
-
-    } else if (tipo === 'dados') {
-      // Guardar provisional, se decide en el modal
-      window._ocaGuardarCromo(num, poiId, function() {
-        if (cb) cb(num, tipo, []);
-      });
-
-    } else if (tipo === 'laberinto' || tipo === 'carcel') {
-      window._ocaGuardarCromo(num, poiId, function() {
-        if (cb) cb(num, tipo, []); // pérdida de 2 se gestiona en modal
-      });
-
-    } else if (tipo === 'muerte') {
-      window._ocaGuardarCromo(num, poiId, function() {
-        if (cb) cb(num, tipo, []);
-      });
-    }
+    // Solo guarda el cromo — efectos especiales se resuelven al abrir en el Tablero
+    var casilla = _OCA_TABLERO[num] || {tipo:'normal'};
+    window._ocaGuardarCromo(num, poiId, function() {
+      if (cb) cb(num, casilla.tipo, []);
+    });
   };
 
   // Guardar foto (blob) asociada a un POI
@@ -9796,7 +9746,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v705</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v706</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
