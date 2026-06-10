@@ -8666,7 +8666,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v703";
+var _APP_VERSION = "v705";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8760,14 +8760,14 @@ if ('serviceWorker' in navigator) {
               var veces = posada ? 2 : 1;
               if (posada) window._ocaSetPosada(false, function(){});
               function _darCromo(n) {
-                var num = window._ocaGenerarNumero(poi.id);
-                window._ocaProcesarCromo(num, poi.id, function(numFinal, tipo, extras) {
-                  if (n === veces) {
-                    // Último cromo — mostrar modal
-                    mostrarToastCromo(poi, numFinal, tipo, extras, posada && veces===2);
-                  } else {
-                    _darCromo(n+1);
-                  }
+                window._ocaGenerarNumero(poi.id, function(num) {
+                  window._ocaProcesarCromo(num, poi.id, function(numFinal, tipo, extras) {
+                    if (n === veces) {
+                      mostrarToastCromo(poi, numFinal, tipo, extras, posada && veces===2);
+                    } else {
+                      _darCromo(n+1);
+                    }
+                  });
                 });
               }
               _darCromo(1);
@@ -8879,12 +8879,26 @@ if ('serviceWorker' in navigator) {
   })();
 
   // Generar número de cromo aleatorio según contexto del POI
-  window._ocaGenerarNumero = function(poiId) {
+  window._ocaGenerarNumero = function(poiId, cb) {
     // Santiago → solo cromo 63
-    if (_POI_SANTIAGO.indexOf(poiId) >= 0) return 63;
-    // MODO PRUEBAS: solo casillas especiales
+    if (_POI_SANTIAGO.indexOf(poiId) >= 0) { cb(63); return; }
+    // MODO PRUEBAS: solo casillas especiales, excluyendo las ya abiertas
     var especiales = [5,6,9,12,14,18,19,23,26,27,31,32,36,41,42,45,50,52,53,54,58,59];
-    return especiales[Math.floor(Math.random()*especiales.length)];
+    _abrirDB(function(db) {
+      if (!db.objectStoreNames.contains('cromos')) { cb(especiales[Math.floor(Math.random()*especiales.length)]); return; }
+      var tx = db.transaction('cromos','readonly');
+      var req = tx.objectStore('cromos').getAll();
+      req.onsuccess = function() {
+        var items = req.result || [];
+        var ocupadas = {};
+        items.forEach(function(it){ if(it.resuelto) ocupadas[it.num]=true; });
+        var libres = especiales.filter(function(n){ return !ocupadas[n]; });
+        // Si todas ocupadas, permitir repetir (no hay más especiales libres)
+        var pool = libres.length > 0 ? libres : especiales;
+        cb(pool[Math.floor(Math.random()*pool.length)]);
+      };
+      req.onerror = function() { cb(especiales[Math.floor(Math.random()*especiales.length)]); };
+    });
   };
 
   // Guardar cromo en IndexedDB (store 'cromos': {num, fecha, poiId})
@@ -9782,7 +9796,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v703</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v705</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
