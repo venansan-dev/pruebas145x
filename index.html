@@ -8665,7 +8665,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v700";
+var _APP_VERSION = "v701";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8879,23 +8879,13 @@ if ('serviceWorker' in navigator) {
 
   // Generar número de cromo aleatorio según contexto del POI
   window._ocaGenerarNumero = function(poiId) {
-    var r = Math.random();
     // Santiago → solo cromo 63
     if (_POI_SANTIAGO.indexOf(poiId) >= 0) return 63;
-    // Templario → puede salir Oca (prob 25%) o normal
-    if (_POI_TEMPLARIOS.indexOf(poiId) >= 0 && r < 0.25) {
-      var ocas = [5,9,14,18,23,27,32,36,41,45,50,54,59];
-      return ocas[Math.floor(Math.random()*ocas.length)];
+    // MODO PRUEBAS: especiales con alta probabilidad
+    var especiales = [5,6,9,12,14,18,19,23,26,27,31,32,36,41,42,45,50,52,53,54,58,59];
+    if (Math.random() < 0.85) {
+      return especiales[Math.floor(Math.random()*especiales.length)];
     }
-    // Puente → prob 40% de casilla puente
-    if (_POI_PUENTES.indexOf(poiId) >= 0 && r < 0.40) {
-      return Math.random() < 0.5 ? 6 : 12;
-    }
-    // Albergue → prob 35% de casilla posada
-    if (_POI_ALBERGUES.indexOf(poiId) >= 0 && r < 0.35) {
-      return Math.random() < 0.5 ? 19 : 31;
-    }
-    // Normal → aleatorio 1-62 (63 solo en Santiago)
     return Math.floor(Math.random() * 62) + 1;
   };
 
@@ -8943,7 +8933,6 @@ if ('serviceWorker' in navigator) {
     });
   };
 
-  // Leer cromos con claves IDB reales [{key, item}]
   window._ocaGetCromosConKeys = function(cb) {
     _abrirDB(function(db) {
       if (!db.objectStoreNames.contains('cromos')) { cb([]); return; }
@@ -8958,8 +8947,6 @@ if ('serviceWorker' in navigator) {
       } catch(e) { cb([]); }
     });
   };
-
-  // Marcar cromo como resuelto por clave IDB
   window._ocaMarcarResuelto = function(idbKey, cb) {
     _abrirDB(function(db) {
       var tx = db.transaction('cromos', 'readwrite');
@@ -8973,7 +8960,6 @@ if ('serviceWorker' in navigator) {
       tx.onerror = function() { if (cb) cb(); };
     });
   };
-
   // Estado posada pendiente
   window._ocaGetPosada = function(cb) {
     _abrirDB(function(db) {
@@ -9560,246 +9546,122 @@ function _renderTableroOca() {
   var tableroVacio = document.getElementById('ap-tablero-vacio');
   var contador = document.getElementById('tablero-contador');
   if (!tableroGrid || !window._ocaGetCromosConKeys) return;
-
   window._ocaGetCromosConKeys(function(entries) {
     tableroGrid.innerHTML = '';
-    var conteo = {}; // num -> [{key, item}]
-    entries.forEach(function(e) {
-      var n = e.item.num;
-      if (!conteo[n]) conteo[n] = [];
-      conteo[n].push(e);
-    });
-
-    var numCasillas = Object.keys(conteo).length;
-    var total = entries.length;
+    var conteo = {};
+    entries.forEach(function(e) { var n=e.item.num; if(!conteo[n]) conteo[n]=[]; conteo[n].push(e); });
+    var numCasillas = Object.keys(conteo).length, total = entries.length;
     var _tTab = T[idiomaActual]||T.es;
-    if (contador) contador.textContent = total > 0
-      ? numCasillas+' '+(_tTab.coleccionContador||'de 63 casillas')+' · '+total+' cromo'+(total!==1?'s':'')
+    if (contador) contador.textContent = total>0
+      ? numCasillas+' '+(_tTab.coleccionContador||'de 63 casillas')+' \xb7 '+total+' cromo'+(total!==1?'s':'')
       : (_tTab.coleccionVacio||'Visita lugares para obtener cromos');
-    if (tableroVacio) tableroVacio.style.display = total > 0 ? 'none' : 'block';
-
+    if (tableroVacio) tableroVacio.style.display = total>0?'none':'block';
     tableroGrid.style.cssText = 'display:grid;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(7,1fr);gap:3px;width:100%;aspect-ratio:9/7';
-
     var cells = [];
-    for (var r = 0; r < 7; r++) {
-      for (var c = 0; c < 9; c++) {
-        var ph = document.createElement('div');
-        cells.push(ph);
-        tableroGrid.appendChild(ph);
-      }
-    }
-
-    var tablero = window._OCA_TABLERO || {};
+    for (var r=0;r<7;r++) for (var c=0;c<9;c++) { var ph=document.createElement('div'); cells.push(ph); tableroGrid.appendChild(ph); }
+    var tablero = window._OCA_TABLERO||{};
     var coloresEsp = {oca:'rgba(110,231,183,0.7)',puente:'rgba(96,165,250,0.7)',posada:'rgba(251,191,36,0.7)',dados:'rgba(147,197,253,0.7)',laberinto:'rgba(167,139,250,0.7)',carcel:'rgba(252,165,165,0.7)',muerte:'rgba(220,38,38,0.85)',santiago:'rgba(245,200,0,0.85)'};
-
-    for (var i = 1; i <= 63; i++) {
-      var pos = _OCA_POSICIONES[i];
-      if (!pos) continue;
-      var cellIdx = pos[0] * 9 + pos[1];
-      var cell = cells[cellIdx];
-      var casilla = tablero[i] || { emoji: '\uD83D\uDC1A', tipo: 'normal', latin: '', trad: '', label: 'Casilla '+i };
-      var ents = conteo[i] || [];
-      var cantidad = ents.length;
-      var tiene = cantidad > 0;
-      var pendiente = ents.some(function(e){ return !e.item.resuelto; });
-
-      var bgBase = tiene ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.03)';
-      var bdBase = tiene ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.06)';
-      if (i === 63) {
-        bgBase = tiene ? 'rgba(245,200,0,0.25)' : 'rgba(245,200,0,0.06)';
-        bdBase = tiene ? 'rgba(245,200,0,0.8)'  : 'rgba(245,200,0,0.2)';
-      } else if (tiene && casilla.tipo !== 'normal') {
-        bdBase = coloresEsp[casilla.tipo] || bdBase;
-      }
-
-      cell.style.cssText = 'position:relative;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:'+bgBase+';border:1px solid '+bdBase+';'+(tiene?'cursor:pointer;':'');
-      if (casilla.latin) cell.title = casilla.latin+(casilla.trad?' · '+casilla.trad:'');
-
-      var emojiEl = document.createElement('div');
-      emojiEl.style.cssText = 'font-size:'+(tiene?'14px':'10px')+';line-height:1;'+(tiene?'':'opacity:0.2');
-      emojiEl.textContent = casilla.emoji;
-      cell.appendChild(emojiEl);
-
-      var numEl = document.createElement('div');
-      numEl.style.cssText = 'font-size:7px;font-weight:700;margin-top:1px;'+(tiene?'color:rgba(255,255,255,0.55)':'color:rgba(255,255,255,0.12)');
-      numEl.textContent = i;
-      cell.appendChild(numEl);
-
-      if (cantidad > 1) {
-        var badge = document.createElement('div');
-        badge.style.cssText = 'position:absolute;top:1px;right:1px;background:#1D9E75;color:#fff;font-size:6px;font-weight:700;border-radius:6px;padding:1px 3px;line-height:1.4';
-        badge.textContent = '\xd7'+cantidad;
-        cell.appendChild(badge);
-      }
-
-      if (pendiente) {
-        var dot = document.createElement('div');
-        dot.style.cssText = 'position:absolute;bottom:2px;right:2px;width:5px;height:5px;border-radius:50%;background:#f59e0b;box-shadow:0 0 4px rgba(245,158,11,0.8)';
-        cell.appendChild(dot);
-      }
-
-      if (tiene) {
-        (function(num, cas, ents_) {
-          cell.addEventListener('click', function() { _abrirModalCasilla(num, cas, ents_); });
-        })(i, casilla, ents);
-      }
+    for (var i=1;i<=63;i++) {
+      var pos=_OCA_POSICIONES[i]; if(!pos) continue;
+      var cell=cells[pos[0]*9+pos[1]];
+      var casilla=tablero[i]||{emoji:'\uD83D\uDC1A',tipo:'normal',latin:'',trad:'',label:'Casilla '+i};
+      var ents=conteo[i]||[], cantidad=ents.length, tiene=cantidad>0;
+      var pendiente=ents.some(function(e){return !e.item.resuelto;});
+      var bgBase=tiene?'rgba(255,255,255,0.12)':'rgba(255,255,255,0.03)';
+      var bdBase=tiene?'rgba(255,255,255,0.25)':'rgba(255,255,255,0.06)';
+      if(i===63){bgBase=tiene?'rgba(245,200,0,0.25)':'rgba(245,200,0,0.06)';bdBase=tiene?'rgba(245,200,0,0.8)':'rgba(245,200,0,0.2)';}
+      else if(tiene&&casilla.tipo!=='normal'){bdBase=coloresEsp[casilla.tipo]||bdBase;}
+      cell.style.cssText='position:relative;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:'+bgBase+';border:1px solid '+bdBase+';'+(tiene?'cursor:pointer;':'');
+      if(casilla.latin) cell.title=casilla.latin+(casilla.trad?' \xb7 '+casilla.trad:'');
+      var em=document.createElement('div'); em.style.cssText='font-size:'+(tiene?'14px':'10px')+';line-height:1;'+(tiene?'':'opacity:0.2'); em.textContent=casilla.emoji; cell.appendChild(em);
+      var nl=document.createElement('div'); nl.style.cssText='font-size:7px;font-weight:700;margin-top:1px;'+(tiene?'color:rgba(255,255,255,0.55)':'color:rgba(255,255,255,0.12)'); nl.textContent=i; cell.appendChild(nl);
+      if(cantidad>1){var bg=document.createElement('div');bg.style.cssText='position:absolute;top:1px;right:1px;background:#1D9E75;color:#fff;font-size:6px;font-weight:700;border-radius:6px;padding:1px 3px;line-height:1.4';bg.textContent='\xd7'+cantidad;cell.appendChild(bg);}
+      if(pendiente){var dot=document.createElement('div');dot.style.cssText='position:absolute;bottom:2px;right:2px;width:5px;height:5px;border-radius:50%;background:#f59e0b;box-shadow:0 0 4px rgba(245,158,11,0.8)';cell.appendChild(dot);}
+      if(tiene){(function(num,cas,ents_){cell.addEventListener('click',function(){_abrirModalCasilla(num,cas,ents_);});})(i,casilla,ents);}
     }
   });
 }
 
 function _abrirModalCasilla(num, casilla, entradas) {
-  var existing = document.getElementById('oca-casilla-modal');
-  if (existing) existing.remove();
-
-  var poiId = entradas[0] ? entradas[0].item.poiId : null;
-  var poi = null;
-  if (poiId && typeof PUNTOS !== 'undefined') {
-    for (var pi = 0; pi < PUNTOS.length; pi++) { if (PUNTOS[pi].id === poiId) { poi = PUNTOS[pi]; break; } }
-  }
-
-  var tipo = casilla.tipo || 'normal';
-  var cantidad = entradas.length;
-  var pendientes = entradas.filter(function(e){ return !e.item.resuelto; });
-  var yaResuelto = pendientes.length === 0;
-
-  var colorTipo = {oca:'#6ee7b7',puente:'#93c5fd',posada:'#fbbf24',dados:'#c4b5fd',laberinto:'#a78bfa',carcel:'#fca5a5',muerte:'#ef4444',santiago:'#F5C800',normal:'rgba(255,255,255,0.7)'};
-  var color = colorTipo[tipo] || colorTipo.normal;
-
-  var imgHtml = poi && poi.imagen
-    ? '<img src="'+poi.imagen+'" style="width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:12px;display:block" onerror="this.style.display=\'none\'">'
-    : '<div style="width:100%;height:60px;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:12px">'+casilla.emoji+'</div>';
-
-  var casillaHtml =
-    '<div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center">'
+  var existing=document.getElementById('oca-casilla-modal'); if(existing) existing.remove();
+  var poiId=entradas[0]?entradas[0].item.poiId:null, poi=null;
+  if(poiId&&typeof PUNTOS!=='undefined') for(var pi=0;pi<PUNTOS.length;pi++){if(PUNTOS[pi].id===poiId){poi=PUNTOS[pi];break;}}
+  var tipo=casilla.tipo||'normal', cantidad=entradas.length;
+  var pendientes=entradas.filter(function(e){return !e.item.resuelto;}), yaResuelto=pendientes.length===0;
+  var colorTipo={oca:'#6ee7b7',puente:'#93c5fd',posada:'#fbbf24',dados:'#c4b5fd',laberinto:'#a78bfa',carcel:'#fca5a5',muerte:'#ef4444',santiago:'#F5C800',normal:'rgba(255,255,255,0.7)'};
+  var color=colorTipo[tipo]||colorTipo.normal;
+  var imgHtml=poi&&poi.imagen
+    ?'<img src="'+poi.imagen+'" style="width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:12px;display:block" onerror="this.style.display=\'none\'">'
+    :'<div style="width:100%;height:60px;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:12px">'+casilla.emoji+'</div>';
+  var casillaHtml='<div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center">'
     +'<div style="font-size:26px;margin-bottom:6px">'+casilla.emoji+'</div>'
     +'<div style="font-family:serif;font-size:14px;font-weight:600;color:'+color+';margin-bottom:3px">'+(casilla.latin||'')+'</div>'
     +'<div style="font-size:11px;color:rgba(255,255,255,0.45);font-style:italic;margin-bottom:4px">'+(casilla.trad||'')+'</div>'
-    +'<div style="font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:1.5px;text-transform:uppercase">'+(casilla.label||'Casilla '+num)+'</div>'
-    +'</div>';
-
-  var poiHtml = poi
-    ? '<div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:14px">'+(poi.emoji||'\uD83D\uDCCD')+' '+(poi.nombre||'')+'</div>'
-    : '';
-
-  var efectoHtml = '', botonesHtml = '';
-
-  if (yaResuelto) {
-    efectoHtml = '<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:14px;font-style:italic">\u2713 Casilla ya resuelta</div>';
-    botonesHtml = '<button id="oca-btn-cerrar" style="width:100%;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cerrar</button>';
-  } else if (tipo === 'normal') {
-    efectoHtml = '<div style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:14px">Casilla normal \u2014 sin efecto especial.</div>';
-    botonesHtml = '<button id="oca-btn-resolver" style="width:100%;background:#1D9E75;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">\u00a1Genial!</button>';
-  } else if (tipo === 'santiago') {
-    efectoHtml = '<div style="font-size:13px;color:#F5C800;margin-bottom:14px">\uD83C\uDFC6 \u00a1Has llegado a Compostela! Cromo especial desbloqueado.</div>';
-    botonesHtml = '<button id="oca-btn-resolver" style="width:100%;background:#b45309;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Ultreïa!</button>';
-  } else if (tipo === 'oca') {
-    efectoHtml = '<div style="font-size:13px;color:#6ee7b7;margin-bottom:14px">\uD83E\uDEB7 <strong style="color:#fff">De oca en oca</strong> \u2014 recibes un cromo extra aleatorio.</div>';
-    botonesHtml = '<button id="oca-btn-resolver" style="width:100%;background:#059669;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Recibir cromo extra</button>';
-  } else if (tipo === 'puente') {
-    efectoHtml = '<div style="font-size:13px;color:#93c5fd;margin-bottom:14px">\uD83C\uDF09 <strong style="color:#fff">El Puente</strong> \u2014 la suerte decide: +1 cromo extra o perder 1.</div>';
-    botonesHtml = '<button id="oca-btn-resolver" style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cruzar el puente</button>';
-  } else if (tipo === 'posada') {
-    efectoHtml = '<div style="font-size:13px;color:#fbbf24;margin-bottom:14px">\uD83C\uDFE8 <strong style="color:#fff">La Posada</strong> \u2014 descansas. El pr\u00f3ximo lugar visitado dar\u00e1 doble cromo.</div>';
-    botonesHtml = '<button id="oca-btn-resolver" style="width:100%;background:#d97706;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Descansar en la posada</button>';
-  } else if (tipo === 'dados') {
-    efectoHtml = '<div style="font-size:13px;color:#c4b5fd;margin-bottom:14px">\uD83C\uDFB2 <strong style="color:#fff">Los Dados</strong> \u2014 \u00bfguardas este cromo o pruebas suerte con uno aleatorio?</div>';
-    botonesHtml = '<div style="display:flex;gap:8px">'
+    +'<div style="font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:1.5px;text-transform:uppercase">'+(casilla.label||'Casilla '+num)+'</div></div>';
+  var poiHtml=poi?'<div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:14px">'+(poi.emoji||'\uD83D\uDCCD')+' '+(poi.nombre||'')+'</div>':'';
+  var efectoHtml='', botonesHtml='';
+  if(yaResuelto){
+    efectoHtml='<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:14px;font-style:italic">\u2713 Casilla ya resuelta</div>';
+    botonesHtml='<button id="oca-btn-cerrar" style="width:100%;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cerrar</button>';
+  } else if(tipo==='normal'){
+    efectoHtml='<div style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:14px">Casilla normal \u2014 sin efecto especial.</div>';
+    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#1D9E75;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">\u00a1Genial!</button>';
+  } else if(tipo==='santiago'){
+    efectoHtml='<div style="font-size:13px;color:#F5C800;margin-bottom:14px">\uD83C\uDFC6 \u00a1Compostela! Cromo especial desbloqueado.</div>';
+    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#b45309;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Ultre\u00efa!</button>';
+  } else if(tipo==='oca'){
+    efectoHtml='<div style="font-size:13px;color:#6ee7b7;margin-bottom:14px">\uD83E\uDEB7 <strong style="color:#fff">De oca en oca</strong> \u2014 recibes un cromo extra aleatorio.</div>';
+    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#059669;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Recibir cromo extra</button>';
+  } else if(tipo==='puente'){
+    efectoHtml='<div style="font-size:13px;color:#93c5fd;margin-bottom:14px">\uD83C\uDF09 <strong style="color:#fff">El Puente</strong> \u2014 la suerte decide: +1 cromo extra o perder 1.</div>';
+    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cruzar el puente</button>';
+  } else if(tipo==='posada'){
+    efectoHtml='<div style="font-size:13px;color:#fbbf24;margin-bottom:14px">\uD83C\uDFE8 <strong style="color:#fff">La Posada</strong> \u2014 descansas. El pr\u00f3ximo lugar visitado dar\u00e1 doble cromo.</div>';
+    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#d97706;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Descansar en la posada</button>';
+  } else if(tipo==='dados'){
+    efectoHtml='<div style="font-size:13px;color:#c4b5fd;margin-bottom:14px">\uD83C\uDFB2 <strong style="color:#fff">Los Dados</strong> \u2014 \u00bfguardas este cromo o pruebas suerte con uno aleatorio?</div>';
+    botonesHtml='<div style="display:flex;gap:8px">'
       +'<button id="oca-btn-guardar" style="flex:1;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Guardar #'+num+'</button>'
-      +'<button id="oca-btn-cambiar" style="flex:1;background:#7c3aed;color:#fff;border:none;border-radius:20px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Probar suerte</button>'
-      +'</div>';
-  } else if (tipo === 'laberinto') {
-    efectoHtml = '<div style="font-size:13px;color:#a78bfa;margin-bottom:14px">\uD83C\uDF00 <strong style="color:#fff">El Laberinto</strong> \u2014 te pierdes. Debes entregar 2 cromos.</div>';
-    botonesHtml = '<button id="oca-btn-perder2" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Elegir 2 cromos a perder</button>';
-  } else if (tipo === 'carcel') {
-    efectoHtml = '<div style="font-size:13px;color:#fca5a5;margin-bottom:14px">\u26d3\ufe0f <strong style="color:#fff">La C\u00e1rcel</strong> \u2014 est\u00e1s preso. Entrega 2 cromos para liberarte.</div>';
-    botonesHtml = '<button id="oca-btn-perder2" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Pagar rescate (2 cromos)</button>';
-  } else if (tipo === 'muerte') {
-    efectoHtml = '<div style="font-size:13px;color:#ef4444;margin-bottom:14px">\uD83D\uDC80 <strong style="color:#fff">La Muerte</strong> \u2014 vuelves al principio. Se pierden todos los cromos.</div>';
-    botonesHtml = '<button id="oca-btn-muerte" style="width:100%;background:#7f1d1d;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Aceptar el destino</button>';
+      +'<button id="oca-btn-cambiar" style="flex:1;background:#7c3aed;color:#fff;border:none;border-radius:20px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Probar suerte</button></div>';
+  } else if(tipo==='laberinto'){
+    efectoHtml='<div style="font-size:13px;color:#a78bfa;margin-bottom:14px">\uD83C\uDF00 <strong style="color:#fff">El Laberinto</strong> \u2014 te pierdes. Debes entregar 2 cromos.</div>';
+    botonesHtml='<button id="oca-btn-perder2" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Elegir 2 cromos a perder</button>';
+  } else if(tipo==='carcel'){
+    efectoHtml='<div style="font-size:13px;color:#fca5a5;margin-bottom:14px">\u26d3\ufe0f <strong style="color:#fff">La C\u00e1rcel</strong> \u2014 est\u00e1s preso. Entrega 2 cromos para liberarte.</div>';
+    botonesHtml='<button id="oca-btn-perder2" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Pagar rescate (2 cromos)</button>';
+  } else if(tipo==='muerte'){
+    efectoHtml='<div style="font-size:13px;color:#ef4444;margin-bottom:14px">\uD83D\uDC80 <strong style="color:#fff">La Muerte</strong> \u2014 se pierden todos los cromos.</div>';
+    botonesHtml='<button id="oca-btn-muerte" style="width:100%;background:#7f1d1d;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Aceptar el destino</button>';
   }
-
-  var overlay = document.createElement('div');
-  overlay.id = 'oca-casilla-modal';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1rem;box-sizing:border-box';
-
-  var box = document.createElement('div');
-  box.style.cssText = 'background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:1.25rem;max-width:85vw;width:300px;max-height:85vh;overflow-y:auto;border:1px solid rgba(255,255,255,0.18)';
-
-  var headerHtml = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
+  var overlay=document.createElement('div'); overlay.id='oca-casilla-modal';
+  overlay.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1rem;box-sizing:border-box';
+  var box=document.createElement('div');
+  box.style.cssText='background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:1.25rem;max-width:85vw;width:300px;max-height:85vh;overflow-y:auto;border:1px solid rgba(255,255,255,0.18)';
+  var headerHtml='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
     +'<div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:'+color+'">'+(casilla.label||'Casilla '+num)+'</div>'
-    +(cantidad>1?'<div style="font-size:10px;background:rgba(29,158,117,0.3);color:#6ee7b7;border-radius:8px;padding:2px 8px">\xd7'+cantidad+'</div>':'')
-    +'</div>';
-
-  box.innerHTML = headerHtml + imgHtml + casillaHtml + poiHtml + efectoHtml + botonesHtml;
-  overlay.appendChild(box);
-  document.body.appendChild(overlay);
-
-  function cerrar() { var el=document.getElementById('oca-casilla-modal'); if(el) el.remove(); _renderTableroOca(); }
-
-  function marcarResueltos(cb) {
-    var pend = pendientes.slice();
-    function next() { if (!pend.length) { if(cb) cb(); return; } window._ocaMarcarResuelto(pend.shift().key, next); }
-    next();
-  }
-
-  overlay.addEventListener('click', function(e){ if(e.target===overlay) cerrar(); });
-
-  var btn = box.querySelector('#oca-btn-cerrar');
-  if (btn) btn.addEventListener('click', cerrar);
-
-  btn = box.querySelector('#oca-btn-resolver');
-  if (btn) btn.addEventListener('click', function() {
-    if (tipo === 'oca') {
-      var ex = Math.floor(Math.random()*62)+1;
-      var xt = (window._OCA_TABLERO||{})[ex]||{emoji:'\uD83D\uDC1A',label:'Casilla '+ex};
-      window._ocaGuardarCromo(ex, poiId||'', function() {
-        marcarResueltos(function() { cerrar(); mostrarToast('\uD83E\uDEB7 +1 cromo: '+xt.emoji+' '+xt.label); });
-      });
-    } else if (tipo === 'posada') {
-      window._ocaSetPosada(true, function() {
-        marcarResueltos(function() { cerrar(); mostrarToast('\uD83C\uDFE8 Posada activa \u2014 pr\u00f3xima visita da doble cromo'); });
-      });
-    } else if (tipo === 'puente') {
-      if (Math.random() < 0.5) {
-        var ex2 = Math.floor(Math.random()*62)+1;
-        var xt2 = (window._OCA_TABLERO||{})[ex2]||{emoji:'\uD83D\uDC1A',label:'Casilla '+ex2};
-        window._ocaGuardarCromo(ex2, poiId||'', function() {
-          marcarResueltos(function() { cerrar(); mostrarToast('\uD83C\uDF09 \u00a1Suerte! +1 cromo: '+xt2.emoji+' #'+ex2); });
-        });
-      } else {
-        marcarResueltos(function() { cerrar(); _ocaMostrarSelectorPerder(1); });
-      }
-    } else {
-      marcarResueltos(function() { cerrar(); });
-    }
+    +(cantidad>1?'<div style="font-size:10px;background:rgba(29,158,117,0.3);color:#6ee7b7;border-radius:8px;padding:2px 8px">\xd7'+cantidad+'</div>':'')+'</div>';
+  box.innerHTML=headerHtml+imgHtml+casillaHtml+poiHtml+efectoHtml+botonesHtml;
+  overlay.appendChild(box); document.body.appendChild(overlay);
+  function cerrar(){var el=document.getElementById('oca-casilla-modal');if(el)el.remove();_renderTableroOca();}
+  function marcarResueltos(cb){var pend=pendientes.slice();function next(){if(!pend.length){if(cb)cb();return;}window._ocaMarcarResuelto(pend.shift().key,next);}next();}
+  overlay.addEventListener('click',function(e){if(e.target===overlay)cerrar();});
+  var btn=box.querySelector('#oca-btn-cerrar'); if(btn) btn.addEventListener('click',cerrar);
+  btn=box.querySelector('#oca-btn-resolver');
+  if(btn) btn.addEventListener('click',function(){
+    if(tipo==='oca'){var ex=Math.floor(Math.random()*62)+1,xt=(window._OCA_TABLERO||{})[ex]||{emoji:'\uD83D\uDC1A',label:'Casilla '+ex};window._ocaGuardarCromo(ex,poiId||'',function(){marcarResueltos(function(){cerrar();mostrarToast('\uD83E\uDEB7 +1 cromo: '+xt.emoji+' '+xt.label);});});}
+    else if(tipo==='posada'){window._ocaSetPosada(true,function(){marcarResueltos(function(){cerrar();mostrarToast('\uD83C\uDFE8 Posada activa \u2014 pr\u00f3xima visita da doble cromo');});});}
+    else if(tipo==='puente'){if(Math.random()<0.5){var ex2=Math.floor(Math.random()*62)+1,xt2=(window._OCA_TABLERO||{})[ex2]||{emoji:'\uD83D\uDC1A',label:'Casilla '+ex2};window._ocaGuardarCromo(ex2,poiId||'',function(){marcarResueltos(function(){cerrar();mostrarToast('\uD83C\uDF09 \u00a1Suerte! +1: '+xt2.emoji+' #'+ex2);});});}else{marcarResueltos(function(){cerrar();_ocaMostrarSelectorPerder(1);});}}
+    else{marcarResueltos(function(){cerrar();});}
   });
-
-  btn = box.querySelector('#oca-btn-guardar');
-  if (btn) btn.addEventListener('click', function() { marcarResueltos(function() { cerrar(); }); });
-
-  btn = box.querySelector('#oca-btn-cambiar');
-  if (btn) btn.addEventListener('click', function() {
-    window._abrirDB(function(db) {
-      var tx = db.transaction('cromos','readwrite');
-      var store = tx.objectStore('cromos');
-      var lastKey = pendientes.length ? pendientes[pendientes.length-1].key : null;
-      if (lastKey !== null) store.delete(lastKey);
-      var nuevoNum = Math.floor(Math.random()*62)+1;
-      store.add({num:nuevoNum, poiId:poiId||'', fecha:Date.now(), resuelto:true});
-      tx.oncomplete = function() {
-        var nt = (window._OCA_TABLERO||{})[nuevoNum]||{emoji:'\uD83D\uDC1A',label:'Casilla '+nuevoNum};
-        cerrar(); mostrarToast('\uD83C\uDFB2 Nuevo cromo: '+nt.emoji+' #'+nuevoNum+' '+nt.label);
-      };
-    });
+  btn=box.querySelector('#oca-btn-guardar'); if(btn) btn.addEventListener('click',function(){marcarResueltos(function(){cerrar();});});
+  btn=box.querySelector('#oca-btn-cambiar');
+  if(btn) btn.addEventListener('click',function(){
+    window._abrirDB(function(db){var tx=db.transaction('cromos','readwrite'),store=tx.objectStore('cromos'),lastKey=pendientes.length?pendientes[pendientes.length-1].key:null;
+    if(lastKey!==null)store.delete(lastKey);var nn=Math.floor(Math.random()*62)+1;store.add({num:nn,poiId:poiId||'',fecha:Date.now(),resuelto:true});
+    tx.oncomplete=function(){var nt=(window._OCA_TABLERO||{})[nn]||{emoji:'\uD83D\uDC1A',label:'Casilla '+nn};cerrar();mostrarToast('\uD83C\uDFB2 Nuevo cromo: '+nt.emoji+' #'+nn+' '+nt.label);};});
   });
-
-  btn = box.querySelector('#oca-btn-perder2');
-  if (btn) btn.addEventListener('click', function() { marcarResueltos(function() { cerrar(); _ocaMostrarSelectorPerder(2); }); });
-
-  btn = box.querySelector('#oca-btn-muerte');
-  if (btn) btn.addEventListener('click', function() {
-    window._ocaEliminarTodos(function() { cerrar(); mostrarToast('\uD83D\uDC80 Todos los cromos perdidos'); });
-  });
+  btn=box.querySelector('#oca-btn-perder2'); if(btn) btn.addEventListener('click',function(){marcarResueltos(function(){cerrar();_ocaMostrarSelectorPerder(2);});});
+  btn=box.querySelector('#oca-btn-muerte'); if(btn) btn.addEventListener('click',function(){window._ocaEliminarTodos(function(){cerrar();mostrarToast('\uD83D\uDC80 Todos los cromos perdidos');});});
 }
 
 // Detectar si estamos offline y avisar
@@ -9864,7 +9726,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v700</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v701</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
