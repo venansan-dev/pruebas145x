@@ -4638,7 +4638,7 @@ function iniciarProximidad() {
       PUNTOS.forEach(function(p) {
         if (notifEnviadas[p.id]) return;
         var d = calcDistancia(lat, lng, p.lat, p.lng);
-        if (d < 0.05) { // 50 metros
+        if (d < 0.70) { // 700 metros
           notifEnviadas[p.id] = true;
           var t = (T[idiomaActual]||T.es);
           new Notification('📍 ' + (idiomaActual==='gl'&&p.nombre_gl?p.nombre_gl:idiomaActual==='en'&&p.nombre_en?p.nombre_en:p.nombre), {
@@ -9317,7 +9317,7 @@ if ('serviceWorker' in navigator) {
   // ---- Detección de proximidad durante el seguimiento GPS ----
   // Se engancha al watchPosition existente comprobando cada posición
   var _albumYaNotificado = {};
-  var RADIO_VISITA_M = 50; // metros para registrar visita
+  var RADIO_VISITA_M = 700; // metros para registrar visita
 
   window._albumCheckProximidad = function(lat, lng) {
     if (typeof PUNTOS === 'undefined') return;
