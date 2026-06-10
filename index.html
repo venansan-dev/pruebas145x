@@ -385,7 +385,7 @@
   <button id='btn-poi-drawer-mapa' onclick='abrirPoiDrawer()' title='Ranking'
     style='display:flex;position:absolute;bottom:124px;right:10px;z-index:400;width:36px;height:36px;background:#fff;border:1.5px solid rgba(0,0,0,0.15);border-radius:8px;cursor:pointer;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,0.12);padding:0'>🏅</button>
   <!-- Tira de búsqueda flotante alineada con lupa -->
-  <div id='mapa-search-strip' style='display:none;position:absolute;bottom:98px;right:10px;z-index:401;transform:translateY(50%);background:rgba(255,255,255,0.97);border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.18);border:1.5px solid rgba(29,158,117,0.3);overflow:hidden;backdrop-filter:blur(4px);min-width:180px;max-width:calc(100% - 70px)'>
+  <div id='mapa-search-strip' style='display:none;position:absolute;bottom:80px;right:10px;z-index:401;background:rgba(255,255,255,0.97);border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.18);border:1.5px solid rgba(29,158,117,0.3);overflow:hidden;backdrop-filter:blur(4px);min-width:180px;max-width:calc(100% - 70px)'>
     <div style='display:flex;align-items:center;gap:0'>
       <input id='buscar-mapa-strip-input' type='text' placeholder='Buscar cerca del mapa: albergue, farmacia...' autocomplete='off'
         style='flex:1;border:none;background:none;font-size:13px;color:#1a1a1a;font-family:DM Sans,sans-serif;outline:none;padding:9px 12px;min-width:0'
@@ -3489,8 +3489,6 @@ function cerrarBuscadorMapa() {
   if (strip) strip.style.display = 'none';
   if (btn)   { btn.style.display = 'flex'; btn.style.background='#fff'; btn.style.borderColor='rgba(0,0,0,0.2)'; btn.style.color=''; btn.innerHTML='&#128269;'; btn.style.fontSize='17px'; }
   if (panel) { panel.style.display = 'flex'; panel.style.flexDirection = 'column'; }
-  limpiarBusquedaMapa();
-  try { radioKm = 1; aplicarRadio(1); } catch(e) {}
 }
 
 // Tags OSM para búsqueda por Overpass
@@ -4640,7 +4638,7 @@ function iniciarProximidad() {
       PUNTOS.forEach(function(p) {
         if (notifEnviadas[p.id]) return;
         var d = calcDistancia(lat, lng, p.lat, p.lng);
-        if (d < 0.7) { // 700 metros
+        if (d < 0.05) { // 50 metros
           notifEnviadas[p.id] = true;
           var t = (T[idiomaActual]||T.es);
           new Notification('📍 ' + (idiomaActual==='gl'&&p.nombre_gl?p.nombre_gl:idiomaActual==='en'&&p.nombre_en?p.nombre_en:p.nombre), {
@@ -5545,46 +5543,15 @@ function _mostrarUnCromo(item, onClose) {
   var tablero = window._OCA_TABLERO || {};
   var casilla = tablero[num] || {emoji:'🐚', label:'Casilla '+num, tipo:'normal'};
   var nombre = (poi.nombre||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  var nombre = (poi.nombre||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  var poiEmoji = poi.emoji || '📍';
 
-  // Construir contenido según tipo
-  var headerTxt = doble ? '🏨 ¡Doble por la Posada!' : 'Cromo desbloqueado';
+  // Modal de notificación — efectos especiales se resuelven al pulsar casilla en el Tablero
+  var headerTxt = doble ? '🏨 ¡Doble por la Posada!' : 'Localización desbloqueada';
   var cromoInfo = num
-    ? '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:12px 16px;margin-bottom:12px;text-align:center">'
-      + '<span style="font-size:36px">'+casilla.emoji+'</span>'
-      + '<div style="font-family:serif;font-size:15px;font-weight:600;color:#F5C800;margin:8px 0 3px">'+casilla.latin+'</div>'
-      + '<div style="font-size:10px;color:rgba(255,255,255,0.45);font-style:italic;margin-bottom:6px">'+casilla.trad+'</div>'
-      + '<div style="font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:1.5px;text-transform:uppercase">'+casilla.label+'</div>'
-      + '</div>'
-    : '';
+    ? '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">'      + '<div style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:8px">Obtienes un cromo</div>'      + '<div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5">Ahora puedes añadir tu foto recuerdo en <strong style=\"color:#fff\">Mi Álbum</strong> y abrir el cromo en el <strong style=\"color:#fff\">Tablero</strong></div>'      + '</div>'    : '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">'      + '<div style="font-size:13px;color:rgba(255,255,255,0.75)">Localización registrada en tu álbum</div>'      + '</div>';
 
-  var efectoHtml = '';
   var botonesHtml = '<div id="cromo-btn-cerrar" style="background:#1D9E75;color:#fff;border:none;border-radius:24px;padding:12px 32px;font-size:15px;font-weight:600;cursor:pointer;display:inline-block;width:100%;box-sizing:border-box">¡Genial!</div>';
-
-  if (tipo === 'oca') {
-    var extCasilla = tablero[extras[0]] || {emoji:'🐚'};
-    efectoHtml = '<div style="font-size:12px;color:#6ee7b7;margin-bottom:12px">🪿 ¡De oca en oca! +1 cromo extra: '+extCasilla.emoji+' #'+extras[0]+'</div>';
-  } else if (tipo === 'puente_menos') {
-    efectoHtml = '<div style="font-size:12px;color:#fca5a5;margin-bottom:12px">🌉 El puente te cobra peaje — perderás 1 cromo</div>';
-    botonesHtml = '<div id="cromo-btn-perder1" style="background:#dc2626;color:#fff;border:none;border-radius:24px;padding:12px 32px;font-size:15px;font-weight:600;cursor:pointer;display:inline-block;width:100%;box-sizing:border-box">Elegir cuál perder</div>';
-  } else if (tipo === 'puente') {
-    var extCasilla2 = tablero[extras[0]] || {emoji:'🐚'};
-    efectoHtml = '<div style="font-size:12px;color:#6ee7b7;margin-bottom:12px">🌉 ¡El puente te favorece! +1 cromo: '+extCasilla2.emoji+' #'+extras[0]+'</div>';
-  } else if (tipo === 'posada') {
-    efectoHtml = '<div style="font-size:12px;color:#fbbf24;margin-bottom:12px">🏨 Descansas en la posada — el próximo lugar te dará doble cromo</div>';
-  } else if (tipo === 'dados') {
-    efectoHtml = '<div style="font-size:12px;color:#93c5fd;margin-bottom:12px">🎲 ¿Pruebas suerte con otro cromo aleatorio?</div>';
-    botonesHtml = '<div style="display:flex;gap:8px">'
-      + '<div id="cromo-btn-guardar" style="flex:1;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:24px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:center">Guardar #'+num+'</div>'
-      + '<div id="cromo-btn-cambiar" style="flex:1;background:#3b82f6;color:#fff;border:none;border-radius:24px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:center">Probar suerte</div>'
-      + '</div>';
-  } else if (tipo === 'laberinto' || tipo === 'carcel') {
-    var icon2 = tipo==='laberinto'?'🌀':'⛓️';
-    efectoHtml = '<div style="font-size:12px;color:#fca5a5;margin-bottom:12px">'+icon2+' Pierdes 2 cromos — elige cuáles</div>';
-    botonesHtml = '<div id="cromo-btn-perder2" style="background:#dc2626;color:#fff;border:none;border-radius:24px;padding:12px 32px;font-size:15px;font-weight:600;cursor:pointer;display:inline-block;width:100%;box-sizing:border-box">Elegir cuáles perder</div>';
-  } else if (tipo === 'muerte') {
-    efectoHtml = '<div style="font-size:12px;color:#fca5a5;margin-bottom:12px">💀 La Muerte se lleva todos tus cromos...</div>';
-    botonesHtml = '<div id="cromo-btn-muerte" style="background:#7f1d1d;color:#fff;border:none;border-radius:24px;padding:12px 32px;font-size:15px;font-weight:600;cursor:pointer;display:inline-block;width:100%;box-sizing:border-box">Aceptar destino</div>';
-  }
 
   var overlay = document.createElement('div');
   overlay.id = 'cromo-celebracion';
@@ -5593,8 +5560,8 @@ function _mostrarUnCromo(item, onClose) {
   box.style.cssText = 'background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:1.5rem;max-width:85vw;width:300px;text-align:center;border:1px solid rgba(255,255,255,0.2)';
   box.innerHTML =
     '<div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.4);margin-bottom:10px">'+headerTxt+'</div>'
-    +'<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:10px">'+nombre+'</div>'
-    +cromoInfo+efectoHtml+botonesHtml;
+    +'<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:14px">'+poiEmoji+' '+nombre+'</div>'
+    +cromoInfo+botonesHtml;
   overlay.appendChild(box);
   document.body.appendChild(overlay);
 
@@ -5603,60 +5570,8 @@ function _mostrarUnCromo(item, onClose) {
   var btnCerrar = box.querySelector('#cromo-btn-cerrar');
   if (btnCerrar) btnCerrar.addEventListener('click', cerrar);
 
-  var btnMuerte = box.querySelector('#cromo-btn-muerte');
-  if (btnMuerte) btnMuerte.addEventListener('click', function(){
-    window._ocaEliminarTodos(function(){ cerrar(); mostrarToast('💀 Todos tus cromos perdidos'); });
-  });
-
-  var btnPerder1 = box.querySelector('#cromo-btn-perder1');
-  if (btnPerder1) btnPerder1.addEventListener('click', function(){ cerrar(); _ocaMostrarSelectorPerder(1); });
-
-  var btnPerder2 = box.querySelector('#cromo-btn-perder2');
-  if (btnPerder2) btnPerder2.addEventListener('click', function(){ cerrar(); _ocaMostrarSelectorPerder(2); });
-
-  var btnGuardar = box.querySelector('#cromo-btn-guardar');
-  if (btnGuardar) btnGuardar.addEventListener('click', cerrar);
-
-  var btnCambiar = box.querySelector('#cromo-btn-cambiar');
-  if (btnCambiar) btnCambiar.addEventListener('click', function(){
-    // Eliminar el cromo actual y dar uno nuevo
-    window._ocaGetCromos(function(cromos){
-      // Encontrar el último cromo con ese número
-      var ultimo = null;
-      for (var i=cromos.length-1; i>=0; i--){ if(cromos[i].num===num){ ultimo=i+1; break; } } // IDB autoincrement empieza en 1
-      // Obtener IDs reales
-      var tx = window._ocaDB ? null : null; // usamos _ocaGetCromos de nuevo con IDs
-      _abrirDB(function(db){
-        var tx2 = db.transaction('cromos','readwrite');
-        var store = tx2.objectStore('cromos');
-        var allReq = store.getAllKeys();
-        allReq.onsuccess = function(){
-          var keys = allReq.result;
-          // Encontrar la key del último cromo con num
-          var keyDel = null;
-          var getAll = store.getAll();
-          getAll.onsuccess = function(){
-            var items = getAll.result;
-            for(var j=items.length-1;j>=0;j--){
-              if(items[j].num===num){ keyDel=keys[j]; break; }
-            }
-            if(keyDel!==null){
-              store.delete(keyDel);
-            }
-            var nuevoNum = Math.floor(Math.random()*62)+1;
-            store.add({num:nuevoNum, poiId:poi.id||'', fecha:Date.now()});
-            tx2.oncomplete = function(){
-              var nCasilla = (window._OCA_TABLERO||{})[nuevoNum]||{emoji:'🐚',label:'Casilla '+nuevoNum};
-              cerrar();
-              mostrarToast('🎲 Nuevo cromo: '+nCasilla.emoji+' #'+nuevoNum+' '+nCasilla.label);
-            };
-          };
-        };
-      });
-    });
-  });
-
   overlay.addEventListener('click', function(e){ if(e.target===overlay) cerrar(); });
+
 }
 
 // Selector de cromos para perder N
@@ -6429,8 +6344,9 @@ function _ejecutarLimpiarRuta() {
   // Retomar vista centrada en posición del usuario
   try {
     if (typeof mapa !== 'undefined' && mapa) {
-      radioKm = 1;
-      aplicarRadio(1);
+      var lat = (typeof userLat !== 'undefined' && userLat) ? userLat : 42.2328;
+      var lng = (typeof userLng !== 'undefined' && userLng) ? userLng : -8.7226;
+      mapa.setView([lat, lng], 15, {animate: true});
     }
   } catch(e) {}
 }
@@ -8748,7 +8664,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = 'v702';
+var _APP_VERSION = "v699";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -9401,7 +9317,7 @@ if ('serviceWorker' in navigator) {
   // ---- Detección de proximidad durante el seguimiento GPS ----
   // Se engancha al watchPosition existente comprobando cada posición
   var _albumYaNotificado = {};
-  var RADIO_VISITA_M = 700; // metros para registrar visita (test)
+  var RADIO_VISITA_M = 50; // metros para registrar visita
 
   window._albumCheckProximidad = function(lat, lng) {
     if (typeof PUNTOS === 'undefined') return;
@@ -9746,7 +9662,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v702</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v699</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
