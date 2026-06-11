@@ -8826,7 +8826,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v756";
+var _APP_VERSION = "v757";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8836,7 +8836,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v756') === -1) {
+        if (key.indexOf('guia-compostelana-v757') === -1) {
           caches.delete(key);
         }
       });
@@ -10166,10 +10166,10 @@ function _abrirModalPOI(punto) {
 
   var overlay = document.createElement('div');
   overlay.id = 'modal-poi-info';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;justify-content:center;font-family:DM Sans,sans-serif';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1rem;box-sizing:border-box';
 
   var box = document.createElement('div');
-  box.style.cssText = 'background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -4px 24px rgba(0,0,0,0.18)';
+  box.style.cssText = 'background:#fff;border-radius:18px;width:100%;max-width:400px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.22)';
 
   // Header fijo
   var starStr = '';
@@ -10289,7 +10289,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v756</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v757</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
