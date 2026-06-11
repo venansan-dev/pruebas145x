@@ -8666,7 +8666,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v708";
+var _APP_VERSION = "v709";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8883,21 +8883,45 @@ if ('serviceWorker' in navigator) {
   window._ocaGenerarNumero = function(poiId, cb) {
     // Santiago → solo cromo 63
     if (_POI_SANTIAGO.indexOf(poiId) >= 0) { cb(63); return; }
-    // Solo especiales, excluyendo las ya abiertas en el tablero
-    var especiales = [5,6,9,12,14,18,19,23,26,27,31,32,36,41,42,45,50,52,53,54,58,59];
+    // Casillas especiales por tipo con sus números
+    var porTipo = {
+      oca:      [5,9,14,18,23,27,32,36,41,45,50,54,59],
+      puente:   [6,12],
+      posada:   [19,31],
+      dados:    [26,53],
+      laberinto:[42],
+      carcel:   [52],
+      muerte:   [58]
+    };
+    var todasEspeciales = [5,6,9,12,14,18,19,23,26,27,31,32,36,41,42,45,50,52,53,54,58,59];
     _abrirDB(function(db) {
-      if (!db.objectStoreNames.contains('cromos')) { cb(especiales[Math.floor(Math.random()*especiales.length)]); return; }
+      if (!db.objectStoreNames.contains('cromos')) { cb(todasEspeciales[Math.floor(Math.random()*todasEspeciales.length)]); return; }
       var tx = db.transaction('cromos','readonly');
       var req = tx.objectStore('cromos').getAll();
       req.onsuccess = function() {
         var items = req.result || [];
+        // Casillas con cromo abierto en el tablero
         var ocupadas = {};
         items.forEach(function(it){ if(it.resuelto) ocupadas[it.num]=true; });
-        var libres = especiales.filter(function(n){ return !ocupadas[n]; });
-        var pool = libres.length > 0 ? libres : especiales;
+        // Tipos cuyas TODAS las casillas están ocupadas en el tablero
+        var tiposCompletos = {};
+        Object.keys(porTipo).forEach(function(tipo) {
+          if (porTipo[tipo].every(function(n){ return ocupadas[n]; })) {
+            tiposCompletos[tipo] = true;
+          }
+        });
+        // Filtrar: excluir casillas ya ocupadas Y casillas de tipos completos
+        var tablero = window._OCA_TABLERO || {};
+        var libres = todasEspeciales.filter(function(n) {
+          if (ocupadas[n]) return false; // casilla ya en tablero
+          var tipo = (tablero[n]||{}).tipo;
+          if (tipo && tiposCompletos[tipo]) return false; // tipo agotado
+          return true;
+        });
+        var pool = libres.length > 0 ? libres : todasEspeciales;
         cb(pool[Math.floor(Math.random()*pool.length)]);
       };
-      req.onerror = function() { cb(especiales[Math.floor(Math.random()*especiales.length)]); };
+      req.onerror = function() { cb(todasEspeciales[Math.floor(Math.random()*todasEspeciales.length)]); };
     });
   };
 
@@ -9873,7 +9897,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v708</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v709</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
