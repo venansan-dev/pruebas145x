@@ -2917,6 +2917,8 @@ function _abrirSlide(panelId) {
   panel.classList.add('slide-in');
   var _noCenter = ['album-panel','tablero-drawer','album-recuerdos-drawer','donaciones-drawer','comousar-drawer','contacto-drawer','poi-drawer'];
   if (_noCenter.indexOf(panelId) === -1) _centrarMapa();
+  var bar = document.getElementById('mapa-cat-bar');
+  if (bar) { bar.style.visibility='hidden'; bar.style.pointerEvents='none'; }
 }
 function _cerrarSlide(panelId) {
   var mapSection = document.querySelector('#map-block .map-section');
@@ -2926,6 +2928,8 @@ function _cerrarSlide(panelId) {
   panel.classList.remove('slide-in');
   if (mapSection) mapSection.classList.remove('slide-out');
   if (_noCenter2.indexOf(panelId) === -1) setTimeout(_centrarMapa, 300);
+  var bar = document.getElementById('mapa-cat-bar');
+  if (bar) { bar.style.visibility=''; bar.style.pointerEvents=''; }
 }
 
 function _sincronizarChipAlertasPOI() {
@@ -8824,7 +8828,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v773";
+var _APP_VERSION = "v775";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8834,7 +8838,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v773') === -1) {
+        if (key.indexOf('guia-compostelana-v775') === -1) {
           caches.delete(key);
         }
       });
@@ -10008,9 +10012,7 @@ function _abrirModalCasilla(num,casilla,entradas){
   var pendientes=entradas.filter(function(e){return !e.item.resuelto;}),yaResuelto=pendientes.length===0;
   var colorTipo={oca:'#6ee7b7',puente:'#93c5fd',posada:'#fbbf24',dados:'#c4b5fd',laberinto:'#a78bfa',carcel:'#fca5a5',muerte:'#ef4444',santiago:'#F5C800',normal:'rgba(255,255,255,0.7)'};
   var color=colorTipo[tipo]||colorTipo.normal;
-  var imgHtml=poi&&poi.imagen
-    ?'<img src="'+poi.imagen+'" style="width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:12px;display:block" onerror="this.style.display=\'none\'">'
-    :'<div style="width:100%;height:60px;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:12px">'+casilla.emoji+'</div>';
+  var imgHtml='<div style="width:100%;height:60px;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:12px">'+casilla.emoji+'</div>';
   var casillaHtml='<div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center">'
     +'<div style="font-size:26px;margin-bottom:6px">'+casilla.emoji+'</div>'
     +'<div style="font-family:serif;font-size:14px;font-weight:600;color:'+color+';margin-bottom:3px">'+(casilla.latin||'')+'</div>'
@@ -10318,7 +10320,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v773</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v775</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
