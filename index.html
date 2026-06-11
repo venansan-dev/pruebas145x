@@ -5515,51 +5515,7 @@ function initMapa() {
     m.on('click', (function(punto) {
       return function() {
         if (window._navBloqPopups) return;
-        var enR = rutaPuntos.find(function(x){return x.id===punto.id;});
-        var pPopupNombre = idiomaActual==='gl'&&punto.nombre_gl?punto.nombre_gl:idiomaActual==='en'&&punto.nombre_en?punto.nombre_en:punto.nombre;
-        var pPopupDesc = idiomaActual==='gl'&&punto.descripcion_gl?punto.descripcion_gl:idiomaActual==='en'&&punto.descripcion_en?punto.descripcion_en:punto.descripcion;
-        var pComoLlegar = '&#128506; '+(T[idiomaActual]||T.es).comoLlegar;
-        var pPopupCat = (function(c){var t2=T[idiomaActual]||T.es;var cm={'naturaleza':t2.chipNaturaleza,'monumento':t2.chipMonumento,'albergue':t2.chipAlbergue,'mirador':t2.chipMirador,'edificación religiosa':t2.chipEdif,'localización histórica':t2.chipHist,'vestigio arqueológico':t2.chipVest,'edificación histórica':t2.chipEdifH,'etapa':t2.chipEtapa||'Etapa'};return cm[c]||c;})(punto.categoria);
-        var _ppDesbloq = !!(window._albumVisitasSet && window._albumVisitasSet[punto.id]);
-        var _ppVal = (typeof valoraciones!=='undefined'&&valoraciones[punto.id])||{total:0,votos:0,miVoto:0};
-        var _ppMedia = _ppVal.votos>0?(_ppVal.total/_ppVal.votos).toFixed(1):null;
-        var _ppOps = (typeof opiniones!=='undefined'&&opiniones[punto.id])||[];
-        // Build fixed footer: comments + stars (if unlocked) + input
-        var _ppFooter = '<div style="border-top:1px solid #e5e7eb;padding-top:6px;margin-top:0;background:#fff">';
-        // Stars row (desbloqueado only)
-        if (_ppDesbloq) {
-          _ppFooter += '<div style="display:flex;align-items:center;gap:4px;margin-bottom:5px">';
-          for (var _si2=1;_si2<=5;_si2++) { _ppFooter += '<span data-pid="'+punto.id+'" data-n="'+_si2+'" onclick="_popupVotar(this.getAttribute(\"data-pid\"),parseInt(this.getAttribute(\"data-n\")))" style="font-size:18px;color:'+(_si2<=(_ppVal.miVoto||0)?'#F5C800':'#d1d5db')+';cursor:pointer;line-height:1">'+(_si2<=(_ppVal.miVoto||0)?'&#9733;':'&#9734;')+'</span>'; }
-          _ppFooter += '</div>';
-        }
-        // Comments (always visible)
-        if (_ppOps.length>0) {
-          _ppFooter += '<div style="max-height:70px;overflow-y:auto;margin-bottom:5px">';
-          _ppOps.slice(-3).forEach(function(op){_ppFooter+='<div style="font-size:11px;color:#374151;padding:2px 0;border-bottom:1px solid #f3f4f6"><strong style="font-size:10px;color:#9ca3af">'+(op.autor||'Peregrino')+'</strong> '+op.texto+'</div>';});
-          _ppFooter += '</div>';
-        }
-        // Input (desbloqueado only)
-        if (_ppDesbloq) {
-          _ppFooter += '<div style="display:flex;gap:4px"><input id="ppinp-'+punto.id+'" type="text" placeholder="Comentar..." style="flex:1;border:1px solid #e5e7eb;border-radius:8px;padding:4px 7px;font-size:11px;font-family:DM Sans,sans-serif;outline:none"/><button onclick="_popupEnviarOp(\''+punto.id+'\')" style="background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:4px 9px;font-size:11px;cursor:pointer">→</button></div>';
-        }
-        _ppFooter += '</div>';
-        // Valoración media junto al título
-        var _ppStarTitle = _ppMedia ? ' <span style="font-size:11px;color:#9ca3af;font-weight:400">&#9733; '+_ppMedia+'</span>' : '';
-        var content = '<div style="font-family:DM Sans,sans-serif;min-width:190px;max-width:280px;word-break:break-word;overflow-wrap:break-word;display:flex;flex-direction:column;max-height:50vh">' +
-          '<div style="flex-shrink:0;padding-bottom:4px">'
-          + '<strong style="font-size:13px">' + pPopupNombre + '</strong>'+_ppStarTitle+'<br>' +
-          '<small style="color:#6b7280;text-transform:uppercase;letter-spacing:1px;font-size:10px">' + pPopupCat + '</small></div>' +
-          '<div style="flex:1;overflow-y:auto;min-height:0;padding-right:4px">' +
-          '<div style="font-size:12px;margin-top:4px;color:#444;line-height:1.5">' + pPopupDesc + (punto.imagen ? '<img src="' + punto.imagen + '" style="width:100%;height:100px;object-fit:cover;border-radius:8px;margin-top:8px;display:block" loading="lazy"/>' : '') + '</div>' +
-          '</div>' +
-          _ppFooter +
-          '<div style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding-top:6px;border-top:1px solid #f0f0f0;margin-top:4px">' +
-          (window._albumVisitasSet && window._albumVisitasSet[punto.id]
-            ? '<span style="display:inline-flex;align-items:center;gap:3px;background:#e6f7f1;color:#0F6E56;border:1px solid rgba(29,158,117,0.35);border-radius:10px;padding:4px 8px;font-size:11px;font-weight:600">✓ Visitada</span>'
-            : '<span style="display:inline-flex;align-items:center;gap:3px;background:#fff2f2;color:#dc2626;border:1px solid rgba(220,38,38,0.3);border-radius:10px;padding:4px 8px;font-size:11px;font-weight:600">🔒 Sin visitar</span>') +
-          '<span id="mpbtn-' + punto.id + '" data-poi="' + punto.id + '" onclick="addToRoute(this.getAttribute(\'data-poi\')); mapa.closePopup();" style="display:inline-block;background:' + (enR?'#1D9E75':'#E1F5EE') + ';color:' + (enR?'#fff':'#0F6E56') + ';border:1px solid rgba(29,158,117,0.3);border-radius:10px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:600;">' + (enR ? '&#10003; '+(T[idiomaActual]||T.es).enRuta.replace('✓ ','') : (T[idiomaActual]||T.es).añadirRutaCorto||'+ ruta') + '</span>' +
-          '</div></div>';
-        L.popup({maxWidth:240, className:"poi-popup"}).setLatLng(m.getLatLng()).setContent(content).openOn(mapa);
+        _abrirModalPOI(punto);
       };
     })(p));
     p.marker = m;
@@ -8870,7 +8826,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v755";
+var _APP_VERSION = "v756";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8880,7 +8836,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v755') === -1) {
+        if (key.indexOf('guia-compostelana-v756') === -1) {
           caches.delete(key);
         }
       });
@@ -10195,6 +10151,82 @@ function _popupEnviarOp(poiId) {
   mostrarToast('💬 Comentario enviado');
 }
 
+function _abrirModalPOI(punto) {
+  var ex = document.getElementById('modal-poi-info'); if(ex) ex.remove();
+  var enR = rutaPuntos.find(function(x){return x.id===punto.id;});
+  var nombre = idiomaActual==='gl'&&punto.nombre_gl?punto.nombre_gl:idiomaActual==='en'&&punto.nombre_en?punto.nombre_en:punto.nombre;
+  var desc = idiomaActual==='gl'&&punto.descripcion_gl?punto.descripcion_gl:idiomaActual==='en'&&punto.descripcion_en?punto.descripcion_en:punto.descripcion;
+  var t2=T[idiomaActual]||T.es;
+  var catMap={'naturaleza':t2.chipNaturaleza,'monumento':t2.chipMonumento,'albergue':t2.chipAlbergue,'mirador':t2.chipMirador,'edificación religiosa':t2.chipEdif,'localización histórica':t2.chipHist,'vestigio arqueológico':t2.chipVest,'edificación histórica':t2.chipEdifH,'etapa':t2.chipEtapa||'Etapa'};
+  var cat = catMap[punto.categoria]||punto.categoria||'';
+  var desbloq = !!(window._albumVisitasSet&&window._albumVisitasSet[punto.id]);
+  var val = (typeof valoraciones!=='undefined'&&valoraciones[punto.id])||{total:0,votos:0,miVoto:0};
+  var media = val.votos>0?(val.total/val.votos).toFixed(1):null;
+  var ops = (typeof opiniones!=='undefined'&&opiniones[punto.id])||[];
+
+  var overlay = document.createElement('div');
+  overlay.id = 'modal-poi-info';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;justify-content:center;font-family:DM Sans,sans-serif';
+
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -4px 24px rgba(0,0,0,0.18)';
+
+  // Header fijo
+  var starStr = '';
+  if(media) starStr = ' <span style="font-size:12px;color:#9ca3af;font-weight:400">&#9733; '+media+'</span>';
+  var visitBadge = desbloq
+    ? '<span style="font-size:10px;font-weight:600;color:#0F6E56;background:#e6f7f1;border:1px solid rgba(29,158,117,0.3);border-radius:8px;padding:2px 7px">✓ Visitada</span>'
+    : '<span style="font-size:10px;font-weight:600;color:#dc2626;background:#fff2f2;border:1px solid rgba(220,38,38,0.25);border-radius:8px;padding:2px 7px">🔒 Sin visitar</span>';
+  var headerDiv = document.createElement('div');
+  headerDiv.style.cssText = 'flex-shrink:0;padding:14px 16px 10px;border-bottom:1px solid #f0f0f0';
+  headerDiv.innerHTML = '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">'
+    + '<div style="flex:1"><div style="font-size:15px;font-weight:700;color:#111">'+punto.emoji+' '+nombre+starStr+'</div>'
+    + '<div style="font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-top:2px">'+cat+'</div></div>'
+    + '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'+visitBadge
+    + '<button onclick="document.getElementById(\'modal-poi-info\').remove()" style="background:rgba(0,0,0,0.06);border:none;border-radius:50%;width:28px;height:28px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#374151">&times;</button>'
+    + '</div></div>';
+  box.appendChild(headerDiv);
+
+  // Cuerpo scrollable
+  var bodyDiv = document.createElement('div');
+  bodyDiv.style.cssText = 'flex:1;overflow-y:auto;padding:12px 16px;min-height:0';
+  bodyDiv.innerHTML = '<div style="font-size:13px;color:#374151;line-height:1.6">'+desc+'</div>'
+    + (punto.imagen ? '<img src="'+punto.imagen+'" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-top:10px;display:block" loading="lazy">' : '');
+  box.appendChild(bodyDiv);
+
+  // Footer fijo: estrellas + comentarios + input
+  var footerDiv = document.createElement('div');
+  footerDiv.style.cssText = 'flex-shrink:0;border-top:1px solid #f0f0f0;padding:10px 16px 12px;background:#fafafa';
+  var footerHTML = '';
+  if(desbloq) {
+    footerHTML += '<div style="display:flex;align-items:center;gap:3px;margin-bottom:8px">';
+    for(var si=1;si<=5;si++) { footerHTML += '<span data-pid="'+punto.id+'" data-n="'+si+'" onclick="_popupVotar(this.getAttribute(\'data-pid\'),parseInt(this.getAttribute(\'data-n\')))" style="font-size:22px;color:'+(si<=(val.miVoto||0)?'#F5C800':'#d1d5db')+';cursor:pointer;line-height:1">'+(si<=(val.miVoto||0)?'&#9733;':'&#9734;')+'</span>'; }
+    if(media) footerHTML += '<span style="font-size:12px;color:#6b7280;margin-left:4px">'+media+' ('+val.votos+')</span>';
+    footerHTML += '</div>';
+  }
+  if(ops.length>0) {
+    footerHTML += '<div style="max-height:80px;overflow-y:auto;margin-bottom:8px;border-top:1px solid #f0f0f0;padding-top:6px">';
+    ops.slice(-4).forEach(function(op){footerHTML+='<div style="font-size:12px;color:#374151;padding:2px 0;border-bottom:1px solid #f3f4f6"><strong style="font-size:11px;color:#9ca3af">'+(op.autor||'Peregrino')+':</strong> '+op.texto+'</div>';});
+    footerHTML += '</div>';
+  }
+  if(desbloq) {
+    footerHTML += '<div style="display:flex;gap:6px"><input id="ppinp-'+punto.id+'" type="text" placeholder="Escribe un comentario..." style="flex:1;border:1px solid #e5e7eb;border-radius:10px;padding:7px 10px;font-size:12px;font-family:DM Sans,sans-serif;outline:none"/><button onclick="_popupEnviarOp(\''+punto.id+'\')" style="background:#1D9E75;color:#fff;border:none;border-radius:10px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">→</button></div>';
+  }
+  footerDiv.innerHTML = footerHTML;
+  box.appendChild(footerDiv);
+
+  // Botones: añadir a ruta + ver ficha
+  var actionsDiv = document.createElement('div');
+  actionsDiv.style.cssText = 'flex-shrink:0;display:flex;gap:8px;padding:8px 16px 16px;background:#fff';
+  actionsDiv.innerHTML = '<button id="mpbtn-'+punto.id+'" data-poi="'+punto.id+'" onclick="addToRoute(this.getAttribute(\'data-poi\')); document.getElementById(\'modal-poi-info\').remove();" style="flex:1;background:'+(enR?'#1D9E75':'#E1F5EE')+';color:'+(enR?'#fff':'#0F6E56')+';border:1px solid rgba(29,158,117,0.3);border-radius:12px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">'+(enR?'&#10003; En ruta':'+ Añadir a ruta')+'</button>'
+    + '<button class="poi-detail-btn" data-poi-id="'+punto.id+'" style="flex:1;background:rgba(29,158,117,0.08);border:1px solid rgba(29,158,117,0.3);border-radius:12px;padding:9px;font-size:13px;font-weight:600;color:#0F6E56;cursor:pointer;font-family:DM Sans,sans-serif">&#128172; '+(t2.verDetalle||'Ver ficha')+'</button>';
+  box.appendChild(actionsDiv);
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
+}
+
 // Detectar si estamos offline y avisar
 window.addEventListener('online',  function() { ocultarBannerRed(); });
 window.addEventListener('offline', function() { mostrarBannerRed(); });
@@ -10257,7 +10289,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v755</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v756</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
