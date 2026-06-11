@@ -591,7 +591,7 @@
       <div style='font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:5px'>Tu álbum está vacío</div>
       <div style='font-size:11px;color:rgba(255,255,255,0.4);line-height:1.6'>Añade fotos desde las tarjetas de lugares desbloqueados.</div>
     </div>
-    <div id='album-rec-grid' style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px'></div>
+    <div id='album-rec-grid' style='display:grid;grid-template-columns:repeat(5,1fr);gap:4px'></div>
   </div>
 </div>
 
@@ -600,7 +600,7 @@
   <!-- Barra superior: volver + chips filtro -->
   <div style='padding:0.6rem 1rem 0.5rem;flex-shrink:0;background:linear-gradient(150deg,#0e2038 0%,#1a3a5c 60%,#1e4570 100%);border-bottom:1px solid rgba(255,255,255,0.12)'>
     <div style='display:flex;align-items:center;gap:6px;margin-bottom:0.5rem' id='poi-drawer-chips'>
-      <button onclick='cerrarPoiDrawer();abrirAlbumPanel()' id='poi-panel-volver' style='flex-shrink:0;display:flex;align-items:center;gap:5px;background:#722F37;border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:6px 12px;color:rgba(255,255,255,0.92);font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;font-weight:600;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,0.15)'>← Volver</button>
+      <button onclick='cerrarPoiDrawer();abrirAlbumPanel()' id='poi-panel-volver' style='flex-shrink:0;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:7px 14px;color:rgba(255,255,255,0.85);font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif'>← Volver</button>
     </div>
     <div style='display:flex;align-items:center;gap:5px;overflow-x:auto;scrollbar-width:none;white-space:nowrap;padding-bottom:2px' id='poi-drawer-filtros'>
       <div class='cat-chip active' id='chip-todos-drawer' onclick='_poiDrawerFiltrar(this,"todos")'>📍 Todos</div>
@@ -3038,34 +3038,34 @@ function _renderAlbumRecuerdos(grid, vacioCont) {
             var fechaTxt = d.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'})
               + ' · ' + d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
             var card = document.createElement('div');
-            card.style.cssText = 'background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;display:flex;flex-direction:column';
-            var imgOverlay = !hasOwn
-              ? '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">'
-                + '<div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(3px);border-radius:8px;padding:3px 7px;font-size:8px;font-weight:700;color:rgba(255,255,255,0.9);text-align:center">📷 Añade foto</div>'
-                + '</div>'
-              : '';
+            card.style.cssText = 'background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;display:flex;flex-direction:column';
             card.style.cursor='pointer';
-            card.innerHTML =
-              '<div style="position:relative;aspect-ratio:1/1;overflow:hidden">'
-              + '<img src="' + src + '" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy">'
-              + imgOverlay
-              + '</div>'
-              + '<div style="padding:4px 5px 5px">'
-              + '<div style="font-size:9px;font-weight:700;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (v2.emoji||'📍') + ' ' + (v2.nombre||v2.poiId||'') + '</div>'
-              + '<div style="font-size:8px;color:rgba(255,255,255,0.35)">' + fechaTxt + '</div>'
+            var imgBlock = hasOwn
+              ? '<div style="position:relative;aspect-ratio:1/1;overflow:hidden"><img src="' + src + '" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy"></div>'
+              : '<div style="position:relative;aspect-ratio:1/1;overflow:hidden;background:linear-gradient(135deg,#1a2f4a,#1e3a5c)">'
+                + '<div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,0.03) 0px,rgba(255,255,255,0.03) 8px,transparent 8px,transparent 16px)"></div>'
+                + '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">'
+                + '<span style="font-size:20px;line-height:1">' + (v2.emoji||'📍') + '</span>'
+                + '<span style="font-size:7px;color:rgba(255,255,255,0.55);font-weight:600;text-align:center;line-height:1.3">📷 Añade tu foto de recuerdo</span>'
+                + '</div></div>';
+            card.innerHTML = imgBlock
+              + '<div style="padding:3px 5px 4px">'
+              + '<div style="font-size:7px;font-weight:700;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (v2.nombre||v2.poiId||'') + '</div>'
+              + '<div style="font-size:6px;color:rgba(255,255,255,0.35)">' + fechaTxt + '</div>'
               + '</div>';
-            (function(imgSrc,nom,em,fecha2){
+            (function(hasFoto,imgSrc,nom,em,fecha2){
               card.addEventListener('click',function(){
                 var lb=document.createElement('div');
-                lb.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;box-sizing:border-box';
-                lb.innerHTML='<img src="'+imgSrc+'" style="max-width:100%;max-height:72vh;object-fit:contain;border-radius:8px">'
+                lb.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;box-sizing:border-box';
+                lb.innerHTML=(hasFoto?'<img src="'+imgSrc+'" style="max-width:100%;max-height:65vh;object-fit:contain;border-radius:8px">':'<div style="font-size:64px;margin-bottom:8px">'+em+'</div>')
                   +'<div style="margin-top:10px;text-align:center"><div style="font-size:14px;font-weight:700;color:#fff">'+em+' '+nom+'</div>'
-                  +'<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px">'+fecha2+'</div></div>'
+                  +'<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px">'+fecha2+'</div>'
+                  +(hasFoto?'':'<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:6px">📷 Sin foto asignada</div>')+'</div>'
                   +'<button onclick="this.parentNode.remove()" style="margin-top:14px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:7px 22px;color:#fff;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif">Cerrar</button>';
                 lb.addEventListener('click',function(e){if(e.target===lb)lb.remove();});
                 document.body.appendChild(lb);
               });
-            })(src, v2.nombre||v2.poiId||'', v2.emoji||'📍', fechaTxt);
+            })(hasOwn, src, v2.nombre||v2.poiId||'', v2.emoji||'📍', fechaTxt);
             grid.appendChild(card);
           });
           if (contador) contador.textContent = poiVisitas.length + ' lugar' + (poiVisitas.length!==1?'es':'') + ' · ' + nFotos + ' foto' + (nFotos!==1?'s':'');
@@ -8830,7 +8830,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v764";
+var _APP_VERSION = "v767";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8840,7 +8840,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v764') === -1) {
+        if (key.indexOf('guia-compostelana-v767') === -1) {
           caches.delete(key);
         }
       });
@@ -10324,7 +10324,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v764</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v767</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
