@@ -2915,10 +2915,8 @@ function _abrirSlide(panelId) {
   panel.scrollTop = 0;
   mapSection.classList.add('slide-out');
   panel.classList.add('slide-in');
-  var _noCenter = ['album-panel','tablero-drawer','album-recuerdos-drawer','donaciones-drawer','comousar-drawer','contacto-drawer'];
+  var _noCenter = ['album-panel','tablero-drawer','album-recuerdos-drawer','donaciones-drawer','comousar-drawer','contacto-drawer','poi-drawer'];
   if (_noCenter.indexOf(panelId) === -1) _centrarMapa();
-  var bar = document.getElementById('mapa-cat-bar');
-  if (bar) bar.style.display = 'none';
 }
 function _cerrarSlide(panelId) {
   var mapSection = document.querySelector('#map-block .map-section');
@@ -2928,8 +2926,6 @@ function _cerrarSlide(panelId) {
   panel.classList.remove('slide-in');
   if (mapSection) mapSection.classList.remove('slide-out');
   if (_noCenter2.indexOf(panelId) === -1) setTimeout(_centrarMapa, 300);
-  var bar = document.getElementById('mapa-cat-bar');
-  if (bar) bar.style.display = '';
 }
 
 function _sincronizarChipAlertasPOI() {
@@ -4204,7 +4200,7 @@ function mostrarAlerta(id) {
 }
 
 
-function _centrarMapa() {
+function _centrarMapa() { return; // salto desactivado
   var mapEl = document.getElementById('map');
   if (!mapEl) return;
   var rect = mapEl.getBoundingClientRect();
@@ -4219,7 +4215,7 @@ function _centrarMapa() {
   }, 400);
 }
 
-function _centrarMapa() {
+function _centrarMapa() { return; // salto desactivado
   var mapEl = document.getElementById('map');
   if (!mapEl) return;
   var rect = mapEl.getBoundingClientRect();
@@ -4234,7 +4230,7 @@ function _centrarMapa() {
   }, 400);
 }
 
-function _centrarMapa() {
+function _centrarMapa() { return; // salto desactivado
   var mapEl = document.getElementById('map');
   if (!mapEl) return;
   var rect = mapEl.getBoundingClientRect();
@@ -8828,7 +8824,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v770";
+var _APP_VERSION = "v773";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8838,7 +8834,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v770') === -1) {
+        if (key.indexOf('guia-compostelana-v773') === -1) {
           caches.delete(key);
         }
       });
@@ -10322,7 +10318,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v770</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v773</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
