@@ -335,7 +335,7 @@
   </div>
 
   <!-- Botón toggle alertas -->
-  <button id='btn-alertas-toggle' onclick='toggleAlertasFirebase()' title='Alertas activas'
+  <button id='btn-alertas-toggle' onclick='abrirModalNotificaciones()' title='Notificaciones'
     style='display:flex;position:absolute;bottom:36px;right:10px;z-index:400;width:36px;height:36px;background:#fff;border:1.5px solid rgba(0,0,0,0.15);border-radius:8px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.12);padding:0;font-size:18px;line-height:1'>🔔</button>
   <!-- btn-go oculto para compatibilidad con JS existente -->
   <span id='ruta-bar-btn-go' style='display:none'></span>
@@ -942,7 +942,7 @@
   <div style='position:absolute;inset:0;padding:0.75rem 1rem;display:flex;flex-direction:column;gap:0.75rem;box-sizing:border-box;overflow-y:auto'>
     <div style='display:flex;align-items:center;justify-content:space-between;flex-shrink:0'>
       <button id='album-panel-volver' onclick='cerrarAlbumPanel()' style='display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:7px 14px;color:rgba(255,255,255,0.85);font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif'>← Volver</button>
-      <button onclick='abrirTableroDrawer()' style='display:flex;align-items:center;gap:5px;background:rgba(245,200,0,0.12);border:1px solid rgba(245,200,0,0.35);border-radius:20px;padding:6px 14px;color:#F5C800;font-size:12px;font-weight:500;cursor:pointer;font-family:Playfair Display,serif;letter-spacing:0.3px'>🐚 Colección</button>
+      <button onclick='abrirTableroDrawer()' style='display:flex;align-items:center;gap:6px;background:rgba(245,200,0,0.08);border:1px solid rgba(245,200,0,0.45);border-radius:10px;padding:7px 14px;color:rgba(255,255,255,0.85);font-size:13px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 0 8px rgba(245,200,0,0.15)'>🐚 Colección →</button>
     </div>
     <!-- Título -->
     <div style='flex-shrink:0'>
@@ -2619,7 +2619,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // - En el navegador normal: ofrece instalar la PWA (Android) o guía (iOS)
 // - Dentro de la app instalada (standalone): activa/desactiva notificaciones
 
-var notifActivadas = false;
+var notifActivadas = (typeof Notification !== 'undefined' && Notification.permission === 'granted');
+if (notifActivadas) { setTimeout(function(){ if(typeof iniciarProximidad==='function') iniciarProximidad(); }, 2000); }
+var _cromosNotifOn = (function(){ try{ var v=localStorage.getItem('cromosNotifOn'); return v===null?true:v==='1'; }catch(e){return true;} })(); // controla modales de desbloqueo y cromos
 var deferredInstallPrompt = null; // guarda el evento beforeinstallprompt
 
 // Capturar el evento de instalación de Android Chrome
@@ -3847,32 +3849,65 @@ function cargarPOIsFirebase() {
 
 var _alertasFirebaseOn = true;
 
-function toggleAlertasFirebase() {
-  _alertasFirebaseOn = !_alertasFirebaseOn;
-  var btn = document.getElementById('btn-alertas-toggle');
-  var mi = document.getElementById('modal-alertas-icono');
-  var mt = document.getElementById('modal-alertas-titulo');
-  var mx = document.getElementById('modal-alertas-texto');
-  var mb = document.getElementById('modal-alertas-bg');
-  if (_alertasFirebaseOn) {
-    btn.style.background = '#fff';
-    btn.style.border = '1.5px solid rgba(0,0,0,0.15)';
-    btn.textContent = '🔔';
-    btn.title = 'Alertas activas';
-    mi.textContent = '🚨';
-    mt.textContent = 'Alertas activadas';
-    mx.textContent = 'Recibirás avisos en tiempo real sobre incidencias en el Camino.';
+function _actualizarBtnAlertas() {
+  var btn=document.getElementById('btn-alertas-toggle'); if(!btn)return;
+  var ambasOff=!_alertasFirebaseOn&&!_cromosNotifOn;
+  var unaOff=!_alertasFirebaseOn||!_cromosNotifOn;
+  if(ambasOff){
+    btn.style.background='#fecaca';btn.style.border='1.5px solid #ef4444';
+    btn.textContent='🔕';btn.title='Alertas y notificaciones desactivadas';
+  } else if(unaOff){
+    btn.style.background='#fef3c7';btn.style.border='1.5px solid #f59e0b';
+    btn.textContent='🔔';btn.title='Algunas notificaciones desactivadas';
   } else {
-    btn.style.background = '#fee2e2';
-    btn.style.border = '1.5px solid #fca5a5';
-    btn.textContent = '🔕';
-    btn.title = 'Alertas desactivadas';
-    mi.textContent = '🚨';
-    mt.textContent = 'Alertas desactivadas';
-    mx.textContent = 'Ya no recibirás avisos sobre incidencias en el Camino.';
+    btn.style.background='#fff';btn.style.border='1.5px solid rgba(0,0,0,0.15)';
+    btn.textContent='🔔';btn.title='Notificaciones activas';
   }
-  mb.classList.add('visible');
-  setTimeout(function(){ mb.classList.remove('visible'); }, 2500);
+}
+
+function toggleAlertasFirebase(){
+  _alertasFirebaseOn=!_alertasFirebaseOn;
+  _actualizarBtnAlertas();
+}
+
+function abrirModalNotificaciones(){
+  var existing=document.getElementById('modal-notif-opciones');
+  if(existing){existing.remove();return;}
+  var overlay=document.createElement('div');
+  overlay.id='modal-notif-opciones';
+  overlay.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1rem;box-sizing:border-box';
+  var box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:16px;padding:1.25rem;max-width:85vw;width:280px;box-shadow:0 8px 32px rgba(0,0,0,0.2)';
+  function renderBox(){
+    var a=_alertasFirebaseOn,n=_cromosNotifOn;
+    box.innerHTML=
+      '<div style="font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:14px">🔔 Notificaciones</div>'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0">'
+      +'<div><div style="font-size:13px;font-weight:600;color:#1a1a1a">🚨 Alertas del Camino</div>'
+      +'<div style="font-size:11px;color:#6b7280">Incidencias en tiempo real</div></div>'
+      +'<button id="notif-toggle-alertas" style="width:44px;height:26px;border-radius:13px;border:none;cursor:pointer;background:'+(a?'#1D9E75':'#d1d5db')+';position:relative;flex-shrink:0">'
+      +'<span style="position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);left:'+(a?'21px':'3px')+'"></span>'
+      +'</button></div>'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0">'
+      +'<div><div style="font-size:13px;font-weight:600;color:#1a1a1a">🐚 Cromos y desbloqueos</div>'
+      +'<div style="font-size:11px;color:#6b7280">Avisos de lugares cercanos</div></div>'
+      +'<button id="notif-toggle-cromos" style="width:44px;height:26px;border-radius:13px;border:none;cursor:pointer;background:'+(n?'#1D9E75':'#d1d5db')+';position:relative;flex-shrink:0">'
+      +'<span style="position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);left:'+(n?'21px':'3px')+'"></span>'
+      +'</button></div>'
+      +'<button id="notif-cerrar" style="width:100%;margin-top:14px;background:#f3f4f6;color:#374151;border:none;border-radius:10px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cerrar</button>';
+    box.querySelector('#notif-toggle-alertas').addEventListener('click',function(){
+      _alertasFirebaseOn=!_alertasFirebaseOn;_actualizarBtnAlertas();renderBox();
+    });
+    box.querySelector('#notif-toggle-cromos').addEventListener('click',function(){
+      _cromosNotifOn=!_cromosNotifOn;
+      try{localStorage.setItem('cromosNotifOn',_cromosNotifOn?'1':'0');}catch(e){}
+      _actualizarBtnAlertas();renderBox();
+    });
+    box.querySelector('#notif-cerrar').addEventListener('click',function(){overlay.remove();});
+  }
+  renderBox();
+  overlay.appendChild(box);document.body.appendChild(overlay);
+  overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.remove();});
 }
 
 var _modoSeguimiento = false;
@@ -4642,7 +4677,7 @@ function iniciarProximidad() {
       PUNTOS.forEach(function(p) {
         if (notifEnviadas[p.id]) return;
         var d = calcDistancia(lat, lng, p.lat, p.lng);
-        if (d < 2.0) { // 2000 metros (pruebas)
+        if (d < 0.3) { // 30 metros (pruebas)
           notifEnviadas[p.id] = true;
           var t = (T[idiomaActual]||T.es);
           new Notification('📍 ' + (idiomaActual==='gl'&&p.nombre_gl?p.nombre_gl:idiomaActual==='en'&&p.nombre_en?p.nombre_en:p.nombre), {
@@ -5532,6 +5567,7 @@ function _cromoSiguiente() {
   _mostrarUnCromo(poi, function(){ setTimeout(_cromoSiguiente, 400); });
 }
 function mostrarToastCromo(poi, numCromo, tipoCromo, extras, doble) {
+  if (!_cromosNotifOn) return;
   // Compatibilidad con llamadas antiguas
   if (typeof numCromo === 'undefined') { _cromoCola.push({poi:poi}); if (!_cromoMostrando) _cromoSiguiente(); return; }
   _cromoCola.push({poi:poi, num:numCromo, tipo:tipoCromo, extras:extras||[], doble:!!doble});
@@ -7396,6 +7432,8 @@ var T={
     coleccionTitulo:'🐚 Colección del Peregrino',
     coleccionVacio:'Visita lugares del Camino para obtener cromos',
     coleccionContador:'de 63 casillas',
+    coleccionAbierto:'abierto',coleccionAbiertos:'abiertos',coleccionMazo:'en mazo',
+    mazoTitulo:'Mazo sin abrir',mazoPendiente:'cromo pendiente',mazoPendientes:'cromos pendientes',mazoTap:'Pulsa para abrir el siguiente',
     visitaDesbloquear:'Visita el lugar para desbloquear y añadir tu imagen',
     rankingTitulo:'Mi ranking',
     rankingVacio:'Aún no has visitado ningún punto',
@@ -7653,6 +7691,8 @@ var T={
     rankingMaximo:'¡Rango máximo acadado!',
     coleccionSuper:'Xogo da Oca Xacobeo',coleccionTitulo:'🐚 Colección do Peregrino',
     coleccionVacio:'Visita lugares do Camiño para obter cromos',coleccionContador:'de 63 casillas',
+    coleccionAbierto:'aberto',coleccionAbiertos:'abertos',coleccionMazo:'no mazo',
+    mazoTitulo:'Mazo sen abrir',mazoPendiente:'cromo pendente',mazoPendientes:'cromos pendentes',mazoTap:'Preme para abrir o seguinte',
     rankingVacio:'Aínda non visitaches ningún punto',
     dificultadLabel:'Dificultade',
     ascenso:'Ascenso',
@@ -7698,6 +7738,8 @@ var T={
     rankingMaximo:'Maximum rank reached!',
     coleccionSuper:'Jacobean Goose Game',coleccionTitulo:'🐚 Pilgrim Collection',
     coleccionVacio:'Visit places along the Way to collect cards',coleccionContador:'of 63 squares',
+    coleccionAbierto:'opened',coleccionAbiertos:'opened',coleccionMazo:'in deck',
+    mazoTitulo:'Unopened deck',mazoPendiente:'card pending',mazoPendientes:'cards pending',mazoTap:'Tap to open the next one',
     rankingVacio:'Aún no has visitado ningún punto',
     dificultadLabel:'Dificultad',
     ascenso:'Ascenso',
@@ -8669,7 +8711,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v711";
+var _APP_VERSION = "v721";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8890,30 +8932,47 @@ if ('serviceWorker' in navigator) {
       puente:[6,12], posada:[19,31], dados:[26,53],
       laberinto:[42], carcel:[52], muerte:[58]
     };
-    var todasEspeciales=[5,6,9,12,14,18,19,23,26,27,31,32,36,41,42,45,50,52,53,54,58,59];
+    // Casillas normales (1-62 excluidas las especiales y la 63)
+    var especiales=[5,6,9,12,14,18,19,23,26,27,31,32,36,41,42,45,50,52,53,54,58,59];
+    var espSet={}; especiales.forEach(function(n){espSet[n]=true;});
+    var normales=[]; for(var ni=1;ni<=62;ni++){if(!espSet[ni])normales.push(ni);}
     _abrirDB(function(db){
-      if(!db.objectStoreNames.contains('cromos')){cb(todasEspeciales[Math.floor(Math.random()*todasEspeciales.length)]);return;}
+      if(!db.objectStoreNames.contains('cromos')){cb(normales[Math.floor(Math.random()*normales.length)]);return;}
       var tx=db.transaction('cromos','readonly');
       var req=tx.objectStore('cromos').getAll();
       req.onsuccess=function(){
         var items=req.result||[];
         var ocupadas={};
-        items.forEach(function(it){if(it.resuelto)ocupadas[it.num]=true;});
+        items.forEach(function(it){ocupadas[it.num]=true;}); // incluye mazo sin abrir
         var tiposCompletos={};
         Object.keys(porTipo).forEach(function(tipo){
           if(porTipo[tipo].every(function(n){return ocupadas[n];}))tiposCompletos[tipo]=true;
         });
         var tablero=window._OCA_TABLERO||{};
-        var libres=todasEspeciales.filter(function(n){
+        // Especiales libres (excluye muerte del pool normal)
+        var especLibres=especiales.filter(function(n){
+          if(n===58)return false; // muerte se sortea aparte
           if(ocupadas[n])return false;
           var tipo=(tablero[n]||{}).tipo;
           if(tipo&&tiposCompletos[tipo])return false;
           return true;
         });
-        var pool=libres.length>0?libres:todasEspeciales;
-        cb(pool[Math.floor(Math.random()*pool.length)]);
+        // Normales libres
+        var normLibres=normales.filter(function(n){return !ocupadas[n];});
+        // Muerte libre
+        var muerteLibre=!ocupadas[58];
+        // Sorteo ponderado:
+        // ~70% normal, ~29.99% especial, ~0.01% muerte
+        var r=Math.random();
+        var usarMuerte=muerteLibre&&r<0.000001;
+        var usarEspecial=!usarMuerte&&especLibres.length>0&&r<0.30;
+        if(usarMuerte){cb(58);}
+        else if(usarEspecial){cb(especLibres[Math.floor(Math.random()*especLibres.length)]);}
+        else if(normLibres.length>0){cb(normLibres[Math.floor(Math.random()*normLibres.length)]);}
+        else if(especLibres.length>0){cb(especLibres[Math.floor(Math.random()*especLibres.length)]);}
+        else{cb(normales[Math.floor(Math.random()*normales.length)]);}
       };
-      req.onerror=function(){cb(todasEspeciales[Math.floor(Math.random()*todasEspeciales.length)]);}
+      req.onerror=function(){cb(normales[Math.floor(Math.random()*normales.length)]);}
     });
   };
 
@@ -9310,7 +9369,7 @@ if ('serviceWorker' in navigator) {
   // ---- Detección de proximidad durante el seguimiento GPS ----
   // Se engancha al watchPosition existente comprobando cada posición
   var _albumYaNotificado = {};
-  var RADIO_VISITA_M = 2000; // metros para registrar visita (pruebas)
+  var RADIO_VISITA_M = 25; // metros para registrar visita (pruebas)
 
   window._albumCheckProximidad = function(lat, lng) {
     if (typeof PUNTOS === 'undefined') return;
@@ -9347,8 +9406,12 @@ if ('serviceWorker' in navigator) {
       var enRutaLabel = enRuta
         ? '&#10003; '+((T[idiomaActual]||T.es).enRuta||'En ruta').replace('✓ ','')
         : ((T[idiomaActual]||T.es).añadirRuta||'+ Ruta');
+      var _imgSrc = p.imagen || 'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png';
+      var _noFoto = !p.imagen;
+      var _fotoOverlay = _noFoto ? ('<div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:30px;pointer-events:none"><div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(3px);border-radius:10px;padding:4px 8px;font-size:9px;font-weight:600;color:rgba(255,255,255,0.85);text-align:center;font-family:DM Sans,sans-serif;letter-spacing:0.3px;max-width:90%">📷 Añade una foto para tu álbum de recuerdos</div></div>') : '';
       return '<div class="poi-img '+p.color+'" style="position:relative;overflow:hidden" data-cromo-id="'+p.id+'">' +
-        '<img id="cromo-img-'+p.id+'" src="'+( p.imagen||'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png')+'" alt="'+p.nombre+'" class="poi-img-cover" decoding="async" fetchpriority="low"/>' +
+        '<img id="cromo-img-'+p.id+'" src="'+_imgSrc+'" alt="'+p.nombre+'" class="poi-img-cover" decoding="async" fetchpriority="low"/>' +
+        _fotoOverlay +
         '<button onclick="event.stopPropagation();_albumPedirFotoCard(\''+p.id+'\')" style="position:absolute;bottom:7px;right:7px;z-index:10;background:rgba(0,0,0,0.52);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:3px 9px;color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;backdrop-filter:blur(4px)" id="foto-btn-'+p.id+'">📷 mi foto</button>' +
       '</div>';
     } else {
@@ -9371,9 +9434,15 @@ if ('serviceWorker' in navigator) {
     var divs = document.querySelectorAll('[data-cromo-id="'+poiId+'"]');
     divs.forEach(function(div) {
       div.style.background = '';
-      div.innerHTML =
-        '<img id="cromo-img-'+p.id+'" src="'+(p.imagen||'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png')+'" alt="'+p.nombre+'" class="poi-img-cover" decoding="async"/>' +
-        '<button onclick="event.stopPropagation();_albumPedirFotoCard(\''+p.id+'\')" style="position:absolute;bottom:7px;right:7px;z-index:10;background:rgba(0,0,0,0.52);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:3px 9px;color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;backdrop-filter:blur(4px)" id="foto-btn-'+p.id+'">📷 mi foto</button>';
+      (function(d,poi){
+        window._albumGetFoto(poi.id, function(blob) {
+          var src = blob ? URL.createObjectURL(blob) : (poi.imagen || 'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png');
+          var noFoto = !blob && !poi.imagen;
+          var ov = noFoto ? '<div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:30px;pointer-events:none"><div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(3px);border-radius:10px;padding:4px 8px;font-size:9px;font-weight:600;color:rgba(255,255,255,0.85);text-align:center;font-family:DM Sans,sans-serif;letter-spacing:0.3px;max-width:90%">📷 Añade una foto para tu álbum de recuerdos</div></div>' : '';
+          d.innerHTML = '<img id="cromo-img-'+poi.id+'" src="'+src+'" alt="'+poi.nombre+'" class="poi-img-cover" decoding="async"/>' + ov +
+            '<button onclick="event.stopPropagation();_albumPedirFotoCard(\''+poi.id+'\')" style="position:absolute;bottom:7px;right:7px;z-index:10;background:rgba(0,0,0,0.52);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:3px 9px;color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;backdrop-filter:blur(4px)" id="foto-btn-'+poi.id+'">📷 mi foto</button>';
+        });
+      })(div, p);
     });
   };
 
@@ -9530,9 +9599,11 @@ function _renderTableroOca() {
     var casillasAb=Object.keys(numAb).length;
     var _tTab=T[idiomaActual]||T.es;
     if(contador) contador.textContent=entries.length>0
-      ?casillasAb+' '+(_tTab.coleccionContador||'de 63 casillas')+' \xc2\xb7 '+abiertos.length+' abierto'+(abiertos.length!==1?'s':'')+(mazo.length?' \xc2\xb7 '+mazo.length+' en mazo':'')
+      ?casillasAb+' '+(_tTab.coleccionContador||'de 63 casillas')+' · '+abiertos.length+' '+(abiertos.length!==1?(_tTab.coleccionAbiertos||'abiertos'):(_tTab.coleccionAbierto||'abierto'))+(mazo.length?' · '+mazo.length+' '+(_tTab.coleccionMazo||'en mazo'):'')
       :(_tTab.coleccionVacio||'Visita lugares para obtener cromos');
     if(tableroVacio) tableroVacio.style.display=entries.length>0?'none':'block';
+
+    // Mazo
     if(mazoCont){
       mazoCont.innerHTML='';
       if(mazo.length>0){
@@ -9542,20 +9613,22 @@ function _renderTableroOca() {
         mazoEl.innerHTML='<div style="position:relative;width:44px;height:58px;flex-shrink:0">'
           +(mazo.length>2?'<div style="position:absolute;top:4px;left:4px;width:36px;height:50px;background:rgba(245,200,0,0.15);border:1px solid rgba(245,200,0,0.25);border-radius:6px"></div>':'')
           +(mazo.length>1?'<div style="position:absolute;top:2px;left:2px;width:36px;height:50px;background:rgba(245,200,0,0.2);border:1px solid rgba(245,200,0,0.3);border-radius:6px"></div>':'')
-          +'<div style="position:absolute;top:0;left:0;width:36px;height:50px;background:linear-gradient(135deg,#2d1854,#1a0e2e);border:1.5px solid rgba(245,200,0,0.6);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px">\xf0\x9f\x8e\xb4</div>'
+          +'<div style="position:absolute;top:0;left:0;width:36px;height:50px;background:linear-gradient(135deg,#2d1854,#1a0e2e);border:1.5px solid rgba(245,200,0,0.6);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px">🎴</div>'
           +'</div>'
           +'<div style="flex:1">'
-          +'<div style="font-size:13px;font-weight:700;color:#F5C800;margin-bottom:3px">Mazo sin abrir</div>'
-          +'<div style="font-size:12px;color:rgba(255,255,255,0.55)">'+(mazo.length>1?'\xc3\x97'+mazo.length+' cromos pendientes':'1 cromo pendiente')+'</div>'
-          +'<div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px">Pulsa para abrir el siguiente</div>'
+          +'<div style="font-size:13px;font-weight:700;color:#F5C800;margin-bottom:3px">'+(_tTab.mazoTitulo||'Mazo sin abrir')+'</div>'
+          +'<div style="font-size:12px;color:rgba(255,255,255,0.55)">'+(mazo.length>1?'×'+mazo.length+' '+(_tTab.mazoPendientes||'cromos pendientes'):'1 '+(_tTab.mazoPendiente||'cromo pendiente'))+'</div>'
+          +'<div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px">'+(_tTab.mazoTap||'Pulsa para abrir el siguiente')+'</div>'
           +'</div>'
-          +'<div style="font-size:20px">\xe2\x96\xb6\xef\xb8\x8f</div>';
+          +'<div style="font-size:20px">▶️</div>';
         mazoEl.addEventListener('mouseenter',function(){this.style.background='rgba(255,255,255,0.12)';});
         mazoEl.addEventListener('mouseleave',function(){this.style.background='rgba(255,255,255,0.07)';});
         mazoEl.addEventListener('click',function(){_abrirCromoDelMazo(mazo[0]);});
         mazoCont.appendChild(mazoEl);
       } else { mazoCont.style.display='none'; }
     }
+
+    // Grid solo abiertos
     tableroGrid.innerHTML='';
     if(abiertos.length===0) return;
     tableroGrid.style.cssText='display:grid;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(7,1fr);gap:3px;width:100%;aspect-ratio:9/7';
@@ -9565,48 +9638,140 @@ function _renderTableroOca() {
     var coloresEsp={oca:'rgba(110,231,183,0.7)',puente:'rgba(96,165,250,0.7)',posada:'rgba(251,191,36,0.7)',dados:'rgba(147,197,253,0.7)',laberinto:'rgba(167,139,250,0.7)',carcel:'rgba(252,165,165,0.7)',muerte:'rgba(220,38,38,0.85)',santiago:'rgba(245,200,0,0.85)'};
     var conteo={};
     abiertos.forEach(function(e){var n=e.item.num;if(!conteo[n])conteo[n]=[];conteo[n].push(e);});
-    for(var i=1;i<=63;i++){
-      var pos=_OCA_POSICIONES[i]; if(!pos) continue;
-      var cell=cells[pos[0]*9+pos[1]];
-      var casilla=tablero[i]||{emoji:'\xf0\x9f\x90\x9a',tipo:'normal',latin:'',trad:'',label:'Casilla '+i};
-      var ents=conteo[i]||[],cantidad=ents.length,tiene=cantidad>0;
-      var bgBase=tiene?'rgba(255,255,255,0.12)':'rgba(255,255,255,0.03)';
-      var bdBase=tiene?'rgba(255,255,255,0.25)':'rgba(255,255,255,0.06)';
-      if(i===63){bgBase=tiene?'rgba(245,200,0,0.25)':'rgba(245,200,0,0.06)';bdBase=tiene?'rgba(245,200,0,0.8)':'rgba(245,200,0,0.2)';}
-      else if(tiene&&casilla.tipo!=='normal'){bdBase=coloresEsp[casilla.tipo]||bdBase;}
-      cell.style.cssText='position:relative;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:'+bgBase+';border:1px solid '+bdBase+';'+(tiene?'cursor:pointer;':'');
-      if(casilla.latin) cell.title=casilla.latin+(casilla.trad?' \xc2\xb7 '+casilla.trad:'');
-      var em=document.createElement('div');em.style.cssText='font-size:'+(tiene?'14px':'10px')+';line-height:1;'+(tiene?'':'opacity:0.2');em.textContent=casilla.emoji;cell.appendChild(em);
-      var nl=document.createElement('div');nl.style.cssText='font-size:7px;font-weight:700;margin-top:1px;'+(tiene?'color:rgba(255,255,255,0.55)':'color:rgba(255,255,255,0.12)');nl.textContent=i;cell.appendChild(nl);
-      if(cantidad>1){var bg=document.createElement('div');bg.style.cssText='position:absolute;top:1px;right:1px;background:#1D9E75;color:#fff;font-size:6px;font-weight:700;border-radius:6px;padding:1px 3px;line-height:1.4';bg.textContent='\xc3\x97'+cantidad;cell.appendChild(bg);}
-      if(tiene){(function(n,cas,ents_){cell.addEventListener('click',function(){_abrirModalCasilla(n,cas,ents_);});})(i,casilla,ents);}
-    }
+
+    // Deuda por tipo para mostrar badges
+    _ocaGetDeuda(function(deuda){
+      // Casillas de deuda: carcel=52, laberinto=42, posada=19/31, puente=6/12, dados=26/53
+      var deudaBadge={
+        52: deuda.carcel||0,
+        42: deuda.laberinto||0,
+        19: Math.ceil((deuda.posada||0)/2), 31: Math.floor((deuda.posada||0)/2),
+        6:  Math.ceil((deuda.puente||0)/2),  12: Math.floor((deuda.puente||0)/2),
+        26: Math.ceil((deuda.dados||0)/2),   53: Math.floor((deuda.dados||0)/2)
+      };
+
+      for(var i=1;i<=63;i++){
+        var pos=_OCA_POSICIONES[i]; if(!pos) continue;
+        var cell=cells[pos[0]*9+pos[1]];
+        var casilla=tablero[i]||{emoji:'🐚',tipo:'normal',latin:'',trad:'',label:'Casilla '+i};
+        var ents=conteo[i]||[],cantidad=ents.length,tiene=cantidad>0;
+        var bgBase=tiene?'rgba(255,255,255,0.12)':'rgba(255,255,255,0.03)';
+        var bdBase=tiene?'rgba(255,255,255,0.25)':'rgba(255,255,255,0.06)';
+        if(i===63){bgBase=tiene?'rgba(245,200,0,0.25)':'rgba(245,200,0,0.06)';bdBase=tiene?'rgba(245,200,0,0.8)':'rgba(245,200,0,0.2)';}
+        else if(tiene&&casilla.tipo!=='normal'){bdBase=coloresEsp[casilla.tipo]||bdBase;}
+        cell.style.cssText='position:relative;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:'+bgBase+';border:1px solid '+bdBase+';'+(tiene?'cursor:pointer;':'');
+        if(casilla.latin) cell.title=casilla.latin+(casilla.trad?' · '+casilla.trad:'');
+        var em=document.createElement('div');em.style.cssText='font-size:'+(tiene?'14px':'10px')+';line-height:1;'+(tiene?'':'opacity:0.2');em.textContent=casilla.emoji;cell.appendChild(em);
+        var nl=document.createElement('div');nl.style.cssText='font-size:7px;font-weight:700;margin-top:1px;'+(tiene?'color:rgba(255,255,255,0.55)':'color:rgba(255,255,255,0.12)');nl.textContent=i;cell.appendChild(nl);
+        if(cantidad>1){var bg=document.createElement('div');bg.style.cssText='position:absolute;top:1px;right:1px;background:#1D9E75;color:#fff;font-size:6px;font-weight:700;border-radius:6px;padding:1px 3px;line-height:1.4';bg.textContent='×'+cantidad;cell.appendChild(bg);}
+        // Badge de deuda
+        var db=deudaBadge[i]||0;
+        if(db>0){
+          var dbEl=document.createElement('div');
+          dbEl.style.cssText='position:absolute;bottom:1px;left:1px;background:#dc2626;color:#fff;font-size:6px;font-weight:700;border-radius:6px;padding:1px 3px;line-height:1.4';
+          dbEl.textContent='-'+db;
+          cell.appendChild(dbEl);
+        }
+        if(tiene){(function(n,cas,ents_){cell.addEventListener('click',function(){_abrirModalCasilla(n,cas,ents_);});})(i,casilla,ents);}
+      }
+    });
   });
 }
 
-function _abrirCromoDelMazo(entry) {
+function _abrirCromoDelMazo(entry){
   var num=entry.item.num;
   var tablero=window._OCA_TABLERO||{};
-  var casilla=tablero[num]||{emoji:'\xf0\x9f\x90\x9a',tipo:'normal',latin:'',trad:'',label:'Casilla '+num};
+  var casilla=tablero[num]||{emoji:'🐚',tipo:'normal',latin:'',trad:'',label:'Casilla '+num};
   _abrirModalCasilla(num,casilla,[entry]);
 }
 
+// ── Deuda: objeto {carcel, laberinto, posada, puente, dados} ─────────────────
+// Orden de cobro: carcel > laberinto > posada > puente > dados
+var _DEUDA_ORDEN=['carcel','laberinto','posada','puente','dados'];
+var _DEUDA_COSTE={carcel:2,laberinto:2,posada:1,puente:1,dados:2};
+var _DEUDA_ICONO={carcel:'⛓️',laberinto:'🌀',posada:'🏨',puente:'🌉',dados:'🎲'};
+
 function _ocaGetDeuda(cb){
   window._abrirDB(function(db){
-    if(!db.objectStoreNames.contains('estado')){cb(0);return;}
+    if(!db.objectStoreNames.contains('estado')){cb({});return;}
     var tx=db.transaction('estado','readonly');
     var req=tx.objectStore('estado').get('deudaCromos');
-    req.onsuccess=function(){cb((req.result&&req.result.valor)||0);};
-    req.onerror=function(){cb(0);};
+    req.onsuccess=function(){cb(req.result&&req.result.valor&&typeof req.result.valor==='object'?req.result.valor:{});};
+    req.onerror=function(){cb({});};
   });
 }
-function _ocaSetDeuda(val,cb){
+function _ocaSetDeuda(obj,cb){
   window._abrirDB(function(db){
     var tx=db.transaction('estado','readwrite');
-    tx.objectStore('estado').put({key:'deudaCromos',valor:val});
+    tx.objectStore('estado').put({key:'deudaCromos',valor:obj});
     tx.oncomplete=function(){if(cb)cb();};
   });
 }
+function _ocaAddDeuda(tipo,cantidad,cb){
+  _ocaGetDeuda(function(d){
+    d[tipo]=(d[tipo]||0)+cantidad;
+    _ocaSetDeuda(d,cb);
+  });
+}
+function _ocaTotalDeuda(d){
+  return _DEUDA_ORDEN.reduce(function(s,t){return s+(d[t]||0);},0);
+}
+
+// Mostrar modal informando de deuda acumulada (sin cromos comunes)
+function _ocaModalDeudaInfo(tipo){
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1rem;box-sizing:border-box';
+  var box=document.createElement('div');
+  box.style.cssText='background:linear-gradient(160deg,#2d0a0a,#7f1d1d);border-radius:20px;padding:1.5rem;max-width:85vw;width:300px;text-align:center;border:1px solid rgba(220,38,38,0.4)';
+  var icono=_DEUDA_ICONO[tipo]||'⚠️';
+  var coste=_DEUDA_COSTE[tipo]||0;
+  box.innerHTML='<div style="font-size:32px;margin-bottom:8px">'+icono+'</div>'
+    +'<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">Deuda pendiente</div>'
+    +'<div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;margin-bottom:16px">No hay cromos comunes en el tablero. Se han anotado <strong style="color:#fca5a5">-'+coste+'</strong> como deuda de <strong style="color:#fff">'+tipo.charAt(0).toUpperCase()+tipo.slice(1)+'</strong>. Se cobrarán automáticamente cuando entren cromos normales.</div>'
+    +'<button id="deuda-ok" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:16px;padding:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Entendido</button>';
+  overlay.appendChild(box);document.body.appendChild(overlay);
+  box.querySelector('#deuda-ok').addEventListener('click',function(){overlay.remove();_renderTableroOca();});
+}
+
+// Cobrar deuda cuando entra un cromo normal — llama desde _marcarResueltoYComprobarDeuda
+function _ocaCobrarDeudaSiProcede(cb){
+  _ocaGetDeuda(function(deuda){
+    var total=_ocaTotalDeuda(deuda);
+    if(total===0){if(cb)cb(false);return;}
+    // Buscar primer tipo con deuda
+    var tipoActivo=null;
+    for(var ti=0;ti<_DEUDA_ORDEN.length;ti++){
+      if((deuda[_DEUDA_ORDEN[ti]]||0)>0){tipoActivo=_DEUDA_ORDEN[ti];break;}
+    }
+    if(!tipoActivo){if(cb)cb(false);return;}
+    // Eliminar 1 cromo común del tablero como pago
+    _ocaEliminarComunesAleatorio(1,function(eli){
+      if(eli===0){if(cb)cb(false);return;} // no había, deuda sigue
+      deuda[tipoActivo]=(deuda[tipoActivo]||0)-1;
+      if(deuda[tipoActivo]<=0) delete deuda[tipoActivo];
+      _ocaSetDeuda(deuda,function(){
+        // Mostrar modal de cobro
+        var restante=_ocaTotalDeuda(deuda);
+        _ocaModalDeudaCobrada(tipoActivo,restante,function(){if(cb)cb(true);});
+      });
+    });
+  });
+}
+
+function _ocaModalDeudaCobrada(tipo,restante,cb){
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1rem;box-sizing:border-box';
+  var box=document.createElement('div');
+  box.style.cssText='background:linear-gradient(160deg,#1a2a0a,#2d4a1a);border-radius:20px;padding:1.5rem;max-width:85vw;width:300px;text-align:center;border:1px solid rgba(110,231,183,0.3)';
+  var icono=_DEUDA_ICONO[tipo]||'⚠️';
+  box.innerHTML='<div style="font-size:32px;margin-bottom:8px">'+icono+'</div>'
+    +'<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">Deuda cobrada</div>'
+    +'<div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;margin-bottom:16px">Se ha retirado 1 cromo común del tablero como pago de <strong style="color:#fff">'+tipo.charAt(0).toUpperCase()+tipo.slice(1)+'</strong>.'+(restante>0?' Deuda restante: <strong style="color:#fca5a5">-'+restante+'</strong>':' ¡Deuda saldada!')+'</div>'
+    +'<button id="deuda-cobro-ok" style="width:100%;background:#1D9E75;color:#fff;border:none;border-radius:16px;padding:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">OK</button>';
+  overlay.appendChild(box);document.body.appendChild(overlay);
+  box.querySelector('#deuda-cobro-ok').addEventListener('click',function(){overlay.remove();_renderTableroOca();if(cb)cb();});
+}
+
 function _ocaEliminarComunesAleatorio(n,cb){
   window._ocaGetCromosConKeys(function(entries){
     var tablero=window._OCA_TABLERO||{};
@@ -9627,35 +9792,41 @@ function _ocaAnadirAlMazo(n,poiId,cb){
   uno(n);
 }
 
-// Selector: el usuario elige N cromos del tablero para entregar
-// EXCLUYE cartas especiales (solo ofrece casillas tipo normal)
-function _ocaSelectorRetirar(n,cb){
+// Selector de cromos normales para pagar
+function _ocaSelectorRetirar(n,tipo,cb){
   window._ocaGetCromosConKeys(function(entries){
     var tablero=window._OCA_TABLERO||{};
-    // Solo cromos normales (tipo normal) del tablero
     var disponibles=entries.filter(function(e){
-      return e.item.resuelto && (tablero[e.item.num]||{tipo:'normal'}).tipo==='normal';
+      return e.item.resuelto&&(tablero[e.item.num]||{tipo:'normal'}).tipo==='normal';
     });
-    if(disponibles.length===0){cb(0);return;}
+    if(disponibles.length===0){
+      // No hay comunes — anotar deuda y mostrar modal informativo
+      _ocaAddDeuda(tipo,n,function(){
+        cb(0);
+        _ocaModalDeudaInfo(tipo);
+      });
+      return;
+    }
     var overlay=document.createElement('div');
     overlay.style.cssText='position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1rem;box-sizing:border-box';
     var grupos={};
     disponibles.forEach(function(e){var num=e.item.num;if(!grupos[num])grupos[num]=[];grupos[num].push(e);});
     var nums=Object.keys(grupos).map(Number).sort(function(a,b){return a-b;});
     var seleccionados=[];
+    var maxSel=Math.min(n,disponibles.length);
     var itemsHtml=nums.map(function(num){
-      var cas=tablero[num]||{emoji:'\xf0\x9f\x90\x9a',label:'Casilla '+num};
+      var cas=tablero[num]||{emoji:'🐚',label:'Casilla '+num};
       var cnt=grupos[num].length;
       return '<div class="oca-sel-item" data-num="'+num+'" style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:8px 10px;cursor:pointer;transition:all 0.15s">'
         +'<span style="font-size:20px">'+cas.emoji+'</span>'
         +'<div style="flex:1"><div style="font-size:11px;color:rgba(255,255,255,0.4)">#'+num+'</div>'
         +'<div style="font-size:12px;font-weight:600;color:#fff">'+cas.label+'</div></div>'
-        +(cnt>1?'<div style="font-size:10px;background:#1D9E75;color:#fff;border-radius:8px;padding:1px 6px">\xc3\x97'+cnt+'</div>':'')
+        +(cnt>1?'<div style="font-size:10px;background:#1D9E75;color:#fff;border-radius:8px;padding:1px 6px">×'+cnt+'</div>':'')
         +'</div>';
     }).join('');
     var box=document.createElement('div');
     box.style.cssText='background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:1.25rem;max-width:85vw;width:300px;max-height:80vh;overflow-y:auto;border:1px solid rgba(255,255,255,0.18)';
-    box.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Elige '+n+' cromo'+(n>1?'s':'')+' a entregar</div>'
+    box.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Elige '+maxSel+' cromo'+(maxSel>1?'s':'')+' a entregar</div>'
       +'<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">'+itemsHtml+'</div>'
       +'<button id="oca-sel-confirmar" disabled style="width:100%;background:#6b7280;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Confirmar</button>';
     overlay.appendChild(box);document.body.appendChild(overlay);
@@ -9665,15 +9836,21 @@ function _ocaSelectorRetirar(n,cb){
         var num=parseInt(this.getAttribute('data-num'));
         var idx=seleccionados.indexOf(num);
         if(idx>=0){seleccionados.splice(idx,1);this.style.background='rgba(255,255,255,0.07)';this.style.borderColor='rgba(255,255,255,0.12)';}
-        else if(seleccionados.length<n){seleccionados.push(num);this.style.background='rgba(220,38,38,0.25)';this.style.borderColor='rgba(252,165,165,0.6)';}
-        var listo=seleccionados.length>=Math.min(n,nums.length);
+        else if(seleccionados.length<maxSel){seleccionados.push(num);this.style.background='rgba(220,38,38,0.25)';this.style.borderColor='rgba(252,165,165,0.6)';}
+        var listo=seleccionados.length>=maxSel;
         confirmBtn.disabled=!listo;confirmBtn.style.background=listo?'#dc2626':'#6b7280';
       });
     });
     confirmBtn.addEventListener('click',function(){
       overlay.remove();
       var pendSel=seleccionados.slice(),eliminados=0;
-      function next(){if(!pendSel.length){cb(eliminados);return;}var num=pendSel.shift();var ents=grupos[num];if(ents&&ents.length){window._ocaEliminarCromo(ents[0].key,function(){eliminados++;next();});}else{next();}}
+      function next(){if(!pendSel.length){
+        // Si había más deuda que comunes disponibles, anotar el resto
+        var deuda=n-eliminados;
+        if(deuda>0){_ocaAddDeuda(tipo,deuda,function(){cb(eliminados);});}
+        else{cb(eliminados);}
+        return;
+      }var num=pendSel.shift();var ents=grupos[num];if(ents&&ents.length){window._ocaEliminarCromo(ents[0].key,function(){eliminados++;next();});}else{next();}}
       next();
     });
   });
@@ -9695,39 +9872,39 @@ function _abrirModalCasilla(num,casilla,entradas){
     +'<div style="font-family:serif;font-size:14px;font-weight:600;color:'+color+';margin-bottom:3px">'+(casilla.latin||'')+'</div>'
     +'<div style="font-size:11px;color:rgba(255,255,255,0.45);font-style:italic;margin-bottom:4px">'+(casilla.trad||'')+'</div>'
     +'<div style="font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:1.5px;text-transform:uppercase">'+(casilla.label||'Casilla '+num)+'</div></div>';
-  var poiHtml=poi?'<div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:14px">'+(poi.emoji||'\xf0\x9f\x93\x8d')+' '+(poi.nombre||'')+'</div>':'';
-  var resultadoTexto={oca:'+1 cromo a\xc3\xb1adido al mazo',puente:'El puente ya fue cruzado',posada:'1 cromo entregado',dados:'Los dados ya fueron lanzados',laberinto:'2 cromos comunes retirados',carcel:'2 cromos comunes retirados',muerte:'Todos los cromos perdidos',santiago:'\xc2\xa1Compostela completada!',normal:'Sin efecto especial'};
+  var poiHtml=poi?'<div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:14px">'+(poi.emoji||'📍')+' '+(poi.nombre||'')+'</div>':'';
+  var resultadoTexto={oca:'+1 cromo añadido al mazo',puente:'El puente ya fue cruzado',posada:'1 cromo entregado',dados:'Los dados ya fueron lanzados',laberinto:'2 cromos comunes retirados',carcel:'2 cromos comunes retirados',muerte:'Todos los cromos perdidos — la Muerte permanece',santiago:'¡Compostela completada!',normal:'Sin efecto especial'};
   var efectoHtml='',botonesHtml='';
   if(yaResuelto){
     var resTexto=resultadoTexto[tipo]||'Casilla resuelta';
-    efectoHtml='<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:14px;background:rgba(255,255,255,0.05);border-radius:8px;padding:8px 10px;text-align:center">\xe2\x9c\x93 '+resTexto+'</div>';
+    efectoHtml='<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:14px;background:rgba(255,255,255,0.05);border-radius:8px;padding:8px 10px;text-align:center">✓ '+resTexto+'</div>';
     botonesHtml='<button id="oca-btn-cerrar" style="width:100%;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cerrar</button>';
   } else if(tipo==='normal'){
     efectoHtml='<div style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:14px">Sin efecto especial.</div>';
-    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#1D9E75;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">\xc2\xa1Genial!</button>';
+    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#1D9E75;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">¡Genial!</button>';
   } else if(tipo==='santiago'){
-    efectoHtml='<div style="font-size:13px;color:#F5C800;margin-bottom:14px">\xf0\x9f\x8f\x86 \xc2\xa1Compostela! Has completado el Camino.</div>';
-    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#b45309;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Ultre\xc3\xafa!</button>';
+    efectoHtml='<div style="font-size:13px;color:#F5C800;margin-bottom:14px">🏆 ¡Compostela! Has completado el Camino.</div>';
+    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#b45309;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Ultreïa!</button>';
   } else if(tipo==='oca'){
-    efectoHtml='<div style="font-size:13px;color:#6ee7b7;margin-bottom:14px">\xf0\x9f\xaa\xb7 <strong style="color:#fff">De oca en oca</strong> \xe2\x80\x94 +1 cromo al mazo.</div>';
+    efectoHtml='<div style="font-size:13px;color:#6ee7b7;margin-bottom:14px">🪷 <strong style="color:#fff">De oca en oca</strong> — +1 cromo al mazo.</div>';
     botonesHtml='<button id="oca-btn-oca" style="width:100%;background:#059669;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Recibir cromo extra</button>';
   } else if(tipo==='puente'){
-    efectoHtml='<div style="font-size:13px;color:#93c5fd;margin-bottom:14px">\xf0\x9f\x8c\x89 <strong style="color:#fff">El Puente</strong> \xe2\x80\x94 la suerte decide: +1 al mazo o \xe2\x88\x921 del tablero.</div>';
+    efectoHtml='<div style="font-size:13px;color:#93c5fd;margin-bottom:14px">🌉 <strong style="color:#fff">El Puente</strong> — la suerte decide: +1 al mazo o −1 cromo normal.</div>';
     botonesHtml='<button id="oca-btn-puente" style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cruzar el puente</button>';
   } else if(tipo==='posada'){
-    efectoHtml='<div style="font-size:13px;color:#fbbf24;margin-bottom:14px">\xf0\x9f\x8f\xa8 <strong style="color:#fff">La Posada</strong> \xe2\x80\x94 elige 1 cromo normal del tablero a entregar.</div>';
+    efectoHtml='<div style="font-size:13px;color:#fbbf24;margin-bottom:14px">🏨 <strong style="color:#fff">La Posada</strong> — elige 1 cromo normal del tablero a entregar.</div>';
     botonesHtml='<button id="oca-btn-posada" style="width:100%;background:#d97706;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Elegir cromo a entregar</button>';
   } else if(tipo==='dados'){
-    efectoHtml='<div style="font-size:13px;color:#c4b5fd;margin-bottom:14px">\xf0\x9f\x8e\xb2 <strong style="color:#fff">Los Dados</strong> \xe2\x80\x94 la suerte lanza: +2 al mazo o \xe2\x88\x922 del tablero.</div>';
+    efectoHtml='<div style="font-size:13px;color:#c4b5fd;margin-bottom:14px">🎲 <strong style="color:#fff">Los Dados</strong> — la suerte lanza: +2 al mazo o −2 normales del tablero.</div>';
     botonesHtml='<button id="oca-btn-dados" style="width:100%;background:#7c3aed;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Lanzar los dados</button>';
   } else if(tipo==='laberinto'){
-    efectoHtml='<div style="font-size:13px;color:#a78bfa;margin-bottom:14px">\xf0\x9f\x8c\x80 <strong style="color:#fff">El Laberinto</strong> \xe2\x80\x94 se retiran 2 cromos comunes del tablero.</div>';
+    efectoHtml='<div style="font-size:13px;color:#a78bfa;margin-bottom:14px">🌀 <strong style="color:#fff">El Laberinto</strong> — se retiran 2 cromos normales del tablero.</div>';
     botonesHtml='<button id="oca-btn-perder2c" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Aceptar el castigo</button>';
   } else if(tipo==='carcel'){
-    efectoHtml='<div style="font-size:13px;color:#fca5a5;margin-bottom:14px">\xe2\x9b\x93\xef\xb8\x8f <strong style="color:#fff">La C\xc3\xa1rcel</strong> \xe2\x80\x94 se retiran 2 cromos comunes del tablero.</div>';
+    efectoHtml='<div style="font-size:13px;color:#fca5a5;margin-bottom:14px">⛓️ <strong style="color:#fff">La Cárcel</strong> — se retiran 2 cromos normales del tablero.</div>';
     botonesHtml='<button id="oca-btn-perder2c" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Pagar rescate</button>';
   } else if(tipo==='muerte'){
-    efectoHtml='<div style="font-size:13px;color:#ef4444;margin-bottom:14px">\xf0\x9f\x92\x80 <strong style="color:#fff">La Muerte</strong> \xe2\x80\x94 se pierden todos los cromos. La muerte permanece en el tablero.</div>';
+    efectoHtml='<div style="font-size:13px;color:#ef4444;margin-bottom:14px">💀 <strong style="color:#fff">La Muerte</strong> — se pierden todos los cromos. La casilla de muerte permanece.</div>';
     botonesHtml='<button id="oca-btn-muerte" style="width:100%;background:#7f1d1d;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Aceptar el destino</button>';
   }
   var overlay=document.createElement('div');overlay.id='oca-casilla-modal';
@@ -9736,7 +9913,7 @@ function _abrirModalCasilla(num,casilla,entradas){
   box.style.cssText='background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:1.25rem;max-width:85vw;width:300px;max-height:85vh;overflow-y:auto;border:1px solid rgba(255,255,255,0.18)';
   var headerHtml='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
     +'<div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:'+color+'">'+(casilla.label||'Casilla '+num)+'</div>'
-    +(cantidad>1?'<div style="font-size:10px;background:rgba(29,158,117,0.3);color:#6ee7b7;border-radius:8px;padding:2px 8px">\xc3\x97'+cantidad+'</div>':'')+'</div>';
+    +(cantidad>1?'<div style="font-size:10px;background:rgba(29,158,117,0.3);color:#6ee7b7;border-radius:8px;padding:2px 8px">×'+cantidad+'</div>':'')+'</div>';
   box.innerHTML=headerHtml+imgHtml+casillaHtml+poiHtml+efectoHtml+botonesHtml;
   overlay.appendChild(box);document.body.appendChild(overlay);
   function cerrar(){var el=document.getElementById('oca-casilla-modal');if(el)el.remove();_renderTableroOca();}
@@ -9745,31 +9922,42 @@ function _abrirModalCasilla(num,casilla,entradas){
   var btn=box.querySelector('#oca-btn-cerrar');if(btn)btn.addEventListener('click',cerrar);
   btn=box.querySelector('#oca-btn-resolver');if(btn)btn.addEventListener('click',function(){marcarResueltos(function(){cerrar();});});
   btn=box.querySelector('#oca-btn-oca');
-  if(btn)btn.addEventListener('click',function(){_ocaAnadirAlMazo(1,poiId,function(){marcarResueltos(function(){cerrar();mostrarToast('\xf0\x9f\xaa\xb7 +1 cromo a\xc3\xb1adido al mazo');});});});
+  if(btn)btn.addEventListener('click',function(){_ocaAnadirAlMazo(1,poiId,function(){marcarResueltos(function(){cerrar();mostrarToast('🪷 +1 cromo añadido al mazo');});});});
   btn=box.querySelector('#oca-btn-puente');
   if(btn)btn.addEventListener('click',function(){
-    if(Math.random()<0.5){_ocaAnadirAlMazo(1,poiId,function(){marcarResueltos(function(){cerrar();mostrarToast('\xf0\x9f\x8c\x89 Suerte: +1 cromo al mazo');});});}
-    else{_ocaEliminarComunesAleatorio(1,function(eli){marcarResueltos(function(){cerrar();mostrarToast(eli>0?'\xf0\x9f\x8c\x89 Mala suerte: \xe2\x88\x921 cromo del tablero':'\xf0\x9f\x8c\x89 Mala suerte, sin cromos que retirar');});});}
+    if(Math.random()<0.5){_ocaAnadirAlMazo(1,poiId,function(){marcarResueltos(function(){cerrar();mostrarToast('🌉 Suerte: +1 cromo al mazo');});});}
+    else{_ocaSelectorRetirar(1,'puente',function(eli){marcarResueltos(function(){cerrar();if(eli>0)mostrarToast('🌉 Mala suerte: −1 cromo normal retirado');});});}
   });
   btn=box.querySelector('#oca-btn-posada');
-  if(btn)btn.addEventListener('click',function(){marcarResueltos(function(){cerrar();_ocaSelectorRetirar(1,function(eli){if(eli===0){_ocaGetDeuda(function(d){_ocaSetDeuda(d+1,function(){mostrarToast('\xf0\x9f\x8f\xa8 Sin cromos normales: deuda de 1 anotada');});});}else{mostrarToast('\xf0\x9f\x8f\xa8 1 cromo entregado en la posada');}});});});
+  if(btn)btn.addEventListener('click',function(){marcarResueltos(function(){cerrar();_ocaSelectorRetirar(1,'posada',function(eli){if(eli>0)mostrarToast('🏨 1 cromo entregado en la posada');});});});
   btn=box.querySelector('#oca-btn-dados');
   if(btn)btn.addEventListener('click',function(){
-    if(Math.random()<0.5){_ocaAnadirAlMazo(2,poiId,function(){marcarResueltos(function(){cerrar();mostrarToast('\xf0\x9f\x8e\xb2 Suerte: +2 cromos al mazo');});});}
-    else{_ocaEliminarComunesAleatorio(2,function(eli){marcarResueltos(function(){cerrar();var deuda=2-eli;if(deuda>0){_ocaGetDeuda(function(d){_ocaSetDeuda(d+deuda,function(){mostrarToast('\xf0\x9f\x8e\xb2 Mala suerte: \xe2\x88\x92'+eli+' retirado(s), deuda de '+deuda);});});}else{mostrarToast('\xf0\x9f\x8e\xb2 Mala suerte: \xe2\x88\x922 cromos del tablero');}});});}
+    if(Math.random()<0.5){_ocaAnadirAlMazo(2,poiId,function(){marcarResueltos(function(){cerrar();mostrarToast('🎲 Suerte: +2 cromos al mazo');});});}
+    else{_ocaSelectorRetirar(2,'dados',function(eli){marcarResueltos(function(){cerrar();if(eli>0)mostrarToast('🎲 Mala suerte: −'+eli+' cromo(s) retirado(s)');});});}
   });
   btn=box.querySelector('#oca-btn-perder2c');
-  if(btn)btn.addEventListener('click',function(){_ocaEliminarComunesAleatorio(2,function(eli){marcarResueltos(function(){cerrar();var deuda=2-eli,icono=tipo==='laberinto'?'\xf0\x9f\x8c\x80':'\xe2\x9b\x93\xef\xb8\x8f';if(deuda>0){_ocaGetDeuda(function(d){_ocaSetDeuda(d+deuda,function(){mostrarToast(icono+' '+eli+' retirado(s), deuda de '+deuda+' anotada');});});}else{mostrarToast(icono+' 2 cromos comunes retirados');}});});});
+  if(btn)btn.addEventListener('click',function(){_ocaSelectorRetirar(2,tipo,function(eli){marcarResueltos(function(){cerrar();if(eli>0)mostrarToast((tipo==='laberinto'?'🌀':'⛓️')+' '+eli+' cromo(s) retirado(s)');});});});
   btn=box.querySelector('#oca-btn-muerte');
   if(btn)btn.addEventListener('click',function(){
-    // Eliminar todos EXCEPTO la casilla de muerte (num=58) — queda permanente
     window._ocaGetCromosConKeys(function(entries){
       var aMatar=entries.filter(function(e){return e.item.num!==58;});
-      function next(){if(!aMatar.length){marcarResueltos(function(){cerrar();mostrarToast('\xf0\x9f\x92\x80 Todos los cromos perdidos \xe2\x80\x94 la Muerte permanece');});return;}window._ocaEliminarCromo(aMatar.shift().key,next);}
+      function next(){if(!aMatar.length){marcarResueltos(function(){
+        _ocaSetDeuda({},function(){cerrar();mostrarToast('💀 Todos los cromos perdidos — la Muerte permanece');});
+      });return;}window._ocaEliminarCromo(aMatar.shift().key,next);}
       next();
     });
   });
 }
+
+// Al marcar un cromo como resuelto, comprobar y cobrar deuda si es cromo normal
+window._ocaMarcarResueltoYComprobarDeuda = function(idbKey, numCromo, cb) {
+  window._ocaMarcarResuelto(idbKey, function(){
+    var tablero=window._OCA_TABLERO||{};
+    var esNormal=(tablero[numCromo]||{tipo:'normal'}).tipo==='normal';
+    if(esNormal){_ocaCobrarDeudaSiProcede(function(){if(cb)cb();});}
+    else{if(cb)cb();}
+  });
+};
 
 // Hard reset
 function _hardResetJuego(){
@@ -9777,9 +9965,9 @@ function _hardResetJuego(){
   overlay.style.cssText='position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1rem;box-sizing:border-box';
   var box=document.createElement('div');
   box.style.cssText='background:linear-gradient(160deg,#2d0a0a,#7f1d1d);border-radius:20px;padding:1.5rem;max-width:85vw;width:300px;text-align:center;border:1px solid rgba(220,38,38,0.4)';
-  box.innerHTML='<div style="font-size:32px;margin-bottom:10px">\xf0\x9f\x97\x91\xef\xb8\x8f</div>'
+  box.innerHTML='<div style="font-size:32px;margin-bottom:10px">🗑️</div>'
     +'<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px">Hard Reset</div>'
-    +'<div style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:20px;line-height:1.5">Se borrar\xc3\xa1n todos los cromos, visitas, fotos y logros. Esta acci\xc3\xb3n no se puede deshacer.</div>'
+    +'<div style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:20px;line-height:1.5">Se borrarán todos los cromos, visitas, fotos y logros. Esta acción no se puede deshacer.</div>'
     +'<div style="display:flex;gap:8px">'
     +'<button id="hreset-cancelar" style="flex:1;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:16px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cancelar</button>'
     +'<button id="hreset-confirmar" style="flex:1;background:#dc2626;color:#fff;border:none;border-radius:16px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Borrar todo</button>'
@@ -9787,11 +9975,11 @@ function _hardResetJuego(){
   overlay.appendChild(box);document.body.appendChild(overlay);
   box.querySelector('#hreset-cancelar').addEventListener('click',function(){overlay.remove();});
   box.querySelector('#hreset-confirmar').addEventListener('click',function(){
-    box.innerHTML='<div style="font-size:28px;margin-bottom:12px">\xe2\x8f\xb3</div><div style="font-size:14px;color:#fff">Borrando datos...</div>';
+    box.innerHTML='<div style="font-size:28px;margin-bottom:12px">⏳</div><div style="font-size:14px;color:#fff">Borrando datos...</div>';
     var req=indexedDB.deleteDatabase('album-peregrino');
     req.onsuccess=req.onerror=function(){
-      if('caches' in window){caches.keys().then(function(keys){return Promise.all(keys.map(function(k){return caches.delete(k);}));}).then(function(){overlay.remove();mostrarToast('\xf0\x9f\x97\x91\xef\xb8\x8f Reset completado \xe2\x80\x94 recargando...');setTimeout(function(){window.location.reload(true);},1200);});}
-      else{overlay.remove();mostrarToast('\xf0\x9f\x97\x91\xef\xb8\x8f Reset completado \xe2\x80\x94 recargando...');setTimeout(function(){window.location.reload(true);},1200);}
+      if('caches' in window){caches.keys().then(function(keys){return Promise.all(keys.map(function(k){return caches.delete(k);}));}).then(function(){overlay.remove();mostrarToast('🗑️ Reset completado — recargando...');setTimeout(function(){window.location.reload(true);},1200);});}
+      else{overlay.remove();mostrarToast('🗑️ Reset completado — recargando...');setTimeout(function(){window.location.reload(true);},1200);}
     };
   });
 }
@@ -9858,7 +10046,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v711</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v721</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
