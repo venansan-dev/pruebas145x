@@ -9147,7 +9147,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v825";
+var _APP_VERSION = "v827";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -9157,7 +9157,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v825') === -1) {
+        if (key.indexOf('guia-compostelana-v827') === -1) {
           caches.delete(key);
         }
       });
@@ -9839,6 +9839,8 @@ if ('serviceWorker' in navigator) {
     if (typeof PUNTOS === 'undefined') return;
     PUNTOS.forEach(function(poi) {
       if (_albumYaNotificado[poi.id]) return;
+      // Puntos de usuario, alertas y búsquedas no entran en el juego
+      if (poi.esUsuario || poi.esAlerta || poi.categoria === 'busqueda' || (poi.id && poi.id.indexOf('u_') === 0)) return;
       var distM = haversine(lat, lng, poi.lat, poi.lng) * 1000;
       if (distM <= RADIO_VISITA_M) {
         _albumYaNotificado[poi.id] = true;
@@ -10459,30 +10461,54 @@ function _hardResetJuego(){
   box.querySelector('#hreset-cancelar').addEventListener('click',function(){overlay.remove();});
   box.querySelector('#hreset-confirmar').addEventListener('click',function(){
     box.innerHTML='<div style="font-size:28px;margin-bottom:12px">⏳</div><div style="font-size:14px;color:#fff">Borrando datos...</div>';
-    // Cerrar conexión DB abierta para evitar bloqueo en iOS/Android
-    if(window._albumDB){try{window._albumDB.close();}catch(e){}window._albumDB=null;}
-    setTimeout(function(){
-    var req=indexedDB.deleteDatabase('album-peregrino');
-    req.onsuccess=req.onerror=req.onblocked=function(){
-      function _doReload(){
-        overlay.remove();
-        mostrarToast('🗑️ Reset completado — recargando...');
-        setTimeout(function(){ window.location.href = window.location.href.split('?')[0]+'?_r='+Date.now(); },1000);
-      }
-      function _clearCachesAndReload(){
-        if('caches' in window){
-          caches.keys().then(function(keys){
-            return Promise.all(keys.map(function(k){ return caches.delete(k); }));
-          }).then(_doReload).catch(_doReload);
-        } else { _doReload(); }
-      }
-      if('serviceWorker' in navigator){
-        navigator.serviceWorker.getRegistrations().then(function(regs){
-          return Promise.all(regs.map(function(r){ return r.unregister(); }));
-        }).then(_clearCachesAndReload).catch(_clearCachesAndReload);
-      } else { _clearCachesAndReload(); }
-    };
-    }, 300); // espera cierre DB
+    // Timeout de seguridad: si algo falla, recargar igualmente tras 5s
+    var _safetyTimer=setTimeout(function(){window.location.href=window.location.href.split('?')[0]+'?_r='+Date.now();},5000);
+    function _doReload(){
+      clearTimeout(_safetyTimer);
+      overlay.remove();
+      mostrarToast('🗑️ Reset completado — recargando...');
+      setTimeout(function(){window.location.href=window.location.href.split('?')[0]+'?_r='+Date.now();},800);
+    }
+    // Estrategia móvil: vaciar stores uno a uno con la conexión existente
+    // evita deleteDatabase que se bloquea en iOS/Android
+    function _vaciarStores(db, cb){
+      var stores=['visitas','fotos','logros','cromos','estado'];
+      var pendiente=stores.length;
+      if(pendiente===0){cb();return;}
+      stores.forEach(function(s){
+        try{
+          if(!db.objectStoreNames.contains(s)){pendiente--;if(!pendiente)cb();return;}
+          var tx=db.transaction(s,'readwrite');
+          tx.objectStore(s).clear();
+          tx.oncomplete=function(){pendiente--;if(!pendiente)cb();};
+          tx.onerror=function(){pendiente--;if(!pendiente)cb();};
+        }catch(e){pendiente--;if(!pendiente)cb();}
+      });
+    }
+    function _limpiarSW(cb){
+      if('caches' in window){
+        caches.keys().then(function(keys){return Promise.all(keys.map(function(k){return caches.delete(k);}));}).then(cb).catch(cb);
+      } else {cb();}
+    }
+    function _hacerReset(db){
+      _vaciarStores(db,function(){
+        _limpiarSW(function(){
+          if('serviceWorker' in navigator){
+            navigator.serviceWorker.getRegistrations().then(function(regs){
+              Promise.all(regs.map(function(r){return r.unregister();})).then(_doReload).catch(_doReload);
+            }).catch(_doReload);
+          } else {_doReload();}
+        });
+      });
+    }
+    // Usar conexión existente si está disponible, si no abrir una nueva
+    if(window._albumDB&&window._albumDB.transaction){
+      _hacerReset(window._albumDB);
+    } else {
+      var req=indexedDB.open('album-peregrino');
+      req.onsuccess=function(e){_hacerReset(e.target.result);};
+      req.onerror=function(){_doReload();};
+    }
   });
 }
 
@@ -10743,7 +10769,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v825</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v827</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
