@@ -222,10 +222,10 @@
 <!-- HEADER -->
 <header class='header'>
   <!-- Logo desktop -->
-  <div class='logo logo-desktop'><img alt='Guía Compostelana de Vigo' src='https://i.postimg.cc/C1gNNsDK/IMG-0213.jpg' style='width:222px;height:60px;vertical-align:middle;border-radius:4px'/></div>
+  
   <!-- Header móvil: recuadro Tu Guía Xacobea + idiomas -->
   <div class='header-mobile-brand' onclick='abrirHeroModal()' style='display:none;cursor:pointer;flex:1;margin:0 10px;min-width:0'>
-    <img src='https://i.postimg.cc/zBvpCzyM/cab2.png' alt='Tu Guía Xacobea' id='header-tag-text' style='width:100%;height:auto;max-height:52px;display:block;object-fit:contain;object-position:left center'/>
+    <img src='https://i.postimg.cc/26CyMyQJ/logcab.png' alt='Tu Guía Xacobea' id='header-tag-text' style='width:auto;height:40px;max-width:100%;display:block;object-fit:contain'/>
   </div>
   <!-- Idiomas en header móvil -->
   <div class='header-lang-mobile' style='display:none;align-items:center;gap:5px'>
@@ -278,10 +278,8 @@
       <!-- COLUMNA IZQUIERDA -->
       <div>
         <div class='hero-tag-row'>
-          <span class='hero-tag'>
-            <img alt='Vieira' src='https://i.postimg.cc/rm387xgK/IMG-0201.jpg' style='width:20px;height:20px;vertical-align:middle;margin-right:6px;border-radius:3px;display:inline-block'/>
-            <span id='hero-tag-text'>Tu Guía Xacobea</span>
-          </span>
+          <img src='https://i.postimg.cc/26CyMyQJ/logcab.png' alt='Tu Guía Xacobea' id='hero-tag-img' style='height:52px;width:auto;display:block;margin-bottom:2px'/>
+          <span id='hero-tag-text' style='display:none'>Tu Guía Xacobea</span>
           <!-- Banderas: solo escritorio, junto al cajetín -->
           <div class='lang-switcher lang-switcher-desktop'>
             <button class='lang-btn activo' id='btn-gl' onclick='cambiarIdioma(&quot;gl&quot;)' title='Galego'><svg viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'><clipPath id='c-gl'><circle cx='18' cy='18' r='18'></circle></clipPath><g clip-path='url(#c-gl)'><rect fill='#ffffff' height='36' width='36'></rect><polygon fill='#003DA5' points='36,7 29,0 0,29 7,36'></polygon></g></svg></button>
@@ -9431,7 +9429,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v877";
+var _APP_VERSION = "v879";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11095,7 +11093,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v877</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v879</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
