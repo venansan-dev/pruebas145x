@@ -224,8 +224,12 @@
   <!-- Logo desktop -->
   
   <!-- Header móvil: recuadro Tu Guía Xacobea + idiomas -->
-  <div class='header-mobile-brand' onclick='abrirHeroModal()' style='display:none;cursor:pointer;flex:1;margin:0 10px;min-width:0'>
+  <div class='header-mobile-brand' onclick='abrirHeroModal()' style='display:none;cursor:pointer;flex:1;margin:0 10px;min-width:0;flex-direction:column;align-items:flex-start;gap:4px'>
     <img src='https://i.postimg.cc/26CyMyQJ/logcab.png' alt='Tu Guía Xacobea' id='header-tag-text' style='width:auto;height:28px;max-width:100%;display:block;object-fit:contain;opacity:0.92'/>
+    <span style='display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:3px 9px'>
+      <img src='https://i.postimg.cc/rm387xgK/IMG-0201.jpg' style='width:13px;height:13px;border-radius:2px;flex-shrink:0;object-fit:cover'/>
+      <span style='font-size:9px;font-weight:600;color:#fff;letter-spacing:1.2px;text-transform:uppercase;font-family:DM Sans,sans-serif;white-space:nowrap' id='hero-tag-mobile'>Tu Guía Xacobea</span>
+    </span>
   </div>
   <!-- Idiomas en header móvil -->
   <div class='header-lang-mobile' style='display:none;align-items:center;gap:5px'>
@@ -8785,6 +8789,7 @@ function cambiarIdioma(lang){
   var el=document.getElementById('hero-sub');if(el)el.textContent=FRASES[lang][0];
   el=document.querySelector('.hero h1');if(el)el.textContent=t.h1;
   el=document.getElementById('hero-tag-text');if(el)el.textContent=t.heroTag;
+  el=document.getElementById('hero-tag-mobile');if(el)el.textContent=t.heroTag;
   // Nav desktop
   el=document.getElementById('nav-inicio');if(el)el.textContent='🏠 '+t.navInicio;
   el=document.getElementById('nav-historia');if(el)el.textContent='🐚 '+t.navHistoria;
@@ -9429,7 +9434,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v881";
+var _APP_VERSION = "v882";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11093,7 +11098,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v881</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v882</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
