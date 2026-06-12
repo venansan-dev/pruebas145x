@@ -9147,7 +9147,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v827";
+var _APP_VERSION = "v829";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -9157,7 +9157,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v827') === -1) {
+        if (key.indexOf('guia-compostelana-v829') === -1) {
           caches.delete(key);
         }
       });
@@ -9242,8 +9242,9 @@ if ('serviceWorker' in navigator) {
               var veces = posada ? 2 : 1;
               if (posada) window._ocaSetPosada(false, function(){});
               function _darCromo(n) {
-                window._ocaGenerarNumero(poi.id, function(num) {
+                _ocaGenerarConLock(poi.id, function(num) {
                   window._ocaProcesarCromo(num, poi.id, function(numFinal, tipo, extras) {
+                    _ocaLockLiberar(); // liberar lock DESPUÉS de guardar en DB
                     if (n === veces) {
                       mostrarToastCromo(poi, numFinal, tipo, extras, posada && veces===2);
                     } else {
@@ -9362,6 +9363,23 @@ if ('serviceWorker' in navigator) {
 
   // Generar número de cromo aleatorio según contexto del POI
   window._OCA_TABLERO = _OCA_TABLERO;
+  // Cola para evitar race conditions al generar cromos simultáneos
+  var _ocaGenerandoLock = false;
+  var _ocaGenerandoCola = [];
+  function _ocaGenerarConLock(poiId, cb) {
+    if (_ocaGenerandoLock) { _ocaGenerandoCola.push([poiId, cb]); return; }
+    _ocaGenerandoLock = true;
+    window._ocaGenerarNumero(poiId, function(num) {
+      cb(num);
+    });
+  }
+  function _ocaLockLiberar() {
+    _ocaGenerandoLock = false;
+    if (_ocaGenerandoCola.length > 0) {
+      var next = _ocaGenerandoCola.shift();
+      _ocaGenerarConLock(next[0], next[1]);
+    }
+  }
   window._ocaGenerarNumero = function(poiId, cb) {
     if (_POI_SANTIAGO.indexOf(poiId) >= 0) { cb(63); return; }
     var porTipo = {
@@ -10272,8 +10290,8 @@ function _ocaEliminarComunesAleatorio(n,cb){
 function _ocaAnadirAlMazo(n,poiId,cb){
   function uno(rest){
     if(rest<=0){if(cb)cb();return;}
-    window._ocaGenerarNumero(poiId||'',function(num){
-      window._ocaGuardarCromo(num,poiId||'',function(){uno(rest-1);});
+    _ocaGenerarConLock(poiId||'',function(num){
+      window._ocaGuardarCromo(num,poiId||'',function(){_ocaLockLiberar();uno(rest-1);});
     });
   }
   uno(n);
@@ -10462,12 +10480,16 @@ function _hardResetJuego(){
   box.querySelector('#hreset-confirmar').addEventListener('click',function(){
     box.innerHTML='<div style="font-size:28px;margin-bottom:12px">⏳</div><div style="font-size:14px;color:#fff">Borrando datos...</div>';
     // Timeout de seguridad: si algo falla, recargar igualmente tras 5s
-    var _safetyTimer=setTimeout(function(){window.location.href=window.location.href.split('?')[0]+'?_r='+Date.now();},5000);
+    var _safetyTimer=setTimeout(function(){
+      try{window.location.replace(window.location.href.split('?')[0]);}catch(e){window.location.reload();}
+    },5000);
     function _doReload(){
       clearTimeout(_safetyTimer);
-      overlay.remove();
-      mostrarToast('🗑️ Reset completado — recargando...');
-      setTimeout(function(){window.location.href=window.location.href.split('?')[0]+'?_r='+Date.now();},800);
+      overlay.innerHTML='<div style="font-size:28px;margin-bottom:12px">✅</div><div style="font-size:14px;color:#fff;font-family:DM Sans,sans-serif">Reset completado.<br>Recargando...</div>';
+      setTimeout(function(){
+        try{window.location.replace(window.location.href.split('?')[0]);}
+        catch(e1){try{window.location.reload(true);}catch(e2){window.location.reload();}}
+      },600);
     }
     // Estrategia móvil: vaciar stores uno a uno con la conexión existente
     // evita deleteDatabase que se bloquea en iOS/Android
@@ -10769,7 +10791,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v827</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v829</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
