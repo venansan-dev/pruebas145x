@@ -361,7 +361,7 @@
 
   <!-- Botón toggle alertas -->
   <button id='btn-alertas-toggle' onclick='abrirModalNotificaciones()' title='Notificaciones'
-    style='display:flex;position:absolute;bottom:36px;right:10px;z-index:400;width:36px;height:36px;background:#fff;border:1.5px solid rgba(0,0,0,0.15);border-radius:8px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.12);padding:0;font-size:18px;line-height:1'>🔔</button>
+    style='display:flex;position:absolute;bottom:36px;right:10px;z-index:400;width:36px;height:36px;background:#fff;border:1.5px solid rgba(0,0,0,0.15);border-radius:8px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.12);padding:0;font-size:18px;line-height:1'>⚙️</button>
   <!-- btn-go oculto para compatibilidad con JS existente -->
   <span id='ruta-bar-btn-go' style='display:none'></span>
   <!-- IDs ocultos para compatibilidad con JS existente -->
@@ -3058,13 +3058,15 @@ function activarNotificaciones() {
     alert(t2.notifBloqueadas||'Las notificaciones están bloqueadas. Actívalas en los ajustes del navegador para este sitio.');
     return;
   }
-  Notification.requestPermission().then(function(perm) {
-    if (perm === 'granted') {
-      notifActivadas = true;
-      actualizarBtnPrincipal();
-      iniciarProximidad();
-    }
-  });
+  try {
+    Notification.requestPermission().then(function(perm) {
+      if (perm === 'granted') {
+        notifActivadas = true;
+        actualizarBtnPrincipal();
+        iniciarProximidad();
+      }
+    }).catch(function(){});
+  } catch(e) {}
 }
 
 function desactivarNotificaciones() {
@@ -3285,9 +3287,9 @@ function _renderAlbumRecuerdos(grid, vacioCont) {
                 + '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(255,255,255,0.06) 0%,transparent 70%)"></div>'
                 + '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px">'
                 + '<div style="font-size:26px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5))">' + (v2.emoji||'📍') + '</div>'
-                + '<div style="display:flex;align-items:center;gap:3px;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:3px 6px;backdrop-filter:blur(4px)">'
-                + '<span style="font-size:9px">📷</span>'
-                + '<span style="font-size:7px;color:rgba(255,255,255,0.8);font-weight:600;letter-spacing:0.3px">Tu foto aquí</span>'
+                + '<div style="background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:5px 9px;backdrop-filter:blur(4px);text-align:center">'
+                + '<div style="font-size:14px;margin-bottom:2px">📷</div>'
+                + '<div style="font-size:9px;color:rgba(255,255,255,0.9);font-weight:700;letter-spacing:0.3px;line-height:1.3">Tu foto recuerdo aquí!</div>'
                 + '</div></div></div>';
             card.innerHTML = imgBlock
               + '<div style="padding:3px 5px 4px">'
@@ -4239,13 +4241,13 @@ function _actualizarBtnAlertas() {
   var unaOff=!_alertasFirebaseOn||!_cromosNotifOn;
   if(ambasOff){
     btn.style.background='#fecaca';btn.style.border='1.5px solid #ef4444';
-    btn.textContent='🔕';btn.title='Alertas y notificaciones desactivadas';
+    btn.textContent='⚙️';btn.title='Alertas y notificaciones desactivadas';
   } else if(unaOff){
     btn.style.background='#fef3c7';btn.style.border='1.5px solid #f59e0b';
-    btn.textContent='🔔';btn.title='Algunas notificaciones desactivadas';
+    btn.textContent='⚙️';btn.title='Algunas notificaciones desactivadas';
   } else {
     btn.style.background='#fff';btn.style.border='1.5px solid rgba(0,0,0,0.15)';
-    btn.textContent='🔔';btn.title='Notificaciones activas';
+    btn.textContent='⚙️';btn.title='Configuración de notificaciones';
   }
 }
 
@@ -4278,7 +4280,7 @@ function abrirModalNotificaciones(){
       +'<button id="notif-toggle-cromos" style="width:44px;height:26px;border-radius:13px;border:none;cursor:pointer;background:'+(n?'#1D9E75':'#d1d5db')+';position:relative;flex-shrink:0">'
       +'<span style="position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);left:'+(n?'21px':'3px')+'"></span>'
       +'</button></div>'
-      +'<button id="notif-cerrar" style="width:100%;margin-top:14px;background:#f3f4f6;color:#374151;border:none;border-radius:10px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cerrar</button>';
+      +'<button id="notif-accion-principal" style="width:100%;margin-top:10px;background:var(--verde);color:#fff;border:none;border-radius:10px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif" id="notif-accion-principal"></button>'      +'<button id="notif-cerrar" style="width:100%;margin-top:8px;background:#f3f4f6;color:#374151;border:none;border-radius:10px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cerrar</button>';
     box.querySelector('#notif-toggle-alertas').addEventListener('click',function(){
       _alertasFirebaseOn=!_alertasFirebaseOn;_actualizarBtnAlertas();renderBox();
     });
@@ -4288,6 +4290,15 @@ function abrirModalNotificaciones(){
       _actualizarBtnAlertas();renderBox();
     });
     box.querySelector('#notif-cerrar').addEventListener('click',function(){overlay.remove();});
+    var btnAP = box.querySelector('#notif-accion-principal');
+    if(btnAP){
+      var _esStandalone = (window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone;
+      var _notifOn = (typeof _cromosNotifOn!=='undefined'&&_cromosNotifOn)||(typeof _alertasFirebaseOn!=='undefined'&&_alertasFirebaseOn);
+      btnAP.textContent = _esStandalone
+        ? (_notifOn ? '✅ Avisos de proximidad activos' : '🔔 Activar avisos de proximidad')
+        : '📲 Instalar app para avisos de proximidad';
+      btnAP.addEventListener('click',function(){overlay.remove();accionBtnPrincipal();});
+    }
   }
   renderBox();
   overlay.appendChild(box);document.body.appendChild(overlay);
@@ -9162,7 +9173,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v843";
+var _APP_VERSION = "v846";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -9172,7 +9183,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v843') === -1) {
+        if (key.indexOf('guia-compostelana-v846') === -1) {
           caches.delete(key);
         }
       });
@@ -10815,7 +10826,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v843</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v846</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
