@@ -844,7 +844,7 @@
               <div style='flex:1'><span style='font-size:11px;font-weight:700;color:#0F6E56'>Peregrino</span> <span style='font-size:10px;color:#9CA3AF'>20–34 · La vieira te reconoce</span></div>
             </div>
             <div style='display:flex;align-items:center;gap:8px;background:#FFFBEB;border-radius:8px;padding:5px 8px'>
-              <span style='font-size:15px'>🪿</span>
+              <span style='font-size:15px'>🦢</span>
               <div style='flex:1'><span style='font-size:11px;font-weight:700;color:#D97706'>Veterano</span> <span style='font-size:10px;color:#9CA3AF'>35–59 · Conoces cada piedra del camino</span></div>
             </div>
             <div style='display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,#1a0e2e,#3b1f6a);border-radius:8px;padding:5px 8px'>
@@ -862,7 +862,7 @@
           <div style='font-size:11px;color:rgba(255,255,255,0.65);line-height:1.6;margin-bottom:8px'>Al visitar cualquier lugar obtienes un cromo aleatorio del <strong style='color:#fff'>Juego de la Oca Jacobeo</strong> — 63 casillas inspiradas en el tablero que los medievales usaban para peregrinar. Colecciona los 63. El cromo nº 63 solo se obtiene en Santiago.</div>
           <div style='font-size:11px;font-weight:600;color:rgba(255,255,255,0.85);margin-bottom:6px'>Las casillas especiales</div>
           <div style='display:flex;flex-direction:column;gap:3px;margin-bottom:8px'>
-            <div style='display:flex;align-items:flex-start;gap:6px;font-size:10px;color:rgba(255,255,255,0.65);line-height:1.5'><span style='flex-shrink:0'>🪿</span><span><strong style='color:#6ee7b7'>Oca</strong> — Solo en lugares templarios y masónicos. Te da un cromo extra.</span></div>
+            <div style='display:flex;align-items:flex-start;gap:6px;font-size:10px;color:rgba(255,255,255,0.65);line-height:1.5'><span style='flex-shrink:0'>🦢</span><span><strong style='color:#6ee7b7'>Oca</strong> — Solo en lugares templarios y masónicos. Te da un cromo extra.</span></div>
             <div style='display:flex;align-items:flex-start;gap:6px;font-size:10px;color:rgba(255,255,255,0.65);line-height:1.5'><span style='flex-shrink:0'>🌉</span><span><strong style='color:#93c5fd'>Puente</strong> — El camino tiene dos caras: puede sumarte o quitarte un cromo.</span></div>
             <div style='display:flex;align-items:flex-start;gap:6px;font-size:10px;color:rgba(255,255,255,0.65);line-height:1.5'><span style='flex-shrink:0'>🏨</span><span><strong style='color:#fbbf24'>Posada</strong> — Descansas. Sin cromo ahora, pero el próximo lugar te da doble.</span></div>
             <div style='display:flex;align-items:flex-start;gap:6px;font-size:10px;color:rgba(255,255,255,0.65);line-height:1.5'><span style='flex-shrink:0'>🎲</span><span><strong style='color:#a78bfa'>Dados</strong> — ¿Guardas el cromo o pruebas suerte con otro aleatorio?</span></div>
@@ -9147,7 +9147,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v824";
+var _APP_VERSION = "v825";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -9157,7 +9157,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v824') === -1) {
+        if (key.indexOf('guia-compostelana-v825') === -1) {
           caches.delete(key);
         }
       });
@@ -9206,8 +9206,9 @@ if ('serviceWorker' in navigator) {
     };
     req.onsuccess = function(e) {
       _db = e.target.result;
+      window._albumDB = _db; // exponer para hard reset
       // Resetear _db si otra pestaña cierra la BD
-      _db.onversionchange = function() { _db.close(); _db = null; };
+      _db.onversionchange = function() { _db.close(); _db = null; window._albumDB = null; };
       cb(_db);
     };
     req.onerror   = function(e) { console.warn('AlbumDB: error al abrir', e.target.error); };
@@ -9272,61 +9273,61 @@ if ('serviceWorker' in navigator) {
     2: {tipo:'normal',   emoji:'🐚', label:'Casilla II',      latin:'Surge et ambula',                 trad:'Levántate y camina'},
     3: {tipo:'normal',   emoji:'🐚', label:'Casilla III',     latin:'Primus passus longissimus',       trad:'El primer paso es el más largo'},
     4: {tipo:'normal',   emoji:'🐚', label:'Casilla IV',      latin:'Porta aperta manet',              trad:'La puerta permanece abierta'},
-    5: {tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'De ansere in anserem',            trad:'De oca en oca'},
+    5: {tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'De ansere in anserem',            trad:'De oca en oca'},
     6: {tipo:'puente',   emoji:'🌉', label:'El Puente',       latin:'Pons et via',                     trad:'El puente y el camino'},
     7: {tipo:'normal',   emoji:'🐚', label:'Casilla VII',     latin:'Dum calcas, vives',               trad:'Mientras caminas, vives'},
     8: {tipo:'normal',   emoji:'🐚', label:'Casilla VIII',    latin:'Via veritas lux',                 trad:'Camino, verdad, luz'},
-    9: {tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'Iterum vola, peregrino',          trad:'Vuela de nuevo, peregrino'},
+    9: {tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'Iterum vola, peregrino',          trad:'Vuela de nuevo, peregrino'},
     10:{tipo:'normal',   emoji:'🐚', label:'Casilla X',       latin:'Fac et spera',                    trad:'Haz y espera'},
     11:{tipo:'normal',   emoji:'🐚', label:'Casilla XI',      latin:'Peregrinus sum',                  trad:'Soy peregrino'},
     12:{tipo:'puente',   emoji:'🌉', label:'El Puente',       latin:'Flumina transeunda sunt',         trad:'Los ríos han de cruzarse'},
     13:{tipo:'normal',   emoji:'🐚', label:'Casilla XIII',    latin:'Corpus lassatur, animus crescit', trad:'El cuerpo se cansa, el alma crece'},
-    14:{tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'Templum in pectore portas',       trad:'Llevas el templo en el pecho'},
+    14:{tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'Templum in pectore portas',       trad:'Llevas el templo en el pecho'},
     15:{tipo:'normal',   emoji:'🐚', label:'Casilla XV',      latin:'Iter longum, fides brevis',       trad:'Largo el camino, corta la fe'},
     16:{tipo:'normal',   emoji:'🐚', label:'Casilla XVI',     latin:'Calcando saxa, calcando stellas', trad:'Pisando piedras, pisando estrellas'},
     17:{tipo:'normal',   emoji:'🐚', label:'Casilla XVII',    latin:'Non recedo',                      trad:'No me rindo'},
-    18:{tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'Signum electorum',                trad:'Señal de los elegidos'},
+    18:{tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'Signum electorum',                trad:'Señal de los elegidos'},
     19:{tipo:'posada',   emoji:'⛺', label:'La Posada',       latin:'Quiesce, peregrino',              trad:'Descansa, peregrino'},
     20:{tipo:'normal',   emoji:'🐚', label:'Casilla XX',      latin:'Media via est',                   trad:'Estás a mitad del camino'},
     21:{tipo:'normal',   emoji:'🐚', label:'Casilla XXI',     latin:'Nunc aut numquam',                trad:'Ahora o nunca'},
     22:{tipo:'normal',   emoji:'🐚', label:'Casilla XXII',    latin:'Paulatim ergo certe',             trad:'Despacio pero seguro'},
-    23:{tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'Iter felix sit tibi',             trad:'Que te sea feliz el viaje'},
+    23:{tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'Iter felix sit tibi',             trad:'Que te sea feliz el viaje'},
     24:{tipo:'normal',   emoji:'🐚', label:'Casilla XXIV',    latin:'Ora et ambula',                   trad:'Reza y camina'},
     25:{tipo:'normal',   emoji:'🐚', label:'Casilla XXV',     latin:'Per pedes apostolorum',           trad:'Por los pasos de los apóstoles'},
     26:{tipo:'dados',    emoji:'🎲', label:'Los Dados',       latin:'Alea iacta est',                  trad:'La suerte está echada'},
-    27:{tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'Signum Templi portas',            trad:'Llevas el signo del Temple'},
+    27:{tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'Signum Templi portas',            trad:'Llevas el signo del Temple'},
     28:{tipo:'normal',   emoji:'🐚', label:'Casilla XXVIII',  latin:'Omnia munda mundis',              trad:'Todo es puro para el puro'},
     29:{tipo:'normal',   emoji:'🐚', label:'Casilla XXIX',    latin:'Virtus in itinere',               trad:'La virtud está en el camino'},
     30:{tipo:'normal',   emoji:'🐚', label:'Casilla XXX',     latin:'Fessus sed non victus',           trad:'Cansado pero no vencido'},
     31:{tipo:'posada',   emoji:'⛺', label:'La Posada',       latin:'Hospes eras, hospes eris',        trad:'Fuiste huésped, serás huésped'},
-    32:{tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'Per lucem ad tenebras',           trad:'Por la luz hacia las tinieblas'},
+    32:{tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'Per lucem ad tenebras',           trad:'Por la luz hacia las tinieblas'},
     33:{tipo:'normal',   emoji:'🐚', label:'Casilla XXXIII',  latin:'Lux in tenebris lucet',           trad:'La luz brilla en las tinieblas'},
     34:{tipo:'normal',   emoji:'🐚', label:'Casilla XXXIV',   latin:'Spem in alium pone',              trad:'Pon la esperanza en otro'},
     35:{tipo:'normal',   emoji:'🐚', label:'Casilla XXXV',    latin:'Gressu tuo duce',                 trad:'Guíate por tus propios pasos'},
-    36:{tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'Sanctus Iacobus te vocat',        trad:'Santiago te llama'},
+    36:{tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'Sanctus Iacobus te vocat',        trad:'Santiago te llama'},
     37:{tipo:'normal',   emoji:'🐚', label:'Casilla XXXVII',  latin:'Caelum, non animum, mutant',      trad:'Cambian el cielo, no el alma'},
     38:{tipo:'normal',   emoji:'🐚', label:'Casilla XXXVIII', latin:'Memento mori, memento vivere',    trad:'Recuerda morir, recuerda vivir'},
     39:{tipo:'normal',   emoji:'🐚', label:'Casilla XXXIX',   latin:'In silentio et spe',              trad:'En silencio y esperanza'},
     40:{tipo:'normal',   emoji:'🐚', label:'Casilla XL',      latin:'Viam inveniam',                   trad:'Encontraré el camino'},
-    41:{tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'Stella te ducit',                 trad:'La estrella te guía'},
+    41:{tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'Stella te ducit',                 trad:'La estrella te guía'},
     42:{tipo:'laberinto',emoji:'🌀', label:'El Laberinto',    latin:'Errando discitur via',            trad:'Errando se aprende el camino'},
     43:{tipo:'normal',   emoji:'🐚', label:'Casilla XLIII',   latin:'Nusquam est qui ubique est',      trad:'El que está en todas partes no está en ninguna'},
     44:{tipo:'normal',   emoji:'🐚', label:'Casilla XLIV',    latin:'Gradatim ferociter',              trad:'Paso a paso, con fiereza'},
-    45:{tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'Lapis angularis',                 trad:'La piedra angular'},
+    45:{tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'Lapis angularis',                 trad:'La piedra angular'},
     46:{tipo:'normal',   emoji:'🐚', label:'Casilla XLVI',    latin:'Iam prope es',                    trad:'Ya estás cerca'},
     47:{tipo:'normal',   emoji:'🐚', label:'Casilla XLVII',   latin:'Pauca sed bona',                  trad:'Pocas cosas pero buenas'},
     48:{tipo:'normal',   emoji:'🐚', label:'Casilla XLVIII',  latin:'Sicut aquila renovabitur',        trad:'Como el águila se renovará'},
     49:{tipo:'normal',   emoji:'🐚', label:'Casilla XLIX',    latin:'Ultima meta appropinquat',        trad:'La meta final se acerca'},
-    50:{tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'Quasi modo natus',                trad:'Como recién nacido'},
+    50:{tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'Quasi modo natus',                trad:'Como recién nacido'},
     51:{tipo:'normal',   emoji:'🐚', label:'Casilla LI',      latin:'Tenax propositi',                 trad:'Firme en el propósito'},
     52:{tipo:'carcel',   emoji:'⛓️',  label:'La Cárcel',      latin:'Manet immotus',                   trad:'Permanece inmóvil'},
     53:{tipo:'dados',    emoji:'🎲', label:'Los Dados',       latin:'Fortunam tempta',                 trad:'Tienta a la fortuna'},
-    54:{tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'Ad finem properas',               trad:'Te apresuras hacia el final'},
+    54:{tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'Ad finem properas',               trad:'Te apresuras hacia el final'},
     55:{tipo:'normal',   emoji:'🐚', label:'Casilla LV',      latin:'Paucis a fine',                   trad:'A pocos pasos del final'},
     56:{tipo:'normal',   emoji:'🐚', label:'Casilla LVI',     latin:'Non desistas',                    trad:'No te detengas'},
     57:{tipo:'normal',   emoji:'🐚', label:'Casilla LVII',    latin:'Porta Sancti Iacobi',             trad:'La puerta de Santiago'},
     58:{tipo:'muerte',   emoji:'💀', label:'La Muerte',       latin:'Moriendum est',                   trad:'Hay que morir — sed resurges'},
-    59:{tipo:'oca',      emoji:'🪿', label:'La Oca',          latin:'Ultima oca ante finem',           trad:'La última oca antes del final'},
+    59:{tipo:'oca',      emoji:'🦢', label:'La Oca',          latin:'Ultima oca ante finem',           trad:'La última oca antes del final'},
     60:{tipo:'normal',   emoji:'🐚', label:'Casilla LX',      latin:'Prope iam adsum',                 trad:'Ya estoy casi aquí'},
     61:{tipo:'normal',   emoji:'🐚', label:'Casilla LXI',     latin:'Cor meum ardet',                  trad:'Mi corazón arde'},
     62:{tipo:'normal',   emoji:'🐚', label:'Casilla LXII',    latin:'Ad ostium gloriae',               trad:'A las puertas de la gloria'},
@@ -9554,7 +9555,7 @@ if ('serviceWorker' in navigator) {
     { min:4,  max:9,  emoji:'🎒', label:'Mochilero' },
     { min:10, max:19, emoji:'👣', label:'Caminante' },
     { min:20, max:34, emoji:'🐚', label:'Peregrino' },
-    { min:35, max:59, emoji:'🪿', label:'Veterano'  },
+    { min:35, max:59, emoji:'🦢', label:'Veterano'  },
     { min:60, max:999,emoji:'🏆', label:'Ultreia'   }
   ];
   window.RANGOS = RANGOS;
@@ -10458,8 +10459,11 @@ function _hardResetJuego(){
   box.querySelector('#hreset-cancelar').addEventListener('click',function(){overlay.remove();});
   box.querySelector('#hreset-confirmar').addEventListener('click',function(){
     box.innerHTML='<div style="font-size:28px;margin-bottom:12px">⏳</div><div style="font-size:14px;color:#fff">Borrando datos...</div>';
+    // Cerrar conexión DB abierta para evitar bloqueo en iOS/Android
+    if(window._albumDB){try{window._albumDB.close();}catch(e){}window._albumDB=null;}
+    setTimeout(function(){
     var req=indexedDB.deleteDatabase('album-peregrino');
-    req.onsuccess=req.onerror=function(){
+    req.onsuccess=req.onerror=req.onblocked=function(){
       function _doReload(){
         overlay.remove();
         mostrarToast('🗑️ Reset completado — recargando...');
@@ -10478,6 +10482,7 @@ function _hardResetJuego(){
         }).then(_clearCachesAndReload).catch(_clearCachesAndReload);
       } else { _clearCachesAndReload(); }
     };
+    }, 300); // espera cierre DB
   });
 }
 
@@ -10738,7 +10743,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v824</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v825</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
