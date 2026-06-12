@@ -52,7 +52,7 @@
 
   <meta name="theme-color" content="#1D9E75"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
   <meta name="apple-mobile-web-app-title" content="Guía Xacobea Ultreia"/>
   <link rel="manifest" href="/guia-compostelana/manifest.json"/>
   <link rel="apple-touch-icon" sizes="180x180" href="/guia-compostelana/apple-touch-icon.png?v=4"/>
@@ -1004,7 +1004,7 @@
     </div>
     <!-- Estadísticas por categoría -->
     <div style='flex-shrink:0'>
-      <div style='font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px'>Estadísticas</div>
+      <div id='ranking-stats-label' style='font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px'>Estadísticas</div>
       <div id='ap-stats' style='display:grid;grid-template-columns:1fr 1fr;gap:6px'></div>
     </div>
 
@@ -1036,7 +1036,7 @@
         <div style='font-size:9px;color:rgba(255,255,255,0.18);font-style:italic;letter-spacing:0.3px'>Sistema de juego GCU © 2025</div>
         <div style='font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:0.5px'>Guía Xacobea Ultreia</div>
       </div>
-      <button onclick='_hardResetJuego()' style='width:100%;background:rgba(220,38,38,0.15);color:rgba(252,165,165,0.8);border:1px solid rgba(220,38,38,0.3);border-radius:10px;padding:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif'>🗑️ Hard Reset — borrar cromos y visitas</button>
+      <button id='tablero-hard-reset-btn' onclick='_hardResetJuego()' style='width:100%;background:rgba(220,38,38,0.15);color:rgba(252,165,165,0.8);border:1px solid rgba(220,38,38,0.3);border-radius:10px;padding:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif'>🗑️ Hard Reset — borrar cromos y visitas</button>
     </div>
   </div>
 </div>
@@ -1079,10 +1079,6 @@
     <div class='cat-chip' id='chip-usuario' style='display:none'><span id='chip-usuario-txt'></span></div>
     <div class='cat-chip' id='chip-etapas-costa'><span id='chip-etapas-costa-txt'></span></div>
     <div class='cat-chip' id='chip-etapas-interior'><span id='chip-etapas-interior-txt'></span></div>
-    <div class='cat-chip' id='chip-etapas-frances'><span id='chip-etapas-frances-txt'></span></div>
-    <div class='cat-chip' id='chip-etapas-norte'><span id='chip-etapas-norte-txt'></span></div>
-    <div class='cat-chip' id='chip-etapas-primitivo'><span id='chip-etapas-primitivo-txt'></span></div>
-    <div class='cat-chip' id='chip-etapas-ingles'><span id='chip-etapas-ingles-txt'></span></div>
     <div class='cat-chip' id='chip-etapas-frances'><span id='chip-etapas-frances-txt'></span></div>
     <div class='cat-chip' id='chip-etapas-norte'><span id='chip-etapas-norte-txt'></span></div>
     <div class='cat-chip' id='chip-etapas-primitivo'><span id='chip-etapas-primitivo-txt'></span></div>
@@ -1662,6 +1658,51 @@ var PUNTOS = [
   // ═══════════════════════════════════════════
   //  ETAPAS — CAMINO DE SANTIAGO
   // ═══════════════════════════════════════════
+  { id:'etapa-costa-p1', orden:-4, nombre:'Etapa P1 · Oporto → Vila do Conde', nombre_gl:'Etapa P1 · Oporto → Vila do Conde', nombre_en:'Stage P1 · Porto → Vila do Conde',
+    categoria:'etapa', variante:'costa', km:28, desnivel_pos:350, desnivel_neg:350, dificultad:'Baja',
+    lat:41.1433, lng:-8.6117,
+    descripcion:'El Camino Portugués de la Costa nace en la Sé do Porto, la catedral románica que domina la ribera del Duero desde el siglo XII. Desde allí el peregrino desciende hacia el Atlántico siguiendo el río hasta Matosinhos —muchos optan por el metro para saltarse los once kilómetros urbanos iniciales, sin que el Apóstol parezca molestarse por ello— y desde la primera visión del océano no lo abandona en todo el día. La etapa avanza por pasarelas de madera sobre las dunas, paseos marítimos, aldeas de pescadores y el faro de Leça da Palmeira, el segundo más alto de Portugal. El desnivel es casi inexistente: la costa dicta aquí su propia geometría. Vila do Conde, con su convento de Santa Clara, su acueducto y su fortaleza de São João, espera al final como recompensa monumental de una jornada que inaugura uno de los Caminos más bellos del mundo.',
+    descripcion_gl:'O Camiño Portugués da Costa nace na Sé do Porto, a catedral románica que domina a ribeira do Douro desde o século XII. Desde alí o peregrino descende cara ao Atlántico e desde a primeira visión do océano non o abandona en todo o día. A etapa avanza por pasarelas de madeira sobre as dunas, paseos marítimos e aldeas de pescadores. Vila do Conde, co seu convento de Santa Clara, o seu acueduto e a súa fortaleza de São João, agarda ao final.',
+    descripcion_en:'The Coastal Portuguese Way begins at the Sé do Porto, the Romanesque cathedral overlooking the Douro since the 12th century. From there the pilgrim descends to the Atlantic — many take the metro to skip the first eleven urban kilometres, apparently without apostolic objection — and from the first glimpse of the ocean never leaves it. The stage advances along wooden boardwalks over dunes, seafront promenades and fishing villages past the Leça da Palmeira lighthouse, Portugal\'s second tallest. Vila do Conde, with its Santa Clara convent, aqueduct and São João fortress, awaits at the end.',
+    subtitulo:'El Atlántico desde el primer paso', subtitulo_gl:'O Atlántico desde o primeiro paso', subtitulo_en:'The Atlantic from the very first step',
+    emoji:'🥾', color:'azul' },
+
+  { id:'etapa-costa-p2', orden:-3, nombre:'Etapa P2 · Vila do Conde → Esposende', nombre_gl:'Etapa P2 · Vila do Conde → Esposende', nombre_en:'Stage P2 · Vila do Conde → Esposende',
+    categoria:'etapa', variante:'costa', km:24, desnivel_pos:180, desnivel_neg:180, dificultad:'Baja',
+    lat:41.3568, lng:-8.7455,
+    descripcion:'De Vila do Conde a Esposende el Camino se adentra en la naturaleza más pura del litoral norteño portugués. Tras cruzar el río Ave y dejar atrás la animada Póvoa de Varzim —escala inevitable para el pescado fresco y las extensas playas— la ruta penetra en el Parque Natural do Litoral Norte, donde dunas de fino cuarzo, pinares fragantes y marismas protegidas crean un paisaje que parece ajeno al siglo en que se camina. Entre Apúlia y Fão, el viento del norte —la nortada— puede convertir estos kilómetros llanos en una prueba de resistencia inesperada. La llegada a Esposende se anuncia con la silueta de la Fortaleza de São João Baptista en la desembocadura del río Cávado: un último guiño atlántico antes de que la ruta gire hacia el interior en la etapa siguiente.',
+    descripcion_gl:'De Vila do Conde a Esposende o Camiño adéntrase na natureza máis pura do litoral norteño portugués. Logo de cruzar o río Ave e deixar atrás a animada Póvoa de Varzim, a ruta penetra no Parque Natural do Litoral Norte, onde dunas, pinares e marismas protexidas crean unha paisaxe que semella allea ao século no que se camiña. A chegada a Esposende anúnciase coa silueta da Fortaleza de São João Baptista na desembocadura do río Cávado.',
+    descripcion_en:'From Vila do Conde to Esposende the Way enters the purest nature of the northern Portuguese coast. After crossing the River Ave and leaving lively Póvoa de Varzim behind, the route penetrates the Litoral Norte Natural Park, where fine quartz dunes, fragrant pinewoods and protected marshes create a landscape seemingly indifferent to the century one walks in. The north wind — the nortada — can turn these flat kilometres into an unexpected test of endurance. Arrival in Esposende is heralded by the silhouette of the Forte de São João Baptista at the mouth of the River Cávado.',
+    subtitulo:'Dunas, pinares y el viento del norte', subtitulo_gl:'Dunas, pinares e o vento do norte', subtitulo_en:'Dunes, pinewoods and the north wind',
+    emoji:'🥾', color:'azul' },
+
+  { id:'etapa-costa-p3', orden:-2, nombre:'Etapa P3 · Esposende → Viana do Castelo', nombre_gl:'Etapa P3 · Esposende → Viana do Castelo', nombre_en:'Stage P3 · Esposende → Viana do Castelo',
+    categoria:'etapa', variante:'costa', km:25, desnivel_pos:320, desnivel_neg:300, dificultad:'Media',
+    lat:41.5339, lng:-8.7833,
+    descripcion:'La etapa de Esposende a Viana do Castelo alterna con elegancia la apertura costera con la intimidad del interior rural portugués. El camino abandona las dunas y avanza por pequeñas aldeas, campos de maíz y senderos que cruzan la desembocadura del río Neiva —uno de los momentos más hermosos de toda la ruta— antes de retornar al litoral para los kilómetros finales. La entrada a Viana do Castelo por el puente metálico del siglo XIX, obra inspirada en el método constructivo de Gustave Eiffel, es una de las imágenes más reconocibles del Camino de la Costa: el peregrino cruza el Lima sobre el hierro y la ciudad le abre su casco histórico barroco, la catedral gótica y el Santuario de Santa Luzia, accesible en funicular o a pie por un sendero de cipreses con vistas que compensan con creces el esfuerzo.',
+    descripcion_gl:'A etapa de Esposende a Viana do Castelo alterna a apertura costeira coa intimidade do interior rural portugués. A entrada a Viana do Castelo polo ponte metálico do século XIX, obra inspirada no método construtivo de Gustave Eiffel, é unha das imaxes máis recoñecibles do Camiño da Costa. O peregrino cruza o Lima sobre o ferro e a cidade ábrelle o seu casco histórico barroco e a catedral gótica.',
+    descripcion_en:'The stage from Esposende to Viana do Castelo alternates elegantly between coastal openness and the intimacy of the Portuguese rural interior. The entry to Viana do Castelo across the 19th-century metal bridge, built in the Eiffel constructive tradition, is one of the most recognisable images of the Coastal Way: the pilgrim crosses the Lima on iron and the city opens its Baroque historic centre, Gothic cathedral and the Sanctuary of Santa Luzia — reachable by funicular or on foot through a cypress path with views that more than repay the effort.',
+    subtitulo:'El puente de hierro y la ciudad del Lima', subtitulo_gl:'A ponte de ferro e a cidade do Lima', subtitulo_en:'The iron bridge and the city of the Lima',
+    emoji:'🥾', color:'azul' },
+
+  { id:'etapa-costa-p4', orden:-1, nombre:'Etapa P4 · Viana do Castelo → Caminha', nombre_gl:'Etapa P4 · Viana do Castelo → Caminha', nombre_en:'Stage P4 · Viana do Castelo → Caminha',
+    categoria:'etapa', variante:'costa', km:28, desnivel_pos:390, desnivel_neg:390, dificultad:'Media-Alta',
+    lat:41.6908, lng:-8.8272,
+    descripcion:'La última etapa íntegramente portuguesa es también la más variada y exigente del tramo luso. El camino sale de Viana por el Santuario de Santa Luzia y affronta un perfil montañoso de sierra baja que nada tiene que ver con las etapas anteriores: senderos de monte, calzadas empedradas irregulares y vistas al estuario del Lima y al Atlántico recompensan el esfuerzo cardiovascular. En Vila Praia de Âncora existe una bifurcación: la senda litoral, plana y directa, o el trazado de montaña que suma desnivel pero ofrece panorámicas excepcionales. Caminha espera al final como uno de los conjuntos históricos más bellos del norte de Portugal, en el estuario del Miño, mirando a Galicia. El ferry a A Guarda —sujeto a horarios y a las condiciones del mar— cierra el tramo portugués con el cruce de frontera más singular de todo el Camino.',
+    descripcion_gl:'A última etapa íntegramente portuguesa é tamén a máis variada e esixente do tramo luso. O camiño afronta un perfil montañoso de serra baixa con sendeiros de monte e calzadas empedradas irregulares. Caminha agarda ao final como un dos conxuntos históricos máis belos do norte de Portugal, no estuario do Miño, mirando a Galicia. O ferry a A Guarda pecha o tramo portugués co cruce de fronteira máis singular de todo o Camiño.',
+    descripcion_en:'The last entirely Portuguese stage is also the most varied and demanding of the Portuguese section. The path faces a low mountain profile with mountain tracks and irregular cobbled causeways. Caminha awaits at the end as one of the most beautiful historic ensembles in northern Portugal, on the Minho estuary facing Galicia. The ferry to A Guarda — subject to timetables and sea conditions — closes the Portuguese section with the most singular border crossing on the entire Camino.',
+    subtitulo:'La despedida de Portugal por el Miño', subtitulo_gl:'A despedida de Portugal polo Miño', subtitulo_en:'Portugal\'s farewell across the Minho',
+    emoji:'🥾', color:'azul' },
+
+  { id:'etapa-costa-p5', orden:0, nombre:'Etapa P5 · Caminha → A Guarda (ferry)', nombre_gl:'Etapa P5 · Caminha → A Guarda (ferry)', nombre_en:'Stage P5 · Caminha → A Guarda (ferry)',
+    categoria:'etapa', variante:'costa', km:9, desnivel_pos:120, desnivel_neg:80, dificultad:'Baja',
+    lat:41.8730, lng:-8.8392,
+    descripcion:'La etapa más corta del Camino Portugués de la Costa es también la más simbólica. El ferry que cruza el estuario del Miño entre Caminha y A Guarda separa en unos minutos de navegación dos mundos que comparten una misma alma: Portugal y Galicia, el río que fue frontera y nunca dejó de ser encuentro. En la orilla española, A Guarda recibe al peregrino con el peso histórico del Castro de Santa Trega —uno de los castros celtas más importantes del noroeste peninsular, habitado hace dos mil años por quienes miraban el mismo Atlántico— y con la iglesia de Santa María, punto de arranque de la etapa hacia Baiona. Es aquí donde el Camino de la Costa toca tierra gallega por primera vez y donde la bota azul del peregrino pisa un suelo que ya conoce el peso de un millón de pasos hacia Compostela.',
+    descripcion_gl:'O ferry que cruza o estuario do Miño entre Caminha e A Guarda separa en poucos minutos de navegación dous mundos que comparten unha mesma alma: Portugal e Galicia. En A Guarda, o Castro de Santa Trega —un dos castros celtas máis importantes do noroeste peninsular— e a igrexa de Santa María reciben ao peregrino. É aquí onde o Camiño da Costa toca terra galega por primeira vez.',
+    descripcion_en:'The shortest stage of the Coastal Portuguese Way is also the most symbolic. The ferry crossing the Minho estuary between Caminha and A Guarda separates in a few minutes of sailing two worlds that share a single soul: Portugal and Galicia. On the Spanish bank, A Guarda receives the pilgrim with the historical weight of the Castro de Santa Trega and the church of Santa María, starting point of the stage to Baiona.',
+    subtitulo:'El ferry que une dos mundos', subtitulo_gl:'O ferry que une dous mundos', subtitulo_en:'The ferry that unites two worlds',
+    emoji:'⛴️', color:'azul' },
+
   { id:'etapa-costa-1', orden:1, nombre:'Etapa 1 · A Guarda → Baiona', nombre_gl:'Etapa 1 · A Guarda → Baiona', nombre_en:'Stage 1 · A Guarda → Baiona',
     categoria:'etapa', variante:'costa', km:28, desnivel_pos:420, desnivel_neg:390, dificultad:'Media',
     lat:41.9027, lng:-8.8722,
@@ -2531,6 +2572,182 @@ var PUNTOS = [
     descripcion_en:'León Cathedral has the largest collection of medieval stained glass in Spain, with 1800 square metres of windows from the 13th to 20th century.',
     lat:42.5990, lng:-5.5682, emoji:'🌈', color:'azul' },
 
+
+  // ── TOMO II — LA RIOJA ──────────────────────────────────────────────────
+
+
+  { id:'iglesia-san-saturnino-ventosa', nombre:'Iglesia de San Saturnino - Ventosa', nombre_gl:'Igrexa de San Saturnino - Ventosa', nombre_en:'Church of San Saturnino - Ventosa', categoria:'localización histórica',
+    descripcion:'Ventosa se alza sobre un cerro que domina los viñedos de la Rioja Alta como una atalaya entre Navarrete y Nájera. El Camino Francés atraviesa sus calles desde hace más de mil años, y la iglesia de San Saturnino corona el altozano con la autoridad callada de quien ha visto pasar generaciones enteras de peregrinos. Las primeras menciones documentales del lugar datan del siglo XI: el rey Sancho III el Mayor cedió la villa al Monasterio de San Millán en 1020, y el topónimo figura ya en el Fuero de Nájera, uno de los fundamentos de la organización municipal española. Por aquellas fechas existía en Ventosa un hospital de peregrinos, testimonio de que la localidad desempeñó desde época temprana un papel activo en la asistencia al caminante. El templo actual, construido en sillería con planta de cruz latina y portada gótica del siglo XVI, conserva en su interior bóvedas de crucería originales y un retablo mayor de principios del XVII obra conjunta del arquitecto Martín de Nalda y el escultor Antonio de Zárraga. Una talla de Cristo yacente del siglo XIV recuerda que aquí, antes de que la piedra tomara su forma actual, hubo un lugar de oración mucho más antiguo.',
+    subtitulo:'Mil años de paso peregrino sobre el viñedo riojano', subtitulo_gl:'Mil anos de paso peregrino sobre o viñedo rioxano', subtitulo_en:'A thousand years of pilgrim passage over the Rioja vineyard',
+    descripcion_gl:'Ventosa álzase sobre un cerro que domina os viñedos da Rioxa Alta coma unha atalaia entre Navarrete e Nájera. O Camiño Francés atravesa as súas rúas desde hai máis de mil anos. As primeiras mencións documentais do lugar datan do século XI: o rei Sancho III o Maior cedeu a vila ao Mosteiro de San Millán en 1020. Por aquelas datas existía en Ventosa un hospital de peregrinos, testemuño de que a localidade desempeñou desde época temperá un papel activo na asistencia ao camiñante.',
+    descripcion_en:'Ventosa rises on a hill dominating the vineyards of the Rioja Alta like a watchtower between Navarrete and Nájera. The French Way has passed through its streets for over a thousand years. The earliest documentary mentions date from the 11th century: King Sancho III the Great granted the village to the Monastery of San Millán in 1020. At that time Ventosa already had a pilgrim hospital, evidence that the settlement played an active role in assisting wayfarers from an early date.',
+    lat:42.4039, lng:-2.6264, emoji:'⛪', color:'verde' },
+
+  { id:'iglesia-angeles-azofra', nombre:'Iglesia de Nuestra Señora de los Ángeles - Azofra', nombre_gl:'Igrexa de Nosa Señora dos Anxos - Azofra', nombre_en:'Church of Our Lady of the Angels - Azofra', categoria:'localización histórica',
+    descripcion:'Noble villa de orígenes árabes —el topónimo deriva del árabe al-sufra, "la mesa"— Azofra es uno de esos pueblos del Camino cuya historia se mide en pasos de peregrino. Su estructura urbana de villa-calle, alargada en torno a la Calle Mayor, es el plano fósil de una localidad que creció para recibir a quienes pasaban, no para quedarse. En el año 1168 doña Isabel fundó aquí un hospital de peregrinos con su propia iglesia dedicada a San Pedro y cementerio propio para quienes morían en el Camino sin llegar a su destino. Ese hospital perduró hasta el siglo XIX. La iglesia actual, dedicada a Nuestra Señora de los Ángeles y construida entre los siglos XVII y XVIII, alberga un retablo mayor de mediados del XVII con una imagen del Apóstol Santiago Peregrino presidiendo el tercer cuerpo —gesto elocuente de una comunidad que siempre supo a qué debía su existencia. En el centro de la villa, sobre su pequeño altozano, la iglesia sigue siendo el corazón espiritual y visual de Azofra, exactamente como lo fue para los miles de peregrinos medievales que pasaron a su sombra.',
+    subtitulo:'La villa que nació para el peregrino', subtitulo_gl:'A vila que naceu para o peregrino', subtitulo_en:'The village born for the pilgrim',
+    descripcion_gl:'Nobre vila de orixes árabes, Azofra é un deses pobos do Camiño cuxa historia se mide en pasos de peregrino. No ano 1168 dona Isabel fundou aquí un hospital de peregrinos con igrexa propia dedicada a San Pedro e cemiterio para quen morría no Camiño sen chegar ao seu destino. A igrexa actual, dedicada a Nosa Señora dos Anxos e construída entre os séculos XVII e XVIII, alberga un retablo maior de mediados do XVII cunha imaxe do Apóstolo Santiago Peregrino presidindo o terceiro corpo.',
+    descripcion_en:'A noble village of Arab origins — the name derives from Arabic al-sufra, meaning "the table" — Azofra is one of those Camino villages whose history is measured in pilgrims\'s footsteps. In 1168, doña Isabel founded a pilgrim hospital here with its own church dedicated to Saint Peter and a cemetery for those who died on the Way without reaching their destination. That hospital survived until the 19th century. The current church, dedicated to Our Lady of the Angels and built between the 17th and 18th centuries, houses a mid-17th-century high altarpiece with an image of the Apostle Santiago Pilgrim presiding over the third tier.',
+    lat:42.4246, lng:-2.8008, emoji:'⛪', color:'verde' },
+
+  { id:'iglesia-san-andres-ciruena', nombre:'Iglesia de San Andrés - Cirueña', nombre_gl:'Igrexa de San Andrés - Cirueña', nombre_en:'Church of San Andrés - Cirueña', categoria:'localización histórica',
+    descripcion:'Cirueña guarda bajo su aparente sencillez una de las memorias más largas del Camino riojano. La iglesia parroquial de San Andrés, aunque la construcción visible data de 1965, se levanta sobre los cimientos de un templo prerrománico del siglo X, y en su ábside aún pueden apreciarse sillares de alabastro que sobrevivieron de aquel primer edificio. El lugar estuvo vinculado desde el siglo X al Monasterio de San Andrés, fundado por Sancho II Abarca de Pamplona y citado en todos los mapas históricos de monasterios riojanos. En 1052, cuando García Sánchez III fundó el cercano Monasterio de Santa María la Real de Nájera, donó Cirueña a esta nueva institución, transfiriendo con ello el control del territorio a una de las grandes abadías del Camino Francés. El pueblo despoblado en 1350 y repoblado posteriormente gracias a una exención de impuestos refleja los avatares de una localidad de frontera cuya supervivencia dependió siempre de la continuidad del tránsito peregrino. El Camino actual pasa ligeramente al margen del casco histórico —a causa del campo de golf que transformó la zona—, pero la iglesia y la fuente junto a ella siguen siendo el punto de orientación natural de quien cruza este tramo de la meseta riojana.',
+    subtitulo:'Sillares del siglo X bajo el Camino de Santiago', subtitulo_gl:'Sillares do século X baixo o Camiño de Santiago', subtitulo_en:'Tenth-century stones beneath the Camino de Santiago',
+    descripcion_gl:'Cirueña garda baixo a súa aparente sinxeleza unha das memorias máis longas do Camiño rioxano. A igrexa parroquial de San Andrés, aínda que a construción visible data de 1965, álzase sobre os alicerces dun templo prerrománico do século X, e no seu ábside aínda se aprecian sillares de alabastro daquel primeiro edificio. O lugar estivo vinculado desde o século X ao Mosteiro de San Andrés, fundado por Sancho II Abarca de Pamplona.',
+    descripcion_en:'Cirueña conceals beneath its apparent simplicity one of the longest memories on the Rioja Camino. The parish church of San Andrés, though the visible building dates from 1965, stands on the foundations of a 10th-century pre-Romanesque temple, and alabaster blocks from that first building can still be seen in its apse. The site has been linked since the 10th century to the Monastery of San Andrés, founded by Sancho II Abarca of Pamplona.',
+    lat:42.4111, lng:-2.8958, emoji:'⛪', color:'verde' },
+
+  { id:'iglesia-san-juan-granon', nombre:'Iglesia de San Juan Bautista - Grañón', nombre_gl:'Igrexa de San Xoán Bautista - Grañón', nombre_en:'Church of San Juan Bautista - Grañón', categoria:'localización histórica',
+    descripcion:'Grañón es el último pueblo riojano antes de que el Camino Francés cruce al territorio burgalés, y como tal cumple una función de despedida que el peregrino siente con claridad al pisar sus calles. La iglesia de San Juan Bautista, situada en la plaza del Hórreo en el corazón del casco histórico, concentra toda esa tradición hospitalaria que hizo famosa a la villa durante la Edad Media. Su hospital parroquial, uno de los más conocidos de la ruta jacobea por la calidad de su acogida comunitaria, sigue funcionando como albergue de donativo bajo gestión parroquial, manteniendo viva una fórmula de hospitalidad que se remonta a los siglos medievales. El templo es una construcción de sillería con nave de tres tramos y cabecera ochavada cubierta con bóvedas de crucería estrellada, y alberga retablos barrocos del siglo XVII. Desde Grañón, en los días claros, la mirada alcanza ya los primeros relieves de los Montes de Oca, anticipando el paisaje que aguarda tras la frontera de Castilla.',
+    subtitulo:'La última hospitalidad de La Rioja', subtitulo_gl:'A última hospitalidade de A Rioxa', subtitulo_en:'La Rioja\'s last hospitality',
+    descripcion_gl:'Grañón é o último pobo rioxano antes de que o Camiño Francés cruce ao territorio burgalés. A igrexa de San Xoán Bautista, situada na praza do Hórreo no corazón do casco histórico, concentra toda esa tradición hospitalaria que fixo famosa a vila durante a Idade Media. O seu hospital parroquial, un dos máis coñecidos da ruta xacobea pola calidade da súa acollida comunitaria, segue funcionando como albergue de donativo baixo xestión parroquial.',
+    descripcion_en:'Grañón is the last Rioja village before the French Way crosses into Burgos territory, and the pilgrim feels this farewell function clearly when walking its streets. The church of San Juan Bautista, in the Plaza del Hórreo at the heart of the historic centre, embodies the hospitality tradition that made the village famous in the Middle Ages. Its parish hostel, one of the best-known on the Jacobean route for the quality of its community welcome, continues operating as a donation-based albergue under parish management.',
+    lat:42.4503, lng:-3.0264, emoji:'⛪', color:'verde' },
+
+  { id:'iglesia-santiago-logrono', nombre:'Iglesia de Santiago el Real - Logroño', nombre_gl:'Igrexa de Santiago o Real - Logroño', nombre_en:'Church of Santiago el Real - Logroño', categoria:'edificación religiosa',
+    descripcion:'La iglesia de Santiago el Real es el templo jacobeo por excelencia de Logroño. Levantada sobre un enclave de tradición medieval, su arquitectura combina elementos góticos y renacentistas que reflejan la prosperidad alcanzada por la ciudad gracias al constante flujo de peregrinos. En su portada norte, la monumental imagen ecuestre del Apóstol Matamoros presidió durante siglos la llegada de los caminantes a la capital riojana. El interior alberga retablos y esculturas de notable valor, testimonio del fervor jacobeo que convirtió a Logroño en una de las puertas más transitadas del Camino Francés hacia Castilla. Aquí confluían las rutas procedentes de Navarra, y entre sus muros descansaron generaciones de peregrinos antes de reemprender la marcha.',
+    subtitulo:'La puerta jacobea de Logroño', subtitulo_gl:'A porta xacobea de Logroño', subtitulo_en:'The Jacobean gateway of Logroño',
+    descripcion_gl:'A igrexa de Santiago o Real é o templo xacobeo por excelencia de Logroño. Erguida sobre un enclave de tradición medieval, a súa arquitectura combina elementos góticos e renacentistas que reflicten a prosperidade alcanzada pola cidade grazas ao constante fluxo de peregrinos. Na súa portada norte, a monumental imaxe ecuestre do Apóstolo Matamoros presidiu durante séculos a chegada dos camiñantes á capital rioxana.',
+    descripcion_en:'The church of Santiago el Real is the quintessential Jacobean temple of Logroño. Built on a site of medieval tradition, its architecture blends Gothic and Renaissance elements reflecting the prosperity the city achieved through the constant flow of pilgrims. On its north portal, the monumental equestrian image of the Apostle Santiago Matamoros presided for centuries over the arrival of wayfarers in the Rioja capital.',
+    lat:42.4654, lng:-2.4452, emoji:'⛪', color:'verde' },
+
+  { id:'iglesia-palacio-logrono', nombre:'Iglesia Imperial de Santa María de Palacio - Logroño', nombre_gl:'Igrexa Imperial de Santa María de Palacio - Logroño', nombre_en:'Imperial Church of Santa María de Palacio - Logroño', categoria:'edificación religiosa',
+    descripcion:'Conocida popularmente como "La Aguja" por su inconfundible aguja gótica del siglo XIII, la iglesia de Santa María de Palacio es uno de los monumentos más singulares de la capital riojana. Su origen se remonta al siglo XII, cuando el rey Alfonso VII cedió el lugar para la fundación de un establecimiento vinculado al Camino de Santiago. La torre-linterna que corona el templo, única en su género en España, domina el skyline histórico de Logroño con una elegancia que ninguna otra construcción posterior ha conseguido igualar. El interior conserva valiosas obras de arte y una espacialidad que transmite con intensidad la espiritualidad de los siglos medievales.',
+    subtitulo:'La aguja que guía a los peregrinos', subtitulo_gl:'A agulla que guía aos peregrinos', subtitulo_en:'The spire that guides pilgrims',
+    descripcion_gl:'Coñecida popularmente como "A Agulla" pola súa inconfundible agulla gótica do século XIII, a igrexa de Santa María de Palacio é un dos monumentos máis singulares da capital rioxana. A súa orixe remóntase ao século XII, cando o rei Afonso VII cedeu o lugar para a fundación dun establecemento vinculado ao Camiño de Santiago.',
+    descripcion_en:'Known popularly as "La Aguja" for its unmistakable 13th-century Gothic spire, the church of Santa María de Palacio is one of the most singular monuments of the Rioja capital. Its origins go back to the 12th century, when King Alfonso VII donated the site for the founding of an establishment linked to the Camino de Santiago.',
+    lat:42.4656, lng:-2.4466, emoji:'⛪', color:'verde' },
+
+  { id:'monasterio-najera', nombre:'Monasterio de Santa María la Real - Nájera', nombre_gl:'Mosteiro de Santa María a Real - Nájera', nombre_en:'Monastery of Santa María la Real - Nájera', categoria:'edificación religiosa',
+    descripcion:'El monasterio de Santa María la Real de Nájera es uno de los conjuntos monásticos más importantes de España y un hito ineludible del Camino Francés en La Rioja. Fundado en el siglo XI por el rey García Sánchez III tras el hallazgo legendario de una imagen de la Virgen en una cueva, alberga el panteón real donde reposan numerosos monarcas navarros y castellanos. Su claustro gótico flamboyant, conocido como el "claustro de los caballeros", es una de las obras maestras del arte medieval peninsular. La iglesia conserva la Santa Cueva original y una magnífica sillería de coro del siglo XVI. Durante siglos fue lugar de coronación y sepultura de la realeza hispana, convirtiendo a Nájera en un nudo político y espiritual de primer orden.',
+    subtitulo:'Panteón de reyes a orillas del Najerilla', subtitulo_gl:'Panteón de reis ás beiras do Najerilla', subtitulo_en:'Royal pantheon on the banks of the Najerilla',
+    descripcion_gl:'O mosteiro de Santa María a Real de Nájera é un dos conxuntos monásticos máis importantes de España e un fito ineludible do Camiño Francés en A Rioxa. Fundado no século XI polo rei García Sánchez III tras o achado lendario dunha imaxe da Virxe nunha cova, alberga o panteón real onde repousan numerosos monarcas navarros e castelás.',
+    descripcion_en:'The monastery of Santa María la Real de Nájera is one of the most important monastic complexes in Spain and an unmissable landmark of the French Way in La Rioja. Founded in the 11th century by King García Sánchez III following the legendary discovery of a Marian image in a cave, it houses the royal pantheon where numerous Navarrese and Castilian monarchs rest.',
+    lat:42.4165, lng:-2.7348, emoji:'🏛️', color:'morado' },
+
+  { id:'catedral-santo-domingo', nombre:'Catedral de Santo Domingo de la Calzada', nombre_gl:'Catedral de Santo Domingo da Calzada', nombre_en:'Cathedral of Santo Domingo de la Calzada', categoria:'edificación religiosa',
+    descripcion:'La catedral de Santo Domingo de la Calzada es uno de los templos más singulares y queridos de todo el Camino de Santiago. Su construcción comenzó en el siglo XII sobre la ermita levantada por el propio santo que da nombre a la ciudad: Domingo García, labriego riojano que consagró su vida a construir puentes, calzadas y hospitales para facilitar el paso de los peregrinos. En el interior del templo, instalado en un gallinero enriquecido artísticamente, viven un gallo y una gallina blancos, recuerdo vivo del famoso milagro: según la tradición, un peregrino ejecutado injustamente resucitó merced a la intervención del santo, mientras los pollos asados que había en la mesa del juez se alzaron a vuelo para corroborarlo. El conjunto catedralicio, con su torre exenta y su claustro gótico, es Patrimonio Histórico de España.',
+    subtitulo:'Donde los gallos cantan en la catedral', subtitulo_gl:'Onde os galos cantan na catedral', subtitulo_en:'Where roosters crow inside the cathedral',
+    descripcion_gl:'A catedral de Santo Domingo da Calzada é un dos templos máis singulares e queridos de todo o Camiño de Santiago. No interior do templo, instalado nun gallineiro enriquecido artisticamente, viven un galo e unha galiña brancos, recordo vivo do famoso milagre: segundo a tradición, un peregrino executado inxustamente resucitou grazas á intervención do santo.',
+    descripcion_en:'The cathedral of Santo Domingo de la Calzada is one of the most singular and beloved temples of the entire Camino de Santiago. Inside the temple, housed in an artistically enriched henhouse, live a white rooster and hen — a living reminder of the famous miracle: according to tradition, an unjustly executed pilgrim was resurrected through the saint\'s intercession, while the roasted chickens on the judge\'s table rose in flight to confirm it.',
+    lat:42.4418, lng:-2.9535, emoji:'🐓', color:'ambar' },
+
+  // ── TOMO III — BURGOS Y MONTES DE OCA ───────────────────────────────────
+
+  { id:'iglesia-redecilla', nombre:'Iglesia de Nuestra Señora de la Calle - Redecilla del Camino', nombre_gl:'Igrexa de Nosa Señora da Rúa - Redecilla do Camiño', nombre_en:'Church of Our Lady of the Street - Redecilla del Camino', categoria:'edificación religiosa',
+    descripcion:'La iglesia de Nuestra Señora de la Calle custodia uno de los tesoros más insospechados del Camino Francés: una pila bautismal románica del siglo XII que figura entre las más bellas de toda España. Esculpida en piedra caliza, su cuerpo cilíndrico desarrolla una composición arquitectónica que representa la Jerusalén Celeste, con torres, arcadas y figuras dispuestas con una precisión que revela la mano de un maestro de primer nivel. Para los medievalistas, constituye un objeto de estudio excepcional; para el peregrino, un recordatorio de que el Camino esconde prodigios donde menos se los espera. Redecilla fue una de las primeras localidades castellanas mencionadas en los itinerarios jacobeos medievales, y este templo concentra toda la memoria de aquella antigua hospitalidad.',
+    subtitulo:'La pila bautismal más bella del Camino', subtitulo_gl:'A pía bautismal máis bela do Camiño', subtitulo_en:'The most beautiful baptismal font on the Camino',
+    descripcion_gl:'A igrexa de Nosa Señora da Rúa custodia un dos tesouros máis insospeitados do Camiño Francés: unha pía bautismal románica do século XII que figura entre as máis belas de toda España. Esculpida en pedra calcaria, o seu corpo cilíndrico desenvolve unha composición arquitectónica que representa a Xerusalén Celestial.',
+    descripcion_en:'The church of Our Lady of the Street houses one of the most unexpected treasures of the French Way: a 12th-century Romanesque baptismal font ranked among the most beautiful in all of Spain. Carved in limestone, its cylindrical body develops an architectural composition representing the Heavenly Jerusalem, with towers, arcades, and figures arranged with a precision that reveals a master craftsman\'s hand.',
+    lat:42.4389, lng:-3.0648, emoji:'⛪', color:'verde' },
+
+  { id:'iglesia-santa-maria-belorado', nombre:'Iglesia de Santa María - Belorado', nombre_gl:'Igrexa de Santa María - Belorado', nombre_en:'Church of Santa María - Belorado', categoria:'edificación religiosa',
+    descripcion:'La iglesia de Santa María de Belorado es el principal monumento de una villa que prosperó durante siglos gracias al Camino de Santiago y al comercio asociado a la ruta compostelana. El templo conserva una torre que sirvió de referencia visual para generaciones de peregrinos que llegaban caminando desde La Rioja, así como retablos barrocos de notable calidad. Belorado fue villa de feria y mercado, y su plaza mayor concentró durante siglos el pulso económico y social de toda la comarca. Las ruinas del castillo que domina la villa desde lo alto recuerdan los tiempos en que esta posición fronteriza tuvo también una dimensión militar.',
+    subtitulo:'Torre vigía de los peregrinos de Castilla', subtitulo_gl:'Torre vixía dos peregrinos de Castela', subtitulo_en:'Watchtower for the pilgrims of Castile',
+    descripcion_gl:'A igrexa de Santa María de Belorado é o principal monumento dunha vila que prosperou durante séculos grazas ao Camiño de Santiago e ao comercio asociado á ruta compostelá. O templo conserva unha torre que serviu de referencia visual para xeracións de peregrinos que chegaban camiñando desde A Rioxa.',
+    descripcion_en:'The church of Santa María de Belorado is the main monument of a town that prospered for centuries thanks to the Camino de Santiago and the trade associated with the Compostelan route. The temple preserves a tower that served as a visual landmark for generations of pilgrims arriving on foot from La Rioja.',
+    lat:42.4207, lng:-3.1900, emoji:'⛪', color:'verde' },
+
+  { id:'monasterio-san-juan-ortega', nombre:'Monasterio de San Juan de Ortega', nombre_gl:'Mosteiro de San Xoán de Ortega', nombre_en:'Monastery of San Juan de Ortega', categoria:'edificación religiosa',
+    descripcion:'Fundado en el siglo XII por Juan de Velázquez, discípulo directo de Santo Domingo de la Calzada, el monasterio de San Juan de Ortega es uno de los grandes santuarios jacobeos de Castilla. El santo constructor levantó este conjunto en pleno corazón de los bosques de Oca, los más temidos del Camino medieval, para ofrecer refugio a los peregrinos que los atravesaban. La iglesia románica conserva uno de los capiteles más admirados del arte medieval hispano: la llamada "Anunciación de la Luz", en cuya escena escultórica incide un rayo de sol en los equinoccios de primavera y otoño, iluminando el rostro del arcángel Gabriel con una precisión que sólo puede ser intencional. El fenómeno, redescubierto en los años setenta del siglo XX, ha convertido al monasterio en un lugar de peregrinación también para quienes llegan buscando la geometría sagrada del románico.',
+    subtitulo:'El milagro de la luz en los equinoccios', subtitulo_gl:'O milagre da luz nos equinocios', subtitulo_en:'The miracle of light at the equinoxes',
+    descripcion_gl:'Fundado no século XII por Xoán de Velázquez, discípulo directo de Santo Domingo da Calzada, o mosteiro de San Xoán de Ortega é un dos grandes santuarios xacobeos de Castela. A igrexa románica conserva un dos capiteis máis admirados da arte medieval hispana: a chamada "Anunciación da Luz".',
+    descripcion_en:'Founded in the 12th century by Juan de Velázquez, a direct disciple of Santo Domingo de la Calzada, the monastery of San Juan de Ortega is one of the great Jacobean sanctuaries of Castile. The Romanesque church preserves one of the most admired capitals of Hispanic medieval art: the so-called "Annunciation of Light", whose sculptural scene is struck by a sunbeam at the spring and autumn equinoxes.',
+    lat:42.376167, lng:-3.436824, emoji:'☀️', color:'ambar' },
+
+  { id:'yacimientos-atapuerca', nombre:'Yacimientos de Atapuerca', nombre_gl:'Xacementos de Atapuerca', nombre_en:'Atapuerca Archaeological Sites', categoria:'vestigio arqueológico',
+    descripcion:'Los yacimientos de la Sierra de Atapuerca albergan el registro fósil humano más importante de Europa y uno de los más relevantes del mundo. Declarados Patrimonio Mundial por la UNESCO en 2000, sus excavaciones han proporcionado restos de homínidos con una antigüedad de más de un millón de años, revolucionando la comprensión de la evolución humana en el continente europeo. La Gran Dolina, el Sima de los Huesos y la Sima del Elefante son los principales yacimientos, cada uno con hallazgos que han redibujado el mapa de la presencia humana prehistórica en Europa. Para el peregrino del Camino Francés, Atapuerca añade una dimensión temporal que trasciende con creces la Edad Media: aquí el Camino se convierte en eco de una ruta que los primeros europeos ya transitaron hace un millón de años.',
+    subtitulo:'Un millón de años antes del primer peregrino', subtitulo_gl:'Un millón de anos antes do primeiro peregrino', subtitulo_en:'A million years before the first pilgrim',
+    descripcion_gl:'Os xacementos da Serra de Atapuerca albergan o rexistro fósil humano máis importante de Europa. Declarados Patrimonio Mundial pola UNESCO en 2000, as súas escavacións proporcionaron restos de homínidos cunha antigüidade de máis dun millón de anos.',
+    descripcion_en:'The sites of the Sierra de Atapuerca hold the most important human fossil record in Europe. Declared a UNESCO World Heritage Site in 2000, their excavations have yielded hominin remains over a million years old, revolutionising the understanding of human evolution on the European continent.',
+    lat:42.3777, lng:-3.5078, emoji:'🦴', color:'ambar' },
+
+  { id:'catedral-burgos', nombre:'Catedral de Santa María de Burgos', nombre_gl:'Catedral de Santa María de Burgos', nombre_en:'Burgos Cathedral of Santa María', categoria:'edificación religiosa',
+    descripcion:'La catedral de Burgos es una de las cumbres del gótico europeo y Patrimonio de la Humanidad desde 1984. Iniciada en 1221 bajo el reinado de Fernando III el Santo con trazas del maestro Enrique, su construcción se prolongó durante más de tres siglos acumulando capillas, torres, fachadas y sepulcros que la convierten en un compendio del arte medieval y renacentista. Las agujas caladas de la torre central, añadidas en el siglo XV por Juan de Colonia, son el símbolo visual más reconocible de Burgos y del Camino en Castilla. En la Capilla del Condestable reposa el corazón del arte burgalés; bajo el crucero, la tumba del Cid y doña Jimena acoge a quienes peregrinan también hacia la historia de Castilla. Ningún peregrino que cruce Burgos puede permitirse pasar de largo ante ella.',
+    subtitulo:'La catedral que define Castilla', subtitulo_gl:'A catedral que define Castela', subtitulo_en:'The cathedral that defines Castile',
+    descripcion_gl:'A catedral de Burgos é unha das cimas do gótico europeo e Patrimonio da Humanidade desde 1984. Iniciada en 1221 baixo o reinado de Fernando III o Santo, a súa construción prolongouse durante máis de tres séculos acumulando capelas, torres, fachadas e sepulcros.',
+    descripcion_en:'Burgos Cathedral is one of the summits of European Gothic and a World Heritage Site since 1984. Begun in 1221 under King Ferdinand III the Holy, its construction extended over three centuries accumulating chapels, towers, façades and tombs that make it a compendium of medieval and Renaissance art.',
+    lat:42.340793, lng:-3.704385, emoji:'🏰', color:'azul' },
+
+  { id:'arco-santa-maria-burgos', nombre:'Arco de Santa María - Burgos', nombre_gl:'Arco de Santa María - Burgos', nombre_en:'Arch of Santa María - Burgos', categoria:'localización histórica',
+    descripcion:'El Arco de Santa María es la puerta más representativa de las antiguas murallas de Burgos y uno de los monumentos más fotogénicos del Camino Francés en Castilla. Construida como puerta medieval en el siglo XIV y reformada en el siglo XVI con un espectacular revestimiento escultórico en honor a Carlos I, su fachada presenta en seis nichos las figuras de los grandes personajes de la historia burgalesa: el Cid, el juez Laín Calvo, el conde Fernán González y el propio emperador. La puerta da acceso directo al corazón histórico de Burgos y al camino hacia la catedral, y durante siglos fue el umbral que marcaba la entrada solemne en la ciudad para los peregrinos que llegaban desde el este.',
+    subtitulo:'La puerta imperial del Camino', subtitulo_gl:'A porta imperial do Camiño', subtitulo_en:'The imperial gate of the Camino',
+    descripcion_gl:'O Arco de Santa María é a porta máis representativa das antigas murallas de Burgos. Construída como porta medieval no século XIV e reformada no século XVI cun espectacular revestimento escultórico en honra a Carlos I.',
+    descripcion_en:'The Arch of Santa María is the most representative gate of Burgos\'s ancient walls. Built as a medieval gateway in the 14th century and remodelled in the 16th with a spectacular sculptural facing in honour of Charles I.',
+    lat:42.3401, lng:-3.7034, emoji:'🏛️', color:'azul' },
+
+  { id:'monasterio-huelgas-burgos', nombre:'Monasterio de Las Huelgas - Burgos', nombre_gl:'Mosteiro das Huelgas - Burgos', nombre_en:'Monastery of Las Huelgas - Burgos', categoria:'edificación religiosa',
+    descripcion:'El Real Monasterio de Santa María la Real de Las Huelgas es uno de los establecimientos religiosos más poderosos e influyentes de la España medieval. Fundado en 1187 por Alfonso VIII de Castilla y su esposa Leonor de Plantagenet, fue concebido como panteón real, lugar de coronación de reyes y sede de una abadesa cuya jurisdicción se extendió sobre decenas de monasterios. Su importancia en el contexto de las órdenes militares es notable: aquí se celebraron capítulos de la Orden de Santiago y se armaron caballeros bajo una liturgia que vinculaba la monarquía castellana con la tradición cruzada. La iglesia gótica alberga magníficos sepulcros reales y un tesoro excepcional con piezas de los siglos XII al XIV, incluyendo tejidos medievales únicos en el mundo.',
+    subtitulo:'El monasterio más poderoso de Castilla', subtitulo_gl:'O mosteiro máis poderoso de Castela', subtitulo_en:'The most powerful monastery in Castile',
+    descripcion_gl:'O Real Mosteiro de Santa María a Real das Huelgas é un dos establecementos relixiosos máis poderosos e influentes da España medieval. Fundado en 1187 por Afonso VIII de Castela e a súa esposa Leonor de Plantagenet, foi concibido como panteón real e sede dunha abadesa cunha xurisdicción que se estendeu sobre decenas de mosteiros.',
+    descripcion_en:'The Royal Monastery of Santa María la Real de Las Huelgas is one of the most powerful and influential religious establishments of medieval Spain. Founded in 1187 by Alfonso VIII of Castile and his wife Eleanor of Plantagenet, it was conceived as a royal pantheon, a place for the coronation of kings, and the seat of an abbess whose jurisdiction extended over dozens of monasteries.',
+    lat:42.3347, lng:-3.7353, emoji:'👑', color:'morado' },
+
+  { id:'cartuja-miraflores', nombre:'Cartuja de Miraflores - Burgos', nombre_gl:'Cartuja de Miraflores - Burgos', nombre_en:'Charterhouse of Miraflores - Burgos', categoria:'edificación religiosa',
+    descripcion:'La Cartuja de Santa María de Miraflores es uno de los conjuntos monásticos más refinados del gótico tardío español. Promovida por los Reyes Católicos para dar sepultura a Juan II de Castilla y a la infanta Isabel, su iglesia alberga el retablo mayor de Gil de Siloé, considerado una de las cumbres de la escultura española del siglo XV, y los sepulcros reales que el mismo artista esculpió en alabastro con una riqueza decorativa sin parangón en la Península. La estrella de ocho puntas que articula el sepulcro central ha sido interpretada desde perspectivas diversas, incluidas las simbólicas. El monasterio sigue habitado por monjes cartujos y mantiene el silencio contemplativo que caracteriza a la orden, ofreciendo al visitante una experiencia de quietud excepcional en las afueras de Burgos.',
+    subtitulo:'El alabastro más bello del gótico español', subtitulo_gl:'O alabastro máis belo do gótico español', subtitulo_en:'The finest alabaster of Spanish Gothic',
+    descripcion_gl:'A Cartuja de Santa María de Miraflores é un dos conxuntos monásticos máis refinados do gótico tardío español. Promovida polos Reis Católicos para dar sepultura a Xoán II de Castela, a súa igrexa alberga o retablo maior de Gil de Siloé, considerado unha das cimas da escultura española do século XV.',
+    descripcion_en:'The Charterhouse of Santa María de Miraflores is one of the most refined monastic complexes of late Spanish Gothic. Commissioned by the Catholic Monarchs to house the tomb of John II of Castile, its church holds the high altarpiece by Gil de Siloé, considered one of the summits of 15th-century Spanish sculpture.',
+    lat:42.3320, lng:-3.6678, emoji:'⚜️', color:'morado' },
+
+  { id:'hospital-del-rey-burgos', nombre:'Hospital del Rey - Burgos', nombre_gl:'Hospital do Rei - Burgos', nombre_en:'Hospital del Rey - Burgos', categoria:'localización histórica',
+    descripcion:'El Hospital del Rey fue uno de los establecimientos de asistencia a peregrinos más grandes e importantes de toda la Europa medieval. Fundado a finales del siglo XII por Alfonso VIII de Castilla junto al Real Monasterio de Las Huelgas, llegó a atender a miles de peregrinos al año y mantuvo su función asistencial durante más de seis siglos. Su Patio de Romeros y la Puerta de los Romeros, de estilo plateresco del siglo XVI, son los elementos más representativos que han llegado hasta nuestros días. La magnitud de la institución era comparable a la de las grandes encomiendas de las órdenes militares, y su gestión por parte de la abadesa de Las Huelgas le confirió una singularidad institucional única en el mundo jacobeo. Actualmente forma parte del campus universitario de la Universidad de Burgos.',
+    subtitulo:'Seis siglos de hospitalidad jacobea', subtitulo_gl:'Seis séculos de hospitalidade xacobea', subtitulo_en:'Six centuries of Jacobean hospitality',
+    descripcion_gl:'O Hospital do Rei foi un dos establecementos de asistencia a peregrinos máis grandes e importantes de toda a Europa medieval. Fundado a finais do século XII por Afonso VIII de Castela, chegou a atender a miles de peregrinos ao ano e mantivo a súa función asistencial durante máis de seis séculos.',
+    descripcion_en:'The Hospital del Rey was one of the largest and most important pilgrim assistance establishments in all of medieval Europe. Founded in the late 12th century by Alfonso VIII of Castile, it attended thousands of pilgrims a year and maintained its welfare function for over six centuries.',
+    lat:42.3501, lng:-3.7282, emoji:'🏥', color:'verde' },
+
+  // ── TOMO IV — TIERRA DE CAMPOS ──────────────────────────────────────────
+
+  { id:'san-martin-fromista', nombre:'Iglesia de San Martín de Tours - Frómista', nombre_gl:'Igrexa de San Martiño de Tours - Frómista', nombre_en:'Church of San Martín de Tours - Frómista', categoria:'edificación religiosa',
+    descripcion:'La iglesia de San Martín de Tours de Frómista es considerada una de las obras maestras del románico puro de toda Europa. Construida a finales del siglo XI, su arquitectura refleja una perfección formal que la distingue de cualquier otro templo del Camino Francés. Sus tres ábsides semicirculares, sus dos torres cilíndricas y el cimborrio octogonal conforman una silueta que los medievalistas consideran la expresión más equilibrada del románico pleno. El interior exhibe más de trescientos capiteles esculpidos con motivos vegetales, animales y figuras humanas de una calidad excepcional. A finales del siglo XIX fue sometida a una polémica restauración que la privó de sus añadidos posteriores, devolviéndola a una pureza formal que puede discutirse históricamente pero que resulta visualmente extraordinaria.',
+    subtitulo:'La perfección del románico en una sola iglesia', subtitulo_gl:'A perfección do románico nunha soa igrexa', subtitulo_en:'The perfection of Romanesque in a single church',
+    descripcion_gl:'A igrexa de San Martiño de Tours de Frómista é considerada unha das obras mestras do románico puro de toda Europa. Construída a finais do século XI, a súa arquitectura reflicte unha perfección formal que a distingue de calquera outro templo do Camiño Francés.',
+    descripcion_en:'The church of San Martín de Tours in Frómista is considered one of the masterpieces of pure Romanesque architecture in all of Europe. Built in the late 11th century, its architecture reflects a formal perfection that sets it apart from any other temple on the French Way.',
+    lat:42.266713, lng:-4.406907, emoji:'🏛️', color:'ambar' },
+
+  { id:'santa-maria-blanca-villalcazar', nombre:'Iglesia de Santa María la Blanca - Villalcázar de Sirga', nombre_gl:'Igrexa de Santa María a Branca - Villalcázar de Sirga', nombre_en:'Church of Santa María la Blanca - Villalcázar de Sirga', categoria:'edificación religiosa',
+    descripcion:'La iglesia de Santa María la Blanca de Villalcázar de Sirga es el monumento templario más importante conservado en el Camino Francés. Construida bajo el patrocinio de la Orden del Temple en el siglo XIII, es uno de los templos góticos rurales de mayor envergadura de toda España. Su portada norte, con arquivoltas decoradas y una iconografía mariana de gran riqueza, y su portada occidental muestran la calidad artística que la Orden imprimió a sus construcciones. En su interior se conservan los sepulcros del infante don Felipe, hermano de Alfonso X el Sabio, y de su esposa doña Leonor Ruiz de Castro, obras cumbres de la escultura funeraria castellana del siglo XIII. La devoción a la Virgen Blanca convirtió este enclave en lugar de peregrinación mariana de primer orden durante la Edad Media.',
+    subtitulo:'El templo templario del Camino Francés', subtitulo_gl:'O templo templario do Camiño Francés', subtitulo_en:'The Templar temple of the French Way',
+    descripcion_gl:'A igrexa de Santa María a Branca de Villalcázar de Sirga é o monumento templario máis importante conservado no Camiño Francés. Construída baixo o patrocinio da Orde do Temple no século XIII, é un dos templos góticos rurais de maior envergadura de toda España.',
+    descripcion_en:'The church of Santa María la Blanca in Villalcázar de Sirga is the most important Templar monument preserved on the French Way. Built under the patronage of the Knights Templar in the 13th century, it is one of the largest rural Gothic temples in all of Spain.',
+    lat:42.3168, lng:-4.5430, emoji:'✝️', color:'morado' },
+
+  { id:'iglesia-santiago-carrion', nombre:'Iglesia de Santiago - Carrión de los Condes', nombre_gl:'Igrexa de Santiago - Carrión dos Condes', nombre_en:'Church of Santiago - Carrión de los Condes', categoria:'edificación religiosa',
+    descripcion:'La iglesia de Santiago de Carrión de los Condes posee una de las portadas románicas más admiradas del Camino Francés. Su friso superior, con la representación del Pantocrátor rodeado de los símbolos de los evangelistas y una procesión de figuras de artesanos medievales, es un documento visual de la sociedad del siglo XII de excepcional valor. Carrión fue una de las ciudades más prósperas del reino castellano-leonés durante la Edad Media, y sus templos, hospitales y monasterios la convirtieron en uno de los grandes centros asistenciales de la ruta jacobea. La ciudad contó también con presencia de diversas órdenes militares que contribuyeron a la protección y asistencia de los peregrinos.',
+    subtitulo:'El Pantocrátor de la meseta castellana', subtitulo_gl:'O Pantocrátor da meseta castelá', subtitulo_en:'The Pantocrator of the Castilian meseta',
+    descripcion_gl:'A igrexa de Santiago de Carrión dos Condes posúe unha das portadas románicas máis admiradas do Camiño Francés. O seu friso superior, coa representación do Pantocrátor rodeado dos símbolos dos evanxelistas e unha procesión de figuras de artesáns medievais, é un documento visual da sociedade do século XII de excepcional valor.',
+    descripcion_en:'The church of Santiago in Carrión de los Condes possesses one of the most admired Romanesque portals on the French Way. Its upper frieze, with the Pantocrator surrounded by the symbols of the Evangelists and a procession of medieval craftsmen figures, is an exceptional visual document of 12th-century society.',
+    lat:42.3399, lng:-4.6026, emoji:'⛪', color:'verde' },
+
+  { id:'monasterio-san-zoilo', nombre:'Monasterio de San Zoilo - Carrión de los Condes', nombre_gl:'Mosteiro de San Zoilo - Carrión dos Condes', nombre_en:'Monastery of San Zoilo - Carrión de los Condes', categoria:'edificación religiosa',
+    descripcion:'El monasterio de San Zoilo es uno de los grandes establecimientos benedictinos del Camino Francés. Fundado en el siglo X sobre la tumba del mártir Zoilo, alcanzó su máximo esplendor en los siglos XI y XII bajo el patrocinio de los condes de Carrión. Su claustro plateresco del siglo XVI, obra de Juan de Badajoz el Mozo, es considerado uno de los más bellos de España, con una decoración exuberante que contrasta con la sobriedad del entorno mesetario. El monasterio albergó durante siglos a los peregrinos jacobeos y fue panteón de los condes de Carrión. Actualmente funciona como hotel, lo que permite apreciar su arquitectura desde el interior.',
+    subtitulo:'El claustro plateresco más bello de Castilla', subtitulo_gl:'O claustro plateresco máis belo de Castela', subtitulo_en:'The finest Plateresque cloister in Castile',
+    descripcion_gl:'O mosteiro de San Zoilo é un dos grandes establecementos beneditinos do Camiño Francés. O seu claustro plateresco do século XVI, obra de Xoán de Badajoz o Mozo, é considerado un dos máis belos de España.',
+    descripcion_en:'The monastery of San Zoilo is one of the great Benedictine establishments of the French Way. Its 16th-century Plateresque cloister, the work of Juan de Badajoz el Mozo, is considered one of the most beautiful in Spain.',
+    lat:42.3416, lng:-4.6103, emoji:'🏛️', color:'verde' },
+
+  { id:'iglesia-san-pedro-terradillos', nombre:'Iglesia de San Pedro - Terradillos de los Templarios', nombre_gl:'Igrexa de San Pedro - Terradillos dos Templarios', nombre_en:'Church of San Pedro - Terradillos de los Templarios', categoria:'edificación religiosa',
+    descripcion:'Terradillos de los Templarios es uno de los topónimos más evocadores de todo el Camino Francés. El nombre de la localidad recuerda el dominio ejercido por la Orden del Temple sobre este territorio durante los siglos XII y XIII, cuando la Orden controló extensas propiedades en la Tierra de Campos palentina. Aunque el templo actual es una reconstrucción moderna que no conserva restos visibles de la arquitectura medieval, el enclave mantiene una carga simbólica difícilmente igualable en la ruta. Para el peregrino interesado en la historia templaria, pasar por aquí es una obligación: el suelo que pisa estuvo bajo el sello de la Orden, y el nombre del pueblo es el más directo testimonio que el Camino Francés ofrece de aquella presencia.',
+    subtitulo:'El pueblo que lleva el nombre del Temple', subtitulo_gl:'O pobo que leva o nome do Temple', subtitulo_en:'The village that bears the Templar name',
+    descripcion_gl:'Terradillos dos Templarios é un dos topónimos máis evocadores de todo o Camiño Francés. O nome da localidade recorda o dominio exercido pola Orde do Temple sobre este territorio durante os séculos XII e XIII.',
+    descripcion_en:'Terradillos de los Templarios is one of the most evocative place names on the entire French Way. The village name recalls the dominion exercised by the Knights Templar over this territory during the 12th and 13th centuries, when the Order controlled vast properties in the Palentine Tierra de Campos.',
+    lat:42.363750, lng:-4.889786, emoji:'✝️', color:'morado' },
+
+  { id:'iglesia-san-tirso-sahagun', nombre:'Iglesia de San Tirso - Sahagún', nombre_gl:'Igrexa de San Tirso - Sahagún', nombre_en:'Church of San Tirso - Sahagún', categoria:'edificación religiosa',
+    descripcion:'La iglesia de San Tirso de Sahagún es el máximo exponente del románico-mudéjar leonés y uno de los monumentos más singulares del Camino de Santiago. Construida en ladrillo en el siglo XII, su torre y sus ábsides combinan la estructura románica con decoraciones de tradición islámica, creando un estilo único que define la identidad artística del reino leonés en la Edad Media. Sahagún fue uno de los grandes centros espirituales de la España medieval, dominado por el poderoso monasterio benedictino de San Benito, cuyos monjes controlaron durante siglos el territorio y la ruta jacobea. La riqueza de sus templos refleja aquella prosperidad, y San Tirso es su expresión más emblemática.',
+    subtitulo:'La joya del románico-mudéjar leonés', subtitulo_gl:'A xoia do románico-mudéxar leonés', subtitulo_en:'The jewel of Leonese Romanesque-Mudéjar',
+    descripcion_gl:'A igrexa de San Tirso de Sahagún é o máximo expoñente do románico-mudéxar leonés e un dos monumentos máis singulares do Camiño de Santiago. Construída en ladrillo no século XII, a súa torre e os seus ábsidos combinan a estrutura románica con decoracións de tradición islámica.',
+    descripcion_en:'The church of San Tirso in Sahagún is the supreme expression of Leonese Romanesque-Mudéjar and one of the most singular monuments on the Camino de Santiago. Built in brick in the 12th century, its tower and apses combine Romanesque structure with Islamic-tradition decorations.',
+    lat:42.370908, lng:-5.032560, emoji:'🕌', color:'ambar' },
+
+  { id:'iglesia-san-lorenzo-sahagun', nombre:'Iglesia de San Lorenzo - Sahagún', nombre_gl:'Igrexa de San Lourenzo - Sahagún', nombre_en:'Church of San Lorenzo - Sahagún', categoria:'edificación religiosa',
+    descripcion:'La iglesia de San Lorenzo de Sahagún es la segunda gran obra del románico-mudéjar leonés en esta localidad, compañera inseparable de San Tirso en la definición del paisaje monumental de la villa. También construida en ladrillo durante el siglo XII, su torre de tres cuerpos con arcos ciegos decorativos ejemplifica la fusión de técnicas constructivas románicas y mudéjares que convirtió a Sahagún en un laboratorio artístico único en el Camino Francés. Junto a San Tirso, San Lorenzo testifica la vitalidad cultural de una ciudad que fue durante la Edad Media uno de los principales focos de interacción entre las tradiciones cristiana e islámica de la Península.',
+    subtitulo:'Ladrillo y fe en la meseta leonesa', subtitulo_gl:'Ladrillo e fe na meseta leonesa', subtitulo_en:'Brick and faith on the Leonese meseta',
+    descripcion_gl:'A igrexa de San Lourenzo de Sahagún é a segunda gran obra do románico-mudéxar leonés nesta localidade. Tamén construída en ladrillo durante o século XII, a súa torre de tres corpos con arcos cegos decorativos exemplifica a fusión de técnicas construtivas románicas e mudéxares.',
+    descripcion_en:'The church of San Lorenzo in Sahagún is the second great work of Leonese Romanesque-Mudéjar in this town. Also built in brick during the 12th century, its three-storey tower with decorative blind arches exemplifies the fusion of Romanesque and Mudéjar building techniques.',
+    lat:42.3697, lng:-5.0285, emoji:'🏛️', color:'ambar' },
+
   { id:'catedral-santiago', nombre:'Catedral de Santiago de Compostela', categoria:'edificación religiosa', descripcion:'Destino final del Camino y meta de millones de peregrinos desde el siglo IX. Sobre la tumba del Apóstol Santiago, el templo combina románico, gótico, barroco y neoclásico en una arquitectura que ha crecido durante mil años. El Pórtico de la Gloria de Maestro Mateo, el Botafumeiro y el abrazo al Apóstol esperan al final de la ruta.', subtitulo:'La meta de un millón de pasos', subtitulo_gl:'A meta dun millón de pasos', subtitulo_en:'The destination of a million steps', descripcion_gl:'Destino final do Camiño e meta de millóns de peregrinos desde o século IX. Sobre a tumba do Apóstolo Santiago, o templo combina románico, gótico, barroco e neoclásico nunha arquitectura que creceu durante mil anos. O Pórtico da Gloria do Mestre Mateo, o Botafumeiro e o abrazo ao Apóstolo esperan ao final da ruta.', descripcion_en:'The final destination of the Way and the goal of millions of pilgrims since the 9th century. Above the tomb of the Apostle James, the temple combines Romanesque, Gothic, Baroque, and Neoclassical in an architecture that has grown over a thousand years. The Portico of Glory by Master Mateo, the Botafumeiro, and the embrace of the Apostle await at the end of the route.', lat:42.8805, lng:-8.5457, emoji:'✨', color:'verde', imagen:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Catedral_de_Santiago_de_Compostela,_la_Praza_do_Obradoiro.jpg/800px-Catedral_de_Santiago_de_Compostela,_la_Praza_do_Obradoiro.jpg' }
 ];
 
@@ -2903,6 +3120,8 @@ function cerrarTodosLosPaneles() {
     if (p) p.classList.remove('slide-in');
   });
   if (mapSection) mapSection.classList.remove('slide-out');
+  var _bt = document.getElementById('mapa-cat-panel-title');
+  if (_bt) { _bt.style.display = 'none'; _bt.textContent = ''; }
 }
 function _abrirSlide(panelId) {
   var mapSection = document.querySelector('#map-block .map-section');
@@ -3774,7 +3993,7 @@ function ejecutarBusquedaMapa() {
               var sm = L.marker([el._lat, el._lng], {icon:iconoBusqueda}).addTo(mapa);
               var addr = el.tags ? (el.tags['addr:street'] ? el.tags['addr:street'] + (el.tags['addr:housenumber'] ? ' '+el.tags['addr:housenumber'] : '') : '') : '';
               var tel = el.tags && el.tags.phone ? '<br>📞 '+el.tags.phone : '';
-              sm.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>'+nombre+'</strong><br><span style="font-size:11px;color:#6b7280">📍 '+dist+(addr?' · '+addr:'')+'</span>'+tel+'<br><button onclick="irACoordenadasNav('+el._lat+','+el._lng+')" style="display:inline-block;margin-top:8px;background:#1D9E75;color:#fff;padding:5px 12px;border-radius:12px;font-size:12px;border:none;cursor:pointer;font-family:DM Sans,sans-serif">&#128506; Cómo llegar</button></div>');
+              sm.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>'+nombre+'</strong><br><span style="font-size:11px;color:#6b7280">📍 '+dist+(addr?' · '+addr:'')+'</span>'+tel+'<br><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button onclick="_addBusquedaRuta(encodeURIComponent(\''+nombre+'\'),'+el._lat+','+el._lng+');this.textContent=\'✓ En ruta\';this.style.background=\'#1D9E75\';this.style.color=\'#fff\';" style="background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">➕ Añadir a ruta</button><button onclick="irACoordenadasNav('+el._lat+','+el._lng+')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">&#128506; Cómo llegar</button></div></div>');
               searchMarkers.push(sm); bounds.push([el._lat, el._lng]);
             });
             if (searchMarkers.length > 0) searchMarkers[0].openPopup();
@@ -3814,7 +4033,7 @@ function ejecutarBusquedaMapa() {
               var nombre = r.display_name.split(',')[0].trim();
               var dist = userLat ? ' · ' + formatDist(haversine(refLat,refLng,lat,lng)) : '';
               var sm = L.marker([lat,lng], {icon:iconoBusqueda}).addTo(mapa);
-              sm.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>'+nombre+dist+'</strong><br><button onclick="irACoordenadasNav('+lat+','+lng+')" style="display:inline-block;margin-top:8px;background:#1D9E75;color:#fff;padding:5px 12px;border-radius:12px;font-size:12px;border:none;cursor:pointer;font-family:DM Sans,sans-serif">&#128506; Cómo llegar</button></div>');
+              sm.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>'+nombre+dist+'</strong><br><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button onclick="_addBusquedaRuta(encodeURIComponent(\''+nombre+'\'),'+lat+','+lng+');this.textContent=\'✓ En ruta\';this.style.background=\'#1D9E75\';this.style.color=\'#fff\';" style="background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">➕ Añadir a ruta</button><button onclick="irACoordenadasNav('+lat+','+lng+')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">&#128506; Cómo llegar</button></div></div>');
               searchMarkers.push(sm); bounds2.push([lat,lng]);
             });
             if (searchMarkers.length > 0) searchMarkers[0].openPopup();
@@ -4243,36 +4462,6 @@ function _centrarMapa() { return; // salto desactivado
     }
   }, 400);
 }
-
-function _centrarMapa() { return; // salto desactivado
-  var mapEl = document.getElementById('map');
-  if (!mapEl) return;
-  var rect = mapEl.getBoundingClientRect();
-  var mapCenterY = window.pageYOffset + rect.top + rect.height / 2;
-  var targetY = mapCenterY - window.innerHeight / 2;
-  window.scrollTo({ top: targetY, behavior: 'smooth' });
-  setTimeout(function() {
-    if (typeof mapa !== 'undefined' && mapa) {
-      mapa.invalidateSize();
-      mapa.panTo(mapa.getCenter(), { animate: false });
-    }
-  }, 400);
-}
-
-function _centrarMapa() { return; // salto desactivado
-  var mapEl = document.getElementById('map');
-  if (!mapEl) return;
-  var rect = mapEl.getBoundingClientRect();
-  var mapCenterY = window.pageYOffset + rect.top + rect.height / 2;
-  var targetY = mapCenterY - window.innerHeight / 2;
-  window.scrollTo({ top: targetY, behavior: 'smooth' });
-  setTimeout(function() {
-    if (typeof mapa !== 'undefined' && mapa) {
-      mapa.invalidateSize();
-      mapa.panTo(mapa.getCenter(), { animate: false });
-    }
-  }, 400);
-}
 function _irAlMapa() {
   setTimeout(_centrarMapa, 150);
 }
@@ -4370,7 +4559,6 @@ function añadirMarcadorUsuario(p) {
       var content = '<div style="font-family:DM Sans,sans-serif;min-width:200px;max-width:260px">' +
         '<strong style="font-size:14px">👤 ' + punto.nombre + '</strong><br>' +
         '<small style="color:#6b7280;font-size:11px">Punto añadido por usuario' +
-        (punto.estado === 'pendiente' ? ' · <span style="color:#f59e0b">⏳ Pendiente revisión</span>' : '') +
         '</small>' +
         (punto.descripcion ? '<p style="font-size:13px;margin:6px 0 4px;color:#374151">' + punto.descripcion + '</p>' : '') +
         '<button onclick="addToRoute(\'' + punto.id + '\');mapa.closePopup();" style="' + btnRutaStyle + '">' + btnRutaLabel + '</button>' +
@@ -6016,7 +6204,7 @@ function ejecutarBusqueda() {
             var nombre=r.display_name.split(',')[0].trim();
             var dist=userLat?' - '+formatDist(haversine(userLat,userLng,lat,lng)):'';
             var sm=L.marker([lat,lng],{icon:iconoBusqueda}).addTo(mapa);
-            sm.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>'+nombre+dist+'</strong><br><button onclick="irACoordenadasNav('+lat+','+lng+')" style="display:inline-block;margin-top:8px;background:#1D9E75;color:#fff;padding:5px 12px;border-radius:12px;font-size:12px;border:none;cursor:pointer;font-family:DM Sans,sans-serif">&#128506; Cómo llegar</button></div>');
+            sm.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>'+nombre+dist+'</strong><br><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button onclick="_addBusquedaRuta(encodeURIComponent(\''+nombre+'\'),'+lat+','+lng+');this.textContent=\'✓ En ruta\';this.style.background=\'#1D9E75\';this.style.color=\'#fff\';" style="background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">➕ Añadir a ruta</button><button onclick="irACoordenadasNav('+lat+','+lng+')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">&#128506; Cómo llegar</button></div></div>');
             searchMarkers.push(sm); bounds.push([lat,lng]);
           });
           if (searchMarkers.length>0) searchMarkers[0].openPopup();
@@ -6340,6 +6528,14 @@ function verEnMapa(lat,lng) {
   mapa.setView([lat,lng],16);
   document.activeElement && document.activeElement.blur(); setTimeout(function(){ var el=document.getElementById('map'); if(el){ var rect=el.getBoundingClientRect(); var center=window.pageYOffset+rect.top-(window.innerHeight/2)+(rect.height/2); window.scrollTo({top:Math.max(0,center),behavior:'smooth'}); } },600);
 }
+function _addBusquedaRuta(nombreEnc, lat, lng) {
+  var nombre = decodeURIComponent(nombreEnc);
+  var tmpId = '_busq_' + lat.toString().replace('.','') + '_' + lng.toString().replace('.','');
+  PUNTOS = PUNTOS.filter(function(p){ return p.id !== tmpId; });
+  PUNTOS.push({ id:tmpId, nombre:nombre, lat:lat, lng:lng, categoria:'busqueda', emoji:'📍' });
+  addToRoute(tmpId);
+  mostrarToast('📍 ' + nombre + ' añadido a la ruta');
+}
 function irACoordenadasNav(lat,lng) {
   mapa.closePopup();
   var tmpId = '_busqueda_tmp';
@@ -6349,10 +6545,7 @@ function irACoordenadasNav(lat,lng) {
   PUNTOS.push(tmp);
   addToRoute(tmpId);
   verEnMapa(lat, lng);
-  setTimeout(function() {
-    var btnNav = document.getElementById('ruta-nav-btn');
-    if (btnNav && btnNav.style.display !== 'none') activarNavegacionVoz();
-  }, 600);
+  setTimeout(function() { activarNavegacionVoz(); }, 600);
 }
 
 function irIndicaciones(lat,lng) {
@@ -7060,9 +7253,10 @@ function activarNavegacionVoz() {
     if (btnOrMap) btnOrMap.style.display = 'none';
     var btnOrPanel = document.getElementById('ruta-nav-orientacion');
     if (btnOrPanel) btnOrPanel.style.display = 'block';
-    ['btn-add-poi-map','map-radio-control','btn-alertas-toggle','btn-sos-mapa','btn-meteo-mapa','btn-buscar-mapa','btn-poi-drawer-mapa'].forEach(function(id){
+    ['btn-add-poi-map','map-radio-control','btn-alertas-toggle','btn-sos-mapa','btn-meteo-mapa','btn-buscar-mapa','btn-poi-drawer-mapa','btn-expandir-mapa'].forEach(function(id){
       var el=document.getElementById(id); if(el) el.style.display='none';
     });
+    var _srchStrip=document.getElementById('mapa-search-strip');if(_srchStrip)_srchStrip.style.display='none';
     ['ruta-bar-count','ruta-bar-dist','ruta-bar-time'].forEach(function(id){
       var el=document.getElementById(id); if(el) el.style.display='none';
     });
@@ -7332,7 +7526,7 @@ function detenerNavegacionVoz() {
   // Restaurar brújula en mapa
   var btnOrMapRst = document.getElementById('btn-brujula-mapa');
   if (btnOrMapRst) btnOrMapRst.style.display = 'flex';
-  ['btn-sos-mapa','btn-meteo-mapa','btn-buscar-mapa','btn-poi-drawer-mapa'].forEach(function(id){
+  ['btn-sos-mapa','btn-meteo-mapa','btn-buscar-mapa','btn-poi-drawer-mapa','btn-expandir-mapa'].forEach(function(id){
     var b=document.getElementById(id); if(b) b.style.display='flex';
   });
   var btnOrPanelRst = document.getElementById('ruta-nav-orientacion');
@@ -7579,6 +7773,11 @@ var T={
     rankingPrimer:'Visita tu primer lugar para comenzar',
     rankingLogros:'Logros',
     rankingEscala:'Escala de rangos',
+    rankingEstadisticas:'Estadísticas',
+    rankingHardReset:'🗑️ Borrar cromos y visitas',
+    rankingPrimer:'Visita tu primer lugar para comenzar',
+    statReligiosos:'Religiosos',statArqueologicos:'Arqueológicos',statAlbergues:'Albergues',
+    statHistoricos:'Históricos',statLocalizaciones:'Localizaciones',statMonumentos:'Monumentos',
     rankingVisita:'visita',
     rankingVisitas:'visitas',
     rankingLugar:'lugar',
@@ -7849,6 +8048,12 @@ var T={
     rankingContador:'Visita lugares do Camiño para avanzar no ranking',
     rankingPrimer:'Visita o teu primeiro lugar para comezar',
     rankingLogros:'Logros',
+    rankingEscala:'Escala de rangos',
+    rankingEstadisticas:'Estatísticas',
+    rankingHardReset:'🗑️ Borrar cromos e visitas',
+    rankingPrimer:'Visita o teu primeiro lugar para comezar',
+    statReligiosos:'Relixiosos',statArqueologicos:'Arqueolóxicos',statAlbergues:'Albergues',
+    statHistoricos:'Históricos',statLocalizaciones:'Localizacións',statMonumentos:'Monumentos',
     rankingVisita:'visita',rankingVisitas:'visitas',rankingLugar:'lugar',rankingLugares:'lugares',
     rankingVisitado:'visitado',rankingVisitados:'visitados',rankingPara:'para',
     rankingMaximo:'¡Rango máximo acadado!',
@@ -7901,6 +8106,12 @@ var T={
     rankingContador:'Visit places along the Way to advance in ranking',
     rankingPrimer:'Visit your first place to begin',
     rankingLogros:'Achievements',
+    rankingEscala:'Rank ladder',
+    rankingEstadisticas:'Statistics',
+    rankingHardReset:'🗑️ Reset cards and visits',
+    rankingPrimer:'Visit your first place to begin',
+    statReligiosos:'Religious',statArqueologicos:'Archaeological',statAlbergues:'Hostels',
+    statHistoricos:'Historical',statLocalizaciones:'Locations',statMonumentos:'Monuments',
     rankingVisita:'visit',rankingVisitas:'visits',rankingLugar:'place',rankingLugares:'places',
     rankingVisitado:'visited',rankingVisitados:'visited',rankingPara:'to reach',
     rankingMaximo:'Maximum rank reached!',
@@ -8471,6 +8682,14 @@ function cambiarIdioma(lang){
   el=document.getElementById('album-panel-titulo');if(el)el.textContent=t.rankingTitulo||'🏅 Ranking del Peregrino';
   if(el&&!el.textContent.match(/\d/)){el=document.getElementById('album-panel-contador');if(el)el.textContent=t.rankingContador||'Visita lugares del Camino para avanzar en el ranking';}
   el=document.getElementById('ranking-logros-label');if(el)el.textContent=t.rankingLogros||'Logros';
+  el=document.getElementById('ranking-stats-label');if(el)el.textContent=t.rankingEstadisticas||'Estadísticas';
+  el=document.getElementById('tablero-hard-reset-btn');if(el)el.textContent=t.rankingHardReset||'🗑️ Borrar cromos y visitas';
+  el=document.getElementById('album-panel-volver');if(el)el.textContent=t.btnVolver||'← Volver';
+  el=document.getElementById('tablero-panel-volver');if(el)el.textContent=t.btnVolver||'← Volver';
+  var _elSigInit=document.getElementById('ap-rank-siguiente');
+  if(_elSigInit&&_elSigInit.textContent&&!_elSigInit.textContent.match(/\d/))_elSigInit.textContent=t.rankingPrimer||'Visita tu primer lugar para comenzar';
+  var _elCountInit=document.getElementById('ap-rank-count');
+  if(_elCountInit&&_elCountInit.textContent==='0 visitas')_elCountInit.textContent='0 '+(t.rankingVisitas||'visitas');
   // Panel Colección
   el=document.getElementById('tablero-super-titulo');if(el)el.textContent=t.coleccionSuper||'Juego de la Oca Jacobeo';
   el=document.getElementById('tablero-titulo');if(el)el.textContent=t.coleccionTitulo||'🐚 Colección del Peregrino';
@@ -8526,6 +8745,14 @@ function cambiarIdioma(lang){
   // Panel ranking título y contador
   el=document.getElementById('album-panel-titulo');if(el)el.textContent=t.rankingTitulo||'🏅 Ranking del Peregrino';
   el=document.getElementById('album-panel-contador');if(el&&!el.textContent.match(/\d/))el.textContent=t.rankingContador||'Visita lugares del Camino para avanzar en el ranking';
+  el=document.getElementById('ranking-stats-label');if(el)el.textContent=t.rankingEstadisticas||'Estadísticas';
+  el=document.getElementById('tablero-hard-reset-btn');if(el)el.textContent=t.rankingHardReset||'🗑️ Borrar cromos y visitas';
+  el=document.getElementById('album-panel-volver');if(el)el.textContent=t.btnVolver||'← Volver';
+  el=document.getElementById('tablero-panel-volver');if(el)el.textContent=t.btnVolver||'← Volver';
+  var _elSigInit2=document.getElementById('ap-rank-siguiente');
+  if(_elSigInit2&&_elSigInit2.textContent&&!_elSigInit2.textContent.match(/\d/))_elSigInit2.textContent=t.rankingPrimer||'Visita tu primer lugar para comenzar';
+  var _elCountInit2=document.getElementById('ap-rank-count');
+  if(_elCountInit2&&_elCountInit2.textContent&&!_elCountInit2.textContent.match(/[1-9]/))_elCountInit2.textContent='0 '+(t.rankingVisitas||'visitas');
   // Panel álbum recuerdos vacío
   el=document.getElementById('album-rec-vacio');if(el){var vt=el.querySelector('div:nth-child(2)');if(vt)vt.textContent=t.albumVacio||'Tu álbum está vacío';}
   // Botones volver álbum recuerdos
@@ -8920,7 +9147,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v804";
+var _APP_VERSION = "v820";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -8930,7 +9157,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v804') === -1) {
+        if (key.indexOf('guia-compostelana-v820') === -1) {
           caches.delete(key);
         }
       });
@@ -9614,7 +9841,7 @@ if ('serviceWorker' in navigator) {
   // ---- Detección de proximidad durante el seguimiento GPS ----
   // Se engancha al watchPosition existente comprobando cada posición
   var _albumYaNotificado = {};
-  var RADIO_VISITA_M = 25; // metros para registrar visita (pruebas)
+  var RADIO_VISITA_M = 3000; // metros para registrar visita (PRUEBAS AMPLIAS)
 
   window._albumCheckProximidad = function(lat, lng) {
     if (typeof PUNTOS === 'undefined') return;
@@ -9663,7 +9890,7 @@ if ('serviceWorker' in navigator) {
       // Cromo bloqueado — misma altura, todo el cuerpo de la tarjeta sigue visible
       return '<div class="poi-img '+p.color+'" style="position:relative;overflow:hidden;background:linear-gradient(135deg,#12082a 0%,#1a0e35 50%,#0e0620 100%)" data-cromo-id="'+p.id+'">' +
         '<div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,0.02) 0px,rgba(255,255,255,0.02) 10px,transparent 10px,transparent 20px)"></div>' +
-        '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">' +
+        '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding-bottom:30%">' +
           '<div style="width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);font-size:16px">🔒</div>' +
           '<div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:1.5px;text-transform:uppercase;font-family:DM Sans,sans-serif;text-align:center;padding:0 6px;line-height:1.4">'+((T[idiomaActual]||T.es).visitaDesbloquear||'Visita el lugar para desbloquear y añadir tu imagen')+'</div>' +
         '</div>' +
@@ -9781,13 +10008,14 @@ function _renderAlbumPanel() {
     // Estadísticas por categoría
     var elStats = document.getElementById('ap-stats');
     if (elStats) {
+      var _tSt=T[idiomaActual]||T.es;
       var statCats = [
-        { emoji:'⛪', label:'Religiosos',     cat:'edificación religiosa',  total:36 },
-        { emoji:'🔍', label:'Arqueológicos',  cat:'vestigio arqueológico',   total:12 },
-        { emoji:'🏠', label:'Albergues',      cat:'albergue',               total:11 },
-        { emoji:'🏛️', label:'Históricos',     cat:'edificación histórica',  total:9  },
-        { emoji:'📜', label:'Localizaciones', cat:'localización histórica', total:8  },
-        { emoji:'🗿', label:'Monumentos',     cat:'monumento',              total:5  }
+        { emoji:'⛪', label:_tSt.statReligiosos||'Religiosos',     cat:'edificación religiosa',  total:36 },
+        { emoji:'🔍', label:_tSt.statArqueologicos||'Arqueológicos',cat:'vestigio arqueológico',   total:12 },
+        { emoji:'🏠', label:_tSt.statAlbergues||'Albergues',       cat:'albergue',               total:11 },
+        { emoji:'🏛️', label:_tSt.statHistoricos||'Históricos',     cat:'edificación histórica',  total:9  },
+        { emoji:'📜', label:_tSt.statLocalizaciones||'Localizaciones',cat:'localización histórica',total:8 },
+        { emoji:'🗿', label:_tSt.statMonumentos||'Monumentos',     cat:'monumento',              total:5  }
       ];
       elStats.innerHTML = statCats.map(function(s) {
         var visitados = s.cat === 'usuario'
@@ -9990,28 +10218,42 @@ function _ocaCobrarDeudaSiProcede(cb){
     }
     if(!tipoActivo){if(cb)cb(false);return;}
     // Eliminar 1 cromo común del tablero como pago
-    _ocaEliminarComunesAleatorio(1,function(eli){
+    _ocaEliminarComunesAleatorio(1,function(eli,infoEli){
       if(eli===0){if(cb)cb(false);return;} // no había, deuda sigue
       deuda[tipoActivo]=(deuda[tipoActivo]||0)-1;
       if(deuda[tipoActivo]<=0) delete deuda[tipoActivo];
       _ocaSetDeuda(deuda,function(){
         // Mostrar modal de cobro
         var restante=_ocaTotalDeuda(deuda);
-        _ocaModalDeudaCobrada(tipoActivo,restante,function(){if(cb)cb(true);});
+        _ocaModalDeudaCobrada(tipoActivo,restante,infoEli||[],function(){if(cb)cb(true);});
       });
     });
   });
 }
 
-function _ocaModalDeudaCobrada(tipo,restante,cb){
+function _ocaModalDeudaCobrada(tipo,restante,infoCromos,cb){
   var overlay=document.createElement('div');
   overlay.style.cssText='position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1rem;box-sizing:border-box';
   var box=document.createElement('div');
   box.style.cssText='background:linear-gradient(160deg,#1a2a0a,#2d4a1a);border-radius:20px;padding:1.5rem;max-width:85vw;width:300px;text-align:center;border:1px solid rgba(110,231,183,0.3)';
   var icono=_DEUDA_ICONO[tipo]||'⚠️';
+  var cromosHtml='';
+  if(infoCromos&&infoCromos.length){
+    cromosHtml='<div style="margin:10px 0 14px;display:flex;flex-direction:column;gap:6px">';
+    infoCromos.forEach(function(c){
+      cromosHtml+='<div style="display:flex;align-items:center;gap:8px;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.35);border-radius:10px;padding:6px 10px;font-size:12px;color:#fca5a5">'
+        +'<span style="font-size:18px">'+c.emoji+'</span>'
+        +'<span style="flex:1;text-align:left"><strong style="color:#fff">'+c.label+'</strong></span>'
+        +'<span style="font-size:10px;opacity:0.7">nº '+c.num+'</span>'
+        +'</div>';
+    });
+    cromosHtml+='</div>';
+  }
   box.innerHTML='<div style="font-size:32px;margin-bottom:8px">'+icono+'</div>'
     +'<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">Deuda cobrada</div>'
-    +'<div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;margin-bottom:16px">Se ha retirado 1 cromo común del tablero como pago de <strong style="color:#fff">'+tipo.charAt(0).toUpperCase()+tipo.slice(1)+'</strong>.'+(restante>0?' Deuda restante: <strong style="color:#fca5a5">-'+restante+'</strong>':' ¡Deuda saldada!')+'</div>'
+    +'<div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5">Se ha retirado del tablero como pago de <strong style="color:#fff">'+tipo.charAt(0).toUpperCase()+tipo.slice(1)+'</strong>:</div>'
+    +cromosHtml
+    +'<div style="font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:16px">'+(restante>0?'Deuda restante: <strong style="color:#fca5a5">-'+restante+'</strong>':'¡Deuda saldada! ✅')+'</div>'
     +'<button id="deuda-cobro-ok" style="width:100%;background:#1D9E75;color:#fff;border:none;border-radius:16px;padding:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">OK</button>';
   overlay.appendChild(box);document.body.appendChild(overlay);
   box.querySelector('#deuda-cobro-ok').addEventListener('click',function(){overlay.remove();_renderTableroOca();if(cb)cb();});
@@ -10022,8 +10264,14 @@ function _ocaEliminarComunesAleatorio(n,cb){
     var tablero=window._OCA_TABLERO||{};
     var comunes=entries.filter(function(e){return e.item.resuelto&&(tablero[e.item.num]||{tipo:'normal'}).tipo==='normal';});
     for(var i=comunes.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=comunes[i];comunes[i]=comunes[j];comunes[j]=t;}
-    var elim=comunes.slice(0,n),eliminados=elim.length;
-    function next(){if(!elim.length){cb(eliminados);return;}window._ocaEliminarCromo(elim.shift().key,next);}
+    var aEliminar=comunes.slice(0,n);
+    var eliminados=aEliminar.length;
+    var infoEliminados=aEliminar.map(function(e){
+      var cas=tablero[e.item.num]||{};
+      return {num:e.item.num, label:cas.label||('Casilla '+e.item.num), emoji:cas.emoji||'🐚'};
+    });
+    var copia=aEliminar.slice();
+    function next(){if(!copia.length){cb(eliminados,infoEliminados);return;}window._ocaEliminarCromo(copia.shift().key,next);}
     next();
   });
 }
@@ -10484,7 +10732,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v804</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v820</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
