@@ -9147,7 +9147,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v820";
+var _APP_VERSION = "v821";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -9157,7 +9157,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v820') === -1) {
+        if (key.indexOf('guia-compostelana-v821') === -1) {
           caches.delete(key);
         }
       });
@@ -10469,8 +10469,23 @@ function _hardResetJuego(){
     box.innerHTML='<div style="font-size:28px;margin-bottom:12px">⏳</div><div style="font-size:14px;color:#fff">Borrando datos...</div>';
     var req=indexedDB.deleteDatabase('album-peregrino');
     req.onsuccess=req.onerror=function(){
-      if('caches' in window){caches.keys().then(function(keys){return Promise.all(keys.map(function(k){return caches.delete(k);}));}).then(function(){overlay.remove();mostrarToast('🗑️ Reset completado — recargando...');setTimeout(function(){window.location.reload(true);},1200);});}
-      else{overlay.remove();mostrarToast('🗑️ Reset completado — recargando...');setTimeout(function(){window.location.reload(true);},1200);}
+      function _doReload(){
+        overlay.remove();
+        mostrarToast('🗑️ Reset completado — recargando...');
+        setTimeout(function(){ window.location.href = window.location.href.split('?')[0]+'?_r='+Date.now(); },1000);
+      }
+      function _clearCachesAndReload(){
+        if('caches' in window){
+          caches.keys().then(function(keys){
+            return Promise.all(keys.map(function(k){ return caches.delete(k); }));
+          }).then(_doReload).catch(_doReload);
+        } else { _doReload(); }
+      }
+      if('serviceWorker' in navigator){
+        navigator.serviceWorker.getRegistrations().then(function(regs){
+          return Promise.all(regs.map(function(r){ return r.unregister(); }));
+        }).then(_clearCachesAndReload).catch(_clearCachesAndReload);
+      } else { _clearCachesAndReload(); }
     };
   });
 }
@@ -10732,7 +10747,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v820</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v821</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
