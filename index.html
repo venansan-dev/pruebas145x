@@ -9147,7 +9147,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v831";
+var _APP_VERSION = "v832";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -9157,7 +9157,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v831') === -1) {
+        if (key.indexOf('guia-compostelana-v832') === -1) {
           caches.delete(key);
         }
       });
@@ -9844,6 +9844,7 @@ if ('serviceWorker' in navigator) {
       var distM = haversine(lat, lng, poi.lat, poi.lng) * 1000;
       if (distM <= RADIO_VISITA_M) {
         _albumYaNotificado[poi.id] = true;
+        if (navigator.vibrate) navigator.vibrate([80,40,80,40,160]);
         window._albumRegistrarVisita(poi);
       }
     });
@@ -10799,7 +10800,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v831</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v832</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
