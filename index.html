@@ -5924,7 +5924,7 @@ function _mostrarUnCromo(item, onClose) {
   // Modal de notificación — efectos especiales se resuelven al pulsar casilla en el Tablero
   var headerTxt = doble ? '🏨 ¡Doble por la Posada!' : 'Localización desbloqueada';
   var cromoInfo = num
-    ? '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">'      + '<div style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:8px">Obtienes un cromo</div>'      + '<div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5">Ahora puedes añadir tu foto recuerdo en <strong style=\"color:#fff\">Mi Álbum</strong> y abrir el cromo en el <strong style=\"color:#fff\">Tablero</strong></div>'      + '</div>'    : '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">'      + '<div style="font-size:13px;color:rgba(255,255,255,0.75)">Localización registrada en tu álbum</div>'      + '</div>';
+    ? '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">'      + '<div style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:8px">Obtienes un cromo</div>'      + '<div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5">Ahora puedes añadir tu foto recuerdo en <strong style=\"color:#fff\">Mi Álbum</strong> y abrir el cromo en el <strong style=\"color:#fff\">Tablero</strong></div>'      + '</div>'    : '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">'      + '<div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.6">Localización registrada en tu <strong style=\"color:#6ee7b7\">Álbum</strong> · cromo disponible en tu <strong style=\"color:#F5C800\">Colección</strong></div>'      + '</div>';
 
   var botonesHtml = '<div id="cromo-btn-cerrar" style="background:#1D9E75;color:#fff;border:none;border-radius:24px;padding:12px 32px;font-size:15px;font-weight:600;cursor:pointer;display:inline-block;width:100%;box-sizing:border-box">¡Genial!</div>';
 
@@ -9147,7 +9147,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v832";
+var _APP_VERSION = "v834";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -9157,7 +9157,7 @@ if ('serviceWorker' in navigator) {
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
-        if (key.indexOf('guia-compostelana-v832') === -1) {
+        if (key.indexOf('guia-compostelana-v834') === -1) {
           caches.delete(key);
         }
       });
@@ -10497,8 +10497,7 @@ function _hardResetJuego(){
     var _safetyTimer=setTimeout(function(){ window.location.reload(); },5000);
     function _doReload(){
       clearTimeout(_safetyTimer);
-      overlay.innerHTML='<div style="font-size:28px;margin-bottom:12px">✅</div><div style="font-size:14px;color:#fff;font-family:DM Sans,sans-serif">Reset completado.<br>Recargando...</div>';
-      setTimeout(function(){ window.location.reload(); },400);
+      window.location.reload();
     }
     // Estrategia móvil: vaciar stores uno a uno con la conexión existente
     // evita deleteDatabase que se bloquea en iOS/Android
@@ -10800,7 +10799,7 @@ function abrirSobreNosotros() {
   document.getElementById('modal-sobre-nosotros').classList.add('visible');
 }
 </script>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v832</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v834</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
