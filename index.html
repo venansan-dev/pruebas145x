@@ -3,21 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes"/>
-  <script>
-  // Bloquear pinch-zoom en iOS excepto dentro del mapa
-  document.addEventListener('touchmove', function(e) {
-    if (e.touches.length > 1) {
-      var map = document.getElementById('map');
-      if (map && map.contains(e.target)) return;
-      e.preventDefault();
-    }
-  }, { passive: false });
-  document.addEventListener('gesturestart', function(e) {
-    var map = document.getElementById('map');
-    if (map && map.contains(e.target)) return;
-    e.preventDefault();
-  }, { passive: false });
-  </script>
+
   <title>Xacobeapp — Tu Guía Xacobea</title>
   <meta name="description" content="Guía interactiva y gratuita del Camino de Santiago. Mapas, etapas, albergues, patrimonio templario y jacobeo desde Oporto hasta Santiago de Compostela."/>
   <meta name="keywords" content="Camino de Santiago, Camino Xacobeo, guía del peregrino, Vigo, Baiona, A Guarda, etapas, albergues, patrimonio templario, Oia, Pontevedra, Padrón"/>
@@ -91,6 +77,7 @@
 #rotate-overlay .rotate-icon{font-size:64px;margin-bottom:20px;animation:rotatePulse 2s ease-in-out infinite}
 #rotate-overlay .rotate-title{font-size:20px;font-weight:700;font-family:Playfair Display,serif;margin-bottom:8px}
 #rotate-overlay .rotate-sub{font-size:14px;color:rgba(255,255,255,0.75);line-height:1.5}
+@media (orientation:landscape) and (max-width:1024px){#rotate-overlay{display:flex}}
 
 
 
@@ -9522,7 +9509,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v960";
+var _APP_VERSION = "v961";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11233,7 +11220,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v960</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v961</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
