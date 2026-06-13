@@ -4728,8 +4728,6 @@ function abrirHeroModal() {
     sub.textContent = 'Hay mucho más en la guía. Elige algo que te llame la atención:';
     inner.appendChild(sub);
 
-    _appendCuriosidad(inner);
-
     var lista = document.createElement('div');
     lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:16px';
 
@@ -4792,8 +4790,6 @@ function abrirHeroModal() {
       textos.appendChild(p);
     });
     inner.appendChild(textos);
-
-    _appendCuriosidad(inner);
 
     // Botón abrir panel
     var btnAbrir = document.createElement('button');
@@ -10082,7 +10078,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v968";
+var _APP_VERSION = "v969";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11795,7 +11791,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v968</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v969</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
