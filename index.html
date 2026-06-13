@@ -4482,17 +4482,91 @@ function abrirHeroModal() {
     inner.appendChild(btnSalir);
   }
 
+  // ── DATOS CONTEXTUALES Y CURIOSIDADES ──────────────────────────
+  var _curiosidades = [
+    'El nombre "Compostela" probablemente deriva del latín <em>campus stellae</em>, "campo de la estrella". Aunque también hay quien lo vincula a <em>compositum</em>, lugar donde se depositan los muertos.',
+    'Los templarios custodiaron el Camino durante casi dos siglos. En Galicia, su bailía de Vigo controlaba las rutas costeras y varios puntos estratégicos que hoy son paradas del Camino Portugués.',
+    'La vieira, símbolo universal del peregrino, tiene un origen incierto. Una leyenda dice que un caballero salió del mar cubierto de conchas tras seguir el cuerpo de Santiago flotando desde Jaffa.',
+    'El Camino Francés mide oficialmente 778 km desde Saint-Jean-Pied-de-Port. Pero la distancia real varía según la fuente: el terreno gallego suma más metros de los que aparecen en el plano.',
+    'La Catedral de Santiago guarda un secreto arquitectónico: el Pórtico de la Gloria fue policromado en colores vivos durante siglos. Lo que hoy ves en piedra desnuda fue una vez una explosión de color.',
+    'El Botafumeiro de la Catedral pesa 53 kg y puede alcanzar los 68 km/h cuando ocho tiraboleiros lo hacen oscilar. Nació, según la tradición, para purificar el aire cargado de peregrinos.',
+    'Existen más de 30 rutas jacobeas reconocidas en Europa. La más larga parte de Riga, en Letonia, y suma más de 3.000 km hasta Compostela.',
+    'La Puerta Santa de la Catedral solo se abre en los Años Santos Jacobeos, cuando el 25 de julio cae en domingo. El próximo es 2027.',
+    'El rey Alfonso II "el Casto" fue el primer peregrino documentado a Compostela, hacia el año 830. Mandó construir la primera iglesia sobre el sepulcro del Apóstol.',
+    'Los peregrinos medievales no caminaban solos por elección: viajar en grupo era una necesidad. Los caminos estaban llenos de bandidos, y la peregrinación era también un seguro de vida colectivo.'
+  ];
+
+  function _curiosidadAleatoria() {
+    return _curiosidades[Math.floor(Math.random() * _curiosidades.length)];
+  }
+
+  function _numCromosActuales() {
+    if (window._albumVisitasSet) return Object.keys(window._albumVisitasSet).length;
+    return 0;
+  }
+
+  function _saludoConContexto() {
+    var hora = new Date().getHours();
+    var base = hora < 13 ? '¡Buenos días, peregrino! 🌅' : hora < 20 ? '¡Buenas tardes, peregrino! ☀️' : '¡Buenas noches, peregrino! 🌙';
+    return base;
+  }
+
+  function _subtituloContextual() {
+    var n = _numCromosActuales();
+    var ruta = (typeof rutaPuntos !== 'undefined') ? rutaPuntos.length : 0;
+    // Mensajes según estado del usuario
+    if (n === 0 && ruta === 0) {
+      var frases = [
+        'Parece que es tu primera vez por aquí. ¡Bienvenido al Camino!',
+        'Todo está listo para tu peregrinación. ¿Por dónde empezamos?',
+        'El Camino empieza con el primer paso. ¿Damos el tuyo?'
+      ];
+      return frases[Math.floor(Math.random() * frases.length)];
+    }
+    if (n > 0 && ruta === 0) {
+      var rango = (window._getRango) ? window._getRango(n) : null;
+      var rangoTxt = rango ? ' Eres ' + rango.emoji + ' ' + rango.label + '.' : '';
+      return 'Llevas ' + n + ' cromo' + (n !== 1 ? 's' : '') + ' en tu álbum.' + rangoTxt + ' ¡Sigue así!';
+    }
+    if (ruta > 0 && n === 0) {
+      return 'Tienes ' + ruta + ' lugar' + (ruta !== 1 ? 'es' : '') + ' en ruta. ¿Salimos?';
+    }
+    if (ruta > 0 && n > 0) {
+      return 'Llevas ' + n + ' cromo' + (n !== 1 ? 's' : '') + ' y una ruta con ' + ruta + ' parada' + (ruta !== 1 ? 's' : '') + '. ¡El Camino te espera!';
+    }
+    return 'El Camino te espera. ¿En qué puedo ayudarte?';
+  }
+
+  // Inserta un bloque de curiosidad con estilo discreto
+  function _appendCuriosidad(container) {
+    // Solo mostrar ~60% de las veces para que no sea predecible
+    if (Math.random() > 0.6) return;
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'background:rgba(255,255,255,0.08);border-left:3px solid rgba(255,255,255,0.3);border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:16px';
+    var label = document.createElement('div');
+    label.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-weight:600';
+    label.textContent = '📜 Sabías que…';
+    var txt = document.createElement('p');
+    txt.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;margin:0';
+    txt.innerHTML = _curiosidadAleatoria();
+    wrap.appendChild(label);
+    wrap.appendChild(txt);
+    container.appendChild(wrap);
+  }
+
   // ── PASO 1: Saludo + bifurcación según estado de ruta ───────────
   function _renderPaso1() {
     inner.innerHTML = '';
 
-    // Saludo contextual
-    var hora = new Date().getHours();
-    var saludo = hora < 13 ? '¡Buenos días, peregrino! 🌅' : hora < 20 ? '¡Buenas tardes, peregrino! ☀️' : '¡Buenas noches, peregrino! 🌙';
+    // Saludo contextual con subtítulo dinámico
     var h1 = document.createElement('div');
-    h1.style.cssText = 'font-family:Playfair Display,serif;font-size:22px;font-weight:600;color:#fff;line-height:1.2;margin-bottom:10px';
-    h1.textContent = saludo;
+    h1.style.cssText = 'font-family:Playfair Display,serif;font-size:22px;font-weight:600;color:#fff;line-height:1.2;margin-bottom:6px';
+    h1.textContent = _saludoConContexto();
     inner.appendChild(h1);
+    var subCtx = document.createElement('p');
+    subCtx.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.75);margin-bottom:12px;line-height:1.5';
+    subCtx.textContent = _subtituloContextual();
+    inner.appendChild(subCtx);
 
     // ¿Hay ruta activa?
     if (typeof rutaPuntos !== 'undefined' && rutaPuntos.length > 0) {
@@ -4556,9 +4630,11 @@ function abrirHeroModal() {
     inner.appendChild(sub);
 
     var sub2 = document.createElement('p');
-    sub2.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;margin-bottom:20px';
+    sub2.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;margin-bottom:12px';
     sub2.textContent = '¿Te gustaría visitar alguno?';
     inner.appendChild(sub2);
+
+    _appendCuriosidad(inner);
 
     var btnRow = document.createElement('div');
     btnRow.style.cssText = 'display:flex;gap:10px';
@@ -4648,9 +4724,11 @@ function abrirHeroModal() {
     inner.appendChild(titulo);
 
     var sub = document.createElement('p');
-    sub.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:16px;line-height:1.5';
+    sub.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:12px;line-height:1.5';
     sub.textContent = 'Hay mucho más en la guía. Elige algo que te llame la atención:';
     inner.appendChild(sub);
+
+    _appendCuriosidad(inner);
 
     var lista = document.createElement('div');
     lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:16px';
@@ -4715,6 +4793,8 @@ function abrirHeroModal() {
     });
     inner.appendChild(textos);
 
+    _appendCuriosidad(inner);
+
     // Botón abrir panel
     var btnAbrir = document.createElement('button');
     btnAbrir.textContent = 'Abrir ' + op.titulo + ' →';
@@ -4759,6 +4839,16 @@ function abrirHeroModal() {
     titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:18px;font-weight:600;color:#fff;margin-bottom:6px';
     titulo.textContent = 'Tu ruta actual';
     inner.appendChild(titulo);
+
+    // Aviso de cromos si tiene alguno
+    var _nCromos = _numCromosActuales();
+    if (_nCromos > 0 && window._getRango) {
+      var _rng = window._getRango(_nCromos);
+      var cromoBanner = document.createElement('div');
+      cromoBanner.style.cssText = 'background:rgba(245,200,0,0.12);border:1px solid rgba(245,200,0,0.3);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:rgba(255,255,255,0.8);line-height:1.5';
+      cromoBanner.innerHTML = _rng.emoji + ' <strong style="color:#F5C800">' + _rng.label + '</strong> · ' + _nCromos + ' cromo' + (_nCromos !== 1 ? 's' : '') + ' desbloqueado' + (_nCromos !== 1 ? 's' : '') + '. Sigue visitando para subir de rango.';
+      inner.appendChild(cromoBanner);
+    }
 
     var hint = document.createElement('p');
     hint.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.65);margin-bottom:14px';
@@ -9992,7 +10082,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v967";
+var _APP_VERSION = "v968";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11705,7 +11795,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v967</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v968</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
