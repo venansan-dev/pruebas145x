@@ -4446,11 +4446,45 @@ function abrirHeroModal() {
   inner.style.cssText = 'position:relative;z-index:1';
   panel.appendChild(inner);
 
-  // ── PASO 1: Saludo + POIs cercanos ──────────────────────────────
+  // ── PASO 1: Saludo + bifurcación según estado de ruta ───────────
   function _renderPaso1() {
     inner.innerHTML = '';
 
-    // Calcular POIs cercanos (sin etapas, sin alertas, sin usuario)
+    // Saludo contextual
+    var hora = new Date().getHours();
+    var saludo = hora < 13 ? '¡Buenos días, peregrino! 🌅' : hora < 20 ? '¡Buenas tardes, peregrino! ☀️' : '¡Buenas noches, peregrino! 🌙';
+    var h1 = document.createElement('div');
+    h1.style.cssText = 'font-family:Playfair Display,serif;font-size:22px;font-weight:600;color:#fff;line-height:1.2;margin-bottom:10px';
+    h1.textContent = saludo;
+    inner.appendChild(h1);
+
+    // ¿Hay ruta activa?
+    if (typeof rutaPuntos !== 'undefined' && rutaPuntos.length > 0) {
+      var sub = document.createElement('p');
+      sub.style.cssText = 'font-size:14px;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:20px';
+      sub.textContent = 'Tienes una ruta seleccionada con ' + rutaPuntos.length + ' lugar' + (rutaPuntos.length !== 1 ? 'es' : '') + '. ¿Quieres revisarla o modificarla?';
+      inner.appendChild(sub);
+
+      var btnRow = document.createElement('div');
+      btnRow.style.cssText = 'display:flex;gap:10px';
+
+      var btnSi = document.createElement('button');
+      btnSi.textContent = 'Sí, ver ruta';
+      btnSi.style.cssText = 'flex:1;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
+      btnSi.addEventListener('click', function(){ _renderRevision(); });
+
+      var btnNo = document.createElement('button');
+      btnNo.textContent = 'No, volver al mapa';
+      btnNo.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+      btnNo.addEventListener('click', cerrar);
+
+      btnRow.appendChild(btnSi);
+      btnRow.appendChild(btnNo);
+      inner.appendChild(btnRow);
+      return;
+    }
+
+    // Sin ruta activa — flujo original con POIs cercanos
     var cercanos = [];
     if (typeof PUNTOS !== 'undefined' && typeof userLat !== 'undefined' && userLat) {
       var todos = PUNTOS.filter(function(p) {
@@ -4464,17 +4498,7 @@ function abrirHeroModal() {
       cercanos = cercanos.slice(0, 5);
     }
 
-    // Saludo
-    var hora = new Date().getHours();
-    var saludo = hora < 13 ? '¡Buenos días, peregrino! 🌅' : hora < 20 ? '¡Buenas tardes, peregrino! ☀️' : '¡Buenas noches, peregrino! 🌙';
-
-    var h1 = document.createElement('div');
-    h1.style.cssText = 'font-family:Playfair Display,serif;font-size:22px;font-weight:600;color:#fff;line-height:1.2;margin-bottom:8px';
-    h1.textContent = saludo;
-    inner.appendChild(h1);
-
     if (cercanos.length === 0) {
-      // Sin GPS o sin puntos cercanos
       var noGps = document.createElement('p');
       noGps.style.cssText = 'font-size:14px;color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px';
       noGps.textContent = 'Activa el GPS para ver los lugares del Camino más cercanos a ti.';
@@ -4500,7 +4524,6 @@ function abrirHeroModal() {
     sub2.textContent = '¿Te gustaría visitar alguno?';
     inner.appendChild(sub2);
 
-    // Botones Sí / No
     var btnRow = document.createElement('div');
     btnRow.style.cssText = 'display:flex;gap:10px';
 
@@ -4517,6 +4540,68 @@ function abrirHeroModal() {
     btnRow.appendChild(btnSi);
     btnRow.appendChild(btnNo);
     inner.appendChild(btnRow);
+  }
+
+  // ── REVISIÓN: lista de POIs en ruta con opción a quitar ─────────
+  function _renderRevision() {
+    inner.innerHTML = '';
+
+    var titulo = document.createElement('div');
+    titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:18px;font-weight:600;color:#fff;margin-bottom:6px';
+    titulo.textContent = 'Tu ruta actual';
+    inner.appendChild(titulo);
+
+    var hint = document.createElement('p');
+    hint.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.65);margin-bottom:14px';
+    hint.textContent = 'Pulsa la ✕ para quitar un lugar de la ruta.';
+    inner.appendChild(hint);
+
+    var lista = document.createElement('div');
+    lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:18px;max-height:45vh;overflow-y:auto';
+
+    function _renderItems() {
+      lista.innerHTML = '';
+      if (rutaPuntos.length === 0) {
+        lista.innerHTML = '<div style="font-size:13px;color:rgba(255,255,255,0.5);padding:12px 0;text-align:center">La ruta está vacía.</div>';
+        return;
+      }
+      rutaPuntos.forEach(function(p, idx) {
+        var fila = document.createElement('div');
+        fila.style.cssText = 'display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:10px 12px';
+
+        var num = document.createElement('div');
+        num.style.cssText = 'width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.25);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0';
+        num.textContent = idx + 1;
+        fila.appendChild(num);
+
+        var nombre = document.createElement('div');
+        nombre.style.cssText = 'flex:1;font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+        nombre.textContent = p.nombre;
+        fila.appendChild(nombre);
+
+        var btnDel = document.createElement('button');
+        btnDel.textContent = '✕';
+        btnDel.style.cssText = 'width:28px;height:28px;border-radius:50%;background:rgba(220,38,38,0.35);border:1px solid rgba(220,38,38,0.5);color:#fff;font-size:13px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none';
+        btnDel.addEventListener('click', function() {
+          try { quitarDeRuta(p.id); } catch(e) {
+            rutaPuntos = rutaPuntos.filter(function(x){ return x.id !== p.id; });
+            try { actualizarRuta(); } catch(e2){}
+          }
+          _renderItems();
+        });
+        fila.appendChild(btnDel);
+        lista.appendChild(fila);
+      });
+    }
+
+    _renderItems();
+    inner.appendChild(lista);
+
+    var btnVolver = document.createElement('button');
+    btnVolver.textContent = '← Regresar al mapa';
+    btnVolver.style.cssText = 'width:100%;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnVolver.addEventListener('click', cerrar);
+    inner.appendChild(btnVolver);
   }
 
   // ── PASO 2: Lista de 5 POIs para seleccionar ────────────────────
@@ -9698,7 +9783,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v963";
+var _APP_VERSION = "v964";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11411,7 +11496,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v963</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v964</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
