@@ -153,7 +153,7 @@
 .poi-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(to bottom,var(--ocre),transparent);opacity:0.5;transition:opacity 0.2s}
 .poi-card:hover::before{opacity:1}
 .modal-box h3{font-family:'Playfair Display',serif}
-@keyframes bounceDownArrow{0%,100%{transform:translateY(0);}45%{transform:translateY(8px);}65%{transform:translateY(3px);}}@keyframes chipAlertaNewPulse{0%,100%{background:#dc2626;box-shadow:0 0 0 0 rgba(220,38,38,0.5)}50%{background:#b91c1c;box-shadow:0 0 0 6px rgba(220,38,38,0)}}</style>
+@keyframes bounceDownArrow{0%,100%{transform:translateY(0);}45%{transform:translateY(8px);}65%{transform:translateY(3px);}}</style>
 
 
   <!-- Schema.org Structured Data -->
@@ -287,7 +287,7 @@
       <!-- COLUMNA IZQUIERDA -->
       <div>
         <div class='hero-tag-row'>
-          <img src='https://i.postimg.cc/tRWLFtGh/vieira.png' id='hero-vieira-desktop' style='height:62px;width:auto;flex-shrink:0;object-fit:contain'/>
+          <img src='https://i.postimg.cc/tRWLFtGh/vieira.png' id='header-vieira-img' style='height:44px;width:auto;flex-shrink:0;object-fit:contain;margin-left:-6px'/>
           <img src='https://i.postimg.cc/k5yzbjd9/logohead.png' alt='Tu Guía Xacobea' id='hero-tag-img' style='height:62px;width:auto;display:block;margin-bottom:2px'/>
           <span id='hero-tag-text' style='display:none'>Tu Guía Xacobea</span>
           <!-- Banderas: solo escritorio, junto al cajetín -->
@@ -338,9 +338,9 @@
 <!-- FILTRO DE CATEGORÍAS SOBRE EL MAPA -->
 <div id='mapa-cat-bar' style='background:#fff;border-top:1px solid rgba(0,0,0,0.07);border-bottom:1px solid rgba(0,0,0,0.07);padding:8px 12px;overflow-x:auto;scrollbar-width:none;white-space:nowrap;display:flex;gap:6px;-webkit-overflow-scrolling:touch;position:relative'>
   <div id='mapa-cat-panel-title' style='display:none;position:absolute;inset:0;background:#fff;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;color:#374151'></div>
-  <button id='chip-alerta-mapa' onclick='abrirModalAlertas()' style='flex-shrink:0;background:#dc2626;color:#fff;border:1px solid #dc2626;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif'>🚨 Alertas</button>
   <button id='chip-mapa-todos' onclick='_filtrarMapaCat(this,"")' class='mapa-cat-chip' style='flex-shrink:0;background:#1D9E75;color:#fff;border:1px solid #1D9E75;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif'>📍 Todos</button>
   <button id='chip-usuario-mapa' onclick='_filtrarMapaCat(this,"usuario")' class='mapa-cat-chip' style='flex-shrink:0;display:none;background:#fff;color:#374151;border:1px solid rgba(0,0,0,0.15);border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>👤 Mis puntos</button>
+  <button id='chip-alerta-mapa' onclick='_filtrarMapaCat(this,"alerta")' class='mapa-cat-chip' style='flex-shrink:0;display:none;background:#fff;color:#374151;border:1px solid rgba(0,0,0,0.15);border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🚨 Alertas</button>
   <button id='chip-mapa-visitados' onclick='_filtrarMapaCat(this,"visitado")' class='mapa-cat-chip' style='flex-shrink:0;background:#fff;color:#374151;border:1px solid rgba(0,0,0,0.15);border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>👁️ Visitados</button>
   <button id='chip-mapa-sinvisitar' onclick='_filtrarMapaCat(this,"no-visitado")' class='mapa-cat-chip' style='flex-shrink:0;background:#fff;color:#374151;border:1px solid rgba(0,0,0,0.15);border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🔒 Sin visitar</button>
   <button id='chip-mapa-costa' onclick='_filtrarMapaCat(this,"etapa-costa")' class='mapa-cat-chip' style='flex-shrink:0;background:#fff;color:#374151;border:1px solid rgba(0,0,0,0.15);border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🔵 Costa</button>
@@ -931,7 +931,7 @@
 
     <!-- Logo + descripción + compartir -->
     <div style='background:var(--blanco);border:1px solid var(--borde);border-radius:var(--radio);padding:1rem;margin-bottom:0.75rem'>
-      <img alt='Guía Compostelana Ultreia' src='https://i.postimg.cc/k5yzbjd9/logohead.png' style='width:180px;height:auto;border-radius:0;display:block;margin-bottom:10px'/>
+      <img alt='Guía Compostelana Ultreia' src='https://i.postimg.cc/C1gNNsDK/IMG-0213.jpg' style='width:160px;height:42px;border-radius:4px;display:block;margin-bottom:10px'/>
       <p id='contacto-panel-desc' style='font-size:12px;color:var(--texto-suave);margin:0 0 10px;line-height:1.7'>Guía interactiva y gratuita del Camino de Santiago. Sin publicidad, sin registro, sin complicaciones. Esperamos que te sea útil y disfrutes del Camino. 🐚</p>
       <div style='display:flex;align-items:center;gap:8px;flex-wrap:wrap'>
         <span style='font-size:11px;color:var(--texto-suave);font-weight:500'>Compartir:</span>
@@ -3297,6 +3297,9 @@ function _abrirSlide(panelId) {
     barTitle.textContent = _panelTitles[panelId] || '';
     barTitle.style.display = 'flex';
   }
+  // Bloquear scroll horizontal de la barra de chips mientras hay panel activo
+  var catBar = document.getElementById('mapa-cat-bar');
+  if (catBar) { catBar.style.overflowX = 'hidden'; catBar.style.touchAction = 'none'; }
 }
 function _cerrarSlide(panelId) {
   var mapSection = document.querySelector('#map-block .map-section');
@@ -3308,6 +3311,9 @@ function _cerrarSlide(panelId) {
   if (_noCenter2.indexOf(panelId) === -1) setTimeout(_centrarMapa, 300);
   var barTitle = document.getElementById('mapa-cat-panel-title');
   if (barTitle) { barTitle.style.display = 'none'; barTitle.textContent = ''; }
+  // Restaurar scroll horizontal de la barra de chips
+  var catBar = document.getElementById('mapa-cat-bar');
+  if (catBar) { catBar.style.overflowX = 'auto'; catBar.style.touchAction = ''; }
 }
 
 function _sincronizarChipAlertasPOI() {
@@ -4303,20 +4309,6 @@ function sincronizarPOIsLocalesConFirebase() {
   });
 }
 
-function _actualizarChipAlerta() {
-  var chipAlerta = document.getElementById('chip-alertas');
-  var hayAlertas = PUNTOS.some(function(p){ return p.esAlerta; });
-  var hayNuevas  = PUNTOS.some(function(p){ return p.esAlerta && !_alertasVistas[p.id]; });
-  if (chipAlerta) chipAlerta.style.animation = hayAlertas ? 'chipAlertaPulse 1.2s ease-in-out infinite' : '';
-  var chipAlertaMapa = document.getElementById('chip-alerta-mapa');
-  if (chipAlertaMapa) {
-    chipAlertaMapa.style.animation = hayNuevas ? 'chipAlertaNewPulse 1s ease-in-out infinite' : '';
-    chipAlertaMapa.style.opacity = hayAlertas ? '1' : '0.45';
-    chipAlertaMapa.title = hayNuevas ? 'Hay alertas nuevas' : (hayAlertas ? 'Ver alertas activas' : 'Sin alertas activas');
-  }
-  _sincronizarChipAlertasPOI();
-}
-
 // Cargar POIs aprobados de Firebase
 function cargarPOIsFirebase() {
   db.ref('poi_usuarios').orderByChild('estado').equalTo('aprobado').on('value', function(snap) {
@@ -4338,7 +4330,17 @@ function cargarPOIsFirebase() {
     renderCarrusel(categoriaActiva);
   });
 
+  // Cargar alertas activas en tiempo real (sin moderación, caducan 24h)
   // Cargar alertas activas en tiempo real — eventos quirúrgicos para evitar duplicados
+  var chipAlerta = document.getElementById('chip-alertas');
+
+  function _actualizarChipAlerta() {
+    var hayVisibles = PUNTOS.some(function(p){ return p.esAlerta && !alertasOcultas[p.id]; });
+    if (chipAlerta) chipAlerta.style.animation = hayVisibles ? 'chipAlertaPulse 1.2s ease-in-out infinite' : '';
+    var chipAlertaMapa = document.getElementById('chip-alerta-mapa');
+    if (chipAlertaMapa) chipAlertaMapa.style.display = hayVisibles ? '' : 'none';
+    _sincronizarChipAlertasPOI();
+  }
 
   db.ref('alertas').on('child_added', function(snap) {
     if (!window._alertasFirebaseOn) return;
@@ -4366,10 +4368,6 @@ function cargarPOIsFirebase() {
     }
     renderCarrusel(categoriaActiva);
     _actualizarChipAlerta();
-    // Notificar al usuario con toast solo si el modal no está abierto
-    if (!document.getElementById('modal-alertas-mapa')) {
-      mostrarToast('🚨 Nueva alerta en el Camino');
-    }
   });
 
   db.ref('alertas').on('child_removed', function(snap) {
@@ -4510,100 +4508,6 @@ function abrirHeroModal() {
   overlay.addEventListener('click', function(e){ if (e.target === overlay) cerrar(); });
   overlay.addEventListener('touchend', function(e){ if (e.target === overlay){ e.preventDefault(); cerrar(); } });
 }
-function abrirModalAlertas() {
-  // Marcar todas las alertas actuales como vistas
-  PUNTOS.forEach(function(p){ if(p.esAlerta) _alertasVistas[p.id] = true; });
-  _actualizarChipAlerta();
-
-  var ex = document.getElementById('modal-alertas-mapa'); if(ex) ex.remove();
-  var totalAlertas = PUNTOS.filter(function(p){ return p.esAlerta; }).length;
-  var hayOcultas   = PUNTOS.some(function(p){ return p.esAlerta && alertasOcultas[p.id]; });
-  var hayVisibles  = PUNTOS.some(function(p){ return p.esAlerta && !alertasOcultas[p.id]; });
-  var t2 = T[idiomaActual]||T.es;
-
-  var overlay = document.createElement('div');
-  overlay.id = 'modal-alertas-mapa';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1.25rem;box-sizing:border-box';
-
-  var box = document.createElement('div');
-  box.style.cssText = 'background:#fff;border-radius:18px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.25)';
-
-  // Header rojo
-  var header = '<div style="background:#dc2626;padding:16px 16px 14px;display:flex;align-items:center;justify-content:space-between">'
-    + '<div style="display:flex;align-items:center;gap:10px">'
-    + '<span style="font-size:24px">🚨</span>'
-    + '<div>'
-    + '<div style="font-size:15px;font-weight:700;color:#fff">Alertas del Camino</div>'
-    + '<div style="font-size:11px;color:rgba(255,255,255,0.75);margin-top:1px">'+(totalAlertas > 0 ? totalAlertas+' alerta'+(totalAlertas>1?'s':'')+' activa'+(totalAlertas>1?'s':'') : 'Sin alertas activas')+'</div>'
-    + '</div></div>'
-    + '<button onclick="document.getElementById(\'modal-alertas-mapa\').remove()" style="background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:30px;height:30px;font-size:18px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center">&times;</button>'
-    + '</div>';
-
-  // Opciones
-  var btnStyle = 'width:100%;text-align:left;background:#fff;border:none;border-radius:0;padding:14px 16px;font-size:14px;font-weight:500;color:#1a1a1a;cursor:pointer;font-family:DM Sans,sans-serif;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f3f4f6';
-  var btnStyleLast = btnStyle.replace('border-bottom:1px solid #f3f4f6','');
-
-  var opciones = '<div>';
-
-  // Ver nuevas (solo si hay alertas visibles)
-  if (hayVisibles) {
-    opciones += '<button style="'+btnStyle+'" onclick="_accionModalAlertas(\'nuevas\')">'
-      + '<span style="width:34px;height:34px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">📍</span>'
-      + '<div><div style="font-weight:600">Ver alertas en el mapa</div><div style="font-size:12px;color:#6b7280;margin-top:1px">Muestra solo los marcadores de alerta</div></div>'
-      + '</button>';
-  }
-
-  // Ver todas (sin filtro)
-  opciones += '<button style="'+(hayVisibles ? btnStyle : btnStyle)+'" onclick="_accionModalAlertas(\'todas\')">'
-    + '<span style="width:34px;height:34px;background:#f0fdf9;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🗺️</span>'
-    + '<div><div style="font-weight:600">Ver todo el mapa</div><div style="font-size:12px;color:#6b7280;margin-top:1px">Quita el filtro y muestra todos los puntos</div></div>'
-    + '</button>';
-
-  // Restaurar ocultas (solo si hay alguna oculta)
-  if (hayOcultas) {
-    opciones += '<button style="'+btnStyle+'" onclick="_accionModalAlertas(\'restaurar\')">'
-      + '<span style="width:34px;height:34px;background:#fff7ed;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">👁</span>'
-      + '<div><div style="font-weight:600">Restaurar todas las ocultas</div><div style="font-size:12px;color:#6b7280;margin-top:1px">Vuelve a mostrar alertas ocultadas anteriormente</div></div>'
-      + '</button>';
-  }
-
-  // Sin alertas
-  if (totalAlertas === 0) {
-    opciones += '<div style="padding:24px 16px;text-align:center;color:#9ca3af;font-size:13px">🚨 Sin alertas activas en este momento</div>';
-  }
-
-  opciones += '</div>';
-
-  box.innerHTML = header + opciones;
-  overlay.appendChild(box);
-  document.body.appendChild(overlay);
-  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
-}
-
-function _accionModalAlertas(accion) {
-  document.getElementById('modal-alertas-mapa').remove();
-  if (accion === 'nuevas') {
-    // Filtrar mapa mostrando solo alertas
-    _filtrarMapaCat(document.getElementById('chip-alerta-mapa'), 'alerta');
-  } else if (accion === 'todas') {
-    // Quitar filtro — mostrar todos
-    _filtrarMapaCat(document.getElementById('chip-mapa-todos'), '');
-  } else if (accion === 'restaurar') {
-    // Restaurar todas las alertas ocultas
-    PUNTOS.forEach(function(p) {
-      if (p.esAlerta && alertasOcultas[p.id]) {
-        delete alertasOcultas[p.id];
-        if (!p._marker) añadirMarcadorAlerta(p);
-      }
-    });
-    try { localStorage.setItem('alertasOcultas', JSON.stringify(alertasOcultas)); } catch(e) {}
-    _actualizarChipAlerta();
-    mostrarToast('👁 Alertas restauradas en el mapa');
-    // Filtrar para mostrar solo alertas
-    _filtrarMapaCat(document.getElementById('chip-alerta-mapa'), 'alerta');
-  }
-}
-
 function abrirModalNotificaciones(){
   var existing=document.getElementById('modal-notif-opciones');
   if(existing){existing.remove();return;}
@@ -4762,23 +4666,12 @@ function buildAlertaPopup(a) {
   var yaReporte = alertasReportadas[a.id];
   var esMia = a.deviceId === DEVICE_ID;
   var yaOculta = alertasOcultas[a.id];
-  var fechaInicio = '';
-  if (a.ts) {
-    var d = new Date(a.ts);
-    var dia = d.getDate().toString().padStart(2,'0');
-    var mes = (d.getMonth()+1).toString().padStart(2,'0');
-    var hora = d.getHours().toString().padStart(2,'0');
-    var min = d.getMinutes().toString().padStart(2,'0');
-    fechaInicio = dia+'/'+mes+' '+hora+':'+min+'h';
-  }
   return '<div style="font-family:DM Sans,sans-serif;min-width:210px">' +
     '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">' +
     '<span style="font-size:22px">🚨</span>' +
     '<strong style="font-size:14px;color:#dc2626">' + a.nombre + '</strong></div>' +
     (a.descripcion ? '<p style="font-size:13px;margin:0 0 6px;color:#374151">' + a.descripcion + '</p>' : '') +
-    '<div style="font-size:11px;color:#9ca3af;margin-bottom:8px">' +
-    (fechaInicio ? '🕐 Desde ' + fechaInicio + '  · ' : '') +
-    '⏱ Caduca en ~' + tiempoRestante + 'h · ' + (a.reportes||1) + ' reporte(s)</div>' +
+    '<div style="font-size:11px;color:#9ca3af;margin-bottom:8px">⏱ Caduca en ~' + tiempoRestante + 'h · ' + (a.reportes||1) + ' reporte(s)</div>' +
     (yaReporte
       ? '<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:7px;font-size:12px;color:#dc2626;text-align:center;margin-bottom:6px">✓ Ya has confirmado esta alerta</div>'
       : '<button onclick="reportarAlerta(\'' + a.id + '\')" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:6px">🚨 Confirmar alerta (+24h)</button>'
@@ -4790,36 +4683,13 @@ function buildAlertaPopup(a) {
           : '<button onclick="ocultarAlerta(\'' + a.id + '\')" style="width:100%;background:#f3f4f6;color:#6b7280;border:1px solid #d1d5db;border-radius:8px;padding:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:2px">👁 Ocultar del mapa</button>'
         )
     ) +
-    _ocultarTodasBtn() +
     '</div>';
-}
-
-function _ocultarTodasBtn() {
-  var alertasVisibles = PUNTOS.filter(function(p){ return p.esAlerta && !alertasOcultas[p.id]; });
-  if (alertasVisibles.length < 2) return '';
-  return '<button onclick="ocultarTodasAlertas()" style="width:100%;background:transparent;color:#9ca3af;border:1px solid #e5e7eb;border-radius:8px;padding:6px;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:6px">👁 Ocultar todas del mapa</button>';
-}
-
-function ocultarTodasAlertas() {
-  var alertasActivas = PUNTOS.filter(function(p){ return p.esAlerta && !alertasOcultas[p.id]; });
-  alertasActivas.forEach(function(a) {
-    if (a._marker) { mapa.removeLayer(a._marker); a._marker = null; }
-    alertasOcultas[a.id] = true;
-  });
-  try { localStorage.setItem('alertasOcultas', JSON.stringify(alertasOcultas)); } catch(e) {}
-  mapa.closePopup();
-  var chipAlerta = document.getElementById('chip-alertas');
-  if (chipAlerta) chipAlerta.style.animation = '';
-  _sincronizarChipAlertasPOI();
-  mostrarToast('👁 Todas las alertas ocultadas del mapa');
-  _irAlMapa();
 }
 
 var alertasReportadas = {};
 try { alertasReportadas = JSON.parse(localStorage.getItem('alertasReportadas')||'{}'); } catch(e) {}
 
 // Alertas ocultas localmente (solo afectan al mapa, no a la tarjeta del carrusel)
-var _alertasVistas = {};
 var alertasOcultas = {};
 try { alertasOcultas = JSON.parse(localStorage.getItem('alertasOcultas')||'{}'); } catch(e) {}
 
@@ -5465,7 +5335,7 @@ function iniciarProximidad() {
           var t = (T[idiomaActual]||T.es);
           new Notification('📍 ' + (idiomaActual==='gl'&&p.nombre_gl?p.nombre_gl:idiomaActual==='en'&&p.nombre_en?p.nombre_en:p.nombre), {
             body: p.subtitulo || t.mapSubtitle,
-            icon: 'https://i.postimg.cc/tRWLFtGh/vieira.png'
+            icon: 'https://i.postimg.cc/rm387xgK/IMG-0201.jpg'
           });
         }
       });
@@ -9179,7 +9049,7 @@ function cambiarIdioma(lang){
   // Chips mapa (visitados/sin visitar/usuario/alertas)
   el=document.getElementById('chip-usuario-mapa');if(el)el.innerHTML='👤 '+(t.chipUsuario||'Mis puntos');
   el=document.getElementById('chip-usuario-drawer');if(el)el.innerHTML='👤 '+(t.chipUsuario||'Mis puntos');
-  el=document.getElementById('chip-alerta-mapa');if(el)el.innerHTML='🚨 '+(t.chipAlertas||'Alertas');
+  el=document.getElementById('chip-alerta-mapa');if(el)el.textContent=t.chipAlertas||'🚨 Alertas';
   // Chips mapa visitados/sin visitar - update all static buttons by text match
   // Chips mapa estáticos — por ID directo
   el=document.getElementById('chip-mapa-todos');if(el)el.textContent=t.chipTodos2||'📍 Todos';
@@ -9646,7 +9516,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v952";
+var _APP_VERSION = "v957";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11060,7 +10930,6 @@ function _hardResetJuego(){
 
 function _filtrarMapaCat(chip, cat) {
   document.querySelectorAll('#mapa-cat-bar .mapa-cat-chip').forEach(function(b){
-    if (b.id === 'chip-alerta-mapa') return; // siempre rojo, no participar en reset
     var activo = b === chip;
     b.style.background = activo ? '#1D9E75' : '#fff';
     b.style.color = activo ? '#fff' : '#374151';
@@ -11358,7 +11227,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v952</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v957</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
