@@ -5771,7 +5771,7 @@ var mapa, circuloRadio, searchMarkers = [];
 var userLat = null, userLng = null;
 var categoriaActiva = 'todos';
 var radioKm = 1;
-var idiomaActual = 'es';
+var idiomaActual = (function(){ try{ return localStorage.getItem('idiomaActual')||'es'; }catch(e){ return 'es'; } })();
 var valoraciones = {}, opiniones = {};
 PUNTOS.forEach(function(p) {
   valoraciones[p.id] = { total:0, votos:0, miVoto:0 };
@@ -8788,6 +8788,7 @@ var T={
 };
 function cambiarIdioma(lang){
   idiomaActual=lang;fraseIdx=0;
+  try{localStorage.setItem('idiomaActual',lang);}catch(e){}
   if(typeof mapa!=='undefined'&&mapa)mapa.closePopup();
   document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.remove('activo');});
   var btn=document.getElementById('btn-'+lang);if(btn)btn.classList.add('activo');
@@ -9438,7 +9439,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v906";
+var _APP_VERSION = "v907";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11109,7 +11110,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v906</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v907</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
