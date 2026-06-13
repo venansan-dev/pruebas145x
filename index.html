@@ -228,7 +228,7 @@
   
   <!-- Header móvil: recuadro Tu Guía Xacobea + idiomas -->
   <div class='header-mobile-brand' onclick='abrirHeroModal()' style='display:none;cursor:pointer;flex:1;margin:0 4px;min-width:0;align-items:center;gap:6px'>
-    <img src='https://i.postimg.cc/rm387xgK/IMG-0201.jpg' id='header-vieira-img' style='height:44px;width:44px;border-radius:5px;flex-shrink:0;object-fit:cover;border:2px solid transparent;margin-left:-6px;transition:border-color 0.3s' onload="this.style.borderColor='#F5C800'"/>
+    <img src='https://i.postimg.cc/tRWLFtGh/vieira.png' id='header-vieira-img' style='height:44px;width:44px;border-radius:5px;flex-shrink:0;object-fit:cover;border:2px solid transparent;margin-left:-6px;transition:border-color 0.3s' onload="this.style.borderColor='#F5C800'"/>
     <div style='display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0'>
       <img src='https://i.postimg.cc/k5yzbjd9/logohead.png' alt='Tu Guía Xacobea' id='header-tag-text' style='width:auto;height:30px;max-width:100%;display:block;object-fit:contain;opacity:0.92'/>
       <span style='display:inline-flex;align-items:center;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:2px 8px'>
@@ -287,7 +287,7 @@
       <!-- COLUMNA IZQUIERDA -->
       <div>
         <div class='hero-tag-row'>
-          <img src='https://i.postimg.cc/rm387xgK/IMG-0201.jpg' id='hero-vieira-desktop' style='height:62px;width:62px;border-radius:7px;flex-shrink:0;object-fit:cover;border:2px solid transparent;transition:border-color 0.3s' onload="this.style.borderColor='rgba(245,200,0,0.6)'"/>
+          <img src='https://i.postimg.cc/tRWLFtGh/vieira.png' id='hero-vieira-desktop' style='height:62px;width:62px;border-radius:7px;flex-shrink:0;object-fit:cover;border:2px solid transparent;transition:border-color 0.3s' onload="this.style.borderColor='rgba(245,200,0,0.6)'"/>
           <img src='https://i.postimg.cc/k5yzbjd9/logohead.png' alt='Tu Guía Xacobea' id='hero-tag-img' style='height:62px;width:auto;display:block;margin-bottom:2px'/>
           <span id='hero-tag-text' style='display:none'>Tu Guía Xacobea</span>
           <!-- Banderas: solo escritorio, junto al cajetín -->
@@ -931,7 +931,7 @@
 
     <!-- Logo + descripción + compartir -->
     <div style='background:var(--blanco);border:1px solid var(--borde);border-radius:var(--radio);padding:1rem;margin-bottom:0.75rem'>
-      <img alt='Guía Compostelana Ultreia' src='https://i.postimg.cc/C1gNNsDK/IMG-0213.jpg' style='width:160px;height:42px;border-radius:4px;display:block;margin-bottom:10px'/>
+      <img alt='Guía Compostelana Ultreia' src='https://i.postimg.cc/k5yzbjd9/logohead.png' style='width:180px;height:auto;border-radius:0;display:block;margin-bottom:10px'/>
       <p id='contacto-panel-desc' style='font-size:12px;color:var(--texto-suave);margin:0 0 10px;line-height:1.7'>Guía interactiva y gratuita del Camino de Santiago. Sin publicidad, sin registro, sin complicaciones. Esperamos que te sea útil y disfrutes del Camino. 🐚</p>
       <div style='display:flex;align-items:center;gap:8px;flex-wrap:wrap'>
         <span style='font-size:11px;color:var(--texto-suave);font-weight:500'>Compartir:</span>
@@ -4333,8 +4333,19 @@ function cargarPOIsFirebase() {
     if (chipAlerta) chipAlerta.style.animation = hayVisibles ? 'chipAlertaPulse 1.2s ease-in-out infinite' : '';
     var chipAlertaMapa = document.getElementById('chip-alerta-mapa');
     if (chipAlertaMapa) {
-      chipAlertaMapa.style.display = hayVisibles ? '' : 'none';
-      chipAlertaMapa.style.animation = hayVisibles ? 'chipAlertaPulse 1.2s ease-in-out infinite' : '';
+      if (hayVisibles) {
+        chipAlertaMapa.style.display = '';
+        chipAlertaMapa.style.animation = 'chipAlertaPulse 1.2s ease-in-out infinite';
+        // Mover justo después del chip "Todos" para que aparezca primero
+        var bar = document.getElementById('mapa-cat-bar');
+        var chipTodos = document.getElementById('chip-mapa-todos');
+        if (bar && chipTodos && chipAlertaMapa.previousElementSibling !== chipTodos) {
+          bar.insertBefore(chipAlertaMapa, chipTodos.nextSibling);
+        }
+      } else {
+        chipAlertaMapa.style.display = 'none';
+        chipAlertaMapa.style.animation = '';
+      }
     }
     _sincronizarChipAlertasPOI();
   }
@@ -5378,7 +5389,7 @@ function iniciarProximidad() {
           var t = (T[idiomaActual]||T.es);
           new Notification('📍 ' + (idiomaActual==='gl'&&p.nombre_gl?p.nombre_gl:idiomaActual==='en'&&p.nombre_en?p.nombre_en:p.nombre), {
             body: p.subtitulo || t.mapSubtitle,
-            icon: 'https://i.postimg.cc/rm387xgK/IMG-0201.jpg'
+            icon: 'https://i.postimg.cc/tRWLFtGh/vieira.png'
           });
         }
       });
@@ -9559,7 +9570,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v944";
+var _APP_VERSION = "v946";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11270,7 +11281,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v944</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v946</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
