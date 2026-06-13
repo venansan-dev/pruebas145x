@@ -4579,6 +4579,66 @@ function abrirHeroModal() {
   }
 
   // ── SUGERENCIAS: cuando el usuario dice "ahora no" ───────────────
+  // Catálogo de opciones con descripción extendida
+  var _opcionesCatalogo = [
+    {
+      emoji: '🐚',
+      titulo: 'Historia Compostelana',
+      desc: 'El Camino, los templarios, las rutas históricas…',
+      detalle: [
+        'Aquí encontrarás los textos históricos que dan vida al Camino: desde los orígenes del culto jacobeo hasta la presencia templaria en Galicia, pasando por las rutas medievales y sus etapas más emblemáticas.',
+        'Cada sección está escrita con rigor histórico y pensada para el peregrino curioso. Puedes leerla tranquilamente antes de salir o consultarla en cualquier momento del Camino.',
+        '📜 Textos históricos · ⚔️ Legado Templario · 🗺️ Rutas y etapas · 🏛️ Arte y arquitectura jacobea'
+      ],
+      abrir: function() {
+        cerrar();
+        setTimeout(function(){ _irAlMapa(); setTimeout(abrirHistoriaDrawer, 400); }, 340);
+      }
+    },
+    {
+      emoji: '🎲',
+      titulo: 'Juego del Tablero de la Oca',
+      desc: '63 casillas jacobeas. Desbloquéalas visitando lugares reales.',
+      detalle: [
+        'Una versión jacobea del clásico juego de la oca con 63 casillas inspiradas en el Camino. Cada casilla tiene su nombre en latín, su mecánica especial y su simbolismo peregrino.',
+        'Las casillas se desbloquean automáticamente cuando visitas los lugares reales del Camino con el GPS activado. Casillas especiales como la Muerte, el Laberinto o la Cárcel tienen mecánicas únicas que condicionan tu avance.',
+        '🎲 63 casillas · 📍 Desbloqueo por GPS · ⚔️ Casillas especiales · 🏆 Progresión real en el Camino'
+      ],
+      abrir: function() {
+        cerrar();
+        setTimeout(function(){ _irAlMapa(); setTimeout(function(){ abrirAlbumPanel(); setTimeout(abrirTableroDrawer, 300); }, 400); }, 340);
+      }
+    },
+    {
+      emoji: '🏅',
+      titulo: 'Álbum del Peregrino',
+      desc: 'Tu colección de cromos desbloqueados en el Camino.',
+      detalle: [
+        'El Álbum registra cada lugar que visitas a lo largo del Camino. Cuando te acercas a menos de 25 metros de un punto de interés con el GPS activo, desbloqueas automáticamente su cromo coleccionable.',
+        'Cada cromo tiene diseño de postal barroca con iconografía jacobea, el nombre del lugar, su descripción histórica y tu fecha de visita. Cuantos más reúnas, mayor será tu rango de peregrino: desde Aspirante hasta Ultreia 🏆.',
+        '🐚 Cromos coleccionables · 📍 GPS automático · 🏆 Sistema de rangos · 📅 Historial de visitas'
+      ],
+      abrir: function() {
+        cerrar();
+        setTimeout(function(){ _irAlMapa(); setTimeout(abrirAlbumPanel, 400); }, 340);
+      }
+    },
+    {
+      emoji: '🆘',
+      titulo: 'Emergencias y seguridad',
+      desc: 'Teléfonos útiles y recursos para el Camino.',
+      detalle: [
+        'Un panel de recursos esenciales pensado para cuando el Camino se complica: teléfonos de emergencia, contactos de la Guardia Civil, Cruz Roja y servicios sanitarios en las principales etapas.',
+        'También encontrarás consejos básicos de seguridad para peregrinos: qué hacer si te pierdes, cómo gestionar una lesión en ruta y cómo activar tu localización de emergencia desde el móvil.',
+        '📞 Teléfonos de emergencia · 🏥 Servicios sanitarios · 🧭 Protocolos de seguridad · 🆘 Localización GPS'
+      ],
+      abrir: function() {
+        cerrar();
+        setTimeout(function(){ _irAlMapa(); setTimeout(abrirSOSDrawer, 400); }, 340);
+      }
+    }
+  ];
+
   function _renderSugerencias() {
     inner.innerHTML = '';
 
@@ -4592,52 +4652,13 @@ function abrirHeroModal() {
     sub.textContent = 'Hay mucho más en la guía. Elige algo que te llame la atención:';
     inner.appendChild(sub);
 
-    var opciones = [
-      {
-        emoji: '🐚',
-        titulo: 'Historia Compostelana',
-        desc: 'El Camino, los templarios, las rutas históricas…',
-        accion: function() {
-          cerrar();
-          setTimeout(function(){ _irAlMapa(); setTimeout(abrirHistoriaDrawer, 400); }, 340);
-        }
-      },
-      {
-        emoji: '🎲',
-        titulo: 'Juego del Tablero de la Oca',
-        desc: '63 casillas jacobeas. Desbloquéalas visitando lugares reales.',
-        accion: function() {
-          cerrar();
-          setTimeout(function(){ _irAlMapa(); setTimeout(function(){ abrirAlbumPanel(); setTimeout(abrirTableroDrawer, 300); }, 400); }, 340);
-        }
-      },
-      {
-        emoji: '🏅',
-        titulo: 'Álbum del Peregrino',
-        desc: 'Tu colección de cromos desbloqueados en el Camino.',
-        accion: function() {
-          cerrar();
-          setTimeout(function(){ _irAlMapa(); setTimeout(abrirAlbumPanel, 400); }, 340);
-        }
-      },
-      {
-        emoji: '🆘',
-        titulo: 'Emergencias y seguridad',
-        desc: 'Teléfonos útiles y recursos para el Camino.',
-        accion: function() {
-          cerrar();
-          setTimeout(function(){ _irAlMapa(); setTimeout(abrirSOSDrawer, 400); }, 340);
-        }
-      }
-    ];
-
     var lista = document.createElement('div');
     lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:16px';
 
-    opciones.forEach(function(op) {
+    _opcionesCatalogo.forEach(function(op) {
       var fila = document.createElement('div');
       fila.style.cssText = 'display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:11px 14px;cursor:pointer;transition:background 0.15s';
-      fila.addEventListener('click', op.accion);
+      fila.addEventListener('click', function(){ _renderDetalle(op); });
 
       var em = document.createElement('div');
       em.style.cssText = 'font-size:24px;flex-shrink:0;width:32px;text-align:center';
@@ -4670,6 +4691,64 @@ function abrirHeroModal() {
     btnCerrar.style.cssText = 'width:100%;background:transparent;color:rgba(255,255,255,0.35);border:none;padding:4px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif';
     btnCerrar.addEventListener('click', function(){ _renderDespedida(); });
     inner.appendChild(btnCerrar);
+  }
+
+  // ── DETALLE de opción + pregunta ¿ver otra? ──────────────────────
+  function _renderDetalle(op) {
+    inner.innerHTML = '';
+
+    // Cabecera
+    var cab = document.createElement('div');
+    cab.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:12px';
+    cab.innerHTML = '<div style="font-size:32px">' + op.emoji + '</div>'
+      + '<div style="font-family:Playfair Display,serif;font-size:18px;font-weight:600;color:#fff;line-height:1.2">' + op.titulo + '</div>';
+    inner.appendChild(cab);
+
+    // Párrafos descriptivos
+    var textos = document.createElement('div');
+    textos.style.cssText = 'max-height:38vh;overflow-y:auto;margin-bottom:14px;padding-right:4px';
+    op.detalle.forEach(function(parrafo, i) {
+      var p = document.createElement('p');
+      p.style.cssText = 'font-size:13px;color:rgba(255,255,255,' + (i === op.detalle.length - 1 ? '0.55' : '0.82') + ');line-height:1.7;margin-bottom:8px';
+      p.textContent = parrafo;
+      textos.appendChild(p);
+    });
+    inner.appendChild(textos);
+
+    // Botón abrir panel
+    var btnAbrir = document.createElement('button');
+    btnAbrir.textContent = 'Abrir ' + op.titulo + ' →';
+    btnAbrir.style.cssText = 'width:100%;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:10px';
+    btnAbrir.addEventListener('click', op.abrir);
+    inner.appendChild(btnAbrir);
+
+    // Separador
+    var sep = document.createElement('div');
+    sep.style.cssText = 'border-top:1px solid rgba(255,255,255,0.15);margin-bottom:10px';
+    inner.appendChild(sep);
+
+    // ¿Ver otra opción?
+    var pregunta = document.createElement('p');
+    pregunta.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.7);text-align:center;margin-bottom:10px';
+    pregunta.textContent = '¿Quieres ver otra opción?';
+    inner.appendChild(pregunta);
+
+    var btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex;gap:8px';
+
+    var btnSi = document.createElement('button');
+    btnSi.textContent = 'Sí, ver más';
+    btnSi.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnSi.addEventListener('click', function(){ _renderSugerencias(); });
+
+    var btnNo = document.createElement('button');
+    btnNo.textContent = 'No, cerrar';
+    btnNo.style.cssText = 'flex:1;background:transparent;color:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:10px;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnNo.addEventListener('click', function(){ _renderDespedida(); });
+
+    btnRow.appendChild(btnSi);
+    btnRow.appendChild(btnNo);
+    inner.appendChild(btnRow);
   }
 
   // ── REVISIÓN: lista de POIs en ruta con opción a quitar ─────────
@@ -9913,7 +9992,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v966";
+var _APP_VERSION = "v967";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11626,7 +11705,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v966</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v967</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
