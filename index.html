@@ -4982,7 +4982,7 @@ function abrirHeroModal() {
         }
       });
       try { actualizarRuta(); } catch(e){}
-      _renderPaso3(ids.length);
+      _renderPaso3(ids.length, seleccionados);
     });
     inner.appendChild(btnConfirmar);
 
@@ -4993,22 +4993,77 @@ function abrirHeroModal() {
     inner.appendChild(btnVolver);
   }
 
-  // ── PASO 3: ¿Comenzar navegación ahora? ─────────────────────────
-  function _renderPaso3(num) {
+  // ── PASO 3: Resumen de ruta + ¿Comenzar navegación? ────────────
+  function _renderPaso3(num, seleccionados) {
     inner.innerHTML = '';
 
     var icono = document.createElement('div');
-    icono.style.cssText = 'font-size:40px;text-align:center;margin-bottom:12px';
+    icono.style.cssText = 'font-size:36px;text-align:center;margin-bottom:8px';
     icono.textContent = '🗺️';
     inner.appendChild(icono);
 
     var titulo = document.createElement('div');
-    titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:20px;font-weight:600;color:#fff;text-align:center;margin-bottom:8px;line-height:1.3';
+    titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:19px;font-weight:600;color:#fff;text-align:center;margin-bottom:10px;line-height:1.3';
     titulo.textContent = num === 1 ? '¡Lugar añadido a tu ruta!' : '¡' + num + ' lugares añadidos a tu ruta!';
     inner.appendChild(titulo);
 
+    // ── Resumen de la ruta ───────────────────────────────────────
+    if (seleccionados && Object.keys(seleccionados).length > 0) {
+      var pois = Object.values(seleccionados);
+
+      // Calcular distancia total aproximada entre puntos (orden actual)
+      var distTotal = 0;
+      for (var i = 0; i < pois.length - 1; i++) {
+        distTotal += haversine(pois[i].lat, pois[i].lng, pois[i+1].lat, pois[i+1].lng);
+      }
+      // Añadir distancia desde usuario al primer punto si hay GPS
+      if (typeof userLat !== 'undefined' && userLat && pois.length > 0) {
+        distTotal += haversine(userLat, userLng, pois[0].lat, pois[0].lng);
+      }
+      var distTxt = distTotal < 1 ? Math.round(distTotal * 1000) + ' m' : distTotal.toFixed(1) + ' km';
+
+      // Bloque resumen visual
+      var resumen = document.createElement('div');
+      resumen.style.cssText = 'background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:12px 14px;margin-bottom:12px';
+
+      // Línea de distancia
+      var distLine = document.createElement('div');
+      distLine.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:8px;display:flex;align-items:center;gap:6px';
+      distLine.innerHTML = '📍 Distancia estimada: <strong style="color:#fff">' + distTxt + '</strong>';
+      resumen.appendChild(distLine);
+
+      // Lista de paradas
+      pois.forEach(function(p, i) {
+        var fila = document.createElement('div');
+        fila.style.cssText = 'display:flex;align-items:center;gap:8px;' + (i < pois.length - 1 ? 'margin-bottom:6px' : '');
+
+        // Conector vertical
+        var col = document.createElement('div');
+        col.style.cssText = 'display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:16px';
+        var dot = document.createElement('div');
+        dot.style.cssText = 'width:10px;height:10px;border-radius:50%;background:' + (i === 0 ? '#7EE8C0' : i === pois.length-1 ? '#F5C800' : 'rgba(255,255,255,0.5)') + ';flex-shrink:0';
+        col.appendChild(dot);
+        if (i < pois.length - 1) {
+          var line = document.createElement('div');
+          line.style.cssText = 'width:2px;height:14px;background:rgba(255,255,255,0.2);margin-top:2px';
+          col.appendChild(line);
+        }
+        fila.appendChild(col);
+
+        var info = document.createElement('div');
+        info.style.cssText = 'flex:1;min-width:0';
+        var emoji = p.emoji || '📍';
+        info.innerHTML = '<span style="font-size:12px;color:rgba(255,255,255,0.9);font-weight:600">' + emoji + ' ' + p.nombre + '</span>'
+          + (p.subtitulo ? '<div style="font-size:11px;color:rgba(255,255,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + p.subtitulo + '</div>' : '');
+        fila.appendChild(info);
+        resumen.appendChild(fila);
+      });
+
+      inner.appendChild(resumen);
+    }
+
     var sub = document.createElement('p');
-    sub.style.cssText = 'font-size:14px;color:rgba(255,255,255,0.8);text-align:center;line-height:1.6;margin-bottom:22px';
+    sub.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.75);text-align:center;line-height:1.6;margin-bottom:14px';
     sub.textContent = '¿Quieres comenzar la navegación ahora?';
     inner.appendChild(sub);
 
@@ -10078,7 +10133,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v969";
+var _APP_VERSION = "v970";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11791,7 +11846,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v969</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v970</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
