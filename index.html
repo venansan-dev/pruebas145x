@@ -3491,6 +3491,9 @@ function abrirPoiDrawer() {
   document.querySelectorAll('#poi-drawer-filtros .cat-chip').forEach(function(c,i){ c.classList.toggle('active', i===0); });
   _renderPoiDrawerCarrusel();
   _sincronizarChipAlertasPOI();
+  // Traducir chips del drawer al idioma actual
+  var t=T[idiomaActual]||T.es;
+  var el=document.getElementById('chip-todos-drawer');if(el)el.textContent=t.chipTodos2||'📍 Todos';
 }
 function cerrarPoiDrawer() { _cerrarSlide('poi-drawer'); }
 
@@ -4491,6 +4494,7 @@ function abrirModalNotificaciones(){
     var permDenied=(typeof Notification!=='undefined'&&Notification.permission==='denied');
     var lBg=l?'#1D9E75':(permDenied?'#ef4444':'#ef4444');
     var lLeft=l?'21px':'3px';
+    var esMovil=window.innerWidth<=768;
     box.innerHTML=
       '<div style="font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:14px">🔔 Notificaciones</div>'
       +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0">'
@@ -4505,12 +4509,14 @@ function abrirModalNotificaciones(){
       +'<button id="notif-toggle-cromos" style="width:44px;height:26px;border-radius:13px;border:none;cursor:pointer;background:'+(n?'#1D9E75':'#d1d5db')+';position:relative;flex-shrink:0">'
       +'<span style="position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);left:'+(n?'21px':'3px')+'"></span>'
       +'</button></div>'
-      +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0">'
-      +'<div><div style="font-size:13px;font-weight:600;color:#1a1a1a">🔔 Notificaciones app</div>'
-      +'<div style="font-size:11px;color:#6b7280">'+(l?'Activas — avisando de POIs cercanos':(permDenied?'Permiso bloqueado — activa en ajustes':'Requiere permiso del navegador'))+'</div></div>'
-      +'<button id="notif-toggle-loc" style="width:44px;height:26px;border-radius:13px;border:none;cursor:pointer;background:'+lBg+';position:relative;flex-shrink:0">'
-      +'<span style="position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);left:'+lLeft+'"></span>'
-      +'</button></div>'
+      +(esMovil?
+        '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0">'
+        +'<div><div style="font-size:13px;font-weight:600;color:#1a1a1a">🔔 Notificaciones app</div>'
+        +'<div style="font-size:11px;color:#6b7280">'+(l?'Activas — avisando de POIs cercanos':(permDenied?'Permiso bloqueado — activa en ajustes':'Requiere permiso del navegador'))+'</div></div>'
+        +'<button id="notif-toggle-loc" style="width:44px;height:26px;border-radius:13px;border:none;cursor:pointer;background:'+lBg+';position:relative;flex-shrink:0">'
+        +'<span style="position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);left:'+lLeft+'"></span>'
+        +'</button></div>'
+      :'')
       +'<button id="notif-cerrar" style="width:100%;margin-top:14px;background:#f3f4f6;color:#374151;border:none;border-radius:10px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cerrar</button>';
     box.querySelector('#notif-toggle-alertas').addEventListener('click',function(){
       _alertasFirebaseOn=!_alertasFirebaseOn;_actualizarBtnAlertas();renderBox();
@@ -4520,7 +4526,7 @@ function abrirModalNotificaciones(){
       try{localStorage.setItem('cromosNotifOn',_cromosNotifOn?'1':'0');}catch(e){}
       _actualizarBtnAlertas();renderBox();
     });
-    box.querySelector('#notif-toggle-loc').addEventListener('click',function(){
+    var locBtn=box.querySelector('#notif-toggle-loc');if(locBtn)locBtn.addEventListener('click',function(){
       if(notifActivadas){
         // Desactivar
         desactivarNotificaciones();
@@ -8311,6 +8317,7 @@ var T={
     chipAlertas:'🚨 Alertas',
     chipVisitados:'👁️ Visitados',
     chipSinVisitar:'🔒 Sen visitar',
+    chipVisitados:'👁️ Visitados',
     btnColeccion:'🐚 Colección',
     btnAlbumRec:'📷 Álbum',
     btnPorVer:'🔒 Por ver',
@@ -8542,7 +8549,7 @@ var T={
   },
   en:{
     h1:'Discover the most special corners',
-    heroTag:'Your Xacobea Guide',
+    heroTag:'Your Jacobean Guide',
     puntosH2:'Nearby points of interest',
     historiaH2:'The origin of the scallop and the Templar footprint',
     navInicio:'Home',
@@ -8991,12 +8998,7 @@ function cambiarIdioma(lang){
   el=document.getElementById('chip-usuario-mapa');if(el)el.textContent=t.chipUsuario||'👤 Mis puntos';
   el=document.getElementById('chip-alerta-mapa');if(el)el.textContent=t.chipAlertas||'🚨 Alertas';
   // Chips mapa visitados/sin visitar - update all static buttons by text match
-  document.querySelectorAll('#mapa-cat-bar .mapa-cat-chip').forEach(function(b){
-    var txt=b.textContent.trim();
-    if(txt.includes('Visitados')||txt.includes('Visited')||txt.includes('Visitados')) b.textContent=t.chipVisitados||'👁️ Visitados';
-    if(txt.includes('Sin visitar')||txt.includes('Sen visitar')||txt.includes('Unvisited')) b.textContent=t.chipSinVisitar||'🔒 Sin visitar';
-  });
-  // Chips mapa estáticos
+  // Chips mapa estáticos — por ID directo
   el=document.getElementById('chip-mapa-todos');if(el)el.textContent=t.chipTodos2||'📍 Todos';
   el=document.getElementById('chip-mapa-visitados');if(el)el.textContent=t.chipVisitados||'👁️ Visitados';
   el=document.getElementById('chip-mapa-sinvisitar');if(el)el.textContent=t.chipSinVisitar||'🔒 Sin visitar';
@@ -9232,7 +9234,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   // Arrancar en modo pantalla completa en móvil/app
   if (window.innerWidth <= 768 || window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
-    setTimeout(function(){ if (!_mapaExpandido) _toggleMapaExpandido(); }, 300);
+    setTimeout(function(){ if (!_mapaExpandido) { _toggleMapaExpandido(); cambiarIdioma(idiomaActual); } }, 300);
   }
   var input=document.getElementById('buscar-input');
   if(input)input.addEventListener('keydown',function(e){if(e.key==='Enter')ejecutarBusqueda();});
@@ -9436,7 +9438,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v896";
+var _APP_VERSION = "v906";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11005,6 +11007,13 @@ function _toggleMapaExpandido() {
     document.body.style.overflow = 'hidden';
     if (btn) btn.textContent = '⊠';
     _mapaExpandido = true;
+    // Re-traducir chips tras moverlos al nuevo contenedor
+    setTimeout(function(){
+      var t=T[idiomaActual]||T.es;
+      var el=document.getElementById('chip-mapa-todos');if(el)el.textContent=t.chipTodos2||'📍 Todos';
+      el=document.getElementById('chip-mapa-visitados');if(el)el.textContent=t.chipVisitados||'👁️ Visitados';
+      el=document.getElementById('chip-mapa-sinvisitar');if(el)el.textContent=t.chipSinVisitar||'🔒 Sin visitar';
+    }, 0);
   } else {
     // Restore original positions
     if (_mapaChipOrigParent) {
@@ -11100,7 +11109,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v896</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v906</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
