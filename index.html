@@ -4332,7 +4332,10 @@ function cargarPOIsFirebase() {
     var hayVisibles = PUNTOS.some(function(p){ return p.esAlerta && !alertasOcultas[p.id]; });
     if (chipAlerta) chipAlerta.style.animation = hayVisibles ? 'chipAlertaPulse 1.2s ease-in-out infinite' : '';
     var chipAlertaMapa = document.getElementById('chip-alerta-mapa');
-    if (chipAlertaMapa) chipAlertaMapa.style.display = hayVisibles ? '' : 'none';
+    if (chipAlertaMapa) {
+      chipAlertaMapa.style.display = hayVisibles ? '' : 'none';
+      chipAlertaMapa.style.animation = hayVisibles ? 'chipAlertaPulse 1.2s ease-in-out infinite' : '';
+    }
     _sincronizarChipAlertasPOI();
   }
 
@@ -4660,12 +4663,23 @@ function buildAlertaPopup(a) {
   var yaReporte = alertasReportadas[a.id];
   var esMia = a.deviceId === DEVICE_ID;
   var yaOculta = alertasOcultas[a.id];
+  var fechaInicio = '';
+  if (a.ts) {
+    var d = new Date(a.ts);
+    var dia = d.getDate().toString().padStart(2,'0');
+    var mes = (d.getMonth()+1).toString().padStart(2,'0');
+    var hora = d.getHours().toString().padStart(2,'0');
+    var min = d.getMinutes().toString().padStart(2,'0');
+    fechaInicio = dia+'/'+mes+' '+hora+':'+min+'h';
+  }
   return '<div style="font-family:DM Sans,sans-serif;min-width:210px">' +
     '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">' +
     '<span style="font-size:22px">🚨</span>' +
     '<strong style="font-size:14px;color:#dc2626">' + a.nombre + '</strong></div>' +
     (a.descripcion ? '<p style="font-size:13px;margin:0 0 6px;color:#374151">' + a.descripcion + '</p>' : '') +
-    '<div style="font-size:11px;color:#9ca3af;margin-bottom:8px">⏱ Caduca en ~' + tiempoRestante + 'h · ' + (a.reportes||1) + ' reporte(s)</div>' +
+    '<div style="font-size:11px;color:#9ca3af;margin-bottom:8px">' +
+    (fechaInicio ? '🕐 Desde ' + fechaInicio + '  · ' : '') +
+    '⏱ Caduca en ~' + tiempoRestante + 'h · ' + (a.reportes||1) + ' reporte(s)</div>' +
     (yaReporte
       ? '<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:7px;font-size:12px;color:#dc2626;text-align:center;margin-bottom:6px">✓ Ya has confirmado esta alerta</div>'
       : '<button onclick="reportarAlerta(\'' + a.id + '\')" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:6px">🚨 Confirmar alerta (+24h)</button>'
@@ -4677,7 +4691,32 @@ function buildAlertaPopup(a) {
           : '<button onclick="ocultarAlerta(\'' + a.id + '\')" style="width:100%;background:#f3f4f6;color:#6b7280;border:1px solid #d1d5db;border-radius:8px;padding:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:2px">👁 Ocultar del mapa</button>'
         )
     ) +
+    _ocultarTodasBtn() +
     '</div>';
+}
+
+function _ocultarTodasBtn() {
+  var alertasVisibles = PUNTOS.filter(function(p){ return p.esAlerta && !alertasOcultas[p.id]; });
+  if (alertasVisibles.length < 2) return '';
+  return '<button onclick="ocultarTodasAlertas()" style="width:100%;background:transparent;color:#9ca3af;border:1px solid #e5e7eb;border-radius:8px;padding:6px;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:6px">👁 Ocultar todas del mapa</button>';
+}
+
+function ocultarTodasAlertas() {
+  var alertasActivas = PUNTOS.filter(function(p){ return p.esAlerta && !alertasOcultas[p.id]; });
+  alertasActivas.forEach(function(a) {
+    if (a._marker) { mapa.removeLayer(a._marker); a._marker = null; }
+    alertasOcultas[a.id] = true;
+  });
+  try { localStorage.setItem('alertasOcultas', JSON.stringify(alertasOcultas)); } catch(e) {}
+  mapa.closePopup();
+  // Apagar chip-alerta-mapa
+  var chipAlertaMapa = document.getElementById('chip-alerta-mapa');
+  if (chipAlertaMapa) { chipAlertaMapa.style.display = 'none'; chipAlertaMapa.style.animation = ''; }
+  var chipAlerta = document.getElementById('chip-alertas');
+  if (chipAlerta) chipAlerta.style.animation = '';
+  _sincronizarChipAlertasPOI();
+  mostrarToast('👁 Todas las alertas ocultadas del mapa');
+  _irAlMapa();
 }
 
 var alertasReportadas = {};
@@ -4731,6 +4770,11 @@ function ocultarAlerta(id) {
   var hayVisibles = PUNTOS.some(function(p){ return p.esAlerta && !alertasOcultas[p.id]; });
   var chipAlerta = document.getElementById('chip-alertas');
   if (chipAlerta) chipAlerta.style.animation = hayVisibles ? 'chipAlertaPulse 1.2s ease-in-out infinite' : '';
+  var chipAlertaMapa = document.getElementById('chip-alerta-mapa');
+  if (chipAlertaMapa) {
+    chipAlertaMapa.style.display = hayVisibles ? '' : 'none';
+    chipAlertaMapa.style.animation = hayVisibles ? 'chipAlertaPulse 1.2s ease-in-out infinite' : '';
+  }
   mostrarToast('👁 Alerta ocultada del mapa');
   _sincronizarChipAlertasPOI();
   _irAlMapa();
@@ -4746,6 +4790,11 @@ function mostrarAlerta(id) {
   var chipAlerta = document.getElementById('chip-alertas');
   if (chipAlerta && !chipAlerta.classList.contains('active')) {
     chipAlerta.style.animation = 'chipAlertaPulse 1.2s ease-in-out infinite';
+  }
+  var chipAlertaMapa = document.getElementById('chip-alerta-mapa');
+  if (chipAlertaMapa) {
+    chipAlertaMapa.style.display = '';
+    chipAlertaMapa.style.animation = 'chipAlertaPulse 1.2s ease-in-out infinite';
   }
   mostrarToast('👁 Alerta visible en el mapa');
   _sincronizarChipAlertasPOI();
@@ -9041,7 +9090,8 @@ function cambiarIdioma(lang){
   el=document.getElementById('chip-albergue-drawer');if(el)el.textContent=t.chipAlbergue2||'🏠 Albergues';
   el=document.getElementById('chip-mirador-drawer');if(el)el.textContent=t.chipMirador2||'🔭 Miradores';
   // Chips mapa (visitados/sin visitar/usuario/alertas)
-  el=document.getElementById('chip-usuario-mapa');if(el)el.textContent=t.chipUsuario||'👤 Mis puntos';
+  el=document.getElementById('chip-usuario-mapa');if(el)el.innerHTML='👤 '+(t.chipUsuario||'Mis puntos');
+  el=document.getElementById('chip-usuario-drawer');if(el)el.innerHTML='👤 '+(t.chipUsuario||'Mis puntos');
   el=document.getElementById('chip-alerta-mapa');if(el)el.textContent=t.chipAlertas||'🚨 Alertas';
   // Chips mapa visitados/sin visitar - update all static buttons by text match
   // Chips mapa estáticos — por ID directo
@@ -9509,7 +9559,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v940";
+var _APP_VERSION = "v944";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -10956,9 +11006,12 @@ function _popupVotar(poiId, n) {
   var val = valoraciones[poiId];
   if (val.miVoto) { val.total -= val.miVoto; val.votos--; }
   val.miVoto = n; val.total += n; val.votos++;
-  // Actualizar estrellitas en el popup
-  var popup = document.querySelector('.leaflet-popup-content');
-  if (popup) { var spans = popup.querySelectorAll('span[onclick*="_popupVotar"]'); spans.forEach(function(s,i){ s.style.color = (i+1)<=n?'#F5C800':'#d1d5db'; s.textContent = (i+1)<=n?'★':'☆'; }); }
+  // Actualizar estrellitas — buscar en el modal POI o en popup Leaflet
+  var container = document.getElementById('modal-poi-info') || document.querySelector('.leaflet-popup-content');
+  if (container) {
+    var spans = container.querySelectorAll('span[data-pid="'+poiId+'"]');
+    spans.forEach(function(s,i){ s.style.color = (i+1)<=n?'#F5C800':'#e5e7eb'; s.textContent = (i+1)<=n?'★':'☆'; });
+  }
   // Guardar en Firebase si disponible
   if (typeof guardarVoto === 'function') guardarVoto(poiId, n);
 }
@@ -11217,7 +11270,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v940</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v944</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
