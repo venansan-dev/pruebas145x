@@ -4520,9 +4520,9 @@ function abrirHeroModal() {
     var dia = new Date().getDay(); // 0=dom, 6=sab
     var finde = (dia === 0 || dia === 6);
 
-    var mañana = (_t.asistSaludoM)||['¡Buenos días, peregrino! 🌅','¡Ultreia! El Camino te espera. 🌄','¡Arriba, caminante! El alba es tuya. ☀️','Un nuevo día en el Camino. ¡Buen paso! 🥾','¡Que la jornada te sea leve, peregrino! 🌤️'];
-    var tarde = (_t.asistSaludoT)||['¡Buenas tardes, peregrino! ☀️','¿Cómo lleva el Camino la tarde de hoy? 🛤️','¡Tarde de Camino! ¿Cuántos kilómetros hoy? 🥾','La tarde es buena hora para planificar. 🗺️','¡Ultreia et suseia, peregrino! ⛰️'];
-    var noche = (_t.asistSaludoN)||['¡Buenas noches, peregrino! 🌙','El Camino descansa, pero tú planificas. 🌟','Noche de peregrino. ¿Mañana salimos? ⭐','¡Buenas noches! El alba trae nuevo Camino. 🌙','Hora de descansar las piernas... o de planificar. 🗺️'];
+    var mañana = (_t.asistSaludoM)||['Buenos días, peregrino! 🌅','Ultreia! El Camino te espera. 🌄','Arriba, caminante! El alba es tuya. ☀️','Un nuevo día en el Camino. ¡Buen paso! 🥾','Que la jornada te sea leve, peregrino! 🌤️'];
+    var tarde = (_t.asistSaludoT)||['Buenas tardes, peregrino! ☀️','Cómo lleva el Camino la tarde de hoy? 🛤️','Tarde de Camino! ¿Cuántos kilómetros hoy? 🥾','La tarde es buena hora para planificar. 🗺️','Ultreia et suseia, peregrino! ⛰️'];
+    var noche = (_t.asistSaludoN)||['Buenas noches, peregrino! 🌙','El Camino descansa, pero tú planificas. 🌟','Noche de peregrino. Mañana salimos? ⭐','Buenas noches! El alba trae nuevo Camino. 🌙','Hora de descansar las piernas... o de planificar. 🗺️'];
 
     var pool = hora < 13 ? mañana : hora < 20 ? tarde : noche;
     return pool[Math.floor(Math.random() * pool.length)];
@@ -4575,8 +4575,9 @@ function abrirHeroModal() {
     var h1 = document.createElement('div');
     h1.style.cssText = 'font-family:IM Fell English,serif;font-size:22px;font-weight:400;color:#1a0800;line-height:1.2;margin-bottom:6px;display:flex;align-items:center';
     var _saludo = _saludoConContexto();
-    var _primerLetra = _saludo.charAt(0);
-    var _restoSaludo = _saludo.slice(1);
+    var _saludoClean = _saludo.replace(/^[¡¿]+/, '');
+    var _primerLetra = _saludoClean.charAt(0);
+    var _restoSaludo = _saludoClean.slice(1);
     h1.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">'
       + '<span style="color:#8b0000;font-weight:700;font-family:Cinzel,serif;font-size:1.15em">' + _primerLetra + '</span>'
       + _restoSaludo;
@@ -10848,7 +10849,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1011";
+var _APP_VERSION = "v1012";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12561,7 +12562,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1011</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1012</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
