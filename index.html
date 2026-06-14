@@ -141,7 +141,7 @@
 .poi-card:hover::before{opacity:1}
 .modal-box h3{font-family:'Playfair Display',serif}
 @keyframes bounceDownArrow{0%,100%{transform:translateY(0);}45%{transform:translateY(8px);}65%{transform:translateY(3px);}}
-.pergamino-body{font-family:'IM Fell English',serif;font-size:14px;line-height:1.7}</style>
+.pergamino-body{font-family:'IM Fell English',serif;font-size:14px;line-height:1.7}.pergamino-body .num,.pergamino-body strong{font-size:1.15em;font-variant-numeric:oldstyle-nums}.pergamino-body span[style*='float:left']{font-family:'Cinzel',serif}</style>
 
 
   <!-- Schema.org Structured Data -->
@@ -4478,7 +4478,7 @@ function abrirHeroModal() {
     inner.appendChild(icono);
 
     var titulo = document.createElement('div');
-    titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:18px;font-weight:600;color:#1a0800;text-align:center;margin-bottom:10px;line-height:1.3';
+    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:18px;font-weight:400;color:#1a0800;text-align:center;margin-bottom:10px;line-height:1.3';
     titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">'+(_t.asistBienCamino||'¡Buen Camino, peregrino!');
     inner.appendChild(titulo);
 
@@ -4557,7 +4557,7 @@ function abrirHeroModal() {
     var wrap = document.createElement('div');
     wrap.style.cssText = 'background:rgba(0,0,0,0.15);border-left:3px solid #7a5010;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:16px';
     var label = document.createElement('div');
-    label.style.cssText = 'font-size:10px;color:#fff0c0;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-weight:600';
+    label.style.cssText = 'font-size:10px;color:#fff0c0;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-weight:600;font-family:IM Fell English,serif';
     label.textContent = _t.asistSabias||'📜 Sabías que…';
     var txt = document.createElement('p');
     txt.style.cssText = 'font-size:12px;color:#fff8e8;line-height:1.6;margin:0';
@@ -4573,7 +4573,7 @@ function abrirHeroModal() {
 
     // Saludo contextual con subtítulo dinámico — casco circular delante
     var h1 = document.createElement('div');
-    h1.style.cssText = 'font-family:Playfair Display,serif;font-size:22px;font-weight:600;color:#1a0800;line-height:1.2;margin-bottom:6px;display:flex;align-items:center';
+    h1.style.cssText = 'font-family:IM Fell English,serif;font-size:22px;font-weight:400;color:#1a0800;line-height:1.2;margin-bottom:6px;display:flex;align-items:center';
     h1.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">' + _saludoConContexto();
     inner.appendChild(h1);
     var subCtx = document.createElement('p');
@@ -4773,7 +4773,7 @@ function abrirHeroModal() {
 
     // Título
     var tit = document.createElement('div');
-    tit.style.cssText = 'font-family:Playfair Display,serif;font-size:17px;font-weight:600;color:#1a0800;margin-bottom:6px;padding-right:36px;line-height:1.3';
+    tit.style.cssText = 'font-family:IM Fell English,serif;font-size:17px;font-weight:400;color:#1a0800;margin-bottom:6px;padding-right:36px;line-height:1.3';
     tit.innerHTML = _t.asistBuscarTit||'🔍 Buscar algo próximo a ti';
     box.appendChild(tit);
 
@@ -4947,7 +4947,7 @@ function abrirHeroModal() {
     inner.innerHTML = '';
 
     var titulo = document.createElement('div');
-    titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:19px;font-weight:600;color:#fff;line-height:1.3;margin-bottom:6px';
+    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:19px;font-weight:400;color:#fff;line-height:1.3;margin-bottom:6px';
     titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">¿Qué te apetece explorar?';
     inner.appendChild(titulo);
 
@@ -5061,7 +5061,7 @@ function abrirHeroModal() {
     inner.innerHTML = '';
 
     var titulo = document.createElement('div');
-    titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:18px;font-weight:600;color:#fff;margin-bottom:6px';
+    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:18px;font-weight:400;color:#fff;margin-bottom:6px';
     titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">Tu ruta actual';
     inner.appendChild(titulo);
 
@@ -5134,7 +5134,7 @@ function abrirHeroModal() {
     var seleccionados = {};
 
     var titulo = document.createElement('div');
-    titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:18px;font-weight:600;color:#fff;margin-bottom:6px;line-height:1.3';
+    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:18px;font-weight:400;color:#fff;margin-bottom:6px;line-height:1.3';
     titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">Selecciona qué te gustaría visitar';
     inner.appendChild(titulo);
 
@@ -5362,7 +5362,7 @@ function abrirHeroModal() {
     inner.appendChild(icono);
 
     var titulo = document.createElement('div');
-    titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:19px;font-weight:600;color:#1a0800;text-align:center;margin-bottom:10px;line-height:1.3';
+    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:19px;font-weight:400;color:#1a0800;text-align:center;margin-bottom:10px;line-height:1.3';
     titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">' + (num === 1 ? (_t.asistPaso3Uno||'¡Lugar añadido a tu ruta!') : (_t.asistPaso3Multi||'¡{n} lugares añadidos a tu ruta!').replace('{n}',num));
     inner.appendChild(titulo);
 
@@ -10741,7 +10741,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1005";
+var _APP_VERSION = "v1006";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12454,7 +12454,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1005</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1006</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
