@@ -4486,7 +4486,7 @@ function abrirHeroModal() {
   }
 
   // ── DATOS CONTEXTUALES Y CURIOSIDADES ──────────────────────────
-  var _curiosidades = (_t.asistCuriosidades) || [];
+  var _curiosidades = _t.asistCuriosidades || [];
 
   function _curiosidadAleatoria() {
     return _curiosidades[Math.floor(Math.random() * _curiosidades.length)];
@@ -4520,13 +4520,14 @@ function abrirHeroModal() {
     if (n > 0 && ruta === 0) {
       var rango = (window._getRango) ? window._getRango(n) : null;
       var rangoTxt = rango ? (_t.asistSubEres||' Eres ') + rango.emoji + ' ' + rango.label + '.' : '';
-      return (n !== 1 ? (_t.asistSubCromosP||'Llevas {n} cromos en tu álbum.') : (_t.asistSubCromos||'Llevas {n} cromo en tu álbum.')).replace('{n}', n) + rangoTxt + (_t.asistSubSigue||' ¡Sigue así!');
+      var base = (n !== 1 ? (_t.asistSubCromosP||'Llevas {n} cromos en tu álbum.') : (_t.asistSubCromos||'Llevas {n} cromo en tu álbum.')).replace('{n}',n);
+      return base + rangoTxt + (_t.asistSubSigue||' ¡Sigue así!');
     }
     if (ruta > 0 && n === 0) {
-      return (ruta !== 1 ? (_t.asistSubRutaP||'Tienes {n} lugares en ruta. ¿Salimos?') : (_t.asistSubRuta||'Tienes {n} lugar en ruta. ¿Salimos?')).replace('{n}', ruta);
+      return (ruta !== 1 ? (_t.asistSubRutaP||'Tienes {n} lugares en ruta. ¿Salimos?') : (_t.asistSubRuta||'Tienes {n} lugar en ruta. ¿Salimos?')).replace('{n}',ruta);
     }
     if (ruta > 0 && n > 0) {
-      return (n !== 1 ? (_t.asistSubAmbosP||'Llevas {n} cromos y una ruta con {r} paradas. ¡El Camino te espera!') : (_t.asistSubAmbos||'Llevas {n} cromo y una ruta con {r} parada. ¡El Camino te espera!')).replace('{n}', n).replace('{r}', ruta);
+      return (n !== 1 ? (_t.asistSubAmbosP||'Llevas {n} cromos y una ruta con {r} paradas. ¡El Camino te espera!') : (_t.asistSubAmbos||'Llevas {n} cromo y una ruta con {r} parada. ¡El Camino te espera!')).replace('{n}',n).replace('{r}',ruta);
     }
     return _t.asistSubDefault||'El Camino te espera. ¿En qué puedo ayudarte?';
   }
@@ -5344,7 +5345,7 @@ function abrirHeroModal() {
 
     var titulo = document.createElement('div');
     titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:19px;font-weight:600;color:#fff;text-align:center;margin-bottom:10px;line-height:1.3';
-    titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">' + (num === 1 ? (_t.asistPaso3Uno||'¡Lugar añadido a tu ruta!') : (_t.asistPaso3Multi||'¡{n} lugares añadidos a tu ruta!').replace('{n}', num));
+    titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">' + (num === 1 ? (_t.asistPaso3Uno||'¡Lugar añadido a tu ruta!') : (_t.asistPaso3Multi||'¡{n} lugares añadidos a tu ruta!').replace('{n}',num));
     inner.appendChild(titulo);
 
     // ── Resumen de la ruta ───────────────────────────────────────
@@ -9114,6 +9115,30 @@ var T={
     asistOp5Desc:'Teléfonos útiles y recursos para el Camino.',
     asistVerDetalle:'Ver detalle →',
     asistAbrir:'Abrir ',
+    asistCuriosidades:[
+      'El nombre \"Compostela\" probablemente deriva del latín <em>campus stellae</em>, \"campo de la estrella\". Aunque también hay quien lo vincula a <em>compositum</em>, lugar donde se depositan los muertos.',
+      'Los templarios custodiaron el Camino durante casi dos siglos. En Galicia, su bailía de Vigo controlaba las rutas costeras y varios puntos estratégicos que hoy son paradas del Camino Portugués.',
+      'La vieira, símbolo universal del peregrino, tiene un origen incierto. Una leyenda dice que un caballero salió del mar cubierto de conchas tras seguir el cuerpo de Santiago flotando desde Jaffa.',
+      'El Camino Francés mide oficialmente 778 km desde Saint-Jean-Pied-de-Port. Pero la distancia real varía según la fuente: el terreno gallego suma más metros de los que aparecen en el plano.',
+      'La Catedral de Santiago guarda un secreto arquitectónico: el Pórtico de la Gloria fue policromado en colores vivos durante siglos. Lo que hoy ves en piedra desnuda fue una vez una explosión de color.',
+      'El Botafumeiro de la Catedral pesa 53 kg y puede alcanzar los 68 km/h cuando ocho tiraboleiros lo hacen oscilar. Nació, según la tradición, para purificar el aire cargado de peregrinos.',
+      'Existen más de 30 rutas jacobeas reconocidas en Europa. La más larga parte de Riga, en Letonia, y suma más de 3.000 km hasta Compostela.',
+      'La Puerta Santa de la Catedral solo se abre en los Años Santos Jacobeos, cuando el 25 de julio cae en domingo. El próximo es 2027.',
+      'El rey Alfonso II \"el Casto\" fue el primer peregrino documentado a Compostela, hacia el año 830. Mandó construir la primera iglesia sobre el sepulcro del Apóstol.',
+      'Los peregrinos medievales no caminaban solos por elección: viajar en grupo era una necesidad. Los caminos estaban llenos de bandidos, y la peregrinación era también un seguro de vida colectivo.'
+    ],
+    asistSubPrimera:['Parece que es tu primera vez por aquí. ¡Bienvenido al Camino!','Todo está listo para tu peregrinación. ¿Por dónde empezamos?','El Camino empieza con el primer paso. ¿Damos el tuyo?'],
+    asistSubCromos:'Llevas {n} cromo en tu álbum.',
+    asistSubCromosP:'Llevas {n} cromos en tu álbum.',
+    asistSubEres:' Eres ',
+    asistSubSigue:' ¡Sigue así!',
+    asistSubRuta:'Tienes {n} lugar en ruta. ¿Salimos?',
+    asistSubRutaP:'Tienes {n} lugares en ruta. ¿Salimos?',
+    asistSubAmbos:'Llevas {n} cromo y una ruta con {r} parada. ¡El Camino te espera!',
+    asistSubAmbosP:'Llevas {n} cromos y una ruta con {r} paradas. ¡El Camino te espera!',
+    asistSubDefault:'El Camino te espera. ¿En qué puedo ayudarte?',
+    asistPaso3Uno:'¡Lugar añadido a tu ruta!',
+    asistPaso3Multi:'¡{n} lugares añadidos a tu ruta!',
     albumVacio:'Tu álbum está vacío',
     albumVacioSub:'Activa el seguimiento GPS y acércate a los puntos del Camino. Cada visita desbloquea el cromo.',
     albumContador:'Visita lugares para desbloquear cromos',
@@ -9447,6 +9472,30 @@ var T={
     asistOp5Desc:'Teléfonos útiles e recursos para o Camiño.',
     asistVerDetalle:'Ver detalle →',
     asistAbrir:'Abrir ',
+    asistCuriosidades:[
+      'O nome \"Compostela\" probablemente deriva do latín <em>campus stellae</em>, \"campo da estrela\". Aínda que tamén hai quen o vincula a <em>compositum</em>, lugar onde se depositan os mortos.',
+      'Os templarios custodiaron o Camiño durante case dous séculos. En Galicia, a súa bailía de Vigo controlaba as rutas costeiras e varios puntos estratéxicos que hoxe son paradas do Camiño Portugués.',
+      'A vieira, símbolo universal do peregrino, ten unha orixe incerta. Unha lenda di que un cabaleiro saíu do mar cuberto de cunchas tras seguir o corpo de Santiago flotando desde Jaffa.',
+      'O Camiño Francés mide oficialmente 778 km desde Saint-Jean-Pied-de-Port. Pero a distancia real varía segundo a fonte: o terreo galego suma máis metros dos que aparecen no plano.',
+      'A Catedral de Santiago garda un segredo arquitectónico: o Pórtico da Gloria foi policromado en cores vivas durante séculos. O que hoxe ves en pedra núa foi unha vez unha explosión de cor.',
+      'O Botafumeiro da Catedral pesa 53 kg e pode alcanzar os 68 km/h cando oito tiraboleiros o fan oscilar. Naceu, segundo a tradición, para purificar o aire cargado de peregrinos.',
+      'Existen máis de 30 rutas xacobeas recoñecidas en Europa. A máis longa parte de Riga, en Letonia, e suma máis de 3.000 km ata Compostela.',
+      'A Porta Santa da Catedral só se abre nos Anos Santos Xacobeos, cando o 25 de xullo cae en domingo. O próximo é 2027.',
+      'O rei Afonso II \"o Casto\" foi o primeiro peregrino documentado a Compostela, cara ao ano 830. Mandou construír a primeira igrexa sobre o sepulcro do Apóstolo.',
+      'Os peregrinos medievais non camiñaban sos por elección: viaxar en grupo era unha necesidade. Os camiños estaban cheos de bandidos, e a peregrinación era tamén un seguro de vida colectivo.'
+    ],
+    asistSubPrimera:['Parece que é a túa primeira vez por aquí. ¡Benvido ao Camiño!','Todo está listo para a túa peregrinación. ¿Por onde empezamos?','O Camiño empieza co primeiro paso. ¿Dámolo?'],
+    asistSubCromos:'Levas {n} cromo no teu álbum.',
+    asistSubCromosP:'Levas {n} cromos no teu álbum.',
+    asistSubEres:' Es ',
+    asistSubSigue:' ¡Segue así!',
+    asistSubRuta:'Tes {n} lugar en ruta. ¿Saímos?',
+    asistSubRutaP:'Tes {n} lugares en ruta. ¿Saímos?',
+    asistSubAmbos:'Levas {n} cromo e unha ruta con {r} parada. ¡O Camiño agárdache!',
+    asistSubAmbosP:'Levas {n} cromos e unha ruta con {r} paradas. ¡O Camiño agárdache!',
+    asistSubDefault:'O Camiño agárdache. ¿En que podo axudarte?',
+    asistPaso3Uno:'¡Lugar engadido á túa ruta!',
+    asistPaso3Multi:'¡{n} lugares engadidos á túa ruta!',
     albumVacio:'O teu álbum está baleiro',
     albumVacioSub:'Activa o seguimento GPS e achégate aos puntos do Camiño. Cada visita desbloquea o cromo.',
     albumContador:'Visita lugares para desbloquear cromos',
@@ -9955,6 +10004,30 @@ var T={
     asistOp5Desc:'Useful numbers and resources for the Way.',
     asistVerDetalle:'See details →',
     asistAbrir:'Open ',
+    asistCuriosidades:[
+      'The name \"Compostela\" probably derives from the Latin <em>campus stellae</em>, \"field of the star\". Though some link it to <em>compositum</em>, a burial ground.',
+      'The Knights Templar guarded the Way for nearly two centuries. In Galicia, their bailiwick of Vigo controlled the coastal routes and several strategic points now on the Portuguese Way.',
+      'The scallop shell, the universal symbol of the pilgrim, has uncertain origins. One legend says a knight emerged from the sea covered in shells after following the body of Saint James from Jaffa.',
+      'The French Way officially measures 778 km from Saint-Jean-Pied-de-Port. But the real distance varies: the Galician terrain adds more metres than appear on the map.',
+      'Santiago Cathedral holds an architectural secret: the Pórtico de la Gloria was painted in vivid colours for centuries. What you see today in bare stone was once an explosion of colour.',
+      'The Cathedral Botafumeiro weighs 53 kg and can reach 68 km/h when eight tiraboleiros swing it. It was created, according to tradition, to purify the air thick with pilgrims.',
+      'There are more than 30 recognised Jacobean routes in Europe. The longest starts in Riga, Latvia, and covers more than 3,000 km to Compostela.',
+      'The Holy Door opens only in Holy Compostelan Years, when 25 July falls on a Sunday. The next one is 2027.',
+      'King Alfonso II the Chaste was the first documented pilgrim to Compostela, around 830 AD. He ordered the first church to be built over the tomb of the Apostle.',
+      'Medieval pilgrims did not walk alone by choice: travelling in groups was a necessity. Roads were full of bandits, and the pilgrimage was also a form of collective life insurance.'
+    ],
+    asistSubPrimera:['Looks like your first time here. Welcome to the Way!','Everything is ready for your pilgrimage. Where shall we start?','The Way begins with the first step. Shall we take yours?'],
+    asistSubCromos:'You have {n} stamp in your album.',
+    asistSubCromosP:'You have {n} stamps in your album.',
+    asistSubEres:' You are ',
+    asistSubSigue:' Keep it up!',
+    asistSubRuta:'You have {n} place on your route. Shall we go?',
+    asistSubRutaP:'You have {n} places on your route. Shall we go?',
+    asistSubAmbos:'You have {n} stamp and a route with {r} stop. The Way awaits!',
+    asistSubAmbosP:'You have {n} stamps and a route with {r} stops. The Way awaits!',
+    asistSubDefault:'The Way awaits. How can I help you?',
+    asistPaso3Uno:'Place added to your route!',
+    asistPaso3Multi:'{n} places added to your route!',
     btnAlbumRec:'Album',
     btnColeccion:'Collection',
     btnPorVer:'To visit',
