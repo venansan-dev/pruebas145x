@@ -10837,7 +10837,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1015";
+var _APP_VERSION = "v1016";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12254,10 +12254,11 @@ function _hardResetJuego(){
 function _filtrarMapaCat(chip, cat) {
   document.querySelectorAll('#mapa-cat-bar .mapa-cat-chip').forEach(function(b){
     var activo = b === chip;
-    b.style.background = activo ? '#1D9E75' : '#fff';
-    b.style.color = activo ? '#fff' : '#374151';
-    b.style.borderColor = activo ? '#1D9E75' : 'rgba(0,0,0,0.15)';
+    b.style.background = activo ? 'linear-gradient(135deg,#2d4a1e,#1e3212)' : 'rgba(255,245,210,0.85)';
+    b.style.color = activo ? '#f5e6c8' : '#3d2000';
+    b.style.borderColor = activo ? '#1a2e0f' : '#a07828';
     b.style.fontWeight = activo ? '600' : '500';
+    b.style.boxShadow = activo ? '0 1px 4px rgba(0,0,0,0.3)' : 'none';
   });
   if (!window._cluster || typeof PUNTOS === 'undefined') return;
   window._cluster.clearLayers();
@@ -12550,7 +12551,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1015</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1016</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
