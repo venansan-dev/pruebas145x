@@ -1,33 +1,33 @@
 {
-  "id": "/guia-compostelana/",
+  "id": "/",
   "name": "Xacobeapp",
   "short_name": "Xacobeapp",
   "description": "Tu Guía Xacobea del Camino de Santiago",
-  "start_url": "/guia-compostelana/",
+  "start_url": "/",
   "display": "standalone",
   "display_override": [
     "standalone",
     "minimal-ui"
   ],
-  "background_color": "#F5F5F0",
-  "theme_color": "#1D9E75",
+  "background_color": "#0a1628",
+  "theme_color": "#0f2847",
   "orientation": "portrait-primary",
   "lang": "es",
   "icons": [
     {
-      "src": "/guia-compostelana/apple-touch-icon.png",
+      "src": "/apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/guia-compostelana/icon-192v2.png",
+      "src": "/icon-192v2.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/guia-compostelana/icon-512v2.png",
+      "src": "/icon-512v2.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -40,5 +40,5 @@
   ],
   "screenshots": [],
   "prefer_related_applications": false,
-  "scope": "/guia-compostelana/"
+  "scope": "/"
 }
