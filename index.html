@@ -5001,12 +5001,36 @@ function abrirHeroModal() {
             mDesc.textContent = descTxt;
             mBox.appendChild(mDesc);
           }
-          // Botón cerrar abajo
+          // Botones inferiores: volver + añadir a ruta
+          var mBtnRow = document.createElement('div');
+          mBtnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px';
           var mBtnClose = document.createElement('button');
-          mBtnClose.textContent = '← Volver a la lista';
-          mBtnClose.style.cssText = 'width:100%;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+          mBtnClose.textContent = '← Volver';
+          mBtnClose.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
           mBtnClose.addEventListener('click', cerrarModal);
-          mBox.appendChild(mBtnClose);
+          mBtnRow.appendChild(mBtnClose);
+          var mBtnAdd = document.createElement('button');
+          var _yaEnRuta = (typeof rutaPuntos !== 'undefined') && rutaPuntos.some(function(x){ return x.id === poi.id; });
+          mBtnAdd.textContent = _yaEnRuta ? '✓ En ruta' : '+ Añadir a ruta';
+          mBtnAdd.style.cssText = 'flex:1;background:' + (_yaEnRuta ? 'rgba(29,158,117,0.6)' : '#fff') + ';color:' + (_yaEnRuta ? '#fff' : '#0F6E56') + ';border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;transition:all 0.15s';
+          mBtnAdd.addEventListener('click', function() {
+            if (typeof rutaPuntos === 'undefined') return;
+            var yaEsta = rutaPuntos.some(function(x){ return x.id === poi.id; });
+            if (!yaEsta) {
+              rutaPuntos.push({id: poi.id, nombre: poi.nombre, lat: poi.lat, lng: poi.lng});
+              try { actualizarRuta(); } catch(e){}
+              // Actualizar estado visual del check en la fila de la lista
+              if (typeof seleccionados !== 'undefined') { seleccionados[poi.id] = poi; }
+              mBtnAdd.textContent = '✓ En ruta';
+              mBtnAdd.style.background = 'rgba(29,158,117,0.6)';
+              mBtnAdd.style.color = '#fff';
+              try { mostrarToast('📍 ' + poi.nombre + ' añadido a la ruta'); } catch(e){}
+            } else {
+              try { mostrarToast('Ya está en tu ruta'); } catch(e){}
+            }
+          });
+          mBtnRow.appendChild(mBtnAdd);
+          mBox.appendChild(mBtnRow);
           mOverlay.appendChild(mBox);
           document.body.appendChild(mOverlay);
           mOverlay.addEventListener('click', function(ev){ if(ev.target===mOverlay) cerrarModal(); });
@@ -10217,7 +10241,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v982";
+var _APP_VERSION = "v983";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11930,7 +11954,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v982</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v983</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
