@@ -4438,7 +4438,7 @@ function abrirHeroModal() {
   overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:99998;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;justify-content:center;-webkit-tap-highlight-color:transparent;font-family:DM Sans,sans-serif';
 
   var panel = document.createElement('div');
-  panel.style.cssText = 'background:radial-gradient(ellipse at 20% 15%, rgba(90,50,0,0.18) 0%, transparent 55%),radial-gradient(ellipse at 80% 80%, rgba(60,30,0,0.22) 0%, transparent 50%),radial-gradient(ellipse at 60% 35%, rgba(180,130,40,0.12) 0%, transparent 40%),radial-gradient(ellipse at 10% 85%, rgba(80,40,0,0.15) 0%, transparent 45%),linear-gradient(180deg,#c9933a 0%,#b87d28 40%,#a86d18 100%);border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-width:480px;position:relative;box-sizing:border-box;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);overflow:hidden;border-top:3px solid #5a3008;box-shadow:0 -4px 32px rgba(0,0,0,0.5),inset 0 0 60px rgba(60,25,0,0.25),inset 0 0 15px rgba(40,15,0,0.3),inset 0 1px 0 rgba(255,220,120,0.15)';
+  panel.style.cssText = 'background:radial-gradient(ellipse at 20% 15%, rgba(90,50,0,0.18) 0%, transparent 55%),radial-gradient(ellipse at 80% 80%, rgba(60,30,0,0.22) 0%, transparent 50%),radial-gradient(ellipse at 60% 35%, rgba(180,130,40,0.12) 0%, transparent 40%),radial-gradient(ellipse at 10% 85%, rgba(80,40,0,0.15) 0%, transparent 45%),linear-gradient(180deg,#c9933a 0%,#b87d28 40%,#a86d18 100%);border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-width:480px;max-height:82vh;position:relative;box-sizing:border-box;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);overflow:hidden;border-top:3px solid #5a3008;box-shadow:0 -4px 32px rgba(0,0,0,0.5),inset 0 0 60px rgba(60,25,0,0.25),inset 0 0 15px rgba(40,15,0,0.3),inset 0 1px 0 rgba(255,220,120,0.15);display:flex;flex-direction:column';
 
   // Grid background
   var grid = document.createElement('div');
@@ -4465,7 +4465,7 @@ function abrirHeroModal() {
 
   // Inner content
   var inner = document.createElement('div');
-  inner.style.cssText = 'position:relative;z-index:1';
+  inner.style.cssText = 'position:relative;z-index:1;overflow-y:auto;flex:1;min-height:0;overscroll-behavior:contain;padding-right:2px';
   inner.className = 'pergamino-body';
   panel.appendChild(inner);
 
@@ -5054,7 +5054,7 @@ function abrirHeroModal() {
     inner.appendChild(sub);
 
     var lista = document.createElement('div');
-    lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:42vh;overflow-y:auto;overscroll-behavior:contain;padding-right:2px';
+    lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:16px;padding-right:2px';
 
     _opcionesCatalogo.forEach(function(op) {
       var fila = document.createElement('div');
@@ -5083,7 +5083,7 @@ function abrirHeroModal() {
 
     var btnAtras = document.createElement('button');
     btnAtras.textContent = _t.asistAtras||'← Volver';
-    btnAtras.style.cssText = 'width:100%;background:transparent;color:rgba(255,248,232,0.6);border:none;padding:8px;font-size:15px;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:2px';
+    btnAtras.style.cssText = 'width:100%;background:rgba(0,0,0,0.2);color:#fff8e8;border:1px solid #7a5010;border-radius:8px;padding:11px;font-size:15px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:8px';
     btnAtras.addEventListener('click', function(){ _renderPaso1(); });
     inner.appendChild(btnAtras);
 
@@ -10838,7 +10838,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1028";
+var _APP_VERSION = "v1029";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12552,7 +12552,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1028</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1029</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
