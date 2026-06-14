@@ -43,7 +43,7 @@
   <meta name="format-detection" content="telephone=no"/>
   <link rel="manifest" href="/manifest.json"/>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=5"/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@400;500&family=Cinzel:wght@700&display=swap" rel="stylesheet"/>
   <link rel="preconnect" href="https://unpkg.com" crossorigin/>
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin/>
   <link rel="preconnect" href="https://i.postimg.cc" crossorigin/>
@@ -4418,7 +4418,7 @@ function abrirHeroModal() {
     if (m) return m[1] + _capital(m[2]);
     var first = txt.charAt(0);
     if (first !== 'T') return txt;
-    return '<span style="float:left;font-family:Playfair Display,serif;font-size:2.6em;line-height:0.85;color:#8b0000;font-weight:700;margin:2px 5px -4px 0;text-shadow:1px 1px 2px rgba(0,0,0,0.3)">T</span>' + txt.slice(1);
+    return '<span style="float:left;font-family:Cinzel,serif;font-size:2.6em;line-height:0.85;color:#8b0000;font-weight:700;margin:2px 5px -4px 0;text-shadow:1px 1px 2px rgba(0,0,0,0.3)">T</span>' + txt.slice(1);
   }
   function _capitalAll(txt) {
     if (!txt || typeof txt !== 'string') return txt;
@@ -4426,7 +4426,7 @@ function abrirHeroModal() {
     if (m) return m[1] + _capitalAll(m[2]);
     var first = txt.charAt(0);
     if (!first.match(/[A-Za-zÀ-ÿÁÉÍÓÚáéíóúÑñ]/)) return txt;
-    return '<span style="float:left;font-family:Playfair Display,serif;font-size:2.6em;line-height:0.85;color:#8b0000;font-weight:700;margin:2px 5px -4px 0;text-shadow:1px 1px 2px rgba(0,0,0,0.3)">' + first + '</span>' + txt.slice(1);
+    return '<span style="float:left;font-family:Cinzel,serif;font-size:2.6em;line-height:0.85;color:#8b0000;font-weight:700;margin:2px 5px -4px 0;text-shadow:1px 1px 2px rgba(0,0,0,0.3)">' + first + '</span>' + txt.slice(1);
   }
   var viejo = document.getElementById('modal-hero-mobile');
   if (viejo) { viejo.remove(); return; }
@@ -10739,7 +10739,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1003";
+var _APP_VERSION = "v1004";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12452,7 +12452,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1003</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1004</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
