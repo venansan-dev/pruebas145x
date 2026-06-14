@@ -4441,6 +4441,21 @@ function abrirHeroModal() {
   bar.style.cssText = 'width:40px;height:4px;background:rgba(255,255,255,0.35);border-radius:2px;margin:0 auto 20px;position:relative;z-index:1';
   panel.appendChild(bar);
 
+  // Avatar del asistente
+  var avatarRow = document.createElement('div');
+  avatarRow.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:14px;position:relative;z-index:1';
+  var avatarImg = document.createElement('img');
+  avatarImg.src = 'https://i.postimg.cc/Gt0FZFyj/casco.png';
+  avatarImg.alt = 'Asistente';
+  avatarImg.style.cssText = 'width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.35);flex-shrink:0;background:rgba(0,0,0,0.2)';
+  var avatarLabel = document.createElement('div');
+  avatarLabel.style.cssText = 'display:flex;flex-direction:column';
+  avatarLabel.innerHTML = '<span style="font-size:12px;font-weight:700;color:#fff;line-height:1.2">Asistente Xacobeapp</span>'
+    + '<span style="font-size:10px;color:rgba(255,255,255,0.55);letter-spacing:0.5px">✦ Tu guía del Camino</span>';
+  avatarRow.appendChild(avatarImg);
+  avatarRow.appendChild(avatarLabel);
+  panel.appendChild(avatarRow);
+
   // Inner content
   var inner = document.createElement('div');
   inner.style.cssText = 'position:relative;z-index:1';
@@ -4955,27 +4970,27 @@ function abrirHeroModal() {
           mOverlay.style.cssText = 'position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;justify-content:center;font-family:DM Sans,sans-serif';
           var mBox = document.createElement('div');
           mBox.style.cssText = 'background:linear-gradient(160deg,#0F4033 0%,#0d2d1e 100%);border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-width:480px;box-sizing:border-box;max-height:85vh;overflow-y:auto;position:relative;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1)';
-          // Handle bar
-          var mBar = document.createElement('div');
-          mBar.style.cssText = 'width:40px;height:4px;background:rgba(255,255,255,0.3);border-radius:2px;margin:0 auto 16px';
-          mBox.appendChild(mBar);
-          // Cerrar
-          var mBtnX = document.createElement('button');
-          mBtnX.textContent = '✕';
-          mBtnX.style.cssText = 'position:absolute;top:12px;right:12px;width:32px;height:32px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-appearance:none';
           function cerrarModal() { mBox.style.transform='translateY(100%)'; setTimeout(function(){ mOverlay.remove(); }, 300); }
-          mBtnX.addEventListener('click', cerrarModal);
-          mBox.appendChild(mBtnX);
-          // Imagen si existe
+          // Imagen si existe — va primero, la X flota encima con z-index
           if (poi.imagen) {
             var mImg = document.createElement('div');
-            mImg.style.cssText = 'width:100%;height:160px;border-radius:12px;overflow:hidden;margin-bottom:14px;background:#0d1f18';
+            mImg.style.cssText = 'width:100%;height:160px;border-radius:12px;overflow:hidden;margin-bottom:14px;background:#0d1f18;position:relative';
             var img = document.createElement('img');
             img.src = poi.imagen;
             img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
             mImg.appendChild(img);
             mBox.appendChild(mImg);
           }
+          // Handle bar (después de la imagen si existe)
+          var mBar = document.createElement('div');
+          mBar.style.cssText = 'width:40px;height:4px;background:rgba(255,255,255,0.3);border-radius:2px;margin:0 auto 16px;display:none';
+          mBox.appendChild(mBar);
+          // Cerrar — posición absoluta respecto al mBox, z-index alto
+          var mBtnX = document.createElement('button');
+          mBtnX.textContent = '✕';
+          mBtnX.style.cssText = 'position:absolute;top:12px;right:12px;width:32px;height:32px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.25);border-radius:50%;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;z-index:10;backdrop-filter:blur(4px)';
+          mBtnX.addEventListener('click', cerrarModal);
+          mBox.appendChild(mBtnX);
           // Emoji + nombre
           var mHead = document.createElement('div');
           mHead.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:8px';
@@ -10226,7 +10241,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v977";
+var _APP_VERSION = "v979";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11939,7 +11954,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v977</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v979</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
