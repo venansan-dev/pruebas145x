@@ -5016,7 +5016,7 @@ function abrirHeroModal() {
       info.style.cssText = 'flex:1;min-width:0';
       var titEl = document.createElement('div');
       titEl.style.cssText = 'font-family:IM Fell English,serif;font-size:15px;color:#1a0800;margin-bottom:2px;line-height:1.3';
-      titEl.textContent = op.tit;
+      titEl.textContent = op.tit.replace(/^[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}\uFE0F\s]+/u, '').trim();
       var descEl = document.createElement('div');
       descEl.style.cssText = 'font-size:11px;color:#3d1f00;line-height:1.3;opacity:0.85';
       descEl.textContent = op.desc;
@@ -10837,7 +10837,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1009";
+var _APP_VERSION = "v1010";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12550,7 +12550,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1009</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1010</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
