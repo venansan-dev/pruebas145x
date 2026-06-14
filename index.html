@@ -9932,13 +9932,8 @@ document.addEventListener('DOMContentLoaded', function() {
     screen.orientation.lock('portrait').catch(function(){});
   }
   // Arrancar en modo pantalla completa en móvil/app
-  var _esMobil = screen.width <= 1024 || window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches || 'ontouchstart' in window;
-  if (_esMobil) {
-    setTimeout(function() {
-      if (_mapaExpandido) return;
-      _toggleMapaExpandido();
-      cambiarIdioma(idiomaActual);
-    }, 350);
+  if (window.innerWidth <= 768 || window.screen.width <= 768 || window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+    setTimeout(function(){ if (!_mapaExpandido) { _toggleMapaExpandido(); cambiarIdioma(idiomaActual); } }, 300);
   }
   var input=document.getElementById('buscar-input');
   if(input)input.addEventListener('keydown',function(e){if(e.key==='Enter')ejecutarBusqueda();});
@@ -10152,7 +10147,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v975";
+var _APP_VERSION = "v976";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11929,7 +11924,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v975</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v976</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
