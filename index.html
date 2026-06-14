@@ -5230,18 +5230,18 @@ function abrirHeroModal() {
     var seleccionados = {};
 
     var titulo = document.createElement('div');
-    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:18px;font-weight:400;color:#fff;margin-bottom:6px;line-height:1.3';
+    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:18px;font-weight:400;color:#1a0800;margin-bottom:6px;line-height:1.3';
     titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">Selecciona qué te gustaría visitar';
     inner.appendChild(titulo);
 
     var hint = document.createElement('p');
-    hint.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.65);margin-bottom:14px';
+    hint.style.cssText = 'font-size:12px;color:#8b6914;margin-bottom:14px;font-style:italic';
     hint.textContent = _t.asistEligeUno||'Puedes elegir uno o varios lugares.';
     inner.appendChild(hint);
 
     // Lista de POIs
     var lista = document.createElement('div');
-    lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:18px;max-height:40vh;overflow-y:auto';
+    lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:18px;max-height:40vh;overflow-y:auto;padding:4px 2px';
 
     cercanos.forEach(function(item) {
       var p = item.poi;
@@ -5249,11 +5249,11 @@ function abrirHeroModal() {
       var fila = document.createElement('div');
       fila.className = 'wizard-poi-fila';
       fila.dataset.poiId = p.id;
-      fila.style.cssText = 'display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.15);border-radius:12px;padding:10px 12px;cursor:pointer;transition:background 0.15s';
+      fila.style.cssText = 'display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.12);border:1.5px solid #b8935a;border-radius:10px;padding:10px 12px;cursor:pointer;transition:all 0.15s';
 
       var check = document.createElement('div');
       check.className = 'wizard-poi-check';
-      check.style.cssText = 'width:22px;height:22px;border-radius:6px;border:2px solid rgba(255,255,255,0.5);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;transition:all 0.15s';
+      check.style.cssText = 'width:22px;height:22px;border-radius:6px;border:2px solid #7a5010;background:rgba(255,255,255,0.15);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#1a0800;transition:all 0.15s';
       fila.appendChild(check);
 
       var emoji = document.createElement('span');
@@ -5265,10 +5265,10 @@ function abrirHeroModal() {
       info.style.cssText = 'flex:1;min-width:0';
       var _visitadoWiz = window._albumVisitasSet && window._albumVisitasSet[p.id];
       var _visitBadge = _visitadoWiz
-        ? '<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(110,231,183,0.25);color:#6ee7b7;border:1px solid rgba(110,231,183,0.4);border-radius:10px;font-size:10px;font-weight:600;padding:1px 7px;margin-left:6px">✓ Visitado</span>'
-        : '<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.15);border-radius:10px;font-size:10px;font-weight:500;padding:1px 7px;margin-left:6px">🔒 Sin visitar</span>';
-      info.innerHTML = '<div style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + p.nombre + '</div>'
-        + '<div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;display:flex;align-items:center;flex-wrap:wrap;gap:2px">📍 ' + distTexto + _visitBadge + '</div>';
+        ? '<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(45,74,30,0.85);color:#d4f0b0;border:1px solid #2d4a1e;border-radius:10px;font-size:10px;font-weight:600;padding:1px 7px;margin-left:6px;font-family:DM Sans,sans-serif">✓ Visitado</span>'
+        : '<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(122,31,31,0.75);color:#ffd0d0;border:1px solid #7a1f1f;border-radius:10px;font-size:10px;font-weight:500;padding:1px 7px;margin-left:6px;font-family:DM Sans,sans-serif">🔒 Sin visitar</span>';
+      info.innerHTML = '<div style="font-family:IM Fell English,serif;font-size:14px;color:#1a0800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + p.nombre + '</div>'
+        + '<div style="font-size:11px;color:#5c3d1e;margin-top:2px;display:flex;align-items:center;flex-wrap:wrap;gap:2px">📍 ' + distTexto + _visitBadge + '</div>';
       fila.appendChild(info);
 
       // Botón ⓘ info ampliada del POI
@@ -5276,7 +5276,7 @@ function abrirHeroModal() {
         var btnInfo = document.createElement('button');
         btnInfo.textContent = 'ⓘ';
         btnInfo.title = 'Más información';
-        btnInfo.style.cssText = 'width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);color:#fff;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;font-family:DM Sans,sans-serif;line-height:1';
+        btnInfo.style.cssText = 'width:28px;height:28px;border-radius:50%;background:rgba(139,105,20,0.2);border:1.5px solid #7a5010;color:#1a0800;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;font-family:DM Sans,sans-serif;line-height:1';
         btnInfo.addEventListener('click', function(e) {
           e.stopPropagation();
           // Modal de información del POI
@@ -5360,14 +5360,14 @@ function abrirHeroModal() {
                 var listaFilas = document.querySelectorAll('.wizard-poi-fila');
                 listaFilas.forEach(function(fila) {
                   if (fila.dataset.poiId === poi.id) {
-                    fila.style.background = 'rgba(255,255,255,0.25)';
-                    fila.style.borderColor = 'rgba(255,255,255,0.6)';
+                    fila.style.background = 'rgba(45,74,30,0.35)';
+                    fila.style.borderColor = '#2d4a1e';
                     var chk = fila.querySelector('.wizard-poi-check');
                     if (chk) {
-                      chk.style.background = '#fff';
-                      chk.style.borderColor = '#fff';
+                      chk.style.background = '#2d4a1e';
+                      chk.style.borderColor = '#2d4a1e';
                       chk.textContent = '✓';
-                      chk.style.color = '#0F6E56';
+                      chk.style.color = '#d4f0b0';
                     }
                   }
                 });
@@ -5397,19 +5397,19 @@ function abrirHeroModal() {
       function toggle() {
         if (seleccionados[p.id]) {
           delete seleccionados[p.id];
-          fila.style.background = 'rgba(255,255,255,0.12)';
-          fila.style.borderColor = 'rgba(255,255,255,0.15)';
-          check.style.background = 'transparent';
-          check.style.borderColor = 'rgba(255,255,255,0.5)';
+          fila.style.background = 'rgba(0,0,0,0.12)';
+          fila.style.borderColor = '#b8935a';
+          check.style.background = 'rgba(255,255,255,0.15)';
+          check.style.borderColor = '#7a5010';
           check.textContent = '';
         } else {
           seleccionados[p.id] = p;
-          fila.style.background = 'rgba(255,255,255,0.25)';
-          fila.style.borderColor = 'rgba(255,255,255,0.6)';
-          check.style.background = '#fff';
-          check.style.borderColor = '#fff';
+          fila.style.background = 'rgba(45,74,30,0.35)';
+          fila.style.borderColor = '#2d4a1e';
+          check.style.background = '#2d4a1e';
+          check.style.borderColor = '#2d4a1e';
           check.textContent = '✓';
-          check.style.color = '#0F6E56';
+          check.style.color = '#d4f0b0';
         }
         btnConfirmar.disabled = Object.keys(seleccionados).length === 0;
         btnConfirmar.style.opacity = btnConfirmar.disabled ? '0.4' : '1';
@@ -5443,7 +5443,7 @@ function abrirHeroModal() {
 
     var btnVolver = document.createElement('button');
     btnVolver.textContent = _t.asistAtras||'← Volver';
-    btnVolver.style.cssText = 'width:100%;background:transparent;color:rgba(255,255,255,0.65);border:none;padding:8px;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnVolver.style.cssText = 'width:100%;background:transparent;color:rgba(26,8,0,0.5);border:none;padding:8px;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif';
     btnVolver.addEventListener('click', function(){ _renderPaso1(); });
     inner.appendChild(btnVolver);
   }
@@ -10837,7 +10837,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1008";
+var _APP_VERSION = "v1009";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12550,7 +12550,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1008</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1009</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
