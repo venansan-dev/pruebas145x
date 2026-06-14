@@ -4440,7 +4440,7 @@ function abrirHeroModal() {
   overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:99998;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;justify-content:center;-webkit-tap-highlight-color:transparent;font-family:DM Sans,sans-serif';
 
   var panel = document.createElement('div');
-  panel.style.cssText = 'background:radial-gradient(ellipse at 20% 15%, rgba(90,50,0,0.18) 0%, transparent 55%),radial-gradient(ellipse at 80% 80%, rgba(60,30,0,0.22) 0%, transparent 50%),radial-gradient(ellipse at 60% 35%, rgba(180,130,40,0.12) 0%, transparent 40%),radial-gradient(ellipse at 10% 85%, rgba(80,40,0,0.15) 0%, transparent 45%),linear-gradient(180deg,#c9933a 0%,#b87d28 40%,#a86d18 100%);border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-width:480px;max-height:82vh;position:relative;box-sizing:border-box;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);overflow:hidden;border-top:3px solid #5a3008;box-shadow:0 -4px 32px rgba(0,0,0,0.5),inset 0 0 60px rgba(60,25,0,0.25),inset 0 0 15px rgba(40,15,0,0.3),inset 0 1px 0 rgba(255,220,120,0.15);display:flex;flex-direction:column';
+  panel.style.cssText = 'background:radial-gradient(ellipse at 20% 15%, rgba(90,50,0,0.18) 0%, transparent 55%),radial-gradient(ellipse at 80% 80%, rgba(60,30,0,0.22) 0%, transparent 50%),radial-gradient(ellipse at 60% 35%, rgba(180,130,40,0.12) 0%, transparent 40%),radial-gradient(ellipse at 10% 85%, rgba(80,40,0,0.15) 0%, transparent 45%),linear-gradient(180deg,#c9933a 0%,#b87d28 40%,#a86d18 100%);border-radius:20px 20px 0 0;padding:0;width:100%;max-width:480px;max-height:82vh;position:relative;box-sizing:border-box;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);overflow:hidden;border-top:3px solid #5a3008;box-shadow:0 -4px 32px rgba(0,0,0,0.5),inset 0 0 60px rgba(60,25,0,0.25),inset 0 0 15px rgba(40,15,0,0.3),inset 0 1px 0 rgba(255,220,120,0.15);display:flex;flex-direction:column';
 
   // Grid background
   var grid = document.createElement('div');
@@ -4455,19 +4455,19 @@ function abrirHeroModal() {
   // ✕
   var btnX = document.createElement('button');
   btnX.textContent = '✕';
-  btnX.style.cssText = 'position:absolute;top:10px;right:10px;width:26px;height:26px;background:rgba(0,0,0,0.2);border:1.5px solid #7a5010;border-radius:50%;font-size:13px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;color:#fff8e8;-webkit-appearance:none';
+  btnX.style.cssText = 'position:absolute;top:10px;right:10px;width:26px;height:26px;background:rgba(0,0,0,0.2);border:1.5px solid #7a5010;border-radius:50%;font-size:13px;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center;color:#fff8e8;-webkit-appearance:none';
   btnX.addEventListener('click', cerrar);
   btnX.addEventListener('touchend', function(e){ e.preventDefault(); cerrar(); });
   panel.appendChild(btnX);
 
-  // Handle bar
+  // Handle bar — con su propio padding top
   var bar = document.createElement('div');
-  bar.style.cssText = 'text-align:center;font-size:20px;color:#fff0c0;margin:0 auto 16px;position:relative;z-index:1;letter-spacing:4px;line-height:1';
+  bar.style.cssText = 'text-align:center;font-size:20px;color:#fff0c0;padding:20px 20px 0;position:relative;z-index:1;letter-spacing:4px;line-height:1;margin-bottom:16px;flex-shrink:0';
   panel.appendChild(bar);
 
   // Inner content
   var inner = document.createElement('div');
-  inner.style.cssText = 'position:relative;z-index:1;flex:1;min-height:0;display:flex;flex-direction:column';
+  inner.style.cssText = 'position:relative;z-index:1;flex:1;min-height:0;display:flex;flex-direction:column;padding:0 20px 40px;box-sizing:border-box';
   inner.className = 'pergamino-body';
   panel.appendChild(inner);
 
@@ -10854,7 +10854,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1032";
+var _APP_VERSION = "v1033";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12568,7 +12568,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1032</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1033</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
