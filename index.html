@@ -4939,6 +4939,14 @@ function abrirHeroModal() {
         + '<div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px">📍 ' + distTexto + '</div>';
       fila.appendChild(info);
 
+      // Botón info → abre modal solo información
+      var btnInfo = document.createElement('button');
+      btnInfo.textContent = 'ℹ';
+      btnInfo.title = 'Ver información';
+      btnInfo.style.cssText = 'width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;font-style:normal';
+      (function(poi){ btnInfo.addEventListener('click', function(e){ e.stopPropagation(); _abrirModalPOISoloInfo(poi); }); })(p);
+      fila.appendChild(btnInfo);
+
       function toggle() {
         if (seleccionados[p.id]) {
           delete seleccionados[p.id];
@@ -10133,7 +10141,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v970";
+var _APP_VERSION = "v971";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11714,6 +11722,70 @@ function _abrirModalPOI(punto) {
   overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
 }
 
+
+// Modal POI solo información (sin botones de acción)
+function _abrirModalPOISoloInfo(punto) {
+  var ex = document.getElementById('modal-poi-info-solo'); if(ex) ex.remove();
+  var nombre = idiomaActual==='gl'&&punto.nombre_gl?punto.nombre_gl:idiomaActual==='en'&&punto.nombre_en?punto.nombre_en:punto.nombre;
+  var desc = idiomaActual==='gl'&&punto.descripcion_gl?punto.descripcion_gl:idiomaActual==='en'&&punto.descripcion_en?punto.descripcion_en:punto.descripcion;
+  var subtitulo = idiomaActual==='gl'&&punto.subtitulo_gl?punto.subtitulo_gl:idiomaActual==='en'&&punto.subtitulo_en?punto.subtitulo_en:punto.subtitulo;
+  var t2=T[idiomaActual]||T.es;
+  var catMap={'naturaleza':t2.chipNaturaleza,'monumento':t2.chipMonumento,'albergue':t2.chipAlbergue,'mirador':t2.chipMirador,'edificación religiosa':t2.chipEdif,'localización histórica':t2.chipHist,'vestigio arqueológico':t2.chipVest,'edificación histórica':t2.chipEdifH,'etapa':t2.chipEtapa||'Etapa'};
+  var cat = catMap[punto.categoria]||punto.categoria||'';
+  var desbloq = !!(window._albumVisitasSet&&window._albumVisitasSet[punto.id]);
+  var val = (typeof valoraciones!=='undefined'&&valoraciones[punto.id])||{total:0,votos:0,miVoto:0};
+  var media = val.votos>0?(val.total/val.votos).toFixed(1):null;
+  var _pal = {
+    'naturaleza':            ['#eaf7f1','#c6eadd','#0a4a30','#1D9E75','#fff'],
+    'edificación religiosa': ['#f5f0ff','#ddd0f8','#3b1f6a','#7c3aed','#fff'],
+    'vestigio arqueológico': ['#fdf6e3','#f0dfa0','#5a3a00','#d97706','#fff'],
+    'localización histórica':['#fdf6e3','#f0dfa0','#5a3a00','#b45309','#fff'],
+    'edificación histórica': ['#fdf6e3','#f0dfa0','#5a3a00','#b45309','#fff'],
+    'monumento':             ['#eff6ff','#bfdbfe','#1e3a8a','#2563eb','#fff'],
+    'mirador':               ['#fff7ed','#fed7aa','#7c2d12','#ea580c','#fff'],
+    'albergue':              ['#f0fdf4','#bbf7d0','#14532d','#16a34a','#fff'],
+    'etapa':                 ['#eaf7f1','#c6eadd','#0a4a30','#1D9E75','#fff'],
+    'fiesta':                ['#fff0f6','#fbc8de','#831843','#db2777','#fff'],
+  };
+  var _p = _pal[punto.categoria] || ['#eaf7f1','#c6eadd','#0a4a30','#1D9E75','#fff'];
+  var _hBg=_p[0],_hBorder=_p[1],_hColor=_p[2],_chipBg=_p[3],_chipColor=_p[4];
+
+  var overlay = document.createElement('div');
+  overlay.id = 'modal-poi-info-solo';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1rem;box-sizing:border-box';
+
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:18px;width:100%;max-width:400px;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.2),0 4px 16px rgba(0,0,0,0.1)';
+
+  var starStr = media ? ' <span style="font-size:12px;color:#F5C800;font-weight:600">★ '+media+'</span>' : '';
+  var catChip = cat ? '<span style="font-size:10px;font-weight:700;color:'+_chipColor+';background:'+_chipBg+';border-radius:20px;padding:2px 10px;letter-spacing:0.5px;text-transform:uppercase">'+cat+'</span>' : '';
+  var visitChip = desbloq
+    ? '<span style="font-size:10px;font-weight:600;color:'+_hColor+';background:rgba(255,255,255,0.6);border:1px solid '+_hBorder+';border-radius:20px;padding:2px 9px">✓ Visitada</span>'
+    : '<span style="font-size:10px;font-weight:500;color:rgba(0,0,0,0.35);background:rgba(0,0,0,0.06);border-radius:20px;padding:2px 9px">🔒 Sin visitar</span>';
+
+  var headerDiv = document.createElement('div');
+  headerDiv.style.cssText = 'flex-shrink:0;padding:16px 16px 14px;background:'+_hBg+';border-bottom:1px solid '+_hBorder;
+  headerDiv.innerHTML = '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">'
+    + '<div style="flex:1;min-width:0">'
+    + '<div style="font-size:17px;font-weight:700;color:'+_hColor+';line-height:1.25;word-break:break-word">'+punto.emoji+' '+nombre+starStr+'</div>'
+    + (subtitulo ? '<div style="font-size:12px;color:'+_hColor+';opacity:0.65;font-style:italic;margin-top:4px;line-height:1.4">'+subtitulo+'</div>' : '')
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">'+catChip+visitChip+'</div>'
+    + '</div>'
+    + '<button onclick="document.getElementById('modal-poi-info-solo').remove()" style="background:rgba(0,0,0,0.08);border:none;border-radius:50%;width:30px;height:30px;font-size:18px;line-height:1;cursor:pointer;color:'+_hColor+';opacity:0.6;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px">&times;</button>'
+    + '</div>';
+  box.appendChild(headerDiv);
+
+  var bodyDiv = document.createElement('div');
+  bodyDiv.style.cssText = 'flex:1;overflow-y:auto;padding:16px 16px 20px;min-height:0;-webkit-overflow-scrolling:touch';
+  bodyDiv.innerHTML = '<div style="font-size:13px;color:#4b5563;line-height:1.75">'+(desc||'')+'</div>'
+    + (punto.imagen ? '<img src="'+punto.imagen+'" style="width:100%;height:180px;object-fit:cover;border-radius:12px;margin-top:14px;display:block" loading="lazy">' : '');
+  box.appendChild(bodyDiv);
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
+}
+
 var _mapaExpandido = false;
 var _mapaWrap = null;
 var _mapaBlockOrigParent = null;
@@ -11846,7 +11918,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v970</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v971</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
