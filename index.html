@@ -4467,7 +4467,7 @@ function abrirHeroModal() {
 
   // Inner content
   var inner = document.createElement('div');
-  inner.style.cssText = 'position:relative;z-index:1;overflow-y:auto;flex:1;min-height:0;overscroll-behavior:contain;padding-right:2px';
+  inner.style.cssText = 'position:relative;z-index:1;flex:1;min-height:0;display:flex;flex-direction:column';
   inner.className = 'pergamino-body';
   panel.appendChild(inner);
 
@@ -5044,19 +5044,26 @@ function abrirHeroModal() {
 
   function _renderSugerencias() {
     inner.innerHTML = '';
+    inner.style.overflow = 'hidden';
+
+    // Cabecera fija
+    var cabecera = document.createElement('div');
+    cabecera.style.cssText = 'flex-shrink:0';
 
     var titulo = document.createElement('div');
     titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:19px;font-weight:400;color:#fff;line-height:1.3;margin-bottom:6px';
     titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">¿Qué te apetece explorar?';
-    inner.appendChild(titulo);
+    cabecera.appendChild(titulo);
 
     var sub = document.createElement('p');
     sub.style.cssText = 'font-size:15px;color:#1a0800;margin-bottom:12px;line-height:1.5';
     sub.innerHTML = _capital(_t.asistMasCosa||'Hay mucho más en la guía. Elige algo que te llame la atención:');
-    inner.appendChild(sub);
+    cabecera.appendChild(sub);
+    inner.appendChild(cabecera);
 
+    // Lista scrolleable
     var lista = document.createElement('div');
-    lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:16px;padding-right:2px';
+    lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;overflow-y:auto;overscroll-behavior:contain;flex:1;min-height:0;padding-right:2px;margin-bottom:12px';
 
     _opcionesCatalogo.forEach(function(op) {
       var fila = document.createElement('div');
@@ -5083,17 +5090,23 @@ function abrirHeroModal() {
     });
     inner.appendChild(lista);
 
+    // Botones fijos abajo
+    var pies = document.createElement('div');
+    pies.style.cssText = 'flex-shrink:0';
+
     var btnAtras = document.createElement('button');
     btnAtras.textContent = _t.asistAtras||'← Volver';
     btnAtras.style.cssText = 'width:100%;background:rgba(0,0,0,0.2);color:#fff8e8;border:1px solid #7a5010;border-radius:8px;padding:11px;font-size:15px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:8px';
     btnAtras.addEventListener('click', function(){ _renderPaso1(); });
-    inner.appendChild(btnAtras);
+    pies.appendChild(btnAtras);
 
     var btnCerrar = document.createElement('button');
     btnCerrar.textContent = _t.asistQuizas||'Quizás más tarde';
     btnCerrar.style.cssText = 'width:100%;background:transparent;color:rgba(255,255,255,0.35);border:none;padding:4px;font-size:14px;cursor:pointer;font-family:DM Sans,sans-serif';
     btnCerrar.addEventListener('click', function(){ _renderDespedida(); });
-    inner.appendChild(btnCerrar);
+    pies.appendChild(btnCerrar);
+
+    inner.appendChild(pies);
   }
 
   // ── DETALLE de opción + pregunta ¿ver otra? ──────────────────────
@@ -10840,7 +10853,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1030";
+var _APP_VERSION = "v1031";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12554,7 +12567,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1030</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1031</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
