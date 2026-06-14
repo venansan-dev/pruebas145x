@@ -4914,6 +4914,12 @@ function abrirHeroModal() {
     hint.textContent = 'Puedes elegir uno o varios lugares.';
     inner.appendChild(hint);
 
+    // Botón confirmar (declarado antes del loop para que toggle() pueda referenciarlo)
+    var btnConfirmar = document.createElement('button');
+    btnConfirmar.textContent = 'Confirmar selección';
+    btnConfirmar.disabled = true;
+    btnConfirmar.style.cssText = 'width:100%;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;opacity:0.4;margin-bottom:8px;transition:opacity 0.2s';
+
     // Lista de POIs
     var lista = document.createElement('div');
     lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:18px;max-height:40vh;overflow-y:auto';
@@ -4972,12 +4978,6 @@ function abrirHeroModal() {
       lista.appendChild(fila);
     });
     inner.appendChild(lista);
-
-    // Botón confirmar
-    var btnConfirmar = document.createElement('button');
-    btnConfirmar.textContent = 'Confirmar selección';
-    btnConfirmar.disabled = true;
-    btnConfirmar.style.cssText = 'width:100%;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;opacity:0.4;margin-bottom:8px;transition:opacity 0.2s';
     btnConfirmar.addEventListener('click', function() {
       var ids = Object.keys(seleccionados);
       if (ids.length === 0) return;
@@ -5088,7 +5088,7 @@ function abrirHeroModal() {
         var mapBlock = document.getElementById('map-block');
         if (mapBlock) mapBlock.scrollIntoView({behavior:'smooth', block:'start'});
         setTimeout(function() {
-          try { iniciarNavegacionVoz(); } catch(e) { try { iniciarRuta(); } catch(e2){} }
+          try { activarNavegacionVoz(); } catch(e) { try { iniciarRuta(); } catch(e2){} }
         }, 400);
       }, 340);
     });
@@ -9926,8 +9926,20 @@ document.addEventListener('DOMContentLoaded', function() {
     screen.orientation.lock('portrait').catch(function(){});
   }
   // Arrancar en modo pantalla completa en móvil/app
-  if (window.innerWidth <= 768 || window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
-    setTimeout(function(){ if (!_mapaExpandido) { _toggleMapaExpandido(); cambiarIdioma(idiomaActual); } }, 300);
+  var _esMobil = window.innerWidth <= 900 || window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches || ('ontouchstart' in window && window.innerWidth < 1024);
+  if (_esMobil) {
+    // Primer intento a 400ms; si el header aún mide 0, reintentar a 800ms
+    function _intentarExpandir() {
+      if (_mapaExpandido) return;
+      var h = document.querySelector('.header');
+      if (!h || h.getBoundingClientRect().height === 0) {
+        setTimeout(_intentarExpandir, 400);
+        return;
+      }
+      _toggleMapaExpandido();
+      cambiarIdioma(idiomaActual);
+    }
+    setTimeout(_intentarExpandir, 400);
   }
   var input=document.getElementById('buscar-input');
   if(input)input.addEventListener('keydown',function(e){if(e.key==='Enter')ejecutarBusqueda();});
@@ -10141,7 +10153,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v971";
+var _APP_VERSION = "v973";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11918,7 +11930,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v971</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v973</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
