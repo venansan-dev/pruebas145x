@@ -455,14 +455,14 @@
 <!-- ═══ PANELES SLIDE (dentro del map-block, se deslizan sobre el mapa) ═══ -->
 
 <!-- PANEL BRÚJULA -->
-<div id='brujula-drawer' class='map-slide-panel' style='background:linear-gradient(160deg,#0d1b2e 0%,#1a2f50 35%,#1e3a6a 65%,#16304f 100%)'>
+<div id='brujula-drawer' class='map-slide-panel' style='background:radial-gradient(ellipse at 20% 15%,rgba(90,50,0,0.18) 0%,transparent 55%),radial-gradient(ellipse at 80% 85%,rgba(60,30,0,0.20) 0%,transparent 50%),linear-gradient(180deg,#d4a95a 0%,#c49040 40%,#b07828 100%)'>
   <div style='flex:1;padding:0.75rem 1rem;display:flex;flex-direction:column;gap:0.6rem;box-sizing:border-box;overflow-y:auto;overflow-x:hidden;min-height:0'>
     <!-- Botón volver arriba -->
-    <button onclick='cerrarBrujulaDrawer()' style='display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:7px 14px;color:rgba(255,255,255,0.85);font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif;width:fit-content;flex-shrink:0' id='brujula-panel-volver'>← Volver</button>
+    <button onclick='cerrarBrujulaDrawer()' style='display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.15);border:1.5px solid #7a5010;border-radius:10px;padding:7px 14px;color:#1a0800;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif;width:fit-content;flex-shrink:0' id='brujula-panel-volver'>← Volver</button>
     <!-- Dos brújulas -->
     <div style='display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;flex:1'>
-      <div style='background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:16px;padding:0.75rem 0.5rem;display:flex;flex-direction:column;align-items:center;justify-content:space-between'>
-        <div id='brujula-norte-label' style='font-size:10px;font-weight:600;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:1.5px'>Norte</div>
+      <div style='background:rgba(0,0,0,0.12);border:1.5px solid #a07828;border-radius:16px;padding:0.75rem 0.5rem;display:flex;flex-direction:column;align-items:center;justify-content:space-between'>
+        <div id='brujula-norte-label' style='font-size:10px;font-weight:600;color:#3d1f00;text-transform:uppercase;letter-spacing:1.5px'>Norte</div>
         <div style='position:relative;width:100px;height:100px'>
           <canvas id='canvas-norte' width='100' height='100' style='position:absolute;top:0;left:0'></canvas>
           <svg id='aguja-norte' style='position:absolute;top:0;left:0;width:100px;height:100px;transition:transform 0.3s ease;transform-origin:50px 50px' viewBox='0 0 110 110'>
@@ -472,12 +472,12 @@
           <div style='position:absolute;top:50%;left:50%;width:10px;height:10px;background:#FFE066;border-radius:50%;margin:-5px 0 0 -5px;z-index:10'></div>
         </div>
         <div style='text-align:center'>
-          <div id='grados-norte' style='font-size:20px;font-weight:700;color:#FFE066;font-family:monospace'>---°</div>
-          <div id='rumbo-texto' style='font-size:12px;color:rgba(255,255,255,0.8)'>--</div>
+          <div id='grados-norte' style='font-size:20px;font-weight:700;color:#7a3800;font-family:monospace'>---°</div>
+          <div id='rumbo-texto' style='font-size:12px;color:#3d1f00'>--</div>
         </div>
       </div>
-      <div style='background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:16px;padding:0.75rem 0.5rem;display:flex;flex-direction:column;align-items:center;justify-content:space-between'>
-        <div id='brujula-stgo-label' style='font-size:10px;font-weight:600;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:1.5px'>Santiago</div>
+      <div style='background:rgba(0,0,0,0.12);border:1.5px solid #a07828;border-radius:16px;padding:0.75rem 0.5rem;display:flex;flex-direction:column;align-items:center;justify-content:space-between'>
+        <div id='brujula-stgo-label' style='font-size:10px;font-weight:600;color:#3d1f00;text-transform:uppercase;letter-spacing:1.5px'>Santiago</div>
         <div style='position:relative;width:100px;height:100px'>
           <canvas id='canvas-stgo' width='100' height='100' style='position:absolute;top:0;left:0'></canvas>
           <svg id='aguja-stgo' style='position:absolute;top:0;left:0;width:100px;height:100px;transition:transform 0.3s ease;transform-origin:50px 50px' viewBox='0 0 110 110'>
@@ -487,8 +487,8 @@
           <div style='position:absolute;top:50%;left:50%;width:10px;height:10px;background:#fff;border-radius:50%;margin:-5px 0 0 -5px;z-index:10'></div>
         </div>
         <div style='text-align:center'>
-          <div id='grados-stgo' style='font-size:20px;font-weight:700;color:#FFE066;font-family:monospace'>---°</div>
-          <div id='dist-stgo' style='font-size:12px;color:rgba(255,255,255,0.8)'>-- km</div>
+          <div id='grados-stgo' style='font-size:20px;font-weight:700;color:#7a3800;font-family:monospace'>---°</div>
+          <div id='dist-stgo' style='font-size:12px;color:#3d1f00'>-- km</div>
         </div>
       </div>
     </div>
@@ -552,19 +552,19 @@
 </div>
 
 <!-- PANEL METEOROLOGÍA -->
-<div id='meteo-drawer' class='map-slide-panel' style='background:linear-gradient(155deg,#091e35 0%,#0f2e50 30%,#1a3d65 60%,#112840 100%);font-family:DM Sans,sans-serif'>
+<div id='meteo-drawer' class='map-slide-panel' style='background:radial-gradient(ellipse at 20% 15%,rgba(90,50,0,0.18) 0%,transparent 55%),radial-gradient(ellipse at 80% 85%,rgba(60,30,0,0.20) 0%,transparent 50%),linear-gradient(180deg,#d4a95a 0%,#c49040 40%,#b07828 100%);font-family:DM Sans,sans-serif'>
   <div style='padding:0.75rem 1rem 1rem'>
     <div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem'>
       <button onclick='cerrarMeteoDrawer()' id='meteo-panel-volver' style='display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:7px 14px;color:rgba(255,255,255,0.85);font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif;width:fit-content'>← Volver</button>
       <div style='text-align:right'>
-        <div style='font-family:Playfair Display,serif;font-size:15px;font-weight:600;color:#fff;line-height:1.2' id='meteo-header-loc'>🌤️ Previsión</div>
-        <div style='font-size:11px;color:rgba(255,255,255,0.55);margin-top:2px' id='meteo-header-fecha'></div>
+        <div style='font-family:IM Fell English,serif;font-size:15px;font-weight:400;color:#1a0800;line-height:1.2' id='meteo-header-loc'>🌤️ Previsión</div>
+        <div style='font-size:11px;color:#5c3d1e;margin-top:2px' id='meteo-header-fecha'></div>
       </div>
     </div>
     <div id='meteo-drawer-horas' style='display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-bottom:1rem'>
       <div style='color:rgba(255,255,255,0.4);font-size:13px;font-style:italic'>Obteniendo datos...</div>
     </div>
-    <div id='meteo-drawer-resumen' style='background:rgba(255,255,255,0.08);border-radius:12px;padding:0.9rem 1rem;display:none'>
+    <div id='meteo-drawer-resumen' style='background:rgba(0,0,0,0.10);border:1.5px solid #a07828;border-radius:12px;padding:0.9rem 1rem;display:none'>
       <div id='meteo-resumen-dia-label' style='font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px'>Resumen del día</div>
       <div id='meteo-drawer-resumen-content' style='display:flex;gap:16px;flex-wrap:wrap'></div>
     </div>
@@ -605,12 +605,12 @@
 </div>
 
 <!-- PANEL ÁLBUM DE RECUERDOS -->
-<div id='album-recuerdos-drawer' class='map-slide-panel' style='background:linear-gradient(160deg,#1a0e2e 0%,#2d1854 50%,#1e1040 100%);font-family:DM Sans,sans-serif;display:flex;flex-direction:column'>
+<div id='album-recuerdos-drawer' class='map-slide-panel' style='background:radial-gradient(ellipse at 20% 15%,rgba(90,50,0,0.18) 0%,transparent 55%),radial-gradient(ellipse at 80% 85%,rgba(60,30,0,0.20) 0%,transparent 50%),linear-gradient(180deg,#d4a95a 0%,#c49040 40%,#b07828 100%);font-family:DM Sans,sans-serif;display:flex;flex-direction:column'>
   <div style='flex-shrink:0;display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.2)'>
     <button onclick='_cerrarSlide("album-recuerdos-drawer");abrirAlbumPanel()' style='background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:6px 12px;color:rgba(255,255,255,0.85);font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif'>← Volver</button>
   </div>
   <div style='flex:1;overflow-y:auto;padding:10px 12px 16px;box-sizing:border-box'>
-    <div id='album-rec-contador' style='font-size:11px;color:rgba(255,255,255,0.5);text-align:center;margin-bottom:8px'>Cargando...</div>
+    <div id='album-rec-contador' style='font-size:11px;color:#5c3d1e;text-align:center;margin-bottom:8px'>Cargando...</div>
     <div id='album-rec-vacio' style='display:none;text-align:center;padding:2.5rem 1rem'>
       <div style='font-size:40px;margin-bottom:10px'>🐚</div>
       <div style='font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:5px'>Tu álbum está vacío</div>
@@ -5166,7 +5166,7 @@ function abrirHeroModal() {
     if (_nCromos > 0 && window._getRango) {
       var _rng = window._getRango(_nCromos);
       var cromoBanner = document.createElement('div');
-      cromoBanner.style.cssText = 'background:rgba(245,200,0,0.12);border:1px solid rgba(245,200,0,0.3);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:rgba(255,255,255,0.8);line-height:1.5';
+      cromoBanner.style.cssText = 'background:rgba(245,200,0,0.12);border:1px solid rgba(245,200,0,0.3);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#3d1f00;line-height:1.5';
       cromoBanner.innerHTML = _rng.emoji + ' <strong style="color:#F5C800">' + _rng.label + '</strong> · ' + _nCromos + ' cromo' + (_nCromos !== 1 ? 's' : '') + ' desbloqueado' + (_nCromos !== 1 ? 's' : '') + '. Sigue visitando para subir de rango.';
       inner.appendChild(cromoBanner);
     }
@@ -10837,7 +10837,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1014";
+var _APP_VERSION = "v1015";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12550,7 +12550,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1014</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1015</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
