@@ -4452,14 +4452,14 @@ function abrirHeroModal() {
   // ✕
   var btnX = document.createElement('button');
   btnX.textContent = '✕';
-  btnX.style.cssText = 'position:absolute;top:10px;right:10px;width:26px;height:26px;background:rgba(0,0,0,0.2);border:1.5px solid #7a5010;border-radius:50%;font-size:11px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;color:#fff8e8;-webkit-appearance:none';
+  btnX.style.cssText = 'position:absolute;top:10px;right:10px;width:26px;height:26px;background:rgba(0,0,0,0.2);border:1.5px solid #7a5010;border-radius:50%;font-size:13px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;color:#fff8e8;-webkit-appearance:none';
   btnX.addEventListener('click', cerrar);
   btnX.addEventListener('touchend', function(e){ e.preventDefault(); cerrar(); });
   panel.appendChild(btnX);
 
   // Handle bar
   var bar = document.createElement('div');
-  bar.style.cssText = 'text-align:center;font-size:18px;color:#fff0c0;margin:0 auto 16px;position:relative;z-index:1;letter-spacing:4px;line-height:1';
+  bar.style.cssText = 'text-align:center;font-size:20px;color:#fff0c0;margin:0 auto 16px;position:relative;z-index:1;letter-spacing:4px;line-height:1';
   panel.appendChild(bar);
 
   // Inner content
@@ -4478,18 +4478,18 @@ function abrirHeroModal() {
     inner.appendChild(icono);
 
     var titulo = document.createElement('div');
-    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:18px;font-weight:400;color:#1a0800;text-align:center;margin-bottom:10px;line-height:1.3';
+    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:20px;font-weight:400;color:#1a0800;text-align:center;margin-bottom:10px;line-height:1.3';
     titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">'+(_t.asistBienCamino||'¡Buen Camino, peregrino!');
     inner.appendChild(titulo);
 
     var msg = document.createElement('p');
-    msg.style.cssText = 'font-size:13px;color:#1a0800;text-align:center;line-height:1.7;margin-bottom:16px';
+    msg.style.cssText = 'font-size:15px;color:#1a0800;text-align:center;line-height:1.7;margin-bottom:16px';
     msg.innerHTML = _capital(_t.asistGratisMsg||'Esta guía es <strong style="color:#fff">gratuita, sin publicidad y sin cookies</strong>. Solo el apoyo de peregrinos como tú hace posible que siga creciendo y libre para todos. 🙏');
     inner.appendChild(msg);
 
     var btnApoyo = document.createElement('button');
     btnApoyo.textContent = _t.asistApoyo||'💚 Apoyar la guía';
-    btnApoyo.style.cssText = 'width:100%;background:linear-gradient(135deg,#7a1f1f,#5c1414);color:#f5e6c8;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;margin-bottom:8px;box-shadow:0 2px 8px rgba(122,31,31,0.4);letter-spacing:0.3px';
+    btnApoyo.style.cssText = 'width:100%;background:linear-gradient(135deg,#7a1f1f,#5c1414);color:#f5e6c8;border:none;border-radius:8px;padding:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;margin-bottom:8px;box-shadow:0 2px 8px rgba(122,31,31,0.4);letter-spacing:0.3px';
     btnApoyo.addEventListener('click', function() {
       cerrar();
       setTimeout(function(){ abrirDonacionesDrawer(); }, 340);
@@ -4498,7 +4498,7 @@ function abrirHeroModal() {
 
     var btnSalir = document.createElement('button');
     btnSalir.textContent = _t.asistSinApoyo||'Continuar sin apoyar';
-    btnSalir.style.cssText = 'width:100%;background:transparent;color:rgba(255,248,232,0.6);border:none;padding:8px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnSalir.style.cssText = 'width:100%;background:transparent;color:rgba(255,248,232,0.6);border:none;padding:8px;font-size:14px;cursor:pointer;font-family:DM Sans,sans-serif';
     btnSalir.addEventListener('click', function(){ if(fnDespues) fnDespues(); else cerrar(); });
     inner.appendChild(btnSalir);
   }
@@ -4557,10 +4557,10 @@ function abrirHeroModal() {
     var wrap = document.createElement('div');
     wrap.style.cssText = 'background:rgba(0,0,0,0.15);border-left:3px solid #7a5010;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:16px';
     var label = document.createElement('div');
-    label.style.cssText = 'font-size:10px;color:#fff0c0;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-weight:600;font-family:IM Fell English,serif';
+    label.style.cssText = 'font-size:12px;color:#fff0c0;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-weight:600;font-family:IM Fell English,serif';
     label.textContent = _t.asistSabias||'📜 Sabías que…';
     var txt = document.createElement('p');
-    txt.style.cssText = 'font-size:12px;color:#fff8e8;line-height:1.6;margin:0';
+    txt.style.cssText = 'font-size:14px;color:#fff8e8;line-height:1.6;margin:0';
     txt.innerHTML = _capitalAll(_curiosidadAleatoria());
     wrap.appendChild(label);
     wrap.appendChild(txt);
@@ -4573,18 +4573,18 @@ function abrirHeroModal() {
 
     // Saludo contextual con subtítulo dinámico — casco circular delante
     var h1 = document.createElement('div');
-    h1.style.cssText = 'font-family:IM Fell English,serif;font-size:22px;font-weight:400;color:#1a0800;line-height:1.2;margin-bottom:6px;display:flex;align-items:center';
+    h1.style.cssText = 'font-family:IM Fell English,serif;font-size:24px;font-weight:400;color:#1a0800;line-height:1.2;margin-bottom:6px;display:flex;align-items:center';
     h1.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">' + _saludoConContexto();
     inner.appendChild(h1);
     var subCtx = document.createElement('p');
-    subCtx.style.cssText = 'font-size:13px;color:#1a0800;margin-bottom:12px;line-height:1.5';
+    subCtx.style.cssText = 'font-size:15px;color:#1a0800;margin-bottom:12px;line-height:1.5';
     subCtx.innerHTML = _capital(_subtituloContextual());
     inner.appendChild(subCtx);
 
     // ¿Hay ruta activa?
     if (typeof rutaPuntos !== 'undefined' && rutaPuntos.length > 0) {
       var sub = document.createElement('p');
-      sub.style.cssText = 'font-size:14px;color:#1a0800;line-height:1.6;margin-bottom:20px';
+      sub.style.cssText = 'font-size:16px;color:#1a0800;line-height:1.6;margin-bottom:20px';
       sub.textContent = (_t.asistTieneRuta||'Tienes una ruta seleccionada con ') + rutaPuntos.length + (rutaPuntos.length !== 1 ? (_t.asistTieneRutaSufP||' lugares. ¿Quieres revisarla o modificarla?') : (_t.asistTieneRutaSuf||' lugar. ¿Quieres revisarla o modificarla?'));
       inner.appendChild(sub);
 
@@ -4593,12 +4593,12 @@ function abrirHeroModal() {
 
       var btnSi = document.createElement('button');
       btnSi.textContent = _t.asistSiVerRuta||'Sí, ver ruta';
-      btnSi.style.cssText = 'flex:1;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;box-shadow:0 2px 8px rgba(45,74,30,0.4)';
+      btnSi.style.cssText = 'flex:1;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:16px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;box-shadow:0 2px 8px rgba(45,74,30,0.4)';
       btnSi.addEventListener('click', function(){ _renderRevision(); });
 
       var btnNo = document.createElement('button');
       btnNo.textContent = _t.asistNoVolver||'No, volver al mapa';
-      btnNo.style.cssText = 'flex:1;background:rgba(80,40,0,0.18);color:#fff8e8;border:1.5px solid #7a5010;border-radius:8px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+      btnNo.style.cssText = 'flex:1;background:rgba(80,40,0,0.18);color:#fff8e8;border:1.5px solid #7a5010;border-radius:8px;padding:13px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
       btnNo.addEventListener('click', function(){ _renderDespedida(); });
 
       btnRow.appendChild(btnSi);
@@ -4623,12 +4623,12 @@ function abrirHeroModal() {
 
     if (cercanos.length === 0) {
       var noGps = document.createElement('p');
-      noGps.style.cssText = 'font-size:14px;color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px';
+      noGps.style.cssText = 'font-size:16px;color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px';
       noGps.innerHTML = _capital(_t.asistSinGps||'Activa el GPS para ver los lugares del Camino más cercanos a ti.');
       inner.appendChild(noGps);
       var btnCerrar = document.createElement('button');
       btnCerrar.textContent = _t.asistCerrar||'Cerrar';
-      btnCerrar.style.cssText = 'width:100%;background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+      btnCerrar.style.cssText = 'width:100%;background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
       btnCerrar.addEventListener('click', function(){ _renderDespedida(); });
       inner.appendChild(btnCerrar);
       return;
@@ -4638,12 +4638,12 @@ function abrirHeroModal() {
     var distTexto = primero.dist < 1000 ? Math.round(primero.dist) + ' m' : (primero.dist/1000).toFixed(1) + ' km';
 
     var sub = document.createElement('p');
-    sub.style.cssText = 'font-size:14px;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:6px';
+    sub.style.cssText = 'font-size:16px;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:6px';
     sub.textContent = 'Tienes ' + cercanos.length + ' lugar' + (cercanos.length !== 1 ? 'es' : '') + ' del Camino cerca de ti. El más próximo es ' + primero.poi.nombre + ', a ' + distTexto + '.';
     inner.appendChild(sub);
 
     var sub2 = document.createElement('p');
-    sub2.style.cssText = 'font-size:13px;color:#1a0800;line-height:1.5;margin-bottom:12px';
+    sub2.style.cssText = 'font-size:15px;color:#1a0800;line-height:1.5;margin-bottom:12px';
     sub2.textContent = _t.asistPreguntaVisitar||'¿Te gustaría visitar alguno?';
     inner.appendChild(sub2);
 
@@ -4654,12 +4654,12 @@ function abrirHeroModal() {
 
     var btnSi = document.createElement('button');
     btnSi.textContent = _t.asistSiVerLugares||'Sí, ver lugares';
-    btnSi.style.cssText = 'flex:1;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnSi.style.cssText = 'flex:1;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:16px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
     btnSi.addEventListener('click', function(){ _renderPaso2(cercanos); });
 
     var btnNo = document.createElement('button');
     btnNo.textContent = _t.asistAhoraNno||'Ahora no';
-    btnNo.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnNo.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:13px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
     btnNo.addEventListener('click', function(){ _renderMenuPrincipal(); });
 
     btnRow.appendChild(btnSi);
@@ -4778,7 +4778,7 @@ function abrirHeroModal() {
     box.appendChild(tit);
 
     var sub = document.createElement('p');
-    sub.style.cssText = 'font-size:12px;color:#1a0800;margin-bottom:14px;line-height:1.5';
+    sub.style.cssText = 'font-size:14px;color:#1a0800;margin-bottom:14px;line-height:1.5';
     sub.innerHTML = _capital(_t.asistBuscarSub||'Escribe lo que necesitas. Los resultados aparecerán en el mapa en un radio de 1 km.');
     box.appendChild(sub);
 
@@ -4788,11 +4788,11 @@ function abrirHeroModal() {
     var input = document.createElement('input');
     input.type = 'text';
     input.placeholder = _t.asistBuscarPh||'albergue, farmacia, fuente, café…';
-    input.style.cssText = 'flex:1;background:rgba(255,240,200,0.6);border:1.5px solid #7a5010;border-radius:8px;padding:10px 14px;font-size:14px;color:#1a0e00;font-family:DM Sans,sans-serif;outline:none;-webkit-appearance:none';
+    input.style.cssText = 'flex:1;background:rgba(255,240,200,0.6);border:1.5px solid #7a5010;border-radius:8px;padding:10px 14px;font-size:16px;color:#1a0e00;font-family:DM Sans,sans-serif;outline:none;-webkit-appearance:none';
     input.setAttribute('autocomplete','off');
     var btnBuscar = document.createElement('button');
     btnBuscar.textContent = _t.asistBuscarBtn||'Buscar';
-    btnBuscar.style.cssText = 'background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;white-space:nowrap;flex-shrink:0';
+    btnBuscar.style.cssText = 'background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:10px 16px;font-size:16px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;white-space:nowrap;flex-shrink:0';
     inputWrap.appendChild(input);
     inputWrap.appendChild(btnBuscar);
     box.appendChild(inputWrap);
@@ -4804,7 +4804,7 @@ function abrirHeroModal() {
     sugs.forEach(function(s) {
       var chip = document.createElement('button');
       chip.textContent = s;
-      chip.style.cssText = 'background:rgba(255,220,140,0.35);color:#1a0e00;border:1px solid #7a5010;border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;-webkit-appearance:none';
+      chip.style.cssText = 'background:rgba(255,220,140,0.35);color:#1a0e00;border:1px solid #7a5010;border-radius:20px;padding:5px 12px;font-size:14px;cursor:pointer;font-family:DM Sans,sans-serif;-webkit-appearance:none';
       chip.addEventListener('click', function(){ input.value = s; ejecutarBusqueda(s); });
       sugWrap.appendChild(chip);
     });
@@ -4812,7 +4812,7 @@ function abrirHeroModal() {
 
     // Estado (spinner / mensaje)
     var estado = document.createElement('div');
-    estado.style.cssText = 'font-size:12px;color:#1a0800;text-align:center;padding:8px 0;display:none';
+    estado.style.cssText = 'font-size:14px;color:#1a0800;text-align:center;padding:8px 0;display:none';
     box.appendChild(estado);
 
     // Área de resultados
@@ -4856,23 +4856,23 @@ function abrirHeroModal() {
         window._wizSearchMarkers = [];
 
         var iconoBusc = (typeof iconoBusqueda !== 'undefined') ? iconoBusqueda
-          : L.divIcon({ html:'<div style="background:#1D9E75;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3)">🔍</div>', className:'', iconSize:[28,28], iconAnchor:[14,14] });
+          : L.divIcon({ html:'<div style="background:#1D9E75;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3)">🔍</div>', className:'', iconSize:[28,28], iconAnchor:[14,14] });
 
         var bounds = [];
         items.forEach(function(it) {
           var lat = it.lat, lng = it.lng, nombre = it.nombre, dist = it.dist;
           var mk = L.marker([lat, lng], { icon: iconoBusc }).addTo(mapa);
-          mk.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>' + nombre + '</strong><br><span style="font-size:11px;color:#6b7280">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + '</span>' + (it.tel ? '<br>📞 ' + it.tel : '') + '<br><div style="display:flex;gap:6px;margin-top:8px"><button onclick="irACoordenadasNav(' + lat + ',' + lng + ')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">🗺️ ' + (_t.asistComoLlegar||'Cómo llegar') + '</button></div></div>');
+          mk.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>' + nombre + '</strong><br><span style="font-size:13px;color:#6b7280">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + '</span>' + (it.tel ? '<br>📞 ' + it.tel : '') + '<br><div style="display:flex;gap:6px;margin-top:8px"><button onclick="irACoordenadasNav(' + lat + ',' + lng + ')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:14px;cursor:pointer;font-family:DM Sans,sans-serif">🗺️ ' + (_t.asistComoLlegar||'Cómo llegar') + '</button></div></div>');
           window._wizSearchMarkers.push(mk);
           bounds.push([lat, lng]);
 
           var fila = document.createElement('div');
           fila.style.cssText = 'background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:9px 12px';
-          fila.innerHTML = '<div style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px">' + nombre + '</div>'
-            + '<div style="font-size:11px;color:rgba(255,255,255,0.55);margin-bottom:8px">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + (it.tel ? ' · 📞 ' + it.tel : '') + '</div>'
+          fila.innerHTML = '<div style="font-size:15px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px">' + nombre + '</div>'
+            + '<div style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:8px">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + (it.tel ? ' · 📞 ' + it.tel : '') + '</div>'
             + '<div style="display:flex;gap:6px">'
-            + '<button class="wiz-mapa-btn" style="flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:7px 8px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap">🗺️ Mostrar en mapa</button>'
-            + '<button class="wiz-ir-btn" style="flex:1;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:7px 8px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap">▶ Ir (navegación)</button>'
+            + '<button class="wiz-mapa-btn" style="flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:7px 8px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap">🗺️ Mostrar en mapa</button>'
+            + '<button class="wiz-ir-btn" style="flex:1;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:7px 8px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap">▶ Ir (navegación)</button>'
             + '</div>';
           (function(la, lo, mk2){
             fila.querySelector('.wiz-mapa-btn').addEventListener('click', function(e){
@@ -4952,23 +4952,23 @@ function abrirHeroModal() {
     inner.appendChild(tit);
 
     var p1 = document.createElement('p');
-    p1.style.cssText = 'font-size:13px;color:#1a0800;line-height:1.7;margin-bottom:10px';
+    p1.style.cssText = 'font-size:15px;color:#1a0800;line-height:1.7;margin-bottom:10px';
     p1.innerHTML = _capitalAll(_t.asistBrujulaP1 || 'La brújula te ayuda a orientarte en el Camino. Muestra el norte magnético y la dirección hacia Santiago de Compostela desde tu posición actual.');
     inner.appendChild(p1);
 
     var p2 = document.createElement('p');
-    p2.style.cssText = 'font-size:13px;color:#1a0800;line-height:1.7;margin-bottom:16px';
+    p2.style.cssText = 'font-size:15px;color:#1a0800;line-height:1.7;margin-bottom:16px';
     p2.innerHTML = _capitalAll(_t.asistBrujulaP2 || 'Para que funcione con precisión, mantén el móvil en posición horizontal y alejado de objetos metálicos o superficies que puedan interferir con el sensor.');
     inner.appendChild(p2);
 
     var sep = document.createElement('div');
-    sep.style.cssText = 'text-align:center;color:#8b6914;letter-spacing:6px;margin-bottom:14px;font-size:14px';
+    sep.style.cssText = 'text-align:center;color:#8b6914;letter-spacing:6px;margin-bottom:14px;font-size:16px';
     sep.textContent = '✦ ✦ ✦';
     inner.appendChild(sep);
 
     var btnAbrir = document.createElement('button');
     btnAbrir.textContent = _t.asistBrujulaBtn || 'Abrir la brújula →';
-    btnAbrir.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:IM Fell English,serif;box-shadow:0 2px 8px rgba(45,74,30,0.4);margin-bottom:8px';
+    btnAbrir.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:16px;font-weight:700;cursor:pointer;font-family:IM Fell English,serif;box-shadow:0 2px 8px rgba(45,74,30,0.4);margin-bottom:8px';
     btnAbrir.addEventListener('click', function() {
       cerrar();
       setTimeout(function(){ _irAlMapa(); setTimeout(abrirBrujulaDrawer, 400); }, 340);
@@ -4977,7 +4977,7 @@ function abrirHeroModal() {
 
     var btnAtras = document.createElement('button');
     btnAtras.textContent = _t.asistAtras || '← Volver';
-    btnAtras.style.cssText = 'width:100%;background:transparent;color:rgba(26,8,0,0.5);border:none;padding:8px;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnAtras.style.cssText = 'width:100%;background:transparent;color:rgba(26,8,0,0.5);border:none;padding:8px;font-size:15px;cursor:pointer;font-family:DM Sans,sans-serif';
     btnAtras.addEventListener('click', function(){ _renderPaso1(); });
     inner.appendChild(btnAtras);
   }
@@ -4991,7 +4991,7 @@ function abrirHeroModal() {
     inner.appendChild(tit);
 
     var orn = document.createElement('div');
-    orn.style.cssText = 'text-align:center;color:#8b6914;letter-spacing:6px;margin:8px 0 14px;font-size:13px';
+    orn.style.cssText = 'text-align:center;color:#8b6914;letter-spacing:6px;margin:8px 0 14px;font-size:15px';
     orn.textContent = '✦ ✦ ✦';
     inner.appendChild(orn);
 
@@ -5018,7 +5018,7 @@ function abrirHeroModal() {
       titEl.style.cssText = 'font-family:IM Fell English,serif;font-size:15px;color:#1a0800;margin-bottom:2px;line-height:1.3';
       titEl.textContent = op.tit.replace(/^[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}\uFE0F\s]+/u, '').trim();
       var descEl = document.createElement('div');
-      descEl.style.cssText = 'font-size:11px;color:#3d1f00;line-height:1.3;opacity:0.85';
+      descEl.style.cssText = 'font-size:13px;color:#3d1f00;line-height:1.3;opacity:0.85';
       descEl.textContent = op.desc;
       info.appendChild(titEl);
       info.appendChild(descEl);
@@ -5034,7 +5034,7 @@ function abrirHeroModal() {
 
     var btnCerrar = document.createElement('button');
     btnCerrar.textContent = _t.asistQuizas||'Quizás más tarde';
-    btnCerrar.style.cssText = 'width:100%;background:transparent;color:rgba(26,8,0,0.4);border:none;padding:8px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:4px';
+    btnCerrar.style.cssText = 'width:100%;background:transparent;color:rgba(26,8,0,0.4);border:none;padding:8px;font-size:14px;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:4px';
     btnCerrar.addEventListener('click', function(){ _renderDespedida(); });
     inner.appendChild(btnCerrar);
   }
@@ -5048,7 +5048,7 @@ function abrirHeroModal() {
     inner.appendChild(titulo);
 
     var sub = document.createElement('p');
-    sub.style.cssText = 'font-size:13px;color:#1a0800;margin-bottom:12px;line-height:1.5';
+    sub.style.cssText = 'font-size:15px;color:#1a0800;margin-bottom:12px;line-height:1.5';
     sub.innerHTML = _capital(_t.asistMasCosa||'Hay mucho más en la guía. Elige algo que te llame la atención:');
     inner.appendChild(sub);
 
@@ -5067,12 +5067,12 @@ function abrirHeroModal() {
 
       var info = document.createElement('div');
       info.style.cssText = 'flex:1;min-width:0';
-      info.innerHTML = '<div style="font-family:IM Fell English,serif;font-size:14px;color:#1a0800;margin-bottom:2px">' + op.titulo + '</div>'
-        + '<div style="font-size:11px;color:#3d1f00;line-height:1.4;opacity:0.85">' + op.desc + '</div>';
+      info.innerHTML = '<div style="font-family:IM Fell English,serif;font-size:16px;color:#1a0800;margin-bottom:2px">' + op.titulo + '</div>'
+        + '<div style="font-size:13px;color:#3d1f00;line-height:1.4;opacity:0.85">' + op.desc + '</div>';
       fila.appendChild(info);
 
       var arr = document.createElement('div');
-      arr.style.cssText = 'color:#7a5010;font-size:18px;flex-shrink:0';
+      arr.style.cssText = 'color:#7a5010;font-size:20px;flex-shrink:0';
       arr.textContent = '›';
       fila.appendChild(arr);
 
@@ -5082,13 +5082,13 @@ function abrirHeroModal() {
 
     var btnAtras = document.createElement('button');
     btnAtras.textContent = _t.asistAtras||'← Volver';
-    btnAtras.style.cssText = 'width:100%;background:transparent;color:rgba(255,248,232,0.6);border:none;padding:8px;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:2px';
+    btnAtras.style.cssText = 'width:100%;background:transparent;color:rgba(255,248,232,0.6);border:none;padding:8px;font-size:15px;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:2px';
     btnAtras.addEventListener('click', function(){ _renderPaso1(); });
     inner.appendChild(btnAtras);
 
     var btnCerrar = document.createElement('button');
     btnCerrar.textContent = _t.asistQuizas||'Quizás más tarde';
-    btnCerrar.style.cssText = 'width:100%;background:transparent;color:rgba(255,255,255,0.35);border:none;padding:4px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnCerrar.style.cssText = 'width:100%;background:transparent;color:rgba(255,255,255,0.35);border:none;padding:4px;font-size:14px;cursor:pointer;font-family:DM Sans,sans-serif';
     btnCerrar.addEventListener('click', function(){ _renderDespedida(); });
     inner.appendChild(btnCerrar);
   }
@@ -5102,7 +5102,7 @@ function abrirHeroModal() {
     cab.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:12px';
     cab.innerHTML = '<div style="font-size:32px">' + op.emoji + '</div>'
       + '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">'
-      + '<div style="font-family:IM Fell English,serif;font-size:18px;color:#1a0800;line-height:1.2">' + op.titulo + '</div>';
+      + '<div style="font-family:IM Fell English,serif;font-size:20px;color:#1a0800;line-height:1.2">' + op.titulo + '</div>';
     inner.appendChild(cab);
 
     // Párrafos descriptivos
@@ -5110,7 +5110,7 @@ function abrirHeroModal() {
     textos.style.cssText = 'max-height:38vh;overflow-y:auto;margin-bottom:14px;padding-right:4px';
     op.detalle.forEach(function(parrafo, i) {
       var p = document.createElement('p');
-      p.style.cssText = 'font-size:13px;color:' + (i === op.detalle.length - 1 ? 'rgba(26,8,0,0.55)' : '#1a0800') + ';line-height:1.7;margin-bottom:8px';
+      p.style.cssText = 'font-size:15px;color:' + (i === op.detalle.length - 1 ? 'rgba(26,8,0,0.55)' : '#1a0800') + ';line-height:1.7;margin-bottom:8px';
       p.textContent = parrafo;
       textos.appendChild(p);
     });
@@ -5119,7 +5119,7 @@ function abrirHeroModal() {
     // Botón abrir panel
     var btnAbrir = document.createElement('button');
     btnAbrir.textContent = (_t.asistAbrir||'Abrir ') + op.titulo + ' →';
-    btnAbrir.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:IM Fell English,serif;margin-bottom:10px;box-shadow:0 2px 8px rgba(45,74,30,0.4)';
+    btnAbrir.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:IM Fell English,serif;margin-bottom:10px;box-shadow:0 2px 8px rgba(45,74,30,0.4)';
     btnAbrir.addEventListener('click', op.abrir);
     inner.appendChild(btnAbrir);
 
@@ -5130,7 +5130,7 @@ function abrirHeroModal() {
 
     // ¿Ver otra opción?
     var pregunta = document.createElement('p');
-    pregunta.style.cssText = 'font-size:13px;color:#1a0800;text-align:center;margin-bottom:10px';
+    pregunta.style.cssText = 'font-size:15px;color:#1a0800;text-align:center;margin-bottom:10px';
     pregunta.textContent = '¿Quieres ver otra opción?';
     inner.appendChild(pregunta);
 
@@ -5139,12 +5139,12 @@ function abrirHeroModal() {
 
     var btnSi = document.createElement('button');
     btnSi.textContent = _t.asistVerMas||'Sí, ver más';
-    btnSi.style.cssText = 'flex:1;background:rgba(0,0,0,0.15);color:#1a0800;border:1.5px solid #7a5010;border-radius:8px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnSi.style.cssText = 'flex:1;background:rgba(0,0,0,0.15);color:#1a0800;border:1.5px solid #7a5010;border-radius:8px;padding:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
     btnSi.addEventListener('click', function(){ _renderSugerencias(); });
 
     var btnNo = document.createElement('button');
     btnNo.textContent = _t.asistNoCerrar||'No, cerrar';
-    btnNo.style.cssText = 'flex:1;background:transparent;color:rgba(26,8,0,0.45);border:1px solid rgba(122,80,16,0.3);border-radius:8px;padding:10px;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnNo.style.cssText = 'flex:1;background:transparent;color:rgba(26,8,0,0.45);border:1px solid rgba(122,80,16,0.3);border-radius:8px;padding:10px;font-size:15px;cursor:pointer;font-family:DM Sans,sans-serif';
     btnNo.addEventListener('click', function(){ _renderDespedida(); });
 
     btnRow.appendChild(btnSi);
@@ -5157,7 +5157,7 @@ function abrirHeroModal() {
     inner.innerHTML = '';
 
     var titulo = document.createElement('div');
-    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:18px;font-weight:400;color:#fff;margin-bottom:6px';
+    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:20px;font-weight:400;color:#fff;margin-bottom:6px';
     titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">Tu ruta actual';
     inner.appendChild(titulo);
 
@@ -5166,13 +5166,13 @@ function abrirHeroModal() {
     if (_nCromos > 0 && window._getRango) {
       var _rng = window._getRango(_nCromos);
       var cromoBanner = document.createElement('div');
-      cromoBanner.style.cssText = 'background:rgba(245,200,0,0.12);border:1px solid rgba(245,200,0,0.3);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:rgba(255,255,255,0.8);line-height:1.5';
+      cromoBanner.style.cssText = 'background:rgba(245,200,0,0.12);border:1px solid rgba(245,200,0,0.3);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:14px;color:rgba(255,255,255,0.8);line-height:1.5';
       cromoBanner.innerHTML = _rng.emoji + ' <strong style="color:#F5C800">' + _rng.label + '</strong> · ' + _nCromos + ' cromo' + (_nCromos !== 1 ? 's' : '') + ' desbloqueado' + (_nCromos !== 1 ? 's' : '') + '. Sigue visitando para subir de rango.';
       inner.appendChild(cromoBanner);
     }
 
     var hint = document.createElement('p');
-    hint.style.cssText = 'font-size:12px;color:#fff0c0;margin-bottom:14px';
+    hint.style.cssText = 'font-size:14px;color:#fff0c0;margin-bottom:14px';
     hint.textContent = _t.asistPulsaX||'Pulsa la ✕ para quitar un lugar de la ruta.';
     inner.appendChild(hint);
 
@@ -5182,7 +5182,7 @@ function abrirHeroModal() {
     function _renderItems() {
       lista.innerHTML = '';
       if (rutaPuntos.length === 0) {
-        lista.innerHTML = '<div style="font-size:13px;color:rgba(255,255,255,0.5);padding:12px 0;text-align:center">La ruta está vacía.</div>';
+        lista.innerHTML = '<div style="font-size:15px;color:rgba(255,255,255,0.5);padding:12px 0;text-align:center">La ruta está vacía.</div>';
         return;
       }
       rutaPuntos.forEach(function(p, idx) {
@@ -5190,18 +5190,18 @@ function abrirHeroModal() {
         fila.style.cssText = 'display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:10px 12px';
 
         var num = document.createElement('div');
-        num.style.cssText = 'width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.25);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0';
+        num.style.cssText = 'width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.25);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0';
         num.textContent = idx + 1;
         fila.appendChild(num);
 
         var nombre = document.createElement('div');
-        nombre.style.cssText = 'flex:1;font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+        nombre.style.cssText = 'flex:1;font-size:15px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
         nombre.textContent = p.nombre;
         fila.appendChild(nombre);
 
         var btnDel = document.createElement('button');
         btnDel.textContent = '✕';
-        btnDel.style.cssText = 'width:28px;height:28px;border-radius:50%;background:rgba(220,38,38,0.35);border:1px solid rgba(220,38,38,0.5);color:#fff;font-size:13px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none';
+        btnDel.style.cssText = 'width:28px;height:28px;border-radius:50%;background:rgba(220,38,38,0.35);border:1px solid rgba(220,38,38,0.5);color:#fff;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none';
         btnDel.addEventListener('click', function() {
           try { quitarDeRuta(p.id); } catch(e) {
             rutaPuntos = rutaPuntos.filter(function(x){ return x.id !== p.id; });
@@ -5219,7 +5219,7 @@ function abrirHeroModal() {
 
     var btnVolver = document.createElement('button');
     btnVolver.textContent = _t.asistRegresarMapa||'← Regresar al mapa';
-    btnVolver.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;box-shadow:0 2px 8px rgba(45,74,30,0.4)';
+    btnVolver.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:16px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;box-shadow:0 2px 8px rgba(45,74,30,0.4)';
     btnVolver.addEventListener('click', function(){ _renderDespedida(); });
     inner.appendChild(btnVolver);
   }
@@ -5230,12 +5230,12 @@ function abrirHeroModal() {
     var seleccionados = {};
 
     var titulo = document.createElement('div');
-    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:18px;font-weight:400;color:#1a0800;margin-bottom:6px;line-height:1.3';
+    titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:20px;font-weight:400;color:#1a0800;margin-bottom:6px;line-height:1.3';
     titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">Selecciona qué te gustaría visitar';
     inner.appendChild(titulo);
 
     var hint = document.createElement('p');
-    hint.style.cssText = 'font-size:12px;color:#8b6914;margin-bottom:14px;font-style:italic';
+    hint.style.cssText = 'font-size:14px;color:#8b6914;margin-bottom:14px;font-style:italic';
     hint.textContent = _t.asistEligeUno||'Puedes elegir uno o varios lugares.';
     inner.appendChild(hint);
 
@@ -5253,22 +5253,22 @@ function abrirHeroModal() {
 
       var check = document.createElement('div');
       check.className = 'wizard-poi-check';
-      check.style.cssText = 'width:22px;height:22px;border-radius:6px;border:2px solid #7a5010;background:rgba(255,255,255,0.15);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#1a0800;transition:all 0.15s';
+      check.style.cssText = 'width:22px;height:22px;border-radius:6px;border:2px solid #7a5010;background:rgba(255,255,255,0.15);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;color:#1a0800;transition:all 0.15s';
       fila.appendChild(check);
 
       var emoji = document.createElement('span');
       emoji.textContent = p.emoji || '📍';
-      emoji.style.cssText = 'font-size:18px;flex-shrink:0';
+      emoji.style.cssText = 'font-size:20px;flex-shrink:0';
       fila.appendChild(emoji);
 
       var info = document.createElement('div');
       info.style.cssText = 'flex:1;min-width:0';
       var _visitadoWiz = window._albumVisitasSet && window._albumVisitasSet[p.id];
       var _visitBadge = _visitadoWiz
-        ? '<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(45,74,30,0.85);color:#d4f0b0;border:1px solid #2d4a1e;border-radius:10px;font-size:10px;font-weight:600;padding:1px 7px;margin-left:6px;font-family:DM Sans,sans-serif">✓ Visitado</span>'
-        : '<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(122,31,31,0.75);color:#ffd0d0;border:1px solid #7a1f1f;border-radius:10px;font-size:10px;font-weight:500;padding:1px 7px;margin-left:6px;font-family:DM Sans,sans-serif">🔒 Sin visitar</span>';
-      info.innerHTML = '<div style="font-family:IM Fell English,serif;font-size:14px;color:#1a0800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + p.nombre + '</div>'
-        + '<div style="font-size:11px;color:#5c3d1e;margin-top:2px;display:flex;align-items:center;flex-wrap:wrap;gap:2px">📍 ' + distTexto + _visitBadge + '</div>';
+        ? '<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(45,74,30,0.85);color:#d4f0b0;border:1px solid #2d4a1e;border-radius:10px;font-size:12px;font-weight:600;padding:1px 7px;margin-left:6px;font-family:DM Sans,sans-serif">✓ Visitado</span>'
+        : '<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(122,31,31,0.75);color:#ffd0d0;border:1px solid #7a1f1f;border-radius:10px;font-size:12px;font-weight:500;padding:1px 7px;margin-left:6px;font-family:DM Sans,sans-serif">🔒 Sin visitar</span>';
+      info.innerHTML = '<div style="font-family:IM Fell English,serif;font-size:16px;color:#1a0800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + p.nombre + '</div>'
+        + '<div style="font-size:13px;color:#5c3d1e;margin-top:2px;display:flex;align-items:center;flex-wrap:wrap;gap:2px">📍 ' + distTexto + _visitBadge + '</div>';
       fila.appendChild(info);
 
       // Botón ⓘ info ampliada del POI
@@ -5276,7 +5276,7 @@ function abrirHeroModal() {
         var btnInfo = document.createElement('button');
         btnInfo.textContent = 'ⓘ';
         btnInfo.title = 'Más información';
-        btnInfo.style.cssText = 'width:28px;height:28px;border-radius:50%;background:rgba(139,105,20,0.2);border:1.5px solid #7a5010;color:#1a0800;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;font-family:DM Sans,sans-serif;line-height:1';
+        btnInfo.style.cssText = 'width:28px;height:28px;border-radius:50%;background:rgba(139,105,20,0.2);border:1.5px solid #7a5010;color:#1a0800;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;font-family:DM Sans,sans-serif;line-height:1';
         btnInfo.addEventListener('click', function(e) {
           e.stopPropagation();
           // Modal de información del POI
@@ -5302,12 +5302,12 @@ function abrirHeroModal() {
           var mHead = document.createElement('div');
           mHead.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:8px';
           mHead.innerHTML = '<span style="font-size:28px">' + (poi.emoji||'📍') + '</span>'
-            + '<div style="font-family:Playfair Display,serif;font-size:18px;font-weight:600;color:#fff;line-height:1.2">' + poi.nombre + '</div>';
+            + '<div style="font-family:Playfair Display,serif;font-size:20px;font-weight:600;color:#fff;line-height:1.2">' + poi.nombre + '</div>';
           mBox.appendChild(mHead);
           // Categoría
           if (poi.categoria) {
             var mCat = document.createElement('div');
-            mCat.style.cssText = 'font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.45);margin-bottom:10px;font-weight:600';
+            mCat.style.cssText = 'font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.45);margin-bottom:10px;font-weight:600';
             mCat.textContent = poi.categoria;
             mBox.appendChild(mCat);
           }
@@ -5317,7 +5317,7 @@ function abrirHeroModal() {
           var subTxt = poi['subtitulo_'+_lang] || poi.subtitulo;
           if (subTxt) {
             var mSub = document.createElement('p');
-            mSub.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.6);font-style:italic;margin-bottom:10px;line-height:1.5';
+            mSub.style.cssText = 'font-size:15px;color:rgba(255,255,255,0.6);font-style:italic;margin-bottom:10px;line-height:1.5';
             mSub.textContent = subTxt;
             mBox.appendChild(mSub);
           }
@@ -5328,7 +5328,7 @@ function abrirHeroModal() {
             sep.style.cssText = 'width:40px;height:2px;background:rgba(255,255,255,0.25);border-radius:2px;margin-bottom:12px';
             mBox.appendChild(sep);
             var mDesc = document.createElement('p');
-            mDesc.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.82);line-height:1.75;margin-bottom:16px';
+            mDesc.style.cssText = 'font-size:15px;color:rgba(255,255,255,0.82);line-height:1.75;margin-bottom:16px';
             mDesc.textContent = descTxt;
             mBox.appendChild(mDesc);
           }
@@ -5337,13 +5337,13 @@ function abrirHeroModal() {
           mBtnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px';
           var mBtnClose = document.createElement('button');
           mBtnClose.textContent = '← Volver';
-          mBtnClose.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+          mBtnClose.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:12px;padding:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
           mBtnClose.addEventListener('click', cerrarModal);
           mBtnRow.appendChild(mBtnClose);
           var mBtnAdd = document.createElement('button');
           var _yaEnRuta = (typeof rutaPuntos !== 'undefined') && rutaPuntos.some(function(x){ return x.id === poi.id; });
           mBtnAdd.textContent = _yaEnRuta ? '✓ En ruta' : '+ Añadir a ruta';
-          mBtnAdd.style.cssText = 'flex:1;background:' + (_yaEnRuta ? 'rgba(29,158,117,0.6)' : '#fff') + ';color:' + (_yaEnRuta ? '#fff' : '#0F6E56') + ';border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;transition:all 0.15s';
+          mBtnAdd.style.cssText = 'flex:1;background:' + (_yaEnRuta ? 'rgba(29,158,117,0.6)' : '#fff') + ';color:' + (_yaEnRuta ? '#fff' : '#0F6E56') + ';border:none;border-radius:12px;padding:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;transition:all 0.15s';
           mBtnAdd.addEventListener('click', function() {
             if (typeof rutaPuntos === 'undefined') return;
             var yaEsta = rutaPuntos.some(function(x){ return x.id === poi.id; });
@@ -5424,7 +5424,7 @@ function abrirHeroModal() {
     var btnConfirmar = document.createElement('button');
     btnConfirmar.textContent = _t.asistConfirmar||'Confirmar selección';
     btnConfirmar.disabled = true;
-    btnConfirmar.style.cssText = 'width:100%;background:linear-gradient(135deg,#7a1f1f,#5c1414);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;opacity:0.4;margin-bottom:8px;transition:opacity 0.2s;box-shadow:0 2px 8px rgba(122,31,31,0.4)';
+    btnConfirmar.style.cssText = 'width:100%;background:linear-gradient(135deg,#7a1f1f,#5c1414);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:16px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;opacity:0.4;margin-bottom:8px;transition:opacity 0.2s;box-shadow:0 2px 8px rgba(122,31,31,0.4)';
     btnConfirmar.addEventListener('click', function() {
       var ids = Object.keys(seleccionados);
       if (ids.length === 0) return;
@@ -5443,7 +5443,7 @@ function abrirHeroModal() {
 
     var btnVolver = document.createElement('button');
     btnVolver.textContent = _t.asistAtras||'← Volver';
-    btnVolver.style.cssText = 'width:100%;background:transparent;color:rgba(26,8,0,0.5);border:none;padding:8px;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnVolver.style.cssText = 'width:100%;background:transparent;color:rgba(26,8,0,0.5);border:none;padding:8px;font-size:15px;cursor:pointer;font-family:DM Sans,sans-serif';
     btnVolver.addEventListener('click', function(){ _renderPaso1(); });
     inner.appendChild(btnVolver);
   }
@@ -5483,7 +5483,7 @@ function abrirHeroModal() {
 
       // Línea de distancia
       var distLine = document.createElement('div');
-      distLine.style.cssText = 'font-size:12px;color:#fff8e8;margin-bottom:8px;display:flex;align-items:center;gap:6px';
+      distLine.style.cssText = 'font-size:14px;color:#fff8e8;margin-bottom:8px;display:flex;align-items:center;gap:6px';
       distLine.innerHTML = '📍 Distancia estimada: <strong style="color:#fff">' + distTxt + '</strong>';
       resumen.appendChild(distLine);
 
@@ -5508,8 +5508,8 @@ function abrirHeroModal() {
         var info = document.createElement('div');
         info.style.cssText = 'flex:1;min-width:0';
         var emoji = p.emoji || '📍';
-        info.innerHTML = '<span style="font-size:12px;color:rgba(255,255,255,0.9);font-weight:600">' + emoji + ' ' + p.nombre + '</span>'
-          + (p.subtitulo ? '<div style="font-size:11px;color:rgba(255,255,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + p.subtitulo + '</div>' : '');
+        info.innerHTML = '<span style="font-size:14px;color:rgba(255,255,255,0.9);font-weight:600">' + emoji + ' ' + p.nombre + '</span>'
+          + (p.subtitulo ? '<div style="font-size:13px;color:rgba(255,255,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + p.subtitulo + '</div>' : '');
         fila.appendChild(info);
         resumen.appendChild(fila);
       });
@@ -5518,7 +5518,7 @@ function abrirHeroModal() {
     }
 
     var sub = document.createElement('p');
-    sub.style.cssText = 'font-size:13px;color:#1a0800;text-align:center;line-height:1.6;margin-bottom:14px';
+    sub.style.cssText = 'font-size:15px;color:#1a0800;text-align:center;line-height:1.6;margin-bottom:14px';
     sub.textContent = _t.asistNavegacionPregunta||'¿Quieres comenzar la navegación ahora?';
     inner.appendChild(sub);
 
@@ -5527,7 +5527,7 @@ function abrirHeroModal() {
 
     var btnSi = document.createElement('button');
     btnSi.textContent = _t.asistNavSi||'🧭 Sí, navegar';
-    btnSi.style.cssText = 'flex:1;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnSi.style.cssText = 'flex:1;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:16px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
     btnSi.addEventListener('click', function() {
       cerrar();
       setTimeout(function() {
@@ -5550,7 +5550,7 @@ function abrirHeroModal() {
 
     var btnNo = document.createElement('button');
     btnNo.textContent = _t.asistNavNo||'No, ver en mapa';
-    btnNo.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnNo.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:13px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
     btnNo.addEventListener('click', function() {
       cerrar();
       setTimeout(function() {
@@ -5600,26 +5600,26 @@ function abrirModalNotificaciones(){
     box.innerHTML=
       '<div style="font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:14px">'+_t.notifModalTitulo+'</div>'
       +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0">'
-      +'<div><div style="font-size:13px;font-weight:600;color:#1a1a1a">'+_t.notifAlertasCamino+'</div>'
-      +'<div style="font-size:11px;color:#6b7280">'+_t.notifAlertasSub+'</div></div>'
+      +'<div><div style="font-size:15px;font-weight:600;color:#1a1a1a">'+_t.notifAlertasCamino+'</div>'
+      +'<div style="font-size:13px;color:#6b7280">'+_t.notifAlertasSub+'</div></div>'
       +'<button id="notif-toggle-alertas" style="width:44px;height:26px;border-radius:13px;border:none;cursor:pointer;background:'+(a?'#1D9E75':'#d1d5db')+';position:relative;flex-shrink:0">'
       +'<span style="position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);left:'+(a?'21px':'3px')+'"></span>'
       +'</button></div>'
       +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0">'
-      +'<div><div style="font-size:13px;font-weight:600;color:#1a1a1a">'+_t.notifCromos+'</div>'
-      +'<div style="font-size:11px;color:#6b7280">'+_t.notifCromosSub+'</div></div>'
+      +'<div><div style="font-size:15px;font-weight:600;color:#1a1a1a">'+_t.notifCromos+'</div>'
+      +'<div style="font-size:13px;color:#6b7280">'+_t.notifCromosSub+'</div></div>'
       +'<button id="notif-toggle-cromos" style="width:44px;height:26px;border-radius:13px;border:none;cursor:pointer;background:'+(n?'#1D9E75':'#d1d5db')+';position:relative;flex-shrink:0">'
       +'<span style="position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);left:'+(n?'21px':'3px')+'"></span>'
       +'</button></div>'
       +(esMovil?
         '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0">'
-        +'<div><div style="font-size:13px;font-weight:600;color:#1a1a1a">'+_t.notifApp+'</div>'
-        +'<div style="font-size:11px;color:#6b7280">'+(l?_t.notifAppActiva:(permDenied?_t.notifAppBloqueada:_t.notifAppPermiso))+'</div></div>'
+        +'<div><div style="font-size:15px;font-weight:600;color:#1a1a1a">'+_t.notifApp+'</div>'
+        +'<div style="font-size:13px;color:#6b7280">'+(l?_t.notifAppActiva:(permDenied?_t.notifAppBloqueada:_t.notifAppPermiso))+'</div></div>'
         +'<button id="notif-toggle-loc" style="width:44px;height:26px;border-radius:13px;border:none;cursor:pointer;background:'+lBg+';position:relative;flex-shrink:0">'
         +'<span style="position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);left:'+lLeft+'"></span>'
         +'</button></div>'
       :'')
-      +'<button id="notif-cerrar" style="width:100%;margin-top:14px;background:#f3f4f6;color:#374151;border:none;border-radius:10px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">'+_t.notifCerrar+'</button>';
+      +'<button id="notif-cerrar" style="width:100%;margin-top:14px;background:#f3f4f6;color:#374151;border:none;border-radius:10px;padding:9px;font-size:15px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">'+_t.notifCerrar+'</button>';
     box.querySelector('#notif-toggle-alertas').addEventListener('click',function(){
       _alertasFirebaseOn=!_alertasFirebaseOn;_actualizarBtnAlertas();renderBox();
     });
@@ -5720,7 +5720,7 @@ function añadirMarcadorAlerta(a) {
   var iconAlerta = L.divIcon({
     className: '',
     html: '<div style="background:#dc2626;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 2px 8px rgba(220,38,38,0.6);animation:pulseAlerta 1.5s infinite">' +
-          '<span style="font-size:18px">🚨</span></div>',
+          '<span style="font-size:20px">🚨</span></div>',
     iconSize:[36,36], iconAnchor:[18,18], popupAnchor:[0,-20]
   });
   var m = L.marker([a.lat, a.lng], { icon: iconAlerta, zIndexOffset: 500 }).addTo(mapa);
@@ -5742,19 +5742,19 @@ function buildAlertaPopup(a) {
   var yaOculta = alertasOcultas[a.id];
   return '<div style="font-family:DM Sans,sans-serif;min-width:210px">' +
     '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">' +
-    '<span style="font-size:22px">🚨</span>' +
-    '<strong style="font-size:14px;color:#dc2626">' + a.nombre + '</strong></div>' +
-    (a.descripcion ? '<p style="font-size:13px;margin:0 0 6px;color:#374151">' + a.descripcion + '</p>' : '') +
-    '<div style="font-size:11px;color:#9ca3af;margin-bottom:8px">⏱ Caduca en ~' + tiempoRestante + 'h · ' + (a.reportes||1) + ' reporte(s)</div>' +
+    '<span style="font-size:24px">🚨</span>' +
+    '<strong style="font-size:16px;color:#dc2626">' + a.nombre + '</strong></div>' +
+    (a.descripcion ? '<p style="font-size:15px;margin:0 0 6px;color:#374151">' + a.descripcion + '</p>' : '') +
+    '<div style="font-size:13px;color:#9ca3af;margin-bottom:8px">⏱ Caduca en ~' + tiempoRestante + 'h · ' + (a.reportes||1) + ' reporte(s)</div>' +
     (yaReporte
-      ? '<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:7px;font-size:12px;color:#dc2626;text-align:center;margin-bottom:6px">✓ Ya has confirmado esta alerta</div>'
-      : '<button onclick="reportarAlerta(\'' + a.id + '\')" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:6px">🚨 Confirmar alerta (+24h)</button>'
+      ? '<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:7px;font-size:14px;color:#dc2626;text-align:center;margin-bottom:6px">✓ Ya has confirmado esta alerta</div>'
+      : '<button onclick="reportarAlerta(\'' + a.id + '\')" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:6px">🚨 Confirmar alerta (+24h)</button>'
     ) +
     (esMia
-      ? '<button onclick="eliminarAlerta(\'' + a.id + '\')" style="width:100%;background:#fff2f2;color:#ef4444;border:1.5px solid #ef4444;border-radius:8px;padding:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">🗑️ Eliminar para todos</button>'
+      ? '<button onclick="eliminarAlerta(\'' + a.id + '\')" style="width:100%;background:#fff2f2;color:#ef4444;border:1.5px solid #ef4444;border-radius:8px;padding:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">🗑️ Eliminar para todos</button>'
       : (yaOculta
-          ? '<div style="font-size:12px;color:#9ca3af;text-align:center;margin-top:2px">👁 Alerta oculta en el mapa</div>'
-          : '<button onclick="ocultarAlerta(\'' + a.id + '\')" style="width:100%;background:#f3f4f6;color:#6b7280;border:1px solid #d1d5db;border-radius:8px;padding:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:2px">👁 Ocultar del mapa</button>'
+          ? '<div style="font-size:14px;color:#9ca3af;text-align:center;margin-top:2px">👁 Alerta oculta en el mapa</div>'
+          : '<button onclick="ocultarAlerta(\'' + a.id + '\')" style="width:100%;background:#f3f4f6;color:#6b7280;border:1px solid #d1d5db;border-radius:8px;padding:7px;font-size:14px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:2px">👁 Ocultar del mapa</button>'
         )
     ) +
     '</div>';
@@ -5789,10 +5789,10 @@ function eliminarAlerta(id) {
     '<div style="background:#fff;border-radius:14px;padding:1.5rem 1.5rem 1.25rem;max-width:300px;width:88%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.18)">' +
     '<div style="font-size:32px;margin-bottom:10px">🚨</div>' +
     '<p style="font-family:DM Sans,sans-serif;font-size:15px;font-weight:600;color:#1a1a1a;margin:0 0 6px">¿Eliminar esta alerta?</p>' +
-    '<p style="font-family:DM Sans,sans-serif;font-size:13px;color:#6b7280;margin:0 0 20px">Se eliminará para todos los usuarios.</p>' +
+    '<p style="font-family:DM Sans,sans-serif;font-size:15px;color:#6b7280;margin:0 0 20px">Se eliminará para todos los usuarios.</p>' +
     '<div style="display:flex;gap:10px;justify-content:center">' +
-    '<button id="confirm-alerta-cancel" style="flex:1;background:#f3f4f6;border:none;border-radius:10px;padding:10px 0;font-size:14px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;color:#374151">Cancelar</button>' +
-    '<button id="confirm-alerta-ok" style="flex:1;background:#dc2626;border:none;border-radius:10px;padding:10px 0;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff">Eliminar</button>' +
+    '<button id="confirm-alerta-cancel" style="flex:1;background:#f3f4f6;border:none;border-radius:10px;padding:10px 0;font-size:16px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;color:#374151">Cancelar</button>' +
+    '<button id="confirm-alerta-ok" style="flex:1;background:#dc2626;border:none;border-radius:10px;padding:10px 0;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff">Eliminar</button>' +
     '</div></div>';
   document.body.appendChild(overlay);
   overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
@@ -5939,15 +5939,15 @@ function añadirMarcadorUsuario(p) {
         ? '✓ ' + (t2.enRuta||'En ruta').replace('✓ ','')
         : '+ ' + (t2.añadirRuta||'Añadir a ruta');
       var btnRutaStyle = enRuta
-        ? 'margin-top:8px;width:100%;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif'
-        : 'margin-top:8px;width:100%;background:#E1F5EE;color:#0F6E56;border:1px solid #1D9E75;border-radius:8px;padding:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+        ? 'margin-top:8px;width:100%;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif'
+        : 'margin-top:8px;width:100%;background:#E1F5EE;color:#0F6E56;border:1px solid #1D9E75;border-radius:8px;padding:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
       var content = '<div style="font-family:DM Sans,sans-serif;min-width:200px;max-width:260px">' +
-        '<strong style="font-size:14px">👤 ' + punto.nombre + '</strong><br>' +
-        '<small style="color:#6b7280;font-size:11px">Punto añadido por usuario' +
+        '<strong style="font-size:16px">👤 ' + punto.nombre + '</strong><br>' +
+        '<small style="color:#6b7280;font-size:13px">Punto añadido por usuario' +
         '</small>' +
-        (punto.descripcion ? '<p style="font-size:13px;margin:6px 0 4px;color:#374151">' + punto.descripcion + '</p>' : '') +
+        (punto.descripcion ? '<p style="font-size:15px;margin:6px 0 4px;color:#374151">' + punto.descripcion + '</p>' : '') +
         '<button onclick="addToRoute(\'' + punto.id + '\');mapa.closePopup();" style="' + btnRutaStyle + '">' + btnRutaLabel + '</button>' +
-        (esMiPunto ? '<button onclick="eliminarPOIUsuario(\'' + punto.id + '\')" style="margin-top:6px;width:100%;background:#fff2f2;color:#ef4444;border:1.5px solid #ef4444;border-radius:8px;padding:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">🗑️ Eliminar este punto</button>' : '') +
+        (esMiPunto ? '<button onclick="eliminarPOIUsuario(\'' + punto.id + '\')" style="margin-top:6px;width:100%;background:#fff2f2;color:#ef4444;border:1.5px solid #ef4444;border-radius:8px;padding:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">🗑️ Eliminar este punto</button>' : '') +
         '</div>';
       mapa.openPopup(L.popup({ className:'poi-popup', maxWidth:240 }).setLatLng([punto.lat,punto.lng]).setContent(content));
     };
@@ -6193,12 +6193,12 @@ function activarMarcarEnMapa() {
     banner.style.cssText = 'pointer-events:all;background:#1D9E75;color:#fff;border-radius:20px;padding:11px 20px;box-shadow:0 4px 16px rgba(0,0,0,0.2);display:flex;align-items:center;gap:10px;font-family:DM Sans,sans-serif';
 
     var texto = document.createElement('span');
-    texto.style.cssText = 'font-size:13px;font-weight:600';
+    texto.style.cssText = 'font-size:15px;font-weight:600';
     texto.textContent = '📍 Toca en el mapa para marcar el punto, o usa el buscador del mapa y toca la ubicación adecuada';
 
     var btnCancelar = document.createElement('button');
     btnCancelar.textContent = '✕';
-    btnCancelar.style.cssText = 'background:rgba(255,255,255,0.25);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0';
+    btnCancelar.style.cssText = 'background:rgba(255,255,255,0.25);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0';
     btnCancelar.addEventListener('touchend', function(e){ e.preventDefault(); cancelarMarcarMapa(); });
     btnCancelar.addEventListener('click', function(){ cancelarMarcarMapa(); });
 
@@ -6529,7 +6529,7 @@ function cerrarAdmin() {
 
 function cargarPendientes() {
   var lista = document.getElementById('admin-lista');
-  lista.innerHTML = '<p style="color:#6b7280;font-size:13px">Cargando...</p>';
+  lista.innerHTML = '<p style="color:#6b7280;font-size:15px">Cargando...</p>';
   // Wait for Firebase if not ready yet
   if (typeof db === 'undefined') {
     var intentos = 0;
@@ -6540,7 +6540,7 @@ function cargarPendientes() {
         cargarPendientes();
       } else if (intentos > 20) {
         clearInterval(esperar);
-        lista.innerHTML = '<p style="color:#EF4444;font-size:13px">Firebase no disponible. Recarga la página e inténtalo de nuevo.</p>';
+        lista.innerHTML = '<p style="color:#EF4444;font-size:15px">Firebase no disponible. Recarga la página e inténtalo de nuevo.</p>';
       }
     }, 300);
     return;
@@ -6548,7 +6548,7 @@ function cargarPendientes() {
   db.ref('pendientes').once('value', function(snap) {
     var data = snap.val();
     if (!data) {
-      lista.innerHTML = '<p style="color:#6b7280;font-size:13px;text-align:center">No hay opiniones pendientes ✓</p>';
+      lista.innerHTML = '<p style="color:#6b7280;font-size:15px;text-align:center">No hay opiniones pendientes ✓</p>';
       return;
     }
     lista.innerHTML = '';
@@ -6563,16 +6563,16 @@ function cargarPendientes() {
         var item = document.createElement('div');
         item.style.cssText = 'background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:10px';
         item.innerHTML =
-          '<div style="font-size:11px;color:#6b7280;margin-bottom:4px">📍 '+poiNombre+'</div>'+
-          '<div style="font-size:13px;color:#1a1a1a;margin-bottom:8px"><strong>'+op.autor+':</strong> '+op.texto+'</div>'+
+          '<div style="font-size:13px;color:#6b7280;margin-bottom:4px">📍 '+poiNombre+'</div>'+
+          '<div style="font-size:15px;color:#1a1a1a;margin-bottom:8px"><strong>'+op.autor+':</strong> '+op.texto+'</div>'+
           '<div style="display:flex;gap:8px">'+
-          '<button class="mod-aprobar" data-poi="'+poiId+'" data-key="'+opKey+'" style="flex:1;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:8px;font-size:13px;cursor:pointer">✓ Aprobar</button>'+
-          '<button class="mod-rechazar" data-poi="'+poiId+'" data-key="'+opKey+'" style="flex:1;background:#EF4444;color:#fff;border:none;border-radius:8px;padding:8px;font-size:13px;cursor:pointer">✗ Rechazar</button>'+
+          '<button class="mod-aprobar" data-poi="'+poiId+'" data-key="'+opKey+'" style="flex:1;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:8px;font-size:15px;cursor:pointer">✓ Aprobar</button>'+
+          '<button class="mod-rechazar" data-poi="'+poiId+'" data-key="'+opKey+'" style="flex:1;background:#EF4444;color:#fff;border:none;border-radius:8px;padding:8px;font-size:15px;cursor:pointer">✗ Rechazar</button>'+
           '</div>';
         lista.appendChild(item);
       });
     });
-    if (total === 0) lista.innerHTML = '<p style="color:#6b7280;font-size:13px;text-align:center">No hay opiniones pendientes ✓</p>';
+    if (total === 0) lista.innerHTML = '<p style="color:#6b7280;font-size:15px;text-align:center">No hay opiniones pendientes ✓</p>';
     // Event delegation for approve/reject buttons
     lista.onclick = function(e) {
       var btn = e.target.closest('.mod-aprobar,.mod-rechazar');
@@ -6639,8 +6639,8 @@ function eliminarPOIUsuario(poiId) {
     '<div style="font-size:32px;margin-bottom:10px">📍</div>' +
     '<p style="font-family:DM Sans,sans-serif;font-size:15px;font-weight:600;color:#1a1a1a;margin:0 0 20px">'+msgElim+'</p>' +
     '<div style="display:flex;gap:10px;justify-content:center">' +
-    '<button id="confirm-poi-cancel" style="flex:1;background:#f3f4f6;border:none;border-radius:10px;padding:10px 0;font-size:14px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;color:#374151">Cancelar</button>' +
-    '<button id="confirm-poi-ok" style="flex:1;background:#dc2626;border:none;border-radius:10px;padding:10px 0;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff">Eliminar</button>' +
+    '<button id="confirm-poi-cancel" style="flex:1;background:#f3f4f6;border:none;border-radius:10px;padding:10px 0;font-size:16px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;color:#374151">Cancelar</button>' +
+    '<button id="confirm-poi-ok" style="flex:1;background:#dc2626;border:none;border-radius:10px;padding:10px 0;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff">Eliminar</button>' +
     '</div></div>';
   document.body.appendChild(overlay);
   overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
@@ -6683,12 +6683,12 @@ function cambiarTabAdmin(tab) {
 
 function cargarAlertasAdmin() {
   var lista = document.getElementById('admin-alertas-lista');
-  lista.innerHTML = '<p style="color:#6b7280;font-size:13px">Cargando...</p>';
+  lista.innerHTML = '<p style="color:#6b7280;font-size:15px">Cargando...</p>';
   db.ref('alertas').once('value', function(snap) {
     var data = snap.val();
     var badge = document.getElementById('badge-alertas');
     if (!data || Object.keys(data).length === 0) {
-      lista.innerHTML = '<p style="color:#6b7280;font-size:13px;text-align:center">No hay alertas registradas ✓</p>';
+      lista.innerHTML = '<p style="color:#6b7280;font-size:15px;text-align:center">No hay alertas registradas ✓</p>';
       if (badge) badge.style.display = 'none';
       return;
     }
@@ -6713,18 +6713,18 @@ function cargarAlertasAdmin() {
       item.style.cssText = 'background:' + (caducada ? '#f9fafb' : '#fff5f5') + ';border:1px solid ' + (caducada ? '#e5e7eb' : '#fca5a5') + ';border-radius:10px;padding:12px;margin-bottom:10px;opacity:' + (caducada ? '0.65' : '1');
       item.innerHTML =
         '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px">' +
-          '<strong style="font-size:14px;color:#dc2626">🚨 ' + a.nombre + '</strong>' +
-          '<span style="font-size:11px;color:#9ca3af;flex-shrink:0">' + fechaStr + '</span>' +
+          '<strong style="font-size:16px;color:#dc2626">🚨 ' + a.nombre + '</strong>' +
+          '<span style="font-size:13px;color:#9ca3af;flex-shrink:0">' + fechaStr + '</span>' +
         '</div>' +
-        (a.descripcion ? '<div style="font-size:13px;color:#374151;margin-bottom:6px;line-height:1.4">' + a.descripcion + '</div>' : '') +
+        (a.descripcion ? '<div style="font-size:15px;color:#374151;margin-bottom:6px;line-height:1.4">' + a.descripcion + '</div>' : '') +
         '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">' +
-          '<span style="font-size:11px;background:#fef2f2;color:#dc2626;border-radius:8px;padding:2px 8px">⏱ ' + expiraStr + '</span>' +
-          '<span style="font-size:11px;background:#f3f4f6;color:#374151;border-radius:8px;padding:2px 8px">👥 ' + (a.reportes||1) + ' reporte(s)</span>' +
-          '<span style="font-size:11px;background:#f3f4f6;color:#9ca3af;border-radius:8px;padding:2px 8px">📌 ' + (a.lat||0).toFixed(4) + ', ' + (a.lng||0).toFixed(4) + '</span>' +
+          '<span style="font-size:13px;background:#fef2f2;color:#dc2626;border-radius:8px;padding:2px 8px">⏱ ' + expiraStr + '</span>' +
+          '<span style="font-size:13px;background:#f3f4f6;color:#374151;border-radius:8px;padding:2px 8px">👥 ' + (a.reportes||1) + ' reporte(s)</span>' +
+          '<span style="font-size:13px;background:#f3f4f6;color:#9ca3af;border-radius:8px;padding:2px 8px">📌 ' + (a.lat||0).toFixed(4) + ', ' + (a.lng||0).toFixed(4) + '</span>' +
         '</div>' +
         '<div style="display:flex;gap:8px">' +
-          '<button class="alerta-mod-extender" data-key="' + key + '" style="flex:1;background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer' + (caducada?';opacity:0.4;pointer-events:none':'') + '">+24h</button>' +
-          '<button class="alerta-mod-eliminar" data-key="' + key + '" style="flex:1;background:#ef4444;color:#fff;border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer">🗑 Eliminar</button>' +
+          '<button class="alerta-mod-extender" data-key="' + key + '" style="flex:1;background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:8px;font-size:14px;font-weight:600;cursor:pointer' + (caducada?';opacity:0.4;pointer-events:none':'') + '">+24h</button>' +
+          '<button class="alerta-mod-eliminar" data-key="' + key + '" style="flex:1;background:#ef4444;color:#fff;border:none;border-radius:8px;padding:8px;font-size:14px;font-weight:600;cursor:pointer">🗑 Eliminar</button>' +
         '</div>';
       lista.appendChild(item);
     });
@@ -6741,7 +6741,7 @@ function cargarAlertasAdmin() {
         db.ref('alertas/' + k).remove().then(function(){
           if (row && row.parentNode) row.parentNode.removeChild(row);
           var n = lista.querySelectorAll('div[style]').length;
-          if (!n) lista.innerHTML = '<p style="color:#6b7280;font-size:13px;text-align:center">No hay alertas registradas ✓</p>';
+          if (!n) lista.innerHTML = '<p style="color:#6b7280;font-size:15px;text-align:center">No hay alertas registradas ✓</p>';
           if (badge) { badge.textContent = parseInt(badge.textContent||1)-1; if(parseInt(badge.textContent)<=0) badge.style.display='none'; }
         });
       }
@@ -6751,14 +6751,14 @@ function cargarAlertasAdmin() {
 
 function cargarPOIsPendientes() {
   var lista = document.getElementById('admin-pois-lista');
-  lista.innerHTML = '<p style="color:#6b7280;font-size:13px">Cargando...</p>';
+  lista.innerHTML = '<p style="color:#6b7280;font-size:15px">Cargando...</p>';
 
   db.ref('poi_usuarios').orderByChild('estado').equalTo('pendiente').once('value', function(snap) {
     var data = snap.val();
     var badge = document.getElementById('badge-pois-pendientes');
 
     if (!data || Object.keys(data).length === 0) {
-      lista.innerHTML = '<p style="color:#6b7280;font-size:13px;text-align:center">No hay puntos pendientes ✓</p>';
+      lista.innerHTML = '<p style="color:#6b7280;font-size:15px;text-align:center">No hay puntos pendientes ✓</p>';
       if (badge) badge.style.display = 'none';
       return;
     }
@@ -6783,15 +6783,15 @@ function cargarPOIsPendientes() {
 
       item.innerHTML =
         '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px">' +
-          '<strong style="font-size:14px;color:#1a1a1a">👤 ' + p.nombre + '</strong>' +
-          '<span style="font-size:11px;color:#6b7280;flex-shrink:0">' + fecha + '</span>' +
+          '<strong style="font-size:16px;color:#1a1a1a">👤 ' + p.nombre + '</strong>' +
+          '<span style="font-size:13px;color:#6b7280;flex-shrink:0">' + fecha + '</span>' +
         '</div>' +
-        '<div style="font-size:12px;color:#6b7280;margin-bottom:4px">' + catLabel + '</div>' +
-        (p.descripcion ? '<div style="font-size:13px;color:#374151;margin-bottom:6px;line-height:1.4">' + p.descripcion + '</div>' : '') +
-        '<div style="font-size:11px;color:#9ca3af;margin-bottom:10px">📌 ' + (p.lat||'').toFixed(5) + ', ' + (p.lng||'').toFixed(5) + '</div>' +
+        '<div style="font-size:14px;color:#6b7280;margin-bottom:4px">' + catLabel + '</div>' +
+        (p.descripcion ? '<div style="font-size:15px;color:#374151;margin-bottom:6px;line-height:1.4">' + p.descripcion + '</div>' : '') +
+        '<div style="font-size:13px;color:#9ca3af;margin-bottom:10px">📌 ' + (p.lat||'').toFixed(5) + ', ' + (p.lng||'').toFixed(5) + '</div>' +
         '<div style="display:flex;gap:8px">' +
-          '<button class="poi-mod-aprobar" data-key="' + key + '" style="flex:1;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer">✓ Aprobar</button>' +
-          '<button class="poi-mod-rechazar" data-key="' + key + '" style="flex:1;background:#ef4444;color:#fff;border:none;border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer">✗ Rechazar</button>' +
+          '<button class="poi-mod-aprobar" data-key="' + key + '" style="flex:1;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:9px;font-size:15px;font-weight:600;cursor:pointer">✓ Aprobar</button>' +
+          '<button class="poi-mod-rechazar" data-key="' + key + '" style="flex:1;background:#ef4444;color:#fff;border:none;border-radius:8px;padding:9px;font-size:15px;font-weight:600;cursor:pointer">✗ Rechazar</button>' +
         '</div>';
 
       lista.appendChild(item);
@@ -6823,7 +6823,7 @@ function aprobarPOIUsuario(key, el) {
       else { badge.textContent = n; }
     }
     if (!lista.querySelector('div[style]')) {
-      lista.innerHTML = '<p style="color:#6b7280;font-size:13px;text-align:center">No hay puntos pendientes ✓</p>';
+      lista.innerHTML = '<p style="color:#6b7280;font-size:15px;text-align:center">No hay puntos pendientes ✓</p>';
     }
   });
 }
@@ -6839,7 +6839,7 @@ function rechazarPOIUsuario(key, el) {
     }
     var lista = document.getElementById('admin-pois-lista');
     if (!lista.querySelector('div[style]')) {
-      lista.innerHTML = '<p style="color:#6b7280;font-size:13px;text-align:center">No hay puntos pendientes ✓</p>';
+      lista.innerHTML = '<p style="color:#6b7280;font-size:15px;text-align:center">No hay puntos pendientes ✓</p>';
     }
   });
 }
@@ -6933,7 +6933,7 @@ function crearIcono(emoji, color) {
 
 var iconoBusqueda = L.divIcon({
   className: '',
-  html: '<div style="background:#DC2626;color:#fff;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.25)"><span style="transform:rotate(45deg);font-size:14px">&#128269;</span></div>',
+  html: '<div style="background:#DC2626;color:#fff;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.25)"><span style="transform:rotate(45deg);font-size:16px">&#128269;</span></div>',
   iconSize:[32,32], iconAnchor:[16,32], popupAnchor:[0,-32]
 });
 
@@ -7108,9 +7108,9 @@ function initMapa() {
     mf.on('click', function() {
       if (window._navBloqPopups) return;
       var content = '<div style="font-family:DM Sans,sans-serif;min-width:190px;max-width:260px">' +
-        '<strong style="font-size:14px;color:#1D9E75">' + p.nombre + '</strong><br>' +
+        '<strong style="font-size:16px;color:#1D9E75">' + p.nombre + '</strong><br>' +
         '<small style="color:#6b7280;text-transform:uppercase;letter-spacing:1px">FIESTA HOY 🎉</small>' +
-        '<div style="font-size:13px;margin-top:6px;color:#444;max-height:150px;overflow-y:auto">' + p.descripcion + '</div>' +
+        '<div style="font-size:15px;margin-top:6px;color:#444;max-height:150px;overflow-y:auto">' + p.descripcion + '</div>' +
 
         '</div>';
       mapa.openPopup(L.popup({ className:'poi-popup', maxWidth:260 }).setLatLng([p.lat,p.lng]).setContent(content));
@@ -7309,7 +7309,7 @@ function _mostrarUnCromo(item, onClose) {
   // Modal de notificación — efectos especiales se resuelven al pulsar casilla en el Tablero
   var headerTxt = doble ? '🏨 ¡Doble por la Posada!' : 'Localización desbloqueada';
   var cromoInfo = num
-    ? '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">'      + '<div style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:8px">Obtienes un cromo</div>'      + '<div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5">Ahora puedes añadir tu foto recuerdo en <strong style=\"color:#fff\">Mi Álbum</strong> y abrir el cromo en el <strong style=\"color:#fff\">Tablero</strong></div>'      + '</div>'    : '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">'      + '<div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.6">Localización registrada en tu <strong style=\"color:#6ee7b7\">Álbum</strong> · cromo disponible en tu <strong style=\"color:#F5C800\">Colección</strong></div>'      + '</div>';
+    ? '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">'      + '<div style="font-size:15px;color:rgba(255,255,255,0.55);margin-bottom:8px">Obtienes un cromo</div>'      + '<div style="font-size:15px;color:rgba(255,255,255,0.75);line-height:1.5">Ahora puedes añadir tu foto recuerdo en <strong style=\"color:#fff\">Mi Álbum</strong> y abrir el cromo en el <strong style=\"color:#fff\">Tablero</strong></div>'      + '</div>'    : '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">'      + '<div style="font-size:15px;color:rgba(255,255,255,0.75);line-height:1.6">Localización registrada en tu <strong style=\"color:#6ee7b7\">Álbum</strong> · cromo disponible en tu <strong style=\"color:#F5C800\">Colección</strong></div>'      + '</div>';
 
   var botonesHtml = '<div id="cromo-btn-cerrar" style="background:#1D9E75;color:#fff;border:none;border-radius:24px;padding:12px 32px;font-size:15px;font-weight:600;cursor:pointer;display:inline-block;width:100%;box-sizing:border-box">¡Genial!</div>';
 
@@ -7321,7 +7321,7 @@ function _mostrarUnCromo(item, onClose) {
   var box = document.createElement('div');
   box.style.cssText = 'background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:1.5rem;max-width:85vw;width:300px;text-align:center;border:1px solid rgba(255,255,255,0.2)';
   box.innerHTML =
-    '<div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.4);margin-bottom:10px">'+headerTxt+'</div>'
+    '<div style="font-size:13px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.4);margin-bottom:10px">'+headerTxt+'</div>'
     +'<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:14px">'+poiEmoji+' '+nombre+'</div>'
     +cromoInfo+botonesHtml;
   overlay.appendChild(box);
@@ -7355,18 +7355,18 @@ function _ocaMostrarSelectorPerder(n) {
     var nums = Object.keys(conteo).map(Number).sort(function(a,b){return b-a;});
     var seleccionados = [];
     var html = '<div style="background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:1.25rem;max-width:90vw;width:320px;border:1px solid rgba(255,255,255,0.2)">'
-      + '<div style="font-size:12px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Elige '+n+' cromo'+(n>1?'s':'')+' para perder</div>'
+      + '<div style="font-size:14px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Elige '+n+' cromo'+(n>1?'s':'')+' para perder</div>'
       + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:50vh;overflow-y:auto;margin-bottom:12px" id="sel-cromos-grid">';
     nums.forEach(function(num){
       var cas = tablero[num]||{emoji:'🐚',label:'Casilla '+num};
       var rep = conteo[num]>1 ? '<span style="font-size:9px;background:#1D9E75;color:#fff;border-radius:10px;padding:1px 5px;margin-left:4px">×'+conteo[num]+'</span>' : '';
       html += '<div class="sel-cromo-item" data-num="'+num+'" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:7px 10px;cursor:pointer;transition:all 0.15s">'
-        + '<span style="font-size:18px">'+cas.emoji+'</span>'
-        + '<div style="flex:1"><div style="font-size:10px;color:rgba(255,255,255,0.4)">#'+num+'</div>'
-        + '<div style="font-size:11px;font-weight:600;color:#fff">'+cas.label+'</div></div>'
+        + '<span style="font-size:20px">'+cas.emoji+'</span>'
+        + '<div style="flex:1"><div style="font-size:12px;color:rgba(255,255,255,0.4)">#'+num+'</div>'
+        + '<div style="font-size:13px;font-weight:600;color:#fff">'+cas.label+'</div></div>'
         + rep+'</div>';
     });
-    html += '</div><button id="sel-confirmar" disabled style="width:100%;background:#6b7280;color:#fff;border:none;border-radius:24px;padding:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Confirmar</button></div>';
+    html += '</div><button id="sel-confirmar" disabled style="width:100%;background:#6b7280;color:#fff;border:none;border-radius:24px;padding:10px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Confirmar</button></div>';
     overlay.innerHTML = html;
     document.body.appendChild(overlay);
     var confirmBtn = overlay.querySelector('#sel-confirmar');
@@ -7420,7 +7420,7 @@ function mostrarToast(msg) {
   if (!t) {
     t = document.createElement('div');
     t.id = 'map-toast';
-    t.style.cssText = 'position:absolute;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:#fff;padding:7px 16px;border-radius:20px;font-size:13px;font-family:DM Sans,sans-serif;z-index:500;pointer-events:none;white-space:nowrap;transition:opacity 0.3s';
+    t.style.cssText = 'position:absolute;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:#fff;padding:7px 16px;border-radius:20px;font-size:15px;font-family:DM Sans,sans-serif;z-index:500;pointer-events:none;white-space:nowrap;transition:opacity 0.3s';
     document.querySelector('.map-section').appendChild(t);
   }
   t.textContent = msg;
@@ -7589,7 +7589,7 @@ function ejecutarBusqueda() {
             var nombre=r.display_name.split(',')[0].trim();
             var dist=userLat?' - '+formatDist(haversine(userLat,userLng,lat,lng)):'';
             var sm=L.marker([lat,lng],{icon:iconoBusqueda}).addTo(mapa);
-            sm.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>'+nombre+dist+'</strong><br><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button onclick="_addBusquedaRuta(encodeURIComponent(\''+nombre+'\'),'+lat+','+lng+');this.textContent=\'✓ En ruta\';this.style.background=\'#1D9E75\';this.style.color=\'#fff\';" style="background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">➕ Añadir a ruta</button><button onclick="irACoordenadasNav('+lat+','+lng+')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">&#128506; Cómo llegar</button></div></div>');
+            sm.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>'+nombre+dist+'</strong><br><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button onclick="_addBusquedaRuta(encodeURIComponent(\''+nombre+'\'),'+lat+','+lng+');this.textContent=\'✓ En ruta\';this.style.background=\'#1D9E75\';this.style.color=\'#fff\';" style="background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">➕ Añadir a ruta</button><button onclick="irACoordenadasNav('+lat+','+lng+')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:14px;cursor:pointer;font-family:DM Sans,sans-serif">&#128506; Cómo llegar</button></div></div>');
             searchMarkers.push(sm); bounds.push([lat,lng]);
           });
           if (searchMarkers.length>0) searchMarkers[0].openPopup();
@@ -7684,8 +7684,8 @@ function renderCarrusel(categoria) {
     var sub = idiomaActual==='gl' ? subGl : idiomaActual==='en' ? subEn : subEs;
     carousel.innerHTML = '<div style="width:100%;padding:2rem 1.5rem;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">'
       + '<div style="font-size:36px;margin-bottom:10px">'+icono+'</div>'
-      + '<div style="color:#6b7280;font-size:13px;font-weight:600;margin-bottom:6px">'+texto+'</div>'
-      + (sub ? '<div style="color:#9ca3af;font-size:12px;line-height:1.6;max-width:240px">'+sub+'</div>' : '')
+      + '<div style="color:#6b7280;font-size:15px;font-weight:600;margin-bottom:6px">'+texto+'</div>'
+      + (sub ? '<div style="color:#9ca3af;font-size:14px;line-height:1.6;max-width:240px">'+sub+'</div>' : '')
       + '</div>';
     return;
   }
@@ -7729,18 +7729,18 @@ function renderCarrusel(categoria) {
     card.innerHTML =
       (window._imgCromo ? window._imgCromo(p, enRuta, T, idiomaActual) : '<div class="poi-img '+p.color+'" style="position:relative;overflow:hidden">' +
         '<img src="'+(p.imagen||'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png')+'" alt="'+p.nombre+'" class="poi-img-cover" decoding="async" fetchpriority="low"/>' +
-        (mostrarBtnRuta && !p.esAlerta && !p.esUsuario && !(window._albumVisitasSet && window._albumVisitasSet[p.id]) ? '<button id="rbtn-'+p.id+'" class="poi-ruta-btn" data-poi="'+p.id+'" style="position:absolute;top:8px;right:8px;z-index:10;font-size:11px;padding:4px 10px;border-radius:10px;backdrop-filter:blur(4px);background:'+(enRuta?'#1D9E75':'rgba(255,255,255,0.92)')+';color:'+(enRuta?'#fff':'#0F6E56')+';border:1px solid '+(enRuta?'#1D9E75':'rgba(29,158,117,0.4)')+'">'+  (enRuta?'&#10003; '+(T[idiomaActual]||T.es).enRuta.replace('✓ ',''):(T[idiomaActual]||T.es).añadirRuta)+'</button>' : '') +
+        (mostrarBtnRuta && !p.esAlerta && !p.esUsuario && !(window._albumVisitasSet && window._albumVisitasSet[p.id]) ? '<button id="rbtn-'+p.id+'" class="poi-ruta-btn" data-poi="'+p.id+'" style="position:absolute;top:8px;right:8px;z-index:10;font-size:13px;padding:4px 10px;border-radius:10px;backdrop-filter:blur(4px);background:'+(enRuta?'#1D9E75':'rgba(255,255,255,0.92)')+';color:'+(enRuta?'#fff':'#0F6E56')+';border:1px solid '+(enRuta?'#1D9E75':'rgba(29,158,117,0.4)')+'">'+  (enRuta?'&#10003; '+(T[idiomaActual]||T.es).enRuta.replace('✓ ',''):(T[idiomaActual]||T.es).añadirRuta)+'</button>' : '') +
       '</div>')+
       (!p.esUsuario ? '<div class="poi-ranking" id="rank-'+p.id+'" style="left:8px;right:auto">&#9733; '+(val.votos>0?media:'-')+'</div>' : '')+
       '<div class="poi-body">'+
         '<div class="poi-category">'+(function(c){var t2=T[idiomaActual]||T.es;var cm={'naturaleza':t2.chipNaturaleza,'monumento':t2.chipMonumento,'albergue':t2.chipAlbergue,'mirador':t2.chipMirador,'edificación religiosa':t2.chipEdif,'localización histórica':t2.chipHist,'vestigio arqueológico':t2.chipVest,'edificación histórica':t2.chipEdifH,'naturaleza':t2.chipNat};return cm[c]||c;})(p.categoria)+'</div>'+
         '<div class="poi-nombre-row"><span class="poi-emoji">'+p.emoji+'</span><span class="poi-nombre">'+pNombre+'</span></div>'+
         (p.categoria==='etapa' && p.km ? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:5px 0 3px">'+
-          '<span style="background:#E1F5EE;color:#0F6E56;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600">📍 '+p.km+' km</span>'+
-          (p.desnivel_pos ? '<span style="background:#FEF3C7;color:#92400E;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600">↑'+p.desnivel_pos+' m</span>' : '')+
-          (p.desnivel_neg ? '<span style="background:#FEF3C7;color:#92400E;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600">↓'+p.desnivel_neg+' m</span>' : '')+
-          (p.dificultad ? '<span style="background:#F3E8FF;color:#6B21A8;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600">'+p.dificultad+'</span>' : '')+
-          (p.variante ? '<span style="background:'+(p.variante==="costa"?"#E0F2FE":"#FCE7F3")+';color:'+(p.variante==="costa"?"#0369A1":"#9D174D")+';border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600">'+(p.variante==="costa"?"🌊 Costa":"🛤️ Interior")+' </span>' : '')+
+          '<span style="background:#E1F5EE;color:#0F6E56;border-radius:10px;padding:2px 8px;font-size:13px;font-weight:600">📍 '+p.km+' km</span>'+
+          (p.desnivel_pos ? '<span style="background:#FEF3C7;color:#92400E;border-radius:10px;padding:2px 8px;font-size:13px;font-weight:600">↑'+p.desnivel_pos+' m</span>' : '')+
+          (p.desnivel_neg ? '<span style="background:#FEF3C7;color:#92400E;border-radius:10px;padding:2px 8px;font-size:13px;font-weight:600">↓'+p.desnivel_neg+' m</span>' : '')+
+          (p.dificultad ? '<span style="background:#F3E8FF;color:#6B21A8;border-radius:10px;padding:2px 8px;font-size:13px;font-weight:600">'+p.dificultad+'</span>' : '')+
+          (p.variante ? '<span style="background:'+(p.variante==="costa"?"#E0F2FE":"#FCE7F3")+';color:'+(p.variante==="costa"?"#0369A1":"#9D174D")+';border-radius:10px;padding:2px 8px;font-size:13px;font-weight:600">'+(p.variante==="costa"?"🌊 Costa":"🛤️ Interior")+' </span>' : '')+
         '</div>' : '')+
         (pSub ? '<div class="poi-subtitulo">'+pSub+'</div>' : '')+
         (p.esAlerta
@@ -7762,17 +7762,17 @@ function renderCarrusel(categoria) {
         (p.esAlerta
           ? '<div style="margin:8px 0 4px">' +
               '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
-                '<span style="font-size:11px;color:#9ca3af">⏱ Caduca en ~'+Math.max(0,Math.round(((p.expiraTs||Date.now())-Date.now())/3600000))+'h · '+(p.reportes||1)+' reporte(s)</span>' +
+                '<span style="font-size:13px;color:#9ca3af">⏱ Caduca en ~'+Math.max(0,Math.round(((p.expiraTs||Date.now())-Date.now())/3600000))+'h · '+(p.reportes||1)+' reporte(s)</span>' +
               '</div>' +
               (alertasReportadas[p.id]
-                ? '<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:7px;font-size:12px;color:#dc2626;text-align:center;margin-bottom:6px">✓ Ya confirmaste esta alerta</div>'
-                : '<button onclick="reportarAlerta(\''+p.id+'\')" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:6px">🚨 Confirmar alerta (+24h)</button>'
+                ? '<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:7px;font-size:14px;color:#dc2626;text-align:center;margin-bottom:6px">✓ Ya confirmaste esta alerta</div>'
+                : '<button onclick="reportarAlerta(\''+p.id+'\')" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:6px">🚨 Confirmar alerta (+24h)</button>'
               ) +
               (p.deviceId === DEVICE_ID
-                ? '<button onclick="eliminarAlerta(\''+p.id+'\')" style="width:100%;background:#fff2f2;color:#ef4444;border:1.5px solid #ef4444;border-radius:8px;padding:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">🗑️ Eliminar para todos</button>'
+                ? '<button onclick="eliminarAlerta(\''+p.id+'\')" style="width:100%;background:#fff2f2;color:#ef4444;border:1.5px solid #ef4444;border-radius:8px;padding:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">🗑️ Eliminar para todos</button>'
                 : (alertasOcultas[p.id]
-                    ? '<button data-alerta-toggle onclick="mostrarAlerta(\''+p.id+'\')" style="width:100%;background:#f0fdf4;color:#15803d;border:1px solid #86efac;border-radius:8px;padding:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif">👁 Mostrar en el mapa</button>'
-                    : '<button data-alerta-toggle onclick="ocultarAlerta(\''+p.id+'\')" style="width:100%;background:#f3f4f6;color:#6b7280;border:1px solid #d1d5db;border-radius:8px;padding:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif">👁 Ocultar del mapa</button>'
+                    ? '<button data-alerta-toggle onclick="mostrarAlerta(\''+p.id+'\')" style="width:100%;background:#f0fdf4;color:#15803d;border:1px solid #86efac;border-radius:8px;padding:7px;font-size:14px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif">👁 Mostrar en el mapa</button>'
+                    : '<button data-alerta-toggle onclick="ocultarAlerta(\''+p.id+'\')" style="width:100%;background:#f3f4f6;color:#6b7280;border:1px solid #d1d5db;border-radius:8px;padding:7px;font-size:14px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif">👁 Ocultar del mapa</button>'
                   )
               ) +
             '</div>'
@@ -7784,7 +7784,7 @@ function renderCarrusel(categoria) {
               '</div>'+
             '</div>'
         )+
-        (p.esUsuario ? '<button data-poi-del="'+p.id+'" style="margin-top:6px;width:100%;background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.35);border-radius:8px;padding:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">🗑️ Eliminar este punto</button>' : '')+
+        (p.esUsuario ? '<button data-poi-del="'+p.id+'" style="margin-top:6px;width:100%;background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.35);border-radius:8px;padding:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">🗑️ Eliminar este punto</button>' : '')+
       '</div>';
     _frag.appendChild(card);
 
@@ -8083,8 +8083,8 @@ function _mostrarConfirmLimpiar(msg, onConfirm) {
     '<div style="font-size:32px;margin-bottom:10px">🗑️</div>' +
     '<p style="font-family:DM Sans,sans-serif;font-size:15px;font-weight:600;color:#1a1a1a;margin:0 0 6px">'+msg+'</p>' +
     '<div style="display:flex;gap:10px;justify-content:center">' +
-    '<button id="confirm-limpiar-cancel" style="flex:1;background:#f3f4f6;border:none;border-radius:10px;padding:10px 0;font-size:14px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;color:#374151">Cancelar</button>' +
-    '<button id="confirm-limpiar-ok" style="flex:1;background:#dc2626;border:none;border-radius:10px;padding:10px 0;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff">Eliminar</button>' +
+    '<button id="confirm-limpiar-cancel" style="flex:1;background:#f3f4f6;border:none;border-radius:10px;padding:10px 0;font-size:16px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;color:#374151">Cancelar</button>' +
+    '<button id="confirm-limpiar-ok" style="flex:1;background:#dc2626;border:none;border-radius:10px;padding:10px 0;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff">Eliminar</button>' +
     '</div></div>';
   document.body.appendChild(overlay);
   overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
@@ -8444,8 +8444,8 @@ function actualizarRuta() {
     if (vaciaEl)  { vaciaEl.style.display  = 'none'; }
     if (listaEl)  { listaEl.style.display  = 'flex';
       listaEl.innerHTML = rutaPuntos.map(function(p, i) {
-        return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 8px;background:var(--fondo);border-radius:8px">' +
-          '<span style="width:18px;height:18px;border-radius:50%;background:var(--verde);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(i+1)+'</span>' +
+        return '<div style="display:flex;align-items:center;gap:8px;font-size:14px;padding:4px 8px;background:var(--fondo);border-radius:8px">' +
+          '<span style="width:18px;height:18px;border-radius:50%;background:var(--verde);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(i+1)+'</span>' +
           '<span style="flex:1;font-weight:500;color:var(--texto)">'+p.nombre+'</span>' +
           '</div>';
       }).join('');
@@ -8525,11 +8525,11 @@ function guardarRuta() {
     if (!cartel) {
       cartel = document.createElement('div');
       cartel.id = 'guardar-ruta-cartel';
-      cartel.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:99999;background:rgba(0,0,0,0.82);color:#fff;padding:16px 22px;border-radius:16px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;text-align:center;max-width:280px;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,0.3);backdrop-filter:blur(8px);transition:opacity 0.5s;';
+      cartel.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:99999;background:rgba(0,0,0,0.82);color:#fff;padding:16px 22px;border-radius:16px;font-family:DM Sans,sans-serif;font-size:15px;font-weight:500;text-align:center;max-width:280px;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,0.3);backdrop-filter:blur(8px);transition:opacity 0.5s;';
       document.body.appendChild(cartel);
     }
     var tC = T[idiomaActual] || T.es;
-    cartel.innerHTML = '💾 <strong>' + (tC.guardandoRuta||'Ruta guardada ✓') + '</strong><br><span style="font-size:12px;color:rgba(255,255,255,0.85)">' + (tC.guardandoRutaSub||'') + '</span>';
+    cartel.innerHTML = '💾 <strong>' + (tC.guardandoRuta||'Ruta guardada ✓') + '</strong><br><span style="font-size:14px;color:rgba(255,255,255,0.85)">' + (tC.guardandoRutaSub||'') + '</span>';
     cartel.style.opacity = '1';
     clearTimeout(cartel._t);
     cartel._t = setTimeout(function(){ cartel.style.opacity = '0'; }, 3500);
@@ -10180,18 +10180,18 @@ function cambiarIdioma(lang){
   el=document.getElementById('nav-comousar');if(el)el.textContent='📖 '+t.navComoUsar;
   el=document.getElementById('nav-brujula');if(el)el.textContent='🧭 '+t.navBrujula;
   el=document.getElementById('nav-mapa');if(el)el.textContent='🗺️ '+t.navMapa;
-  el=document.getElementById('nav-m-comousar');if(el)el.innerHTML='<span style="font-size:18px;margin-right:8px">📖</span>'+t.navComoUsar;
+  el=document.getElementById('nav-m-comousar');if(el)el.innerHTML='<span style="font-size:20px;margin-right:8px">📖</span>'+t.navComoUsar;
   el=document.getElementById('nav-contacto');if(el)el.textContent='✉️ '+t.navContacto;
   // Nav móvil
-  el=document.getElementById('nav-m-inicio');if(el)el.innerHTML='<span style="font-size:18px;margin-right:8px">🏠</span>'+t.navInicio;
-  el=document.getElementById('nav-m-historia');if(el)el.innerHTML='<span style="font-size:18px;margin-right:8px">🐚</span>'+t.navHistoria;
-  el=document.getElementById('nav-m-puntos');if(el)el.innerHTML='<span style="font-size:18px;margin-right:8px">🏅</span>'+t.navPuntos;
-  el=document.getElementById('nav-m-emergencias');if(el)el.innerHTML='<span style="font-size:18px;margin-right:8px">🆘</span>'+(t.navEmergencias||'Emergencias').replace(/^🆘\s*/,'');
-  el=document.getElementById('nav-m-comousar');if(el)el.innerHTML='<span style="font-size:18px;margin-right:8px">📖</span>'+t.navComoUsar;
-  el=document.getElementById('nav-m-contacto');if(el)el.innerHTML='<span style="font-size:18px;margin-right:8px">✉️</span>'+t.navContacto;
-  el=document.getElementById('nav-m-mapa');if(el)el.innerHTML='<span style="font-size:18px;margin-right:8px">🗺️</span>'+t.navMapa;
-  el=document.getElementById('nav-m-brujula');if(el)el.innerHTML='<span style="font-size:18px;margin-right:8px">🧭</span>'+t.navBrujula;
-  el=document.getElementById('nav-m-donaciones');if(el)el.innerHTML='<span style="font-size:18px;margin-right:8px">🙏</span>'+t.navDonaciones;
+  el=document.getElementById('nav-m-inicio');if(el)el.innerHTML='<span style="font-size:20px;margin-right:8px">🏠</span>'+t.navInicio;
+  el=document.getElementById('nav-m-historia');if(el)el.innerHTML='<span style="font-size:20px;margin-right:8px">🐚</span>'+t.navHistoria;
+  el=document.getElementById('nav-m-puntos');if(el)el.innerHTML='<span style="font-size:20px;margin-right:8px">🏅</span>'+t.navPuntos;
+  el=document.getElementById('nav-m-emergencias');if(el)el.innerHTML='<span style="font-size:20px;margin-right:8px">🆘</span>'+(t.navEmergencias||'Emergencias').replace(/^🆘\s*/,'');
+  el=document.getElementById('nav-m-comousar');if(el)el.innerHTML='<span style="font-size:20px;margin-right:8px">📖</span>'+t.navComoUsar;
+  el=document.getElementById('nav-m-contacto');if(el)el.innerHTML='<span style="font-size:20px;margin-right:8px">✉️</span>'+t.navContacto;
+  el=document.getElementById('nav-m-mapa');if(el)el.innerHTML='<span style="font-size:20px;margin-right:8px">🗺️</span>'+t.navMapa;
+  el=document.getElementById('nav-m-brujula');if(el)el.innerHTML='<span style="font-size:20px;margin-right:8px">🧭</span>'+t.navBrujula;
+  el=document.getElementById('nav-m-donaciones');if(el)el.innerHTML='<span style="font-size:20px;margin-right:8px">🙏</span>'+t.navDonaciones;
   // Secciones
   el=document.getElementById('puntos-h2');if(el)el.textContent=t.puntosH2;
   el=document.getElementById('historia-h2');if(el)el.textContent=t.historiaH2;
@@ -10761,23 +10761,23 @@ document.addEventListener('DOMContentLoaded', function() {
     <h3 style='font-family:Playfair Display,serif;font-size:20px;margin:0 0 12px'>🛡️ Moderación</h3>
     <!-- Pestañas -->
     <div style='display:flex;gap:6px;margin-bottom:1rem;border-bottom:2px solid #f0f0f0;padding-bottom:0'>
-      <button id='tab-opiniones' onclick='cambiarTabAdmin("opiniones")' style='flex:1;background:none;border:none;border-bottom:2px solid #1D9E75;margin-bottom:-2px;padding:8px 4px;font-size:13px;font-weight:600;color:#1D9E75;cursor:pointer;font-family:DM Sans,sans-serif'>💬 Opiniones</button>
-      <button id='tab-pois' onclick='cambiarTabAdmin("pois")' style='flex:1;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:8px 4px;font-size:13px;font-weight:500;color:#6b7280;cursor:pointer;font-family:DM Sans,sans-serif'>📍 Puntos <span id='badge-pois-pendientes' style='background:#ef4444;color:#fff;border-radius:10px;padding:1px 6px;font-size:11px;margin-left:4px;display:none'>0</span></button>
-      <button id='tab-alertas' onclick='cambiarTabAdmin("alertas")' style='flex:1;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:8px 4px;font-size:13px;font-weight:500;color:#6b7280;cursor:pointer;font-family:DM Sans,sans-serif'>🚨 Alertas <span id='badge-alertas' style='background:#dc2626;color:#fff;border-radius:10px;padding:1px 6px;font-size:11px;margin-left:4px;display:none'>0</span></button>
+      <button id='tab-opiniones' onclick='cambiarTabAdmin("opiniones")' style='flex:1;background:none;border:none;border-bottom:2px solid #1D9E75;margin-bottom:-2px;padding:8px 4px;font-size:15px;font-weight:600;color:#1D9E75;cursor:pointer;font-family:DM Sans,sans-serif'>💬 Opiniones</button>
+      <button id='tab-pois' onclick='cambiarTabAdmin("pois")' style='flex:1;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:8px 4px;font-size:15px;font-weight:500;color:#6b7280;cursor:pointer;font-family:DM Sans,sans-serif'>📍 Puntos <span id='badge-pois-pendientes' style='background:#ef4444;color:#fff;border-radius:10px;padding:1px 6px;font-size:13px;margin-left:4px;display:none'>0</span></button>
+      <button id='tab-alertas' onclick='cambiarTabAdmin("alertas")' style='flex:1;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:8px 4px;font-size:15px;font-weight:500;color:#6b7280;cursor:pointer;font-family:DM Sans,sans-serif'>🚨 Alertas <span id='badge-alertas' style='background:#dc2626;color:#fff;border-radius:10px;padding:1px 6px;font-size:13px;margin-left:4px;display:none'>0</span></button>
     </div>
     <!-- Panel opiniones -->
     <div id='panel-tab-opiniones'>
-      <button onclick='cargarPendientes()' style='font-size:12px;color:#1D9E75;background:none;border:none;cursor:pointer;margin-bottom:1rem;padding:0'>↺ Actualizar</button>
+      <button onclick='cargarPendientes()' style='font-size:14px;color:#1D9E75;background:none;border:none;cursor:pointer;margin-bottom:1rem;padding:0'>↺ Actualizar</button>
       <div id='admin-lista'></div>
     </div>
     <!-- Panel POIs usuario -->
     <div id='panel-tab-pois' style='display:none'>
-      <button onclick='cargarPOIsPendientes()' style='font-size:12px;color:#1D9E75;background:none;border:none;cursor:pointer;margin-bottom:1rem;padding:0'>↺ Actualizar</button>
+      <button onclick='cargarPOIsPendientes()' style='font-size:14px;color:#1D9E75;background:none;border:none;cursor:pointer;margin-bottom:1rem;padding:0'>↺ Actualizar</button>
       <div id='admin-pois-lista'></div>
     </div>
     <!-- Panel Alertas -->
     <div id='panel-tab-alertas' style='display:none'>
-      <button onclick='cargarAlertasAdmin()' style='font-size:12px;color:#1D9E75;background:none;border:none;cursor:pointer;margin-bottom:1rem;padding:0'>↺ Actualizar</button>
+      <button onclick='cargarAlertasAdmin()' style='font-size:14px;color:#1D9E75;background:none;border:none;cursor:pointer;margin-bottom:1rem;padding:0'>↺ Actualizar</button>
       <div id='admin-alertas-lista'></div>
     </div>
   </div>
@@ -10795,7 +10795,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <h3>📱 Bizum</h3>
     <p id='bizum-modal-txt'>Envía tu donación por Bizum al número:</p>
     <div class='bizum-number' id='bizum-num' data-real='657 281 137' style='cursor:pointer;user-select:none' onclick='revelarBizum()'>••• ••• •••</div>
-    <p style='font-size:11px;color:var(--texto-suave);text-align:center;margin-bottom:10px' id='bizum-reveal-hint'>Pulsa para revelar</p>
+    <p style='font-size:13px;color:var(--texto-suave);text-align:center;margin-bottom:10px' id='bizum-reveal-hint'>Pulsa para revelar</p>
     <button class='bizum-copy-btn' onclick='copiarBizum()' id='bizum-copy-btn-txt'>Copiar número</button>
     <div class='bizum-copied' id='bizum-copied'></div>
   </div>
@@ -10806,38 +10806,38 @@ document.addEventListener('DOMContentLoaded', function() {
 <div id='subcats-drawer' style='display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:linear-gradient(160deg,#0e2038 0%,#1a3a5c 60%,#1e4570 100%);border-radius:20px 20px 0 0;z-index:10001;padding:1.2rem 1.2rem 2rem;box-sizing:border-box;transition:transform 0.25s;font-family:DM Sans,sans-serif;color:#fff'>
   <div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem'>
     <div>
-      <div style='font-size:14px;font-weight:700;color:#6ee7b7'>⭐ Recomendar punto</div>
-      <div style='font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px'>Elige el tipo de lugar</div>
+      <div style='font-size:16px;font-weight:700;color:#6ee7b7'>⭐ Recomendar punto</div>
+      <div style='font-size:13px;color:rgba(255,255,255,0.45);margin-top:1px'>Elige el tipo de lugar</div>
     </div>
     <button onclick='cerrarSubcatDrawer()' style='background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:50%;width:30px;height:30px;font-size:16px;cursor:pointer;color:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;flex-shrink:0'>✕</button>
   </div>
   <div style='display:flex;flex-direction:column;gap:5px'>
-    <button type='button' onclick='selSubcat("naturaleza","🌿 Naturaleza")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
-      <span style='font-size:18px;line-height:1'>🌿</span><span>Naturaleza</span>
+    <button type='button' onclick='selSubcat("naturaleza","🌿 Naturaleza")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:15px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
+      <span style='font-size:20px;line-height:1'>🌿</span><span>Naturaleza</span>
     </button>
-    <button type='button' onclick='selSubcat("monumento","🏛️ Monumento")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
-      <span style='font-size:18px;line-height:1'>🏛️</span><span>Monumento</span>
+    <button type='button' onclick='selSubcat("monumento","🏛️ Monumento")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:15px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
+      <span style='font-size:20px;line-height:1'>🏛️</span><span>Monumento</span>
     </button>
-    <button type='button' onclick='selSubcat("edificación religiosa","⛪ Religiosa")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
-      <span style='font-size:18px;line-height:1'>⛪</span><span>Religiosa</span>
+    <button type='button' onclick='selSubcat("edificación religiosa","⛪ Religiosa")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:15px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
+      <span style='font-size:20px;line-height:1'>⛪</span><span>Religiosa</span>
     </button>
-    <button type='button' onclick='selSubcat("mirador","🔭 Mirador")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
-      <span style='font-size:18px;line-height:1'>🔭</span><span>Mirador</span>
+    <button type='button' onclick='selSubcat("mirador","🔭 Mirador")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:15px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
+      <span style='font-size:20px;line-height:1'>🔭</span><span>Mirador</span>
     </button>
-    <button type='button' onclick='selSubcat("albergue","🏠 Albergue")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
-      <span style='font-size:18px;line-height:1'>🏠</span><span>Albergue</span>
+    <button type='button' onclick='selSubcat("albergue","🏠 Albergue")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:15px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
+      <span style='font-size:20px;line-height:1'>🏠</span><span>Albergue</span>
     </button>
-    <button type='button' onclick='selSubcat("localización histórica","📜 Histórica")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
-      <span style='font-size:18px;line-height:1'>📜</span><span>Histórica</span>
+    <button type='button' onclick='selSubcat("localización histórica","📜 Histórica")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:15px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
+      <span style='font-size:20px;line-height:1'>📜</span><span>Histórica</span>
     </button>
-    <button type='button' onclick='selSubcat("vestigio arqueológico","🔍 Arqueológico")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
-      <span style='font-size:18px;line-height:1'>🔍</span><span>Arqueológico</span>
+    <button type='button' onclick='selSubcat("vestigio arqueológico","🔍 Arqueológico")' style='display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:15px;font-weight:600;color:rgba(255,255,255,0.75);cursor:pointer;font-family:DM Sans,sans-serif;text-align:left;transition:all 0.15s'>
+      <span style='font-size:20px;line-height:1'>🔍</span><span>Arqueológico</span>
     </button>
   </div>
 </div>
 
 <script>
-var _APP_VERSION = "v1025";
+var _APP_VERSION = "v1026";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11307,8 +11307,8 @@ if ('serviceWorker' in navigator) {
     box.style.cssText='background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:16px;padding:1.5rem;max-width:280px;width:100%;text-align:center;border:1px solid rgba(255,215,0,0.3)';
     box.innerHTML='<div style="font-size:48px;margin-bottom:8px">'+b.emoji+'</div>'
       +'<div style="font-size:16px;font-weight:700;color:#FFD700;margin-bottom:6px">'+b.label+'</div>'
-      +'<div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;margin-bottom:16px">'+b.desc+'</div>'
-      +'<button onclick="document.getElementById(\'modal-logro-info\').remove()" style="background:#1D9E75;color:#fff;border:none;border-radius:20px;padding:8px 24px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">¡Genial!</button>';
+      +'<div style="font-size:15px;color:rgba(255,255,255,0.7);line-height:1.5;margin-bottom:16px">'+b.desc+'</div>'
+      +'<button onclick="document.getElementById(\'modal-logro-info\').remove()" style="background:#1D9E75;color:#fff;border:none;border-radius:20px;padding:8px 24px;font-size:15px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">¡Genial!</button>';
     ov.appendChild(box);document.body.appendChild(ov);
     ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
   }
@@ -11326,9 +11326,9 @@ if ('serviceWorker' in navigator) {
       + '<div style="flex:1">'
         + '<div style="display:flex;align-items:baseline;gap:8px">'
           + '<span style="font-size:15px;font-weight:700;color:#fff">'+rango.label+'</span>'
-          + '<span style="font-size:11px;color:rgba(255,255,255,0.45)">'+n+' cromo'+(n!==1?'s':'')+'</span>'
+          + '<span style="font-size:13px;color:rgba(255,255,255,0.45)">'+n+' cromo'+(n!==1?'s':'')+'</span>'
         + '</div>'
-        + '<div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px">'+siguienteTexto+'</div>'
+        + '<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:1px">'+siguienteTexto+'</div>'
       + '</div>'
       + '</div>'
       + '<div style="background:rgba(255,255,255,0.1);border-radius:20px;height:5px;overflow:hidden">'
@@ -11345,7 +11345,7 @@ if ('serviceWorker' in navigator) {
       obtenidos.forEach(function(b){
         var m=document.createElement('span');
         m.title=b.label;
-        m.style.cssText='font-size:18px;cursor:pointer;line-height:1;display:inline-block';
+        m.style.cssText='font-size:20px;cursor:pointer;line-height:1;display:inline-block';
         m.textContent=b.emoji;
         m.addEventListener('click',function(e){e.stopPropagation();_mostrarModalLogro(b);});
         medallasDiv.appendChild(m);
@@ -11395,7 +11395,7 @@ if ('serviceWorker' in navigator) {
           var ok = desbloqueados.indexOf(b.id) !== -1;
           var pill = document.createElement('div');
           pill.title = b.desc;
-          pill.style.cssText = 'display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap;border:1px solid '+(ok?'rgba(255,215,0,0.5)':'rgba(255,255,255,0.12)')+';background:'+(ok?'rgba(255,215,0,0.12)':'rgba(255,255,255,0.05)')+';color:'+(ok?'#FFD700':'rgba(255,255,255,0.28)');
+          pill.style.cssText = 'display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;border:1px solid '+(ok?'rgba(255,215,0,0.5)':'rgba(255,255,255,0.12)')+';background:'+(ok?'rgba(255,215,0,0.12)':'rgba(255,255,255,0.05)')+';color:'+(ok?'#FFD700':'rgba(255,255,255,0.28)');
           pill.textContent = b.emoji + ' ' + b.label;
           el.appendChild(pill);
         });
@@ -11436,12 +11436,12 @@ if ('serviceWorker' in navigator) {
           info.style.cssText = 'position:relative;z-index:2;padding:6px;width:100%;box-sizing:border-box';
           var d = new Date(v.fecha);
           var fechaStr = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
-          info.innerHTML = '<div style="font-size:10px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:2px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">'+v.emoji+' '+v.nombre+'</div>'
+          info.innerHTML = '<div style="font-size:12px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:2px;text-shadow:0 1px 3px rgba(0,0,0,0.8)">'+v.emoji+' '+v.nombre+'</div>'
             +'<div style="font-size:9px;color:rgba(255,255,255,0.6)">'+fechaStr+'</div>';
           card.appendChild(info);
           // Botón foto (esquina superior derecha)
           var btnFoto = document.createElement('button');
-          btnFoto.style.cssText = 'position:absolute;top:6px;right:6px;z-index:3;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.3);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;backdrop-filter:blur(4px)';
+          btnFoto.style.cssText = 'position:absolute;top:6px;right:6px;z-index:3;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.3);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;backdrop-filter:blur(4px)';
           btnFoto.innerHTML = '📷';
           btnFoto.title = 'Añadir foto';
           btnFoto.onclick = function(e) { e.stopPropagation(); _albumPedirFoto(v.poiId, card); };
@@ -11471,7 +11471,7 @@ if ('serviceWorker' in navigator) {
       BADGES.forEach(function(b) {
         var desbloqueado = desbloqueados.indexOf(b.id) !== -1;
         var pill = document.createElement('div');
-        pill.style.cssText = 'flex-shrink:0;display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;border:1px solid '+(desbloqueado?'rgba(255,215,0,0.6)':'rgba(255,255,255,0.15)')+';background:'+(desbloqueado?'rgba(255,215,0,0.15)':'rgba(255,255,255,0.05)')+';color:'+(desbloqueado?'#FFD700':'rgba(255,255,255,0.35)');
+        pill.style.cssText = 'flex-shrink:0;display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;border:1px solid '+(desbloqueado?'rgba(255,215,0,0.6)':'rgba(255,255,255,0.15)')+';background:'+(desbloqueado?'rgba(255,215,0,0.15)':'rgba(255,255,255,0.05)')+';color:'+(desbloqueado?'#FFD700':'rgba(255,255,255,0.35)');
         pill.title = b.desc;
         pill.innerHTML = b.emoji+' '+b.label;
         cont.appendChild(pill);
@@ -11575,7 +11575,7 @@ if ('serviceWorker' in navigator) {
       return '<div class="poi-img '+p.color+'" style="position:relative;overflow:hidden" data-cromo-id="'+p.id+'">' +
         '<img id="cromo-img-'+p.id+'" src="'+_imgSrc+'" alt="'+p.nombre+'" class="poi-img-cover" decoding="async" fetchpriority="low"/>' +
         _fotoOverlay +
-        '<button onclick="event.stopPropagation();_albumPedirFotoCard(\''+p.id+'\')" style="position:absolute;bottom:7px;right:7px;z-index:10;background:rgba(0,0,0,0.52);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:3px 9px;color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;backdrop-filter:blur(4px)" id="foto-btn-'+p.id+'">📷 mi foto</button>' +
+        '<button onclick="event.stopPropagation();_albumPedirFotoCard(\''+p.id+'\')" style="position:absolute;bottom:7px;right:7px;z-index:10;background:rgba(0,0,0,0.52);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:3px 9px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;backdrop-filter:blur(4px)" id="foto-btn-'+p.id+'">📷 mi foto</button>' +
       '</div>';
     } else {
       // Cromo bloqueado — diseño elegante con color del POI y emoji central
@@ -11604,7 +11604,7 @@ if ('serviceWorker' in navigator) {
           var noFoto = !blob; // overlay hasta que usuario asigne foto propia
           var ov = noFoto ? '<div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:30px;pointer-events:none"><div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(3px);border-radius:10px;padding:4px 8px;font-size:9px;font-weight:600;color:rgba(255,255,255,0.85);text-align:center;font-family:DM Sans,sans-serif;letter-spacing:0.3px;max-width:90%">📷 Añade una foto para tu álbum de recuerdos</div></div>' : '';
           d.innerHTML = '<img id="cromo-img-'+poi.id+'" src="'+src+'" alt="'+poi.nombre+'" class="poi-img-cover" decoding="async"/>' + ov +
-            '<button onclick="event.stopPropagation();_albumPedirFotoCard(\''+poi.id+'\')" style="position:absolute;bottom:7px;right:7px;z-index:10;background:rgba(0,0,0,0.52);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:3px 9px;color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;backdrop-filter:blur(4px)" id="foto-btn-'+poi.id+'">📷 mi foto</button>';
+            '<button onclick="event.stopPropagation();_albumPedirFotoCard(\''+poi.id+'\')" style="position:absolute;bottom:7px;right:7px;z-index:10;background:rgba(0,0,0,0.52);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:3px 9px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;backdrop-filter:blur(4px)" id="foto-btn-'+poi.id+'">📷 mi foto</button>';
         });
       })(div, p);
     });
@@ -11725,8 +11725,8 @@ function _renderAlbumPanel() {
         var pctStat = s.total ? Math.round(visitados/s.total*100) : 0;
         return '<div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 10px">'
           + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'
-            + '<span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.75)">'+s.emoji+' '+s.label+'</span>'
-            + '<span style="font-size:11px;font-weight:700;color:#6ee7b7">'+visitados+(s.total?'/'+s.total:'')+'</span>'
+            + '<span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.75)">'+s.emoji+' '+s.label+'</span>'
+            + '<span style="font-size:13px;font-weight:700;color:#6ee7b7">'+visitados+(s.total?'/'+s.total:'')+'</span>'
           + '</div>'
           + (s.total ? '<div style="background:rgba(255,255,255,0.08);border-radius:20px;height:3px;overflow:hidden">'
             + '<div style="height:100%;width:'+pctStat+'%;background:linear-gradient(90deg,#1D9E75,#6ee7b7);border-radius:20px"></div>'
@@ -11739,7 +11739,7 @@ function _renderAlbumPanel() {
     var elLog = document.getElementById('ap-rank-logros');
     if (elLog) {
       elLog.innerHTML = window.BADGES.map(function(b) {
-        return '<div id="ap-badge-'+b.id+'" title="'+b.desc+'" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.28)">'+b.emoji+' '+b.label+'</div>';
+        return '<div id="ap-badge-'+b.id+'" title="'+b.desc+'" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.28)">'+b.emoji+' '+b.label+'</div>';
       }).join('');
       window._albumGetLogros(function(logros) {
         var desbloqueados = logros.map(function(l){ return l.badgeId; });
@@ -11790,12 +11790,12 @@ function _renderTableroOca() {
         mazoEl.innerHTML='<div style="position:relative;width:44px;height:58px;flex-shrink:0">'
           +(mazo.length>2?'<div style="position:absolute;top:4px;left:4px;width:36px;height:50px;background:rgba(245,200,0,0.15);border:1px solid rgba(245,200,0,0.25);border-radius:6px"></div>':'')
           +(mazo.length>1?'<div style="position:absolute;top:2px;left:2px;width:36px;height:50px;background:rgba(245,200,0,0.2);border:1px solid rgba(245,200,0,0.3);border-radius:6px"></div>':'')
-          +'<div style="position:absolute;top:0;left:0;width:36px;height:50px;background:linear-gradient(135deg,#2d1854,#1a0e2e);border:1.5px solid rgba(245,200,0,0.6);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px">🎴</div>'
+          +'<div style="position:absolute;top:0;left:0;width:36px;height:50px;background:linear-gradient(135deg,#2d1854,#1a0e2e);border:1.5px solid rgba(245,200,0,0.6);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px">🎴</div>'
           +'</div>'
           +'<div style="flex:1">'
-          +'<div style="font-size:13px;font-weight:700;color:#F5C800;margin-bottom:3px">'+(_tTab.mazoTitulo||'Mazo sin abrir')+'</div>'
-          +'<div style="font-size:12px;color:rgba(255,255,255,0.55)">'+(mazo.length>1?'×'+mazo.length+' '+(_tTab.mazoPendientes||'cromos pendientes'):'1 '+(_tTab.mazoPendiente||'cromo pendiente'))+'</div>'
-          +'<div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px">'+(_tTab.mazoTap||'Pulsa para abrir el siguiente')+'</div>'
+          +'<div style="font-size:15px;font-weight:700;color:#F5C800;margin-bottom:3px">'+(_tTab.mazoTitulo||'Mazo sin abrir')+'</div>'
+          +'<div style="font-size:14px;color:rgba(255,255,255,0.55)">'+(mazo.length>1?'×'+mazo.length+' '+(_tTab.mazoPendientes||'cromos pendientes'):'1 '+(_tTab.mazoPendiente||'cromo pendiente'))+'</div>'
+          +'<div style="font-size:13px;color:rgba(255,255,255,0.3);margin-top:2px">'+(_tTab.mazoTap||'Pulsa para abrir el siguiente')+'</div>'
           +'</div>'
           +'<div style="font-size:20px">▶️</div>';
         mazoEl.addEventListener('mouseenter',function(){this.style.background='rgba(255,255,255,0.12)';});
@@ -11937,8 +11937,8 @@ function _ocaModalDeudaInfo(tipo){
   var coste=_DEUDA_COSTE[tipo]||0;
   box.innerHTML='<div style="font-size:32px;margin-bottom:8px">'+icono+'</div>'
     +'<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">Deuda pendiente</div>'
-    +'<div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;margin-bottom:16px">No hay cromos comunes en el tablero. Se han anotado <strong style="color:#fca5a5">-'+coste+'</strong> como deuda de <strong style="color:#fff">'+tipo.charAt(0).toUpperCase()+tipo.slice(1)+'</strong>. Se cobrarán automáticamente cuando entren cromos normales.</div>'
-    +'<button id="deuda-ok" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:16px;padding:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Entendido</button>';
+    +'<div style="font-size:15px;color:rgba(255,255,255,0.7);line-height:1.5;margin-bottom:16px">No hay cromos comunes en el tablero. Se han anotado <strong style="color:#fca5a5">-'+coste+'</strong> como deuda de <strong style="color:#fff">'+tipo.charAt(0).toUpperCase()+tipo.slice(1)+'</strong>. Se cobrarán automáticamente cuando entren cromos normales.</div>'
+    +'<button id="deuda-ok" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:16px;padding:10px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Entendido</button>';
   overlay.appendChild(box);document.body.appendChild(overlay);
   box.querySelector('#deuda-ok').addEventListener('click',function(){overlay.remove();_renderTableroOca();});
 }
@@ -11978,20 +11978,20 @@ function _ocaModalDeudaCobrada(tipo,restante,infoCromos,cb){
   if(infoCromos&&infoCromos.length){
     cromosHtml='<div style="margin:10px 0 14px;display:flex;flex-direction:column;gap:6px">';
     infoCromos.forEach(function(c){
-      cromosHtml+='<div style="display:flex;align-items:center;gap:8px;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.35);border-radius:10px;padding:6px 10px;font-size:12px;color:#fca5a5">'
-        +'<span style="font-size:18px">'+c.emoji+'</span>'
+      cromosHtml+='<div style="display:flex;align-items:center;gap:8px;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.35);border-radius:10px;padding:6px 10px;font-size:14px;color:#fca5a5">'
+        +'<span style="font-size:20px">'+c.emoji+'</span>'
         +'<span style="flex:1;text-align:left"><strong style="color:#fff">'+c.label+'</strong></span>'
-        +'<span style="font-size:10px;opacity:0.7">nº '+c.num+'</span>'
+        +'<span style="font-size:12px;opacity:0.7">nº '+c.num+'</span>'
         +'</div>';
     });
     cromosHtml+='</div>';
   }
   box.innerHTML='<div style="font-size:32px;margin-bottom:8px">'+icono+'</div>'
     +'<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">Deuda cobrada</div>'
-    +'<div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5">Se ha retirado del tablero como pago de <strong style="color:#fff">'+tipo.charAt(0).toUpperCase()+tipo.slice(1)+'</strong>:</div>'
+    +'<div style="font-size:15px;color:rgba(255,255,255,0.7);line-height:1.5">Se ha retirado del tablero como pago de <strong style="color:#fff">'+tipo.charAt(0).toUpperCase()+tipo.slice(1)+'</strong>:</div>'
     +cromosHtml
-    +'<div style="font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:16px">'+(restante>0?'Deuda restante: <strong style="color:#fca5a5">-'+restante+'</strong>':'¡Deuda saldada! ✅')+'</div>'
-    +'<button id="deuda-cobro-ok" style="width:100%;background:#1D9E75;color:#fff;border:none;border-radius:16px;padding:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">OK</button>';
+    +'<div style="font-size:15px;color:rgba(255,255,255,0.7);margin-bottom:16px">'+(restante>0?'Deuda restante: <strong style="color:#fca5a5">-'+restante+'</strong>':'¡Deuda saldada! ✅')+'</div>'
+    +'<button id="deuda-cobro-ok" style="width:100%;background:#1D9E75;color:#fff;border:none;border-radius:16px;padding:10px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">OK</button>';
   overlay.appendChild(box);document.body.appendChild(overlay);
   box.querySelector('#deuda-cobro-ok').addEventListener('click',function(){overlay.remove();_renderTableroOca();if(cb)cb();});
 }
@@ -12047,16 +12047,16 @@ function _ocaSelectorRetirar(n,tipo,cb){
       var cnt=grupos[num].length;
       return '<div class="oca-sel-item" data-num="'+num+'" style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:8px 10px;cursor:pointer;transition:all 0.15s">'
         +'<span style="font-size:20px">'+cas.emoji+'</span>'
-        +'<div style="flex:1"><div style="font-size:11px;color:rgba(255,255,255,0.4)">#'+num+'</div>'
-        +'<div style="font-size:12px;font-weight:600;color:#fff">'+cas.label+'</div></div>'
-        +(cnt>1?'<div style="font-size:10px;background:#1D9E75;color:#fff;border-radius:8px;padding:1px 6px">×'+cnt+'</div>':'')
+        +'<div style="flex:1"><div style="font-size:13px;color:rgba(255,255,255,0.4)">#'+num+'</div>'
+        +'<div style="font-size:14px;font-weight:600;color:#fff">'+cas.label+'</div></div>'
+        +(cnt>1?'<div style="font-size:12px;background:#1D9E75;color:#fff;border-radius:8px;padding:1px 6px">×'+cnt+'</div>':'')
         +'</div>';
     }).join('');
     var box=document.createElement('div');
     box.style.cssText='background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:1.25rem;max-width:85vw;width:300px;max-height:80vh;overflow-y:auto;border:1px solid rgba(255,255,255,0.18)';
-    box.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Elige '+maxSel+' cromo'+(maxSel>1?'s':'')+' a entregar</div>'
+    box.innerHTML='<div style="font-size:14px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Elige '+maxSel+' cromo'+(maxSel>1?'s':'')+' a entregar</div>'
       +'<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">'+itemsHtml+'</div>'
-      +'<button id="oca-sel-confirmar" disabled style="width:100%;background:#6b7280;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Confirmar</button>';
+      +'<button id="oca-sel-confirmar" disabled style="width:100%;background:#6b7280;color:#fff;border:none;border-radius:20px;padding:11px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Confirmar</button>';
     overlay.appendChild(box);document.body.appendChild(overlay);
     var confirmBtn=box.querySelector('#oca-sel-confirmar');
     box.querySelectorAll('.oca-sel-item').forEach(function(item){
@@ -12095,51 +12095,51 @@ function _abrirModalCasilla(num,casilla,entradas){
   var imgHtml='<div style="width:100%;height:60px;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:12px">'+casilla.emoji+'</div>';
   var casillaHtml='<div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center">'
     +'<div style="font-size:26px;margin-bottom:6px">'+casilla.emoji+'</div>'
-    +'<div style="font-family:serif;font-size:14px;font-weight:600;color:'+color+';margin-bottom:3px">'+(casilla.latin||'')+'</div>'
-    +'<div style="font-size:11px;color:rgba(255,255,255,0.45);font-style:italic;margin-bottom:4px">'+(casilla.trad||'')+'</div>'
+    +'<div style="font-family:serif;font-size:16px;font-weight:600;color:'+color+';margin-bottom:3px">'+(casilla.latin||'')+'</div>'
+    +'<div style="font-size:13px;color:rgba(255,255,255,0.45);font-style:italic;margin-bottom:4px">'+(casilla.trad||'')+'</div>'
     +'<div style="font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:1.5px;text-transform:uppercase">'+(casilla.label||'Casilla '+num)+'</div></div>';
-  var poiHtml=poi?'<div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:14px">'+(poi.emoji||'📍')+' '+(poi.nombre||'')+'</div>':'';
+  var poiHtml=poi?'<div style="font-size:15px;color:rgba(255,255,255,0.6);margin-bottom:14px">'+(poi.emoji||'📍')+' '+(poi.nombre||'')+'</div>':'';
   var resultadoTexto={oca:'+1 cromo añadido al mazo',puente:'El puente ya fue cruzado',posada:'1 cromo entregado',dados:'Los dados ya fueron lanzados',laberinto:'2 cromos comunes retirados',carcel:'2 cromos comunes retirados',muerte:'Todos los cromos perdidos — la Muerte permanece',santiago:'¡Compostela completada!',normal:'Sin efecto especial'};
   var efectoHtml='',botonesHtml='';
   if(yaResuelto){
     var resTexto=resultadoTexto[tipo]||'Casilla resuelta';
-    efectoHtml='<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:14px;background:rgba(255,255,255,0.05);border-radius:8px;padding:8px 10px;text-align:center">✓ '+resTexto+'</div>';
-    botonesHtml='<button id="oca-btn-cerrar" style="width:100%;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cerrar</button>';
+    efectoHtml='<div style="font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:14px;background:rgba(255,255,255,0.05);border-radius:8px;padding:8px 10px;text-align:center">✓ '+resTexto+'</div>';
+    botonesHtml='<button id="oca-btn-cerrar" style="width:100%;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:11px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cerrar</button>';
   } else if(tipo==='normal'){
-    efectoHtml='<div style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:14px">Sin efecto especial.</div>';
-    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#1D9E75;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">¡Genial!</button>';
+    efectoHtml='<div style="font-size:15px;color:rgba(255,255,255,0.65);margin-bottom:14px">Sin efecto especial.</div>';
+    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#1D9E75;color:#fff;border:none;border-radius:20px;padding:11px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">¡Genial!</button>';
   } else if(tipo==='santiago'){
-    efectoHtml='<div style="font-size:13px;color:#F5C800;margin-bottom:14px">🏆 ¡Compostela! Has completado el Camino.</div>';
-    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#b45309;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Ultreïa!</button>';
+    efectoHtml='<div style="font-size:15px;color:#F5C800;margin-bottom:14px">🏆 ¡Compostela! Has completado el Camino.</div>';
+    botonesHtml='<button id="oca-btn-resolver" style="width:100%;background:#b45309;color:#fff;border:none;border-radius:20px;padding:11px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Ultreïa!</button>';
   } else if(tipo==='oca'){
-    efectoHtml='<div style="font-size:13px;color:#6ee7b7;margin-bottom:14px">🪷 <strong style="color:#fff">De oca en oca</strong> — +1 cromo al mazo.</div>';
-    botonesHtml='<button id="oca-btn-oca" style="width:100%;background:#059669;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Recibir cromo extra</button>';
+    efectoHtml='<div style="font-size:15px;color:#6ee7b7;margin-bottom:14px">🪷 <strong style="color:#fff">De oca en oca</strong> — +1 cromo al mazo.</div>';
+    botonesHtml='<button id="oca-btn-oca" style="width:100%;background:#059669;color:#fff;border:none;border-radius:20px;padding:11px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Recibir cromo extra</button>';
   } else if(tipo==='puente'){
-    efectoHtml='<div style="font-size:13px;color:#93c5fd;margin-bottom:14px">🌉 <strong style="color:#fff">El Puente</strong> — la suerte decide: +1 al mazo o −1 cromo normal.</div>';
-    botonesHtml='<button id="oca-btn-puente" style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cruzar el puente</button>';
+    efectoHtml='<div style="font-size:15px;color:#93c5fd;margin-bottom:14px">🌉 <strong style="color:#fff">El Puente</strong> — la suerte decide: +1 al mazo o −1 cromo normal.</div>';
+    botonesHtml='<button id="oca-btn-puente" style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:20px;padding:11px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cruzar el puente</button>';
   } else if(tipo==='posada'){
-    efectoHtml='<div style="font-size:13px;color:#fbbf24;margin-bottom:14px">🏨 <strong style="color:#fff">La Posada</strong> — elige 1 cromo normal del tablero a entregar.</div>';
-    botonesHtml='<button id="oca-btn-posada" style="width:100%;background:#d97706;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Elegir cromo a entregar</button>';
+    efectoHtml='<div style="font-size:15px;color:#fbbf24;margin-bottom:14px">🏨 <strong style="color:#fff">La Posada</strong> — elige 1 cromo normal del tablero a entregar.</div>';
+    botonesHtml='<button id="oca-btn-posada" style="width:100%;background:#d97706;color:#fff;border:none;border-radius:20px;padding:11px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Elegir cromo a entregar</button>';
   } else if(tipo==='dados'){
-    efectoHtml='<div style="font-size:13px;color:#c4b5fd;margin-bottom:14px">🎲 <strong style="color:#fff">Los Dados</strong> — la suerte lanza: +2 al mazo o −2 normales del tablero.</div>';
-    botonesHtml='<button id="oca-btn-dados" style="width:100%;background:#7c3aed;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Lanzar los dados</button>';
+    efectoHtml='<div style="font-size:15px;color:#c4b5fd;margin-bottom:14px">🎲 <strong style="color:#fff">Los Dados</strong> — la suerte lanza: +2 al mazo o −2 normales del tablero.</div>';
+    botonesHtml='<button id="oca-btn-dados" style="width:100%;background:#7c3aed;color:#fff;border:none;border-radius:20px;padding:11px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Lanzar los dados</button>';
   } else if(tipo==='laberinto'){
-    efectoHtml='<div style="font-size:13px;color:#a78bfa;margin-bottom:14px">🌀 <strong style="color:#fff">El Laberinto</strong> — se retiran 2 cromos normales del tablero.</div>';
-    botonesHtml='<button id="oca-btn-perder2c" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Aceptar el castigo</button>';
+    efectoHtml='<div style="font-size:15px;color:#a78bfa;margin-bottom:14px">🌀 <strong style="color:#fff">El Laberinto</strong> — se retiran 2 cromos normales del tablero.</div>';
+    botonesHtml='<button id="oca-btn-perder2c" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:20px;padding:11px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Aceptar el castigo</button>';
   } else if(tipo==='carcel'){
-    efectoHtml='<div style="font-size:13px;color:#fca5a5;margin-bottom:14px">⛓️ <strong style="color:#fff">La Cárcel</strong> — se retiran 2 cromos normales del tablero.</div>';
-    botonesHtml='<button id="oca-btn-perder2c" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Pagar rescate</button>';
+    efectoHtml='<div style="font-size:15px;color:#fca5a5;margin-bottom:14px">⛓️ <strong style="color:#fff">La Cárcel</strong> — se retiran 2 cromos normales del tablero.</div>';
+    botonesHtml='<button id="oca-btn-perder2c" style="width:100%;background:#dc2626;color:#fff;border:none;border-radius:20px;padding:11px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Pagar rescate</button>';
   } else if(tipo==='muerte'){
-    efectoHtml='<div style="font-size:13px;color:#ef4444;margin-bottom:14px">💀 <strong style="color:#fff">La Muerte</strong> — se pierden todos los cromos. La casilla de muerte permanece.</div>';
-    botonesHtml='<button id="oca-btn-muerte" style="width:100%;background:#7f1d1d;color:#fff;border:none;border-radius:20px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Aceptar el destino</button>';
+    efectoHtml='<div style="font-size:15px;color:#ef4444;margin-bottom:14px">💀 <strong style="color:#fff">La Muerte</strong> — se pierden todos los cromos. La casilla de muerte permanece.</div>';
+    botonesHtml='<button id="oca-btn-muerte" style="width:100%;background:#7f1d1d;color:#fff;border:none;border-radius:20px;padding:11px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Aceptar el destino</button>';
   }
   var overlay=document.createElement('div');overlay.id='oca-casilla-modal';
   overlay.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1rem;box-sizing:border-box';
   var box=document.createElement('div');
   box.style.cssText='background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:1.25rem;max-width:85vw;width:300px;max-height:85vh;overflow-y:auto;border:1px solid rgba(255,255,255,0.18)';
   var headerHtml='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
-    +'<div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:'+color+'">'+(casilla.label||'Casilla '+num)+'</div>'
-    +(cantidad>1?'<div style="font-size:10px;background:rgba(29,158,117,0.3);color:#6ee7b7;border-radius:8px;padding:2px 8px">×'+cantidad+'</div>':'')+'</div>';
+    +'<div style="font-size:12px;text-transform:uppercase;letter-spacing:2px;color:'+color+'">'+(casilla.label||'Casilla '+num)+'</div>'
+    +(cantidad>1?'<div style="font-size:12px;background:rgba(29,158,117,0.3);color:#6ee7b7;border-radius:8px;padding:2px 8px">×'+cantidad+'</div>':'')+'</div>';
   box.innerHTML=headerHtml+imgHtml+casillaHtml+poiHtml+efectoHtml+botonesHtml;
   overlay.appendChild(box);document.body.appendChild(overlay);
   function cerrar(){var el=document.getElementById('oca-casilla-modal');if(el)el.remove();_renderTableroOca();}
@@ -12193,15 +12193,15 @@ function _hardResetJuego(){
   box.style.cssText='background:linear-gradient(160deg,#2d0a0a,#7f1d1d);border-radius:20px;padding:1.5rem;max-width:85vw;width:300px;text-align:center;border:1px solid rgba(220,38,38,0.4)';
   box.innerHTML='<div style="font-size:32px;margin-bottom:10px">🗑️</div>'
     +'<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px">Hard Reset</div>'
-    +'<div style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:20px;line-height:1.5">Se borrarán todos los cromos, visitas, fotos y logros. Esta acción no se puede deshacer.</div>'
+    +'<div style="font-size:15px;color:rgba(255,255,255,0.65);margin-bottom:20px;line-height:1.5">Se borrarán todos los cromos, visitas, fotos y logros. Esta acción no se puede deshacer.</div>'
     +'<div style="display:flex;gap:8px">'
-    +'<button id="hreset-cancelar" style="flex:1;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:16px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cancelar</button>'
-    +'<button id="hreset-confirmar" style="flex:1;background:#dc2626;color:#fff;border:none;border-radius:16px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Borrar todo</button>'
+    +'<button id="hreset-cancelar" style="flex:1;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:16px;padding:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Cancelar</button>'
+    +'<button id="hreset-confirmar" style="flex:1;background:#dc2626;color:#fff;border:none;border-radius:16px;padding:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Borrar todo</button>'
     +'</div>';
   overlay.appendChild(box);document.body.appendChild(overlay);
   box.querySelector('#hreset-cancelar').addEventListener('click',function(){overlay.remove();});
   box.querySelector('#hreset-confirmar').addEventListener('click',function(){
-    box.innerHTML='<div style="font-size:28px;margin-bottom:12px">⏳</div><div style="font-size:14px;color:#fff">Borrando datos...</div>';
+    box.innerHTML='<div style="font-size:28px;margin-bottom:12px">⏳</div><div style="font-size:16px;color:#fff">Borrando datos...</div>';
     // Timeout de seguridad: si algo falla, recargar igualmente tras 5s
     var _safetyTimer=setTimeout(function(){ window.location.reload(); },5000);
     function _doReload(){
@@ -12551,7 +12551,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1025</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1026</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
