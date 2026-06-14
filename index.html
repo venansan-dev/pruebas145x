@@ -4420,11 +4420,11 @@ function abrirHeroModal() {
   overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:99998;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;justify-content:center;-webkit-tap-highlight-color:transparent;font-family:DM Sans,sans-serif';
 
   var panel = document.createElement('div');
-  panel.style.cssText = 'background:linear-gradient(160deg,#0F6E56 0%,#1D9E75 100%);border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-width:480px;position:relative;box-sizing:border-box;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);overflow:hidden';
+  panel.style.cssText = 'background:linear-gradient(180deg,#f0d9a0 0%,#e8cb88 40%,#dfc070 100%);border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-width:480px;position:relative;box-sizing:border-box;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);overflow:hidden;border-top:3px solid #b8935a;box-shadow:0 -4px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.4)';
 
   // Grid background
   var grid = document.createElement('div');
-  grid.style.cssText = 'position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.06) 1px,transparent 1px);background-size:50px 50px;pointer-events:none';
+  grid.style.cssText = 'position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(139,105,20,0.07) 28px,rgba(139,105,20,0.07) 29px);pointer-events:none;opacity:0.7';
   panel.appendChild(grid);
 
   function cerrar() {
@@ -4435,14 +4435,14 @@ function abrirHeroModal() {
   // ✕
   var btnX = document.createElement('button');
   btnX.textContent = '✕';
-  btnX.style.cssText = 'position:absolute;top:12px;right:12px;width:36px;height:36px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);border-radius:50%;font-size:16px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;color:#fff;-webkit-appearance:none';
+  btnX.style.cssText = 'position:absolute;top:12px;right:12px;width:36px;height:36px;background:rgba(139,105,20,0.15);border:1.5px solid #b8935a;border-radius:50%;font-size:16px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;color:#2c1a0e;-webkit-appearance:none';
   btnX.addEventListener('click', cerrar);
   btnX.addEventListener('touchend', function(e){ e.preventDefault(); cerrar(); });
   panel.appendChild(btnX);
 
   // Handle bar
   var bar = document.createElement('div');
-  bar.style.cssText = 'width:40px;height:4px;background:rgba(255,255,255,0.35);border-radius:2px;margin:0 auto 20px;position:relative;z-index:1';
+  bar.style.cssText = 'text-align:center;font-size:18px;color:#8b6914;margin:0 auto 16px;position:relative;z-index:1;letter-spacing:4px;line-height:1';
   panel.appendChild(bar);
 
   // Inner content
@@ -4460,18 +4460,18 @@ function abrirHeroModal() {
     inner.appendChild(icono);
 
     var titulo = document.createElement('div');
-    titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:18px;font-weight:600;color:#fff;text-align:center;margin-bottom:10px;line-height:1.3';
+    titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:18px;font-weight:600;color:#2c1a0e;text-align:center;margin-bottom:10px;line-height:1.3';
     titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">'+(_t.asistBienCamino||'¡Buen Camino, peregrino!');
     inner.appendChild(titulo);
 
     var msg = document.createElement('p');
-    msg.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.82);text-align:center;line-height:1.7;margin-bottom:16px';
+    msg.style.cssText = 'font-size:13px;color:#3d2b1f;text-align:center;line-height:1.7;margin-bottom:16px';
     msg.innerHTML = _t.asistGratisMsg||'Esta guía es <strong style="color:#fff">gratuita, sin publicidad y sin cookies</strong>. Solo el apoyo de peregrinos como tú hace posible que siga creciendo y libre para todos. 🙏';
     inner.appendChild(msg);
 
     var btnApoyo = document.createElement('button');
     btnApoyo.textContent = _t.asistApoyo||'💚 Apoyar la guía';
-    btnApoyo.style.cssText = 'width:100%;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:8px';
+    btnApoyo.style.cssText = 'width:100%;background:linear-gradient(135deg,#7a1f1f,#5c1414);color:#f5e6c8;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;margin-bottom:8px;box-shadow:0 2px 8px rgba(122,31,31,0.4);letter-spacing:0.3px';
     btnApoyo.addEventListener('click', function() {
       cerrar();
       setTimeout(function(){ abrirDonacionesDrawer(); }, 340);
@@ -4480,7 +4480,7 @@ function abrirHeroModal() {
 
     var btnSalir = document.createElement('button');
     btnSalir.textContent = _t.asistSinApoyo||'Continuar sin apoyar';
-    btnSalir.style.cssText = 'width:100%;background:transparent;color:rgba(255,255,255,0.4);border:none;padding:8px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnSalir.style.cssText = 'width:100%;background:transparent;color:rgba(44,26,14,0.45);border:none;padding:8px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif';
     btnSalir.addEventListener('click', function(){ if(fnDespues) fnDespues(); else cerrar(); });
     inner.appendChild(btnSalir);
   }
@@ -4537,12 +4537,12 @@ function abrirHeroModal() {
     // Solo mostrar ~60% de las veces para que no sea predecible
     if (Math.random() > 0.6) return;
     var wrap = document.createElement('div');
-    wrap.style.cssText = 'background:rgba(255,255,255,0.08);border-left:3px solid rgba(255,255,255,0.3);border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:16px';
+    wrap.style.cssText = 'background:rgba(139,105,20,0.1);border-left:3px solid #b8935a;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:16px';
     var label = document.createElement('div');
-    label.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-weight:600';
+    label.style.cssText = 'font-size:10px;color:#8b6914;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-weight:600';
     label.textContent = _t.asistSabias||'📜 Sabías que…';
     var txt = document.createElement('p');
-    txt.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;margin:0';
+    txt.style.cssText = 'font-size:12px;color:#3d2b1f;line-height:1.6;margin:0';
     txt.innerHTML = _curiosidadAleatoria();
     wrap.appendChild(label);
     wrap.appendChild(txt);
@@ -4555,18 +4555,18 @@ function abrirHeroModal() {
 
     // Saludo contextual con subtítulo dinámico — casco circular delante
     var h1 = document.createElement('div');
-    h1.style.cssText = 'font-family:Playfair Display,serif;font-size:22px;font-weight:600;color:#fff;line-height:1.2;margin-bottom:6px;display:flex;align-items:center';
+    h1.style.cssText = 'font-family:Playfair Display,serif;font-size:22px;font-weight:600;color:#2c1a0e;line-height:1.2;margin-bottom:6px;display:flex;align-items:center';
     h1.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">' + _saludoConContexto();
     inner.appendChild(h1);
     var subCtx = document.createElement('p');
-    subCtx.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.75);margin-bottom:12px;line-height:1.5';
+    subCtx.style.cssText = 'font-size:13px;color:#5c3d1e;margin-bottom:12px;line-height:1.5';
     subCtx.textContent = _subtituloContextual();
     inner.appendChild(subCtx);
 
     // ¿Hay ruta activa?
     if (typeof rutaPuntos !== 'undefined' && rutaPuntos.length > 0) {
       var sub = document.createElement('p');
-      sub.style.cssText = 'font-size:14px;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:20px';
+      sub.style.cssText = 'font-size:14px;color:#3d2b1f;line-height:1.6;margin-bottom:20px';
       sub.textContent = (_t.asistTieneRuta||'Tienes una ruta seleccionada con ') + rutaPuntos.length + (rutaPuntos.length !== 1 ? (_t.asistTieneRutaSufP||' lugares. ¿Quieres revisarla o modificarla?') : (_t.asistTieneRutaSuf||' lugar. ¿Quieres revisarla o modificarla?'));
       inner.appendChild(sub);
 
@@ -4575,12 +4575,12 @@ function abrirHeroModal() {
 
       var btnSi = document.createElement('button');
       btnSi.textContent = _t.asistSiVerRuta||'Sí, ver ruta';
-      btnSi.style.cssText = 'flex:1;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
+      btnSi.style.cssText = 'flex:1;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;box-shadow:0 2px 8px rgba(45,74,30,0.4)';
       btnSi.addEventListener('click', function(){ _renderRevision(); });
 
       var btnNo = document.createElement('button');
       btnNo.textContent = _t.asistNoVolver||'No, volver al mapa';
-      btnNo.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+      btnNo.style.cssText = 'flex:1;background:rgba(139,105,20,0.12);color:#2c1a0e;border:1.5px solid #b8935a;border-radius:8px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
       btnNo.addEventListener('click', function(){ _renderDespedida(); });
 
       btnRow.appendChild(btnSi);
@@ -4625,7 +4625,7 @@ function abrirHeroModal() {
     inner.appendChild(sub);
 
     var sub2 = document.createElement('p');
-    sub2.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;margin-bottom:12px';
+    sub2.style.cssText = 'font-size:13px;color:#5c3d1e;line-height:1.5;margin-bottom:12px';
     sub2.textContent = _t.asistPreguntaVisitar||'¿Te gustaría visitar alguno?';
     inner.appendChild(sub2);
 
@@ -4734,7 +4734,7 @@ function abrirHeroModal() {
     overlay.style.cssText = 'position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.72);display:flex;align-items:flex-end;justify-content:center;font-family:DM Sans,sans-serif';
 
     var box = document.createElement('div');
-    box.style.cssText = 'background:linear-gradient(160deg,#0F4033 0%,#0d2d1e 100%);border-radius:20px 20px 0 0;padding:20px 20px 44px;width:100%;max-width:480px;box-sizing:border-box;position:relative;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1)';
+    box.style.cssText = 'background:linear-gradient(180deg,#f0d9a0 0%,#e8cb88 40%,#dfc070 100%);border-radius:20px 20px 0 0;padding:20px 20px 44px;width:100%;max-width:480px;box-sizing:border-box;position:relative;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);border-top:3px solid #b8935a;box-shadow:0 -4px 32px rgba(0,0,0,0.35)';
 
     function cerrarModal() {
       box.style.transform = 'translateY(100%)';
@@ -4743,24 +4743,24 @@ function abrirHeroModal() {
 
     // Handle
     var handle = document.createElement('div');
-    handle.style.cssText = 'width:40px;height:4px;background:rgba(255,255,255,0.3);border-radius:2px;margin:0 auto 16px';
+    handle.style.cssText = 'width:40px;height:4px;background:rgba(139,105,20,0.4);border-radius:2px;margin:0 auto 16px';
     box.appendChild(handle);
 
     // Botón X
     var btnX = document.createElement('button');
     btnX.textContent = '✕';
-    btnX.style.cssText = 'position:absolute;top:12px;right:12px;width:32px;height:32px;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);border-radius:50%;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;z-index:10';
+    btnX.style.cssText = 'position:absolute;top:12px;right:12px;width:32px;height:32px;background:rgba(139,105,20,0.15);border:1.5px solid #b8935a;border-radius:50%;color:#2c1a0e;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;z-index:10';
     btnX.addEventListener('click', cerrarModal);
     box.appendChild(btnX);
 
     // Título
     var tit = document.createElement('div');
-    tit.style.cssText = 'font-family:Playfair Display,serif;font-size:17px;font-weight:600;color:#fff;margin-bottom:6px;padding-right:36px;line-height:1.3';
+    tit.style.cssText = 'font-family:Playfair Display,serif;font-size:17px;font-weight:600;color:#2c1a0e;margin-bottom:6px;padding-right:36px;line-height:1.3';
     tit.innerHTML = _t.asistBuscarTit||'🔍 Buscar algo próximo a ti';
     box.appendChild(tit);
 
     var sub = document.createElement('p');
-    sub.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:14px;line-height:1.5';
+    sub.style.cssText = 'font-size:12px;color:#5c3d1e;margin-bottom:14px;line-height:1.5';
     sub.textContent = _t.asistBuscarSub||'Escribe lo que necesitas. Los resultados aparecerán en el mapa en un radio de 1 km.';
     box.appendChild(sub);
 
@@ -4770,11 +4770,11 @@ function abrirHeroModal() {
     var input = document.createElement('input');
     input.type = 'text';
     input.placeholder = _t.asistBuscarPh||'albergue, farmacia, fuente, café…';
-    input.style.cssText = 'flex:1;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.25);border-radius:12px;padding:10px 14px;font-size:14px;color:#fff;font-family:DM Sans,sans-serif;outline:none;-webkit-appearance:none';
+    input.style.cssText = 'flex:1;background:rgba(255,255,255,0.5);border:1.5px solid #b8935a;border-radius:8px;padding:10px 14px;font-size:14px;color:#2c1a0e;font-family:DM Sans,sans-serif;outline:none;-webkit-appearance:none';
     input.setAttribute('autocomplete','off');
     var btnBuscar = document.createElement('button');
     btnBuscar.textContent = _t.asistBuscarBtn||'Buscar';
-    btnBuscar.style.cssText = 'background:#1D9E75;color:#fff;border:none;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap;flex-shrink:0';
+    btnBuscar.style.cssText = 'background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;white-space:nowrap;flex-shrink:0';
     inputWrap.appendChild(input);
     inputWrap.appendChild(btnBuscar);
     box.appendChild(inputWrap);
@@ -4786,7 +4786,7 @@ function abrirHeroModal() {
     sugs.forEach(function(s) {
       var chip = document.createElement('button');
       chip.textContent = s;
-      chip.style.cssText = 'background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;-webkit-appearance:none';
+      chip.style.cssText = 'background:rgba(255,255,255,0.4);color:#2c1a0e;border:1px solid #b8935a;border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;-webkit-appearance:none';
       chip.addEventListener('click', function(){ input.value = s; ejecutarBusqueda(s); });
       sugWrap.appendChild(chip);
     });
@@ -4794,7 +4794,7 @@ function abrirHeroModal() {
 
     // Estado (spinner / mensaje)
     var estado = document.createElement('div');
-    estado.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.5);text-align:center;padding:8px 0;display:none';
+    estado.style.cssText = 'font-size:12px;color:#5c3d1e;text-align:center;padding:8px 0;display:none';
     box.appendChild(estado);
 
     // Área de resultados
@@ -4968,7 +4968,7 @@ function abrirHeroModal() {
 
     var btnAtras = document.createElement('button');
     btnAtras.textContent = _t.asistAtras||'← Volver';
-    btnAtras.style.cssText = 'width:100%;background:transparent;color:rgba(255,255,255,0.55);border:none;padding:8px;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:2px';
+    btnAtras.style.cssText = 'width:100%;background:transparent;color:rgba(44,26,14,0.5);border:none;padding:8px;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:2px';
     btnAtras.addEventListener('click', function(){ _renderPaso1(); });
     inner.appendChild(btnAtras);
 
@@ -5058,7 +5058,7 @@ function abrirHeroModal() {
     }
 
     var hint = document.createElement('p');
-    hint.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.65);margin-bottom:14px';
+    hint.style.cssText = 'font-size:12px;color:#8b6914;margin-bottom:14px';
     hint.textContent = _t.asistPulsaX||'Pulsa la ✕ para quitar un lugar de la ruta.';
     inner.appendChild(hint);
 
@@ -5105,7 +5105,7 @@ function abrirHeroModal() {
 
     var btnVolver = document.createElement('button');
     btnVolver.textContent = _t.asistRegresarMapa||'← Regresar al mapa';
-    btnVolver.style.cssText = 'width:100%;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnVolver.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;box-shadow:0 2px 8px rgba(45,74,30,0.4)';
     btnVolver.addEventListener('click', function(){ _renderDespedida(); });
     inner.appendChild(btnVolver);
   }
@@ -5310,7 +5310,7 @@ function abrirHeroModal() {
     var btnConfirmar = document.createElement('button');
     btnConfirmar.textContent = _t.asistConfirmar||'Confirmar selección';
     btnConfirmar.disabled = true;
-    btnConfirmar.style.cssText = 'width:100%;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;opacity:0.4;margin-bottom:8px;transition:opacity 0.2s';
+    btnConfirmar.style.cssText = 'width:100%;background:linear-gradient(135deg,#7a1f1f,#5c1414);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;opacity:0.4;margin-bottom:8px;transition:opacity 0.2s;box-shadow:0 2px 8px rgba(122,31,31,0.4)';
     btnConfirmar.addEventListener('click', function() {
       var ids = Object.keys(seleccionados);
       if (ids.length === 0) return;
@@ -5344,7 +5344,7 @@ function abrirHeroModal() {
     inner.appendChild(icono);
 
     var titulo = document.createElement('div');
-    titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:19px;font-weight:600;color:#fff;text-align:center;margin-bottom:10px;line-height:1.3';
+    titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:19px;font-weight:600;color:#2c1a0e;text-align:center;margin-bottom:10px;line-height:1.3';
     titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">' + (num === 1 ? (_t.asistPaso3Uno||'¡Lugar añadido a tu ruta!') : (_t.asistPaso3Multi||'¡{n} lugares añadidos a tu ruta!').replace('{n}',num));
     inner.appendChild(titulo);
 
@@ -5365,11 +5365,11 @@ function abrirHeroModal() {
 
       // Bloque resumen visual
       var resumen = document.createElement('div');
-      resumen.style.cssText = 'background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:12px 14px;margin-bottom:12px';
+      resumen.style.cssText = 'background:rgba(139,105,20,0.1);border:1.5px solid #b8935a;border-radius:8px;padding:12px 14px;margin-bottom:12px';
 
       // Línea de distancia
       var distLine = document.createElement('div');
-      distLine.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:8px;display:flex;align-items:center;gap:6px';
+      distLine.style.cssText = 'font-size:12px;color:#5c3d1e;margin-bottom:8px;display:flex;align-items:center;gap:6px';
       distLine.innerHTML = '📍 Distancia estimada: <strong style="color:#fff">' + distTxt + '</strong>';
       resumen.appendChild(distLine);
 
@@ -5404,7 +5404,7 @@ function abrirHeroModal() {
     }
 
     var sub = document.createElement('p');
-    sub.style.cssText = 'font-size:13px;color:rgba(255,255,255,0.75);text-align:center;line-height:1.6;margin-bottom:14px';
+    sub.style.cssText = 'font-size:13px;color:#5c3d1e;text-align:center;line-height:1.6;margin-bottom:14px';
     sub.textContent = _t.asistNavegacionPregunta||'¿Quieres comenzar la navegación ahora?';
     inner.appendChild(sub);
 
@@ -10723,7 +10723,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v998";
+var _APP_VERSION = "v999";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11201,7 +11201,7 @@ if ('serviceWorker' in navigator) {
 
   function _renderRankingCard(grid, n, rango, nextRango) {
     var card = document.createElement('div');
-    card.style.cssText = 'grid-column:span 3;border-radius:12px;background:linear-gradient(135deg,rgba(29,158,117,0.25),rgba(29,158,117,0.1));border:1px solid rgba(29,158,117,0.4);padding:0.85rem 1rem;margin-bottom:4px';
+    card.style.cssText = 'grid-column:span 3;border-radius:8px;background:rgba(255,255,255,0.35);border:1.5px solid #b8935a;padding:0.85rem 1rem;margin-bottom:4px';
     var pct = nextRango ? Math.min(Math.round((n - rango.min) / (nextRango.min - rango.min) * 100), 99) : 100;
     var siguienteTexto = nextRango
       ? (nextRango.min - n) + ' visita' + (nextRango.min - n !== 1 ? 's' : '') + ' para ' + nextRango.emoji + ' ' + nextRango.label
@@ -12436,7 +12436,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v998</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v999</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
