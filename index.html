@@ -4450,9 +4450,10 @@ function abrirHeroModal() {
   function _renderDespedida(fnDespues) {
     inner.innerHTML = '';
 
-    var icono = document.createElement('div');
-    icono.style.cssText = 'font-size:36px;text-align:center;margin-bottom:10px';
-    icono.textContent = '🐚';
+    var icono = document.createElement('img');
+    icono.src = 'https://i.postimg.cc/Gt0FZFyj/casco.png';
+    icono.alt = 'Guía Xacobea';
+    icono.style.cssText = 'width:56px;height:56px;object-fit:contain;display:block;margin:0 auto 10px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))';
     inner.appendChild(icono);
 
     var titulo = document.createElement('div');
@@ -4558,9 +4559,14 @@ function abrirHeroModal() {
   function _renderPaso1() {
     inner.innerHTML = '';
 
-    // Saludo contextual con subtítulo dinámico
+    // Avatar casco + saludo contextual
+    var avatar = document.createElement('img');
+    avatar.src = 'https://i.postimg.cc/Gt0FZFyj/casco.png';
+    avatar.alt = 'Guía Xacobea';
+    avatar.style.cssText = 'width:64px;height:64px;object-fit:contain;display:block;margin:0 auto 10px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))';
+    inner.appendChild(avatar);
     var h1 = document.createElement('div');
-    h1.style.cssText = 'font-family:Playfair Display,serif;font-size:22px;font-weight:600;color:#fff;line-height:1.2;margin-bottom:6px';
+    h1.style.cssText = 'font-family:Playfair Display,serif;font-size:22px;font-weight:600;color:#fff;line-height:1.2;margin-bottom:6px;text-align:center';
     h1.textContent = _saludoConContexto();
     inner.appendChild(h1);
     var subCtx = document.createElement('p');
@@ -9926,20 +9932,13 @@ document.addEventListener('DOMContentLoaded', function() {
     screen.orientation.lock('portrait').catch(function(){});
   }
   // Arrancar en modo pantalla completa en móvil/app
-  var _esMobil = window.innerWidth <= 900 || window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches || ('ontouchstart' in window && window.innerWidth < 1024);
+  var _esMobil = screen.width <= 1024 || window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches || 'ontouchstart' in window;
   if (_esMobil) {
-    // Primer intento a 400ms; si el header aún mide 0, reintentar a 800ms
-    function _intentarExpandir() {
+    setTimeout(function() {
       if (_mapaExpandido) return;
-      var h = document.querySelector('.header');
-      if (!h || h.getBoundingClientRect().height === 0) {
-        setTimeout(_intentarExpandir, 400);
-        return;
-      }
       _toggleMapaExpandido();
       cambiarIdioma(idiomaActual);
-    }
-    setTimeout(_intentarExpandir, 400);
+    }, 350);
   }
   var input=document.getElementById('buscar-input');
   if(input)input.addEventListener('keydown',function(e){if(e.key==='Enter')ejecutarBusqueda();});
@@ -10153,7 +10152,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v973";
+var _APP_VERSION = "v975";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11930,7 +11929,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v973</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v975</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
