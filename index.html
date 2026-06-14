@@ -413,7 +413,7 @@
     <div id='ar-status' style='position:absolute;top:20px;left:20px;color:#fff;font-size:12px;font-family:DM Sans,sans-serif;background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:8px'></div>
   </div>
   <!-- Botón añadir punto (derecha) -->
-  <button id='btn-add-poi-map' onclick='abrirFormPOI()' title='Añadir un punto' style='position:absolute;top:10px;right:10px;z-index:400;height:36px;background:#1a4a9e;color:#f5e6c8;border:1.5px solid #2a5aae;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(26,74,158,0.3);padding:0 12px;font-family:DM Sans,sans-serif;white-space:nowrap'>➕ <span id='btn-add-poi-map-txt'>Punto</span></button>
+  <button id='btn-add-poi-map' onclick='abrirFormPOI()' title='Añadir un punto' style='position:absolute;top:10px;right:10px;z-index:400;height:36px;background:#1a4a9e;color:#fff;border:1.5px solid #2a5aae;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(26,74,158,0.3);padding:0 12px;font-family:DM Sans,sans-serif;white-space:nowrap'>➕ <span id='btn-add-poi-map-txt'>Punto</span></button>
   <!-- Panel radio en mapa (columna derecha bajo +punto) -->
   <div id='map-radio-control' style='display:flex;position:absolute;top:54px;right:10px;z-index:400;flex-direction:column;align-items:stretch;gap:4px;font-family:DM Sans,sans-serif'>
     <div style='height:22px'></div>
@@ -4397,10 +4397,10 @@ function _actualizarBtnAlertas() {
     btn.style.background='#fecaca';btn.style.border='1.5px solid #ef4444';
     btn.textContent='🔕';btn.title='Alertas y notificaciones desactivadas';
   } else if(alguOff){
-    btn.style.background='#fef3c7';btn.style.border='1.5px solid #f59e0b';
+    btn.style.background='#f97316';btn.style.border='1.5px solid #ea6000';
     btn.textContent='🔔';btn.title='Algunas notificaciones desactivadas';
   } else {
-    btn.style.background='#fff';btn.style.border='1.5px solid rgba(0,0,0,0.15)';
+    btn.style.background='rgba(255,245,210,0.92)';btn.style.border='1.5px solid #a07828';
     btn.textContent='🔔';btn.title='Notificaciones activas';
   }
 }
@@ -10837,7 +10837,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1024";
+var _APP_VERSION = "v1025";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12551,7 +12551,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1024</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1025</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
