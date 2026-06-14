@@ -1035,31 +1035,33 @@
 </div>
 
 <!-- PANEL TABLERO DE LA OCA -->
-<div id='tablero-drawer' class='map-slide-panel' style='background:linear-gradient(160deg,#1a0e2e 0%,#2d1854 40%,#3b1f6a 70%,#1e1040 100%);font-family:DM Sans,sans-serif;overflow-y:auto;touch-action:pan-y'>
-  <div style='position:absolute;inset:0;padding:0.75rem 1rem;display:flex;flex-direction:column;gap:0.75rem;box-sizing:border-box;overflow-y:auto'>
+<div id='tablero-drawer' class='map-slide-panel' style='background:radial-gradient(ellipse at 20% 15%, rgba(90,50,0,0.25) 0%, transparent 55%),radial-gradient(ellipse at 80% 80%, rgba(60,30,0,0.30) 0%, transparent 50%),radial-gradient(ellipse at 60% 35%, rgba(180,130,40,0.15) 0%, transparent 40%),linear-gradient(180deg,#c9933a 0%,#b87d28 40%,#a86d18 100%);font-family:DM Sans,sans-serif;overflow-y:auto;touch-action:pan-y;border-top:3px solid #5a3008;box-shadow:inset 0 0 60px rgba(60,25,0,0.25),inset 0 0 15px rgba(40,15,0,0.3)'>
+  <!-- Líneas pergamino -->
+  <div style='position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(139,105,20,0.07) 28px,rgba(139,105,20,0.07) 29px);pointer-events:none;opacity:0.7;z-index:0'></div>
+  <div style='position:absolute;inset:0;padding:0.75rem 1rem;display:flex;flex-direction:column;gap:0.75rem;box-sizing:border-box;overflow-y:auto;z-index:1'>
     <div style='display:flex;align-items:center;justify-content:space-between;flex-shrink:0'>
-      <button id='tablero-panel-volver' onclick='cerrarTableroDrawer();abrirAlbumPanel()' style='display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:7px 14px;color:rgba(255,255,255,0.85);font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif'>← Volver</button>
+      <button id='tablero-panel-volver' onclick='cerrarTableroDrawer();abrirAlbumPanel()' style='display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.2);border:1px solid #7a5010;border-radius:10px;padding:7px 14px;color:#fff8e8;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif'>← Volver</button>
     </div>
     <div style='flex-shrink:0'>
       <div style='flex-shrink:0'>
-        <div id='tablero-super-titulo' style='font-size:10px;font-weight:600;color:rgba(245,200,0,0.5);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:4px'>Juego de la Oca Jacobeo</div>
-        <div id='tablero-titulo' style='font-family:Playfair Display,serif;font-size:22px;font-weight:600;color:#F5C800;line-height:1.15;margin-bottom:2px'>🐚 Colección del Peregrino</div>
+        <div id='tablero-super-titulo' style='font-size:10px;font-weight:600;color:rgba(200,160,0,0.7);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:4px'>Juego de la Oca Jacobeo</div>
+        <div id='tablero-titulo' style='font-family:Playfair Display,serif;font-size:22px;font-weight:600;color:#1a0800;line-height:1.15;margin-bottom:2px'>🐚 Colección del Peregrino</div>
       </div>
-      <div id='tablero-contador' style='font-size:12px;color:rgba(255,255,255,0.45)'>Visita lugares para obtener cromos</div>
+      <div id='tablero-contador' style='font-size:12px;color:rgba(26,8,0,0.55)'>Visita lugares para obtener cromos</div>
     </div>
     <div id='ap-mazo-cromos' style='flex-shrink:0;display:none'></div>
     <div id='ap-tablero-oca' style='flex-shrink:0'></div>
     <div id='ap-tablero-vacio' style='display:none;text-align:center;padding:1.5rem 1rem;flex-shrink:0'>
       <div style='font-size:36px;margin-bottom:8px'>🎴</div>
-      <div id='tablero-vacio-txt' style='font-size:13px;color:rgba(255,255,255,0.5)'>Visita lugares del Camino para obtener cromos</div>
+      <div id='tablero-vacio-txt' style='font-size:13px;color:rgba(26,8,0,0.55)'>Visita lugares del Camino para obtener cromos</div>
     </div>
     <!-- Copyright + hard reset -->
-    <div style='flex-shrink:0;border-top:1px solid rgba(255,255,255,0.07);padding-top:10px;display:flex;flex-direction:column;gap:8px'>
+    <div style='flex-shrink:0;border-top:1px solid rgba(90,48,0,0.3);padding-top:10px;display:flex;flex-direction:column;gap:8px'>
       <div style='display:flex;align-items:center;justify-content:space-between'>
-        <div style='font-size:9px;color:rgba(255,255,255,0.18);font-style:italic;letter-spacing:0.3px'>Xacobeapp&#8482; © 2025</div>
-        <div style='font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:0.5px'>Xacobeapp</div>
+        <div style='font-size:9px;color:rgba(26,8,0,0.35);font-style:italic;letter-spacing:0.3px'>Xacobeapp&#8482; © 2025</div>
+        <div style='font-size:9px;color:rgba(26,8,0,0.35);letter-spacing:0.5px'>Xacobeapp</div>
       </div>
-      <button id='tablero-hard-reset-btn' onclick='_hardResetJuego()' style='width:100%;background:rgba(220,38,38,0.15);color:rgba(252,165,165,0.8);border:1px solid rgba(220,38,38,0.3);border-radius:10px;padding:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif'>🗑️ Hard Reset — borrar cromos y visitas</button>
+      <button id='tablero-hard-reset-btn' onclick='_hardResetJuego()' style='width:100%;background:rgba(122,31,31,0.2);color:#c0404040;border:1px solid rgba(180,60,60,0.4);border-radius:10px;padding:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#b03030'>🗑️ Hard Reset — borrar cromos y visitas</button>
     </div>
   </div>
 </div>
@@ -10838,7 +10840,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1029";
+var _APP_VERSION = "v1030";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11787,20 +11789,20 @@ function _renderTableroOca() {
       if(mazo.length>0){
         mazoCont.style.display='block';
         var mazoEl=document.createElement('div');
-        mazoEl.style.cssText='display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(245,200,0,0.35);border-radius:14px;padding:12px 16px;cursor:pointer;transition:background 0.15s;margin-bottom:4px';
+        mazoEl.style.cssText='display:flex;align-items:center;gap:12px;background:rgba(0,0,0,0.15);border:1.5px solid #7a5010;border-radius:14px;padding:12px 16px;cursor:pointer;transition:background 0.15s;margin-bottom:4px';
         mazoEl.innerHTML='<div style="position:relative;width:44px;height:58px;flex-shrink:0">'
-          +(mazo.length>2?'<div style="position:absolute;top:4px;left:4px;width:36px;height:50px;background:rgba(245,200,0,0.15);border:1px solid rgba(245,200,0,0.25);border-radius:6px"></div>':'')
-          +(mazo.length>1?'<div style="position:absolute;top:2px;left:2px;width:36px;height:50px;background:rgba(245,200,0,0.2);border:1px solid rgba(245,200,0,0.3);border-radius:6px"></div>':'')
-          +'<div style="position:absolute;top:0;left:0;width:36px;height:50px;background:linear-gradient(135deg,#2d1854,#1a0e2e);border:1.5px solid rgba(245,200,0,0.6);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px">🎴</div>'
+          +(mazo.length>2?'<div style="position:absolute;top:4px;left:4px;width:36px;height:50px;background:rgba(90,48,0,0.25);border:1px solid rgba(200,160,0,0.3);border-radius:6px"></div>':'')
+          +(mazo.length>1?'<div style="position:absolute;top:2px;left:2px;width:36px;height:50px;background:rgba(90,48,0,0.35);border:1px solid rgba(200,160,0,0.4);border-radius:6px"></div>':'')
+          +'<div style="position:absolute;top:0;left:0;width:36px;height:50px;background:linear-gradient(135deg,#5a3008,#3a1e04);border:1.5px solid rgba(200,160,0,0.7);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px">🎴</div>'
           +'</div>'
           +'<div style="flex:1">'
           +'<div style="font-size:15px;font-weight:700;color:#F5C800;margin-bottom:3px">'+(_tTab.mazoTitulo||'Mazo sin abrir')+'</div>'
-          +'<div style="font-size:14px;color:rgba(255,255,255,0.55)">'+(mazo.length>1?'×'+mazo.length+' '+(_tTab.mazoPendientes||'cromos pendientes'):'1 '+(_tTab.mazoPendiente||'cromo pendiente'))+'</div>'
-          +'<div style="font-size:13px;color:rgba(255,255,255,0.3);margin-top:2px">'+(_tTab.mazoTap||'Pulsa para abrir el siguiente')+'</div>'
+          +'<div style="font-size:14px;color:rgba(26,8,0,0.65)">'+(mazo.length>1?'×'+mazo.length+' '+(_tTab.mazoPendientes||'cromos pendientes'):'1 '+(_tTab.mazoPendiente||'cromo pendiente'))+'</div>'
+          +'<div style="font-size:13px;color:rgba(26,8,0,0.45);margin-top:2px">'+(_tTab.mazoTap||'Pulsa para abrir el siguiente')+'</div>'
           +'</div>'
           +'<div style="font-size:20px">▶️</div>';
-        mazoEl.addEventListener('mouseenter',function(){this.style.background='rgba(255,255,255,0.12)';});
-        mazoEl.addEventListener('mouseleave',function(){this.style.background='rgba(255,255,255,0.07)';});
+        mazoEl.addEventListener('mouseenter',function(){this.style.background='rgba(0,0,0,0.25)';});
+        mazoEl.addEventListener('mouseleave',function(){this.style.background='rgba(0,0,0,0.15)';});
         mazoEl.addEventListener('click',function(){_abrirCromoDelMazo(mazo[0]);});
         mazoCont.appendChild(mazoEl);
       } else { mazoCont.style.display='none'; }
@@ -12552,7 +12554,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1029</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1030</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
