@@ -4414,11 +4414,18 @@ function abrirHeroModal() {
   var _t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : T['es'];
   function _capital(txt) {
     if (!txt || typeof txt !== 'string') return txt;
-    // Saltar etiquetas HTML al inicio
     var m = txt.match(/^(<[^>]+>)(.+)/s);
     if (m) return m[1] + _capital(m[2]);
     var first = txt.charAt(0);
-    if (!first.match(/[A-Za-zÀ-ÿÁÉÍÓÚáéíóúÑñ¡¿]/)) return txt;
+    if (first !== 'T') return txt;
+    return '<span style="float:left;font-family:Playfair Display,serif;font-size:2.6em;line-height:0.85;color:#8b0000;font-weight:700;margin:2px 5px -4px 0;text-shadow:1px 1px 2px rgba(0,0,0,0.3)">T</span>' + txt.slice(1);
+  }
+  function _capitalAll(txt) {
+    if (!txt || typeof txt !== 'string') return txt;
+    var m = txt.match(/^(<[^>]+>)(.+)/s);
+    if (m) return m[1] + _capitalAll(m[2]);
+    var first = txt.charAt(0);
+    if (!first.match(/[A-Za-zÀ-ÿÁÉÍÓÚáéíóúÑñ]/)) return txt;
     return '<span style="float:left;font-family:Playfair Display,serif;font-size:2.6em;line-height:0.85;color:#8b0000;font-weight:700;margin:2px 5px -4px 0;text-shadow:1px 1px 2px rgba(0,0,0,0.3)">' + first + '</span>' + txt.slice(1);
   }
   var viejo = document.getElementById('modal-hero-mobile');
@@ -4444,7 +4451,7 @@ function abrirHeroModal() {
   // ✕
   var btnX = document.createElement('button');
   btnX.textContent = '✕';
-  btnX.style.cssText = 'position:absolute;top:12px;right:12px;width:36px;height:36px;background:rgba(0,0,0,0.2);border:1.5px solid #7a5010;border-radius:50%;font-size:16px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;color:#fff8e8;-webkit-appearance:none';
+  btnX.style.cssText = 'position:absolute;top:10px;right:10px;width:26px;height:26px;background:rgba(0,0,0,0.2);border:1.5px solid #7a5010;border-radius:50%;font-size:11px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;color:#fff8e8;-webkit-appearance:none';
   btnX.addEventListener('click', cerrar);
   btnX.addEventListener('touchend', function(e){ e.preventDefault(); cerrar(); });
   panel.appendChild(btnX);
@@ -4552,7 +4559,7 @@ function abrirHeroModal() {
     label.textContent = _t.asistSabias||'📜 Sabías que…';
     var txt = document.createElement('p');
     txt.style.cssText = 'font-size:12px;color:#fff8e8;line-height:1.6;margin:0';
-    txt.innerHTML = _capital(_curiosidadAleatoria());
+    txt.innerHTML = _capitalAll(_curiosidadAleatoria());
     wrap.appendChild(label);
     wrap.appendChild(txt);
     container.appendChild(wrap);
@@ -10732,7 +10739,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1001";
+var _APP_VERSION = "v1003";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12445,7 +12452,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1001</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1003</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
