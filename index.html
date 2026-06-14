@@ -4486,18 +4486,7 @@ function abrirHeroModal() {
   }
 
   // ── DATOS CONTEXTUALES Y CURIOSIDADES ──────────────────────────
-  var _curiosidades = [
-    'El nombre "Compostela" probablemente deriva del latín <em>campus stellae</em>, "campo de la estrella". Aunque también hay quien lo vincula a <em>compositum</em>, lugar donde se depositan los muertos.',
-    'Los templarios custodiaron el Camino durante casi dos siglos. En Galicia, su bailía de Vigo controlaba las rutas costeras y varios puntos estratégicos que hoy son paradas del Camino Portugués.',
-    'La vieira, símbolo universal del peregrino, tiene un origen incierto. Una leyenda dice que un caballero salió del mar cubierto de conchas tras seguir el cuerpo de Santiago flotando desde Jaffa.',
-    'El Camino Francés mide oficialmente 778 km desde Saint-Jean-Pied-de-Port. Pero la distancia real varía según la fuente: el terreno gallego suma más metros de los que aparecen en el plano.',
-    'La Catedral de Santiago guarda un secreto arquitectónico: el Pórtico de la Gloria fue policromado en colores vivos durante siglos. Lo que hoy ves en piedra desnuda fue una vez una explosión de color.',
-    'El Botafumeiro de la Catedral pesa 53 kg y puede alcanzar los 68 km/h cuando ocho tiraboleiros lo hacen oscilar. Nació, según la tradición, para purificar el aire cargado de peregrinos.',
-    'Existen más de 30 rutas jacobeas reconocidas en Europa. La más larga parte de Riga, en Letonia, y suma más de 3.000 km hasta Compostela.',
-    'La Puerta Santa de la Catedral solo se abre en los Años Santos Jacobeos, cuando el 25 de julio cae en domingo. El próximo es 2027.',
-    'El rey Alfonso II "el Casto" fue el primer peregrino documentado a Compostela, hacia el año 830. Mandó construir la primera iglesia sobre el sepulcro del Apóstol.',
-    'Los peregrinos medievales no caminaban solos por elección: viajar en grupo era una necesidad. Los caminos estaban llenos de bandidos, y la peregrinación era también un seguro de vida colectivo.'
-  ];
+  var _curiosidades = (_t.asistCuriosidades) || [];
 
   function _curiosidadAleatoria() {
     return _curiosidades[Math.floor(Math.random() * _curiosidades.length)];
@@ -4524,27 +4513,22 @@ function abrirHeroModal() {
   function _subtituloContextual() {
     var n = _numCromosActuales();
     var ruta = (typeof rutaPuntos !== 'undefined') ? rutaPuntos.length : 0;
-    // Mensajes según estado del usuario
     if (n === 0 && ruta === 0) {
-      var frases = [
-        'Parece que es tu primera vez por aquí. ¡Bienvenido al Camino!',
-        'Todo está listo para tu peregrinación. ¿Por dónde empezamos?',
-        'El Camino empieza con el primer paso. ¿Damos el tuyo?'
-      ];
+      var frases = _t.asistSubPrimera || ['Parece que es tu primera vez por aquí. ¡Bienvenido al Camino!','Todo está listo para tu peregrinación. ¿Por dónde empezamos?','El Camino empieza con el primer paso. ¿Damos el tuyo?'];
       return frases[Math.floor(Math.random() * frases.length)];
     }
     if (n > 0 && ruta === 0) {
       var rango = (window._getRango) ? window._getRango(n) : null;
-      var rangoTxt = rango ? ' Eres ' + rango.emoji + ' ' + rango.label + '.' : '';
-      return 'Llevas ' + n + ' cromo' + (n !== 1 ? 's' : '') + ' en tu álbum.' + rangoTxt + ' ¡Sigue así!';
+      var rangoTxt = rango ? (_t.asistSubEres||' Eres ') + rango.emoji + ' ' + rango.label + '.' : '';
+      return (n !== 1 ? (_t.asistSubCromosP||'Llevas {n} cromos en tu álbum.') : (_t.asistSubCromos||'Llevas {n} cromo en tu álbum.')).replace('{n}', n) + rangoTxt + (_t.asistSubSigue||' ¡Sigue así!');
     }
     if (ruta > 0 && n === 0) {
-      return 'Tienes ' + ruta + ' lugar' + (ruta !== 1 ? 'es' : '') + ' en ruta. ¿Salimos?';
+      return (ruta !== 1 ? (_t.asistSubRutaP||'Tienes {n} lugares en ruta. ¿Salimos?') : (_t.asistSubRuta||'Tienes {n} lugar en ruta. ¿Salimos?')).replace('{n}', ruta);
     }
     if (ruta > 0 && n > 0) {
-      return 'Llevas ' + n + ' cromo' + (n !== 1 ? 's' : '') + ' y una ruta con ' + ruta + ' parada' + (ruta !== 1 ? 's' : '') + '. ¡El Camino te espera!';
+      return (n !== 1 ? (_t.asistSubAmbosP||'Llevas {n} cromos y una ruta con {r} paradas. ¡El Camino te espera!') : (_t.asistSubAmbos||'Llevas {n} cromo y una ruta con {r} parada. ¡El Camino te espera!')).replace('{n}', n).replace('{r}', ruta);
     }
-    return 'El Camino te espera. ¿En qué puedo ayudarte?';
+    return _t.asistSubDefault||'El Camino te espera. ¿En qué puedo ayudarte?';
   }
 
   // Inserta un bloque de curiosidad con estilo discreto
@@ -5360,7 +5344,7 @@ function abrirHeroModal() {
 
     var titulo = document.createElement('div');
     titulo.style.cssText = 'font-family:Playfair Display,serif;font-size:19px;font-weight:600;color:#fff;text-align:center;margin-bottom:10px;line-height:1.3';
-    titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">' + (num === 1 ? '¡Lugar añadido a tu ruta!' : '¡' + num + ' lugares añadidos a tu ruta!');
+    titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">' + (num === 1 ? (_t.asistPaso3Uno||'¡Lugar añadido a tu ruta!') : (_t.asistPaso3Multi||'¡{n} lugares añadidos a tu ruta!').replace('{n}', num));
     inner.appendChild(titulo);
 
     // ── Resumen de la ruta ───────────────────────────────────────
@@ -10666,7 +10650,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v997";
+var _APP_VERSION = "v998";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12379,7 +12363,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v997</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v998</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
