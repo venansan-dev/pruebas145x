@@ -8186,6 +8186,19 @@ function _addBusquedaRuta(nombreEnc, lat, lng) {
   PUNTOS.push({ id:tmpId, nombre:nombre, lat:lat, lng:lng, categoria:'busqueda', emoji:'📍' });
   addToRoute(tmpId);
   mostrarToast('📍 ' + nombre + ' añadido a la ruta');
+  // Restaurar botones del mapa siempre, independientemente del estado del popup
+  setTimeout(function(){
+    var ids = ['btn-add-poi-map','btn-alertas-toggle','btn-brujula-mapa','btn-sos-mapa',
+               'btn-buscar-mapa','btn-meteo-mapa','btn-poi-drawer-mapa'];
+    ids.forEach(function(id){
+      var b = document.getElementById(id);
+      if (b && !_navActiva) b.style.display = 'flex';
+    });
+    var b2 = document.getElementById('map-ruta-panel');
+    if (b2){ b2.style.display='flex'; b2.style.flexDirection='column'; }
+    var b3 = document.getElementById('map-radio-control');
+    if (b3) b3.style.display = 'flex';
+  }, 350);
 }
 function _mostrarEnMapaConRuta(lat, lng) {
   mapa.closePopup();
@@ -11314,7 +11327,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1127";
+var _APP_VERSION = "v1128";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -13028,7 +13041,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1127</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1128</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
