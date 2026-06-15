@@ -243,7 +243,7 @@
     <a href='#' id='nav-donaciones' onclick='abrirDonacionesDrawer();return false'>🙏 Donaciones</a>
   </nav>
   <!-- Idiomas desktop en header -->
-  <div class='lang-switcher lang-switcher-header-desktop' style='display:flex;gap:5px;margin-left:12px'>
+  <div class='lang-switcher lang-switcher-header-desktop' style='gap:5px;margin-left:12px'>
     <button class='lang-btn activo' id='btn-gl-hd' onclick='cambiarIdioma(&quot;gl&quot;)' title='Galego'><svg viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'><clipPath id='c-gl-hd'><circle cx='18' cy='18' r='18'></circle></clipPath><g clip-path='url(#c-gl-hd)'><rect fill='#ffffff' height='36' width='36'></rect><polygon fill='#003DA5' points='36,7 29,0 0,29 7,36'></polygon></g></svg></button>
     <button class='lang-btn' id='btn-en-hd' onclick='cambiarIdioma(&quot;en&quot;)' title='English'><svg viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'><clipPath id='c-en-hd'><circle cx='18' cy='18' r='18'></circle></clipPath><g clip-path='url(#c-en-hd)'><rect fill='#012169' height='36' width='36'></rect><line stroke='#fff' stroke-width='7' x1='0' x2='36' y1='0' y2='36'></line><line stroke='#fff' stroke-width='7' x1='36' x2='0' y1='0' y2='36'></line><line stroke='#CF142B' stroke-width='4' x1='0' x2='36' y1='0' y2='36'></line><line stroke='#CF142B' stroke-width='4' x1='36' x2='0' y1='0' y2='36'></line><rect fill='#fff' height='36' width='8' x='14' y='0'></rect><rect fill='#fff' height='8' width='36' y='14'></rect><rect fill='#CF142B' height='36' width='5' x='15.5' y='0'></rect><rect fill='#CF142B' height='5' width='36' y='15.5'></rect></g></svg></button>
     <button class='lang-btn' id='btn-es-hd' onclick='cambiarIdioma(&quot;es&quot;)' title='Español'><svg viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'><clipPath id='c-es-hd'><circle cx='18' cy='18' r='18'></circle></clipPath><g clip-path='url(#c-es-hd)'><rect fill='#c60b1e' height='9' width='36'></rect><rect fill='#ffc300' height='18' width='36' y='9'></rect><rect fill='#c60b1e' height='9' width='36' y='27'></rect></g></svg></button>
@@ -10986,7 +10986,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1068";
+var _APP_VERSION = "v1069";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -12700,7 +12700,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1068</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1069</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
