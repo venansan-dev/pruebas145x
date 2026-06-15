@@ -7318,7 +7318,7 @@ function initMapa() {
     b=document.getElementById('btn-alertas-toggle'); if(b) b.style.display='flex';
     b=document.getElementById('btn-brujula-mapa'); if(b&&!_navActiva) b.style.display='flex';
     b=document.getElementById('btn-sos-mapa'); if(b) b.style.display='flex';
-
+    b=document.getElementById('btn-buscar-mapa'); if(b&&!_navActiva) b.style.display='flex';
     b=document.getElementById('btn-meteo-mapa'); if(b) b.style.display='flex';
     b=document.getElementById('btn-poi-drawer-mapa'); if(b) b.style.display='flex';
     // Restaurar panel ruta siempre visible
@@ -8859,7 +8859,23 @@ function cargarRutaGuardada() {
       var full = PUNTOS.find(function(x){ return x.id === p.id; });
       return full || p;
     });
+    // Reinsertar puntos de búsqueda en PUNTOS para que la ruta funcione
+    rutaPuntos.forEach(function(p) {
+      if (p.categoria === 'busqueda' && !PUNTOS.find(function(x){ return x.id === p.id; })) {
+        PUNTOS.push(p);
+      }
+    });
     actualizarRuta();
+    // Recrear marcadores en el mapa para los puntos de búsqueda
+    var iconoBusc = (typeof iconoBusqueda !== 'undefined') ? iconoBusqueda
+      : L.divIcon({ html:'<div style="background:#DC2626;color:#fff;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.25)"><span style="transform:rotate(45deg);font-size:16px">🔍</span></div>', className:'', iconSize:[32,32], iconAnchor:[16,32], popupAnchor:[0,-32] });
+    if (!window._wizSearchMarkers) window._wizSearchMarkers = [];
+    rutaPuntos.forEach(function(p) {
+      if (p.categoria !== 'busqueda' || !p.lat || !p.lng) return;
+      var mk = L.marker([p.lat, p.lng], { icon: iconoBusc }).addTo(mapa);
+      mk.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>' + p.nombre + '</strong><br><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button onclick="_addBusquedaRuta(encodeURIComponent(\'' + p.nombre.replace(/'/g,"\\'") + '\'),' + p.lat + ',' + p.lng + ');this.textContent=\'✓ En ruta\';this.style.background=\'#1D9E75\';this.style.color=\'#fff\';" style="background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">➕ Añadir a ruta</button><button onclick="irACoordenadasNav(' + p.lat + ',' + p.lng + ')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">🗺️ Cómo llegar</button></div></div>');
+      window._wizSearchMarkers.push(mk);
+    });
     mostrarToast('📍 Ruta restaurada (' + rutaPuntos.length + ' puntos)');
     _actualizarBtnRestauraRuta();
   } catch(e) { console.log('Error cargando ruta:', e); }
@@ -11298,7 +11314,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1125";
+var _APP_VERSION = "v1127";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -13012,7 +13028,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1125</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1127</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
