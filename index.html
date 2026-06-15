@@ -4852,13 +4852,13 @@ function abrirHeroModal() {
         window._wizSearchMarkers = [];
 
         var iconoBusc = (typeof iconoBusqueda !== 'undefined') ? iconoBusqueda
-          : L.divIcon({ html:'<div style="background:#1D9E75;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3)">🔍</div>', className:'', iconSize:[28,28], iconAnchor:[14,14] });
+          : L.divIcon({ html:'<div style="background:#DC2626;color:#fff;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.25)"><span style="transform:rotate(45deg);font-size:16px">🔍</span></div>', className:'', iconSize:[32,32], iconAnchor:[16,32], popupAnchor:[0,-32] });
 
         var bounds = [];
         items.forEach(function(it) {
           var lat = it.lat, lng = it.lng, nombre = it.nombre, dist = it.dist;
           var mk = L.marker([lat, lng], { icon: iconoBusc }).addTo(mapa);
-          mk.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>' + nombre + '</strong><br><span style="font-size:13px;color:#6b7280">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + '</span>' + (it.tel ? '<br>📞 ' + it.tel : '') + '<br><div style="display:flex;gap:6px;margin-top:8px"><button onclick="irACoordenadasNav(' + lat + ',' + lng + ')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:14px;cursor:pointer;font-family:DM Sans,sans-serif">🗺️ ' + (_t.asistComoLlegar||'Cómo llegar') + '</button></div></div>');
+          mk.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>' + nombre + '</strong><br><span style="font-size:11px;color:#6b7280">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + '</span>' + (it.tel ? '<br>📞 ' + it.tel : '') + '<br><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button onclick="_addBusquedaRuta(encodeURIComponent(\'' + nombre.replace(/\'/g,"\\'") + '\'),' + lat + ',' + lng + ');this.textContent=\'✓ En ruta\';this.style.background=\'#1D9E75\';this.style.color=\'#fff\';" style="background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">➕ Añadir a ruta</button><button onclick="irACoordenadasNav(' + lat + ',' + lng + ')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">🗺️ Cómo llegar</button></div></div>');
           window._wizSearchMarkers.push(mk);
           bounds.push([lat, lng]);
 
@@ -5727,13 +5727,14 @@ function abrirBuscadorAsistente() {
       window._wizSearchMarkers.forEach(function(m){ try{ mapa.removeLayer(m); }catch(e){} });
       window._wizSearchMarkers = [];
 
-      var iconoBusc = L.divIcon({ html:'<div style="background:#1D9E75;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3)">🔍</div>', className:'', iconSize:[28,28], iconAnchor:[14,14] });
+      var iconoBusc = (typeof iconoBusqueda !== 'undefined') ? iconoBusqueda
+        : L.divIcon({ html:'<div style="background:#DC2626;color:#fff;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.25)"><span style="transform:rotate(45deg);font-size:16px">🔍</span></div>', className:'', iconSize:[32,32], iconAnchor:[16,32], popupAnchor:[0,-32] });
 
       var bounds = [];
       items.forEach(function(it) {
         var lat = it.lat, lng = it.lng, nombre = it.nombre, dist = it.dist;
         var mk = L.marker([lat, lng], { icon: iconoBusc }).addTo(mapa);
-        mk.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>' + nombre + '</strong><br><span style="font-size:13px;color:#6b7280">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + '</span>' + (it.tel ? '<br>📞 ' + it.tel : '') + '<br><div style="display:flex;gap:6px;margin-top:8px"><button onclick="irACoordenadasNav(' + lat + ',' + lng + ')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:14px;cursor:pointer;font-family:DM Sans,sans-serif">🗺️ ' + (_t.asistComoLlegar||'Cómo llegar') + '</button></div></div>');
+        mk.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>' + nombre + '</strong><br><span style="font-size:11px;color:#6b7280">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + '</span>' + (it.tel ? '<br>📞 ' + it.tel : '') + '<br><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button onclick="_addBusquedaRuta(encodeURIComponent(\'' + nombre.replace(/\'/g, "\\'") + '\'),' + lat + ',' + lng + ');this.textContent=\'✓ En ruta\';this.style.background=\'#1D9E75\';this.style.color=\'#fff\';" style="background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">➕ Añadir a ruta</button><button onclick="irACoordenadasNav(' + lat + ',' + lng + ')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">🗺️ Cómo llegar</button></div></div>');
         window._wizSearchMarkers.push(mk);
         bounds.push([lat, lng]);
 
@@ -11297,7 +11298,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1124";
+var _APP_VERSION = "v1125";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -13011,7 +13012,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1124</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1125</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
