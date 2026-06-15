@@ -57,7 +57,7 @@
   <link href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" rel="stylesheet"/>
   <link href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" rel="stylesheet"/>
   <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'DM Sans',sans-serif;background:radial-gradient(ellipse at 15% 10%, rgba(90,50,0,0.10) 0%, transparent 50%),radial-gradient(ellipse at 85% 90%, rgba(60,30,0,0.12) 0%, transparent 50%),radial-gradient(ellipse at 70% 30%, rgba(180,130,40,0.07) 0%, transparent 40%),radial-gradient(ellipse at 20% 75%, rgba(80,40,0,0.09) 0%, transparent 45%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),linear-gradient(180deg,#e8d5a0 0%,#dfc888 50%,#d4b85a 100%);color:#1a1a1a;line-height:1.6}a{text-decoration:none;color:inherit}:root{--verde:#1D9E75;--verde-oscuro:#0F6E56;--verde-claro:#E1F5EE;--blanco:#ffffff;--fondo:#e8d5a0;--texto:#1a1a1a;--texto-suave:#6b7280;--borde:rgba(0,0,0,0.08);--radio:12px;--radio-sm:8px;--fondo-alt:#dfc888}.navbar-iframe,#navbar-iframe{display:none !important}.widget,#sidebar,.blog-pager,.post-feeds,#comments{display:none !important}.header{background:var(--blanco);border-bottom:1px solid var(--borde);box-shadow:0 1px 4px rgba(0,0,0,0.06);padding:0 1rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1100}#nav-desktop{display:flex;align-items:center;gap:2px;flex-wrap:nowrap}@media(max-width:768px){#nav-desktop{display:none}}#nav-desktop a{font-size:12px;padding:0 6px;white-space:nowrap;color:var(--texto-suave);text-decoration:none;transition:color 0.2s}#nav-desktop a:hover{color:var(--verde)}.logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:600}.logo span{color:var(--verde)}nav{display:flex;gap:2rem;align-items:center}nav a{font-size:14px;color:var(--texto-suave);transition:color 0.2s}nav a:hover{color:var(--texto)}.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none}.hamburger span{display:block;width:24px;height:2px;background:var(--texto);border-radius:2px;transition:all 0.25s}.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}.hamburger.open span:nth-child(2){opacity:0}.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}.nav-mobile{display:none;position:fixed;top:64px;left:0;right:0;background:var(--blanco);border-bottom:1px solid var(--borde);z-index:1090;box-shadow:0 8px 24px rgba(0,0,0,0.1);max-height:calc(100vh - 64px);overflow-y:auto}.nav-mobile.open{display:grid;grid-template-columns:1fr 1fr}.nav-mobile.open{display:flex}.nav-mobile a{padding:0 1rem;font-size:13px;color:var(--texto-suave);border-bottom:0.5px solid var(--borde);border-right:0.5px solid var(--borde);transition:background 0.15s;line-height:1.3;display:flex;align-items:center;height:48px;box-sizing:border-box;-webkit-tap-highlight-color:rgba(29,158,117,0.1)}.nav-mobile a:hover{background:var(--fondo);color:var(--texto)}.hero{background:linear-gradient(150deg,var(--verde-oscuro) 0%,#1a9470 55%,var(--verde) 100%);padding:1.5rem 2rem 1rem;position:relative;overflow:hidden;isolation:isolate;z-index:1}.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.07) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}.hero-inner{position:relative;z-index:2;max-width:960px;margin:0 auto}.hero-layout{display:grid;grid-template-columns:1fr 280px;gap:2rem;align-items:start}.hero-tag-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}.hero-tag{display:inline-flex;align-items:center;background:rgba(255,255,255,0.18);color:#fff;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);flex-shrink:0}.hero-share-inline{display:flex;gap:6px;align-items:center}.hero-share-btn{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;text-decoration:none}.hero-share-btn:hover{background:rgba(255,255,255,0.32)}.hero-share-btn svg{width:13px;height:13px;fill:#fff}.hero h1{font-family:'Playfair Display',serif;font-size:38px;color:#fff;line-height:1.15;margin-bottom:4px}.hero-sub{color:rgba(255,255,255,0.8);font-size:15px;margin-bottom:1.5rem}.hero-search-wrap{position:relative}.hero-search-bar{background:var(--blanco);border-radius:var(--radio);padding:0.9rem 1rem;display:flex;gap:8px;align-items:center;box-shadow:0 4px 24px rgba(0,0,0,0.15)}.hero-search-bar input{flex:1;border:none;background:none;font-size:14px;color:var(--texto);font-family:'DM Sans',sans-serif;outline:none}.hero-search-btn{background:var(--verde);color:var(--blanco);border:none;padding:9px 18px;border-radius:var(--radio-sm);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:background 0.2s;flex-shrink:0}.hero-search-btn:hover{background:var(--verde-oscuro)}.hero-search-btn:disabled{background:#9ca3af;cursor:default}.hero-search-hint{font-size:11px;color:rgba(255,255,255,0.6);margin-top:6px}.donate-hero{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:var(--radio);padding:1.25rem}.donate-hero-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px}.donate-hero-sub{font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:12px;line-height:1.5}.donate-btns{display:flex;flex-direction:column;gap:8px}.donate-btn{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:9px 12px;cursor:pointer;transition:background 0.2s;text-decoration:none;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500}.donate-btn:hover{background:rgba(255,255,255,0.28);color:#fff}.donate-btn-icon{font-size:18px;flex-shrink:0}.donate-btn-info{display:flex;flex-direction:column}.donate-btn-label{font-size:13px;font-weight:500;line-height:1.2}.donate-btn-detail{font-size:11px;color:rgba(255,255,255,0.65)}.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center}.modal-bg.visible{display:flex}.modal-box{background:#fff;border-radius:var(--radio);padding:2rem;max-width:340px;width:90%;position:relative}.modal-close{position:absolute;top:12px;right:14px;font-size:20px;cursor:pointer;color:var(--texto-suave);background:none;border:none}.modal-box h3{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:8px}.modal-box p{font-size:13px;color:var(--texto-suave);margin-bottom:12px;line-height:1.6}.bizum-number{background:var(--verde-claro);border:2px solid var(--verde);border-radius:8px;padding:12px;font-size:22px;font-weight:700;color:var(--verde-oscuro);letter-spacing:2px;margin-bottom:12px;text-align:center}.bizum-copy-btn{background:var(--verde);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;margin-bottom:6px}.bizum-copied{font-size:12px;color:var(--verde);text-align:center;height:16px}.cripto-row{margin-bottom:12px}.cripto-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--texto-suave);margin-bottom:4px;font-weight:500}.cripto-addr{background:var(--fondo);border:1px solid var(--borde);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--texto);word-break:break-all;cursor:pointer;transition:background 0.15s}.cripto-addr:hover{background:var(--verde-claro)}.map-section{padding:0 2.5rem;position:relative;background:var(--fondo);z-index:0}#map{width:100%;height:420px;display:block}.map-block #map{height:100%}.map-status{position:absolute;top:50px;left:50%;transform:translateX(-50%);background:var(--blanco);border-radius:24px;padding:8px 18px;font-size:13px;color:var(--verde-oscuro);box-shadow:0 2px 12px rgba(0,0,0,0.12);z-index:500;display:none;border:1px solid var(--borde)}.map-status.visible{display:block}.map-radio-control{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:var(--blanco);border-radius:24px;padding:8px 16px;font-size:12px;color:var(--texto-suave);box-shadow:0 2px 12px rgba(0,0,0,0.12);z-index:500;border:1px solid var(--borde);display:flex;gap:8px;align-items:center}.map-radio-btn{padding:4px 12px;border-radius:12px;cursor:pointer;font-size:12px;font-weight:500;border:1px solid var(--borde);background:var(--fondo);color:var(--texto-suave);transition:all 0.15s}.map-radio-btn.active{background:var(--verde);color:#fff;border-color:var(--verde)}.footer-donate{background:var(--verde-claro);border-top:1px solid rgba(29,158,117,0.2);padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap}.footer-donate-text h4{font-size:15px;font-weight:600;color:var(--verde-oscuro);margin-bottom:3px}.footer-donate-text p{font-size:13px;color:var(--texto-suave)}.footer-donate-btns{display:flex;gap:8px;flex-wrap:wrap}.footer-donate-btn{display:flex;align-items:center;gap:6px;background:var(--blanco);border:1px solid rgba(29,158,117,0.3);border-radius:20px;padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;color:var(--verde-oscuro);transition:all 0.15s;text-decoration:none;font-family:'DM Sans',sans-serif}.footer-donate-btn:hover{background:var(--verde);color:#fff;border-color:var(--verde)}.section{padding:3rem 2rem;position:relative;z-index:500}.section-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.5rem}.section-header h2{font-family:'Playfair Display',serif;font-size:26px;font-weight:600}.section-subtitle{font-size:14px;color:var(--texto-suave);margin-bottom:0.25rem}.section-subtitle2{font-size:13px;color:var(--texto-suave);font-style:italic;margin-bottom:1.5rem}.categories{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:1.5rem;scrollbar-width:none}.categories::-webkit-scrollbar{display:none}.cat-chip{padding:8px 18px;border-radius:24px;font-size:13px;cursor:pointer;white-space:nowrap;border:1px solid var(--borde);background:var(--blanco);color:var(--texto-suave);transition:all 0.15s}.cat-chip:hover{border-color:var(--verde);color:var(--verde)}.cat-chip.active{background:var(--verde);color:var(--blanco);border-color:var(--verde)}.carousel-wrap{position:relative;z-index:510;isolation:isolate}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'DM Sans',sans-serif;background:radial-gradient(ellipse at 15% 10%, rgba(90,50,0,0.10) 0%, transparent 50%),radial-gradient(ellipse at 85% 90%, rgba(60,30,0,0.12) 0%, transparent 50%),radial-gradient(ellipse at 70% 30%, rgba(180,130,40,0.07) 0%, transparent 40%),radial-gradient(ellipse at 20% 75%, rgba(80,40,0,0.09) 0%, transparent 45%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),linear-gradient(180deg,#e8d5a0 0%,#dfc888 50%,#d4b85a 100%);color:#1a1a1a;line-height:1.6}a{text-decoration:none;color:inherit}:root{--verde:#1D9E75;--verde-oscuro:#0F6E56;--verde-claro:#E1F5EE;--blanco:#ffffff;--fondo:#e8d5a0;--texto:#1a1a1a;--texto-suave:#6b7280;--borde:rgba(0,0,0,0.08);--radio:12px;--radio-sm:8px;--fondo-alt:#dfc888}.navbar-iframe,#navbar-iframe{display:none !important}.widget,#sidebar,.blog-pager,.post-feeds,#comments{display:none !important}.header{background:var(--blanco);border-bottom:1px solid var(--borde);box-shadow:0 1px 4px rgba(0,0,0,0.06);padding:0 1rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1100}#nav-desktop{display:flex;align-items:center;gap:2px;flex-wrap:nowrap}@media(max-width:768px){#nav-desktop{display:none}}#nav-desktop a{font-size:12px;padding:0 6px;white-space:nowrap;color:var(--texto-suave);text-decoration:none;transition:color 0.2s}#nav-desktop a:hover{color:var(--verde)}.logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:600}.logo span{color:var(--verde)}nav{display:flex;gap:2rem;align-items:center}nav a{font-size:14px;color:var(--texto-suave);transition:color 0.2s}nav a:hover{color:var(--texto)}.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none}.hamburger span{display:block;width:24px;height:2px;background:var(--texto);border-radius:2px;transition:all 0.25s}.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}.hamburger.open span:nth-child(2){opacity:0}.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}.nav-mobile{display:none;position:fixed;top:64px;left:0;right:0;background:var(--blanco);border-bottom:1px solid var(--borde);z-index:1090;box-shadow:0 8px 24px rgba(0,0,0,0.1);max-height:calc(100vh - 64px);overflow-y:auto}.nav-mobile.open{display:grid;grid-template-columns:1fr 1fr}.nav-mobile.open{display:flex}.nav-mobile a{padding:0 1rem;font-size:13px;color:var(--texto-suave);border-bottom:0.5px solid var(--borde);border-right:0.5px solid var(--borde);transition:background 0.15s;line-height:1.3;display:flex;align-items:center;height:48px;box-sizing:border-box;-webkit-tap-highlight-color:rgba(29,158,117,0.1)}.nav-mobile a:hover{background:var(--fondo);color:var(--texto)}.hero{background:url('https://i.postimg.cc/HnGvFWjJ/headr4.png') center/cover no-repeat,linear-gradient(150deg,var(--verde-oscuro) 0%,#1a9470 55%,var(--verde) 100%);padding:1.5rem 2rem 1rem;position:relative;overflow:hidden;isolation:isolate;z-index:1}.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.07) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}.hero-inner{position:relative;z-index:2;max-width:960px;margin:0 auto}.hero-layout{display:grid;grid-template-columns:1fr 280px;gap:2rem;align-items:start}.hero-tag-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}.hero-tag{display:inline-flex;align-items:center;background:rgba(255,255,255,0.18);color:#fff;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);flex-shrink:0}.hero-share-inline{display:flex;gap:6px;align-items:center}.hero-share-btn{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;text-decoration:none}.hero-share-btn:hover{background:rgba(255,255,255,0.32)}.hero-share-btn svg{width:13px;height:13px;fill:#fff}.hero h1{font-family:'Playfair Display',serif;font-size:38px;color:#fff;line-height:1.15;margin-bottom:4px}.hero-sub{color:rgba(255,255,255,0.8);font-size:15px;margin-bottom:1.5rem}.hero-search-wrap{position:relative}.hero-search-bar{background:var(--blanco);border-radius:var(--radio);padding:0.9rem 1rem;display:flex;gap:8px;align-items:center;box-shadow:0 4px 24px rgba(0,0,0,0.15)}.hero-search-bar input{flex:1;border:none;background:none;font-size:14px;color:var(--texto);font-family:'DM Sans',sans-serif;outline:none}.hero-search-btn{background:var(--verde);color:var(--blanco);border:none;padding:9px 18px;border-radius:var(--radio-sm);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:background 0.2s;flex-shrink:0}.hero-search-btn:hover{background:var(--verde-oscuro)}.hero-search-btn:disabled{background:#9ca3af;cursor:default}.hero-search-hint{font-size:11px;color:rgba(255,255,255,0.6);margin-top:6px}.donate-hero{display:none;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:var(--radio);padding:1.25rem}.donate-hero-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px}.donate-hero-sub{font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:12px;line-height:1.5}.donate-btns{display:flex;flex-direction:column;gap:8px}.donate-btn{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:9px 12px;cursor:pointer;transition:background 0.2s;text-decoration:none;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500}.donate-btn:hover{background:rgba(255,255,255,0.28);color:#fff}.donate-btn-icon{font-size:18px;flex-shrink:0}.donate-btn-info{display:flex;flex-direction:column}.donate-btn-label{font-size:13px;font-weight:500;line-height:1.2}.donate-btn-detail{font-size:11px;color:rgba(255,255,255,0.65)}.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center}.modal-bg.visible{display:flex}.modal-box{background:#fff;border-radius:var(--radio);padding:2rem;max-width:340px;width:90%;position:relative}.modal-close{position:absolute;top:12px;right:14px;font-size:20px;cursor:pointer;color:var(--texto-suave);background:none;border:none}.modal-box h3{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:8px}.modal-box p{font-size:13px;color:var(--texto-suave);margin-bottom:12px;line-height:1.6}.bizum-number{background:var(--verde-claro);border:2px solid var(--verde);border-radius:8px;padding:12px;font-size:22px;font-weight:700;color:var(--verde-oscuro);letter-spacing:2px;margin-bottom:12px;text-align:center}.bizum-copy-btn{background:var(--verde);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;margin-bottom:6px}.bizum-copied{font-size:12px;color:var(--verde);text-align:center;height:16px}.cripto-row{margin-bottom:12px}.cripto-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--texto-suave);margin-bottom:4px;font-weight:500}.cripto-addr{background:var(--fondo);border:1px solid var(--borde);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--texto);word-break:break-all;cursor:pointer;transition:background 0.15s}.cripto-addr:hover{background:var(--verde-claro)}.map-section{padding:0 2.5rem;position:relative;background:var(--fondo);z-index:0}#map{width:100%;height:420px;display:block}.map-block #map{height:100%}.map-status{position:absolute;top:50px;left:50%;transform:translateX(-50%);background:var(--blanco);border-radius:24px;padding:8px 18px;font-size:13px;color:var(--verde-oscuro);box-shadow:0 2px 12px rgba(0,0,0,0.12);z-index:500;display:none;border:1px solid var(--borde)}.map-status.visible{display:block}.map-radio-control{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:var(--blanco);border-radius:24px;padding:8px 16px;font-size:12px;color:var(--texto-suave);box-shadow:0 2px 12px rgba(0,0,0,0.12);z-index:500;border:1px solid var(--borde);display:flex;gap:8px;align-items:center}.map-radio-btn{padding:4px 12px;border-radius:12px;cursor:pointer;font-size:12px;font-weight:500;border:1px solid var(--borde);background:var(--fondo);color:var(--texto-suave);transition:all 0.15s}.map-radio-btn.active{background:var(--verde);color:#fff;border-color:var(--verde)}.footer-donate{background:var(--verde-claro);border-top:1px solid rgba(29,158,117,0.2);padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap}.footer-donate-text h4{font-size:15px;font-weight:600;color:var(--verde-oscuro);margin-bottom:3px}.footer-donate-text p{font-size:13px;color:var(--texto-suave)}.footer-donate-btns{display:flex;gap:8px;flex-wrap:wrap}.footer-donate-btn{display:flex;align-items:center;gap:6px;background:var(--blanco);border:1px solid rgba(29,158,117,0.3);border-radius:20px;padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;color:var(--verde-oscuro);transition:all 0.15s;text-decoration:none;font-family:'DM Sans',sans-serif}.footer-donate-btn:hover{background:var(--verde);color:#fff;border-color:var(--verde)}.section{padding:3rem 2rem;position:relative;z-index:500}.section-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.5rem}.section-header h2{font-family:'Playfair Display',serif;font-size:26px;font-weight:600}.section-subtitle{font-size:14px;color:var(--texto-suave);margin-bottom:0.25rem}.section-subtitle2{font-size:13px;color:var(--texto-suave);font-style:italic;margin-bottom:1.5rem}.categories{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:1.5rem;scrollbar-width:none}.categories::-webkit-scrollbar{display:none}.cat-chip{padding:8px 18px;border-radius:24px;font-size:13px;cursor:pointer;white-space:nowrap;border:1px solid var(--borde);background:var(--blanco);color:var(--texto-suave);transition:all 0.15s}.cat-chip:hover{border-color:var(--verde);color:var(--verde)}.cat-chip.active{background:var(--verde);color:var(--blanco);border-color:var(--verde)}.carousel-wrap{position:relative;z-index:510;isolation:isolate}
 #rotate-overlay{display:none;position:fixed;inset:0;z-index:999999;background:linear-gradient(160deg,#0F6E56 0%,#1D9E75 100%);flex-direction:column;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;color:#fff;text-align:center;padding:2rem}
 #rotate-overlay .rotate-icon{font-size:64px;margin-bottom:20px;animation:rotatePulse 2s ease-in-out infinite}
 #rotate-overlay .rotate-title{font-size:20px;font-weight:700;font-family:Playfair Display,serif;margin-bottom:8px}
@@ -66,9 +66,10 @@
 @media (orientation:landscape) and (max-width:1024px){#rotate-overlay{display:flex}}
 
 
-.carousel{display:flex;gap:1.25rem;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x mandatory;padding-bottom:1rem;cursor:grab;scrollbar-width:none;-webkit-overflow-scrolling:touch;transform:translateZ(0);-webkit-transform:translateZ(0)}.carousel::-webkit-scrollbar{display:none}.carousel:active{cursor:grabbing}.poi-card{background:#fffffe;border-radius:var(--radio);border:1px solid var(--borde);overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;flex:0 0 280px;scroll-snap-align:start;position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.07)}@media(hover:hover){.poi-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.13)}}.poi-img{height:150px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.poi-img img{width:100%;height:100%;object-fit:cover;display:block}.poi-img.verde{background:#E1F5EE}.poi-img.azul{background:#E6F1FB}.poi-img.ambar{background:#FAEEDA}.poi-img.coral{background:#FAECE7}.poi-img.morado{background:#EEEDFE}.poi-body{padding:1rem 1.25rem}.poi-category{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--verde);font-weight:500;margin-bottom:5px}.poi-nombre-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}.poi-emoji{font-size:20px;flex-shrink:0;line-height:1}.poi-nombre{font-size:15px;font-weight:500;line-height:1.3}.poi-body p{font-size:13px;color:var(--texto-suave);line-height:1.5;margin-bottom:10px}.poi-stars{display:flex;align-items:center;gap:6px;margin-bottom:10px}.stars{display:flex;gap:2px}.star{font-size:18px;cursor:pointer;color:#d1d5db;transition:color 0.1s;line-height:1;padding:4px 3px;display:inline-block;user-select:none}.star.activa{color:#F5C800}.star:hover{color:#F5C800}.stars-count{font-size:11px;color:var(--texto-suave)}.poi-share{display:flex;gap:6px;margin-bottom:10px}.poi-share-btn{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--borde);background:var(--fondo);font-size:13px;transition:background 0.15s;text-decoration:none}.poi-share-btn:hover{background:var(--verde-claro)}.poi-opiniones{margin-top:8px;border-top:1px solid var(--borde);padding-top:10px}.poi-opiniones-lista{max-height:80px;overflow-y:auto;margin-bottom:8px}.opinion-item{font-size:12px;color:var(--texto-suave);padding:4px 0;border-bottom:1px solid #f0f0f0;line-height:1.4}.opinion-item strong{color:var(--texto);font-size:11px}.opinion-form{display:flex;gap:6px}.opinion-input{flex:1;border:1px solid var(--borde);border-radius:8px;padding:6px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--texto);background:var(--fondo)}.opinion-input:focus{border-color:var(--verde)}.opinion-send{background:var(--verde);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}.poi-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px}.poi-dist{font-size:12px;color:var(--texto-suave);background:var(--verde-claro);padding:3px 10px;border-radius:12px;font-weight:500}.poi-dist.calculando{color:#aaa;background:#f0f0f0}.poi-btn{font-size:12px;color:var(--verde);font-weight:500;cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif}.poi-btn:hover{text-decoration:underline}.carousel-nav{display:flex;justify-content:center;gap:12px;margin-top:1rem}.carousel-arrow{width:36px;height:36px;border-radius:50%;background:var(--blanco);border:1px solid var(--borde);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all 0.15s}.carousel-arrow:hover{background:var(--verde);color:#fff;border-color:var(--verde)}.historia-section{background:linear-gradient(155deg,#0d5e49 0%,#163354 60%,#122840 100%);padding:4rem 2rem;position:relative;overflow:hidden}.historia-section::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:50px 50px;pointer-events:none}.historia-inner{max-width:860px;margin:0 auto;position:relative;z-index:2}.historia-tag{display:inline-block;background:rgba(255,255,255,0.15);color:#fff;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;padding:6px 14px;border-radius:20px;margin-bottom:1rem;border:1px solid rgba(255,255,255,0.25)}.historia-section h2{font-family:'Playfair Display',serif;font-size:32px;color:#fff;line-height:1.2;margin-bottom:0.5rem}.historia-section h3{font-family:'Playfair Display',serif;font-size:20px;color:rgba(255,255,255,0.9);margin:2rem 0 0.75rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.15)}.historia-subtitulo{color:rgba(255,255,255,0.6);font-size:14px;margin-bottom:2rem;font-style:italic}.historia-section p{color:rgba(255,255,255,0.82);font-size:15px;line-height:1.85;margin-bottom:1rem}.historia-destacado{background:rgba(255,255,255,0.1);border-left:3px solid #F5C800;padding:1.2rem 1.5rem;border-radius:0 var(--radio) var(--radio) 0;margin:1.5rem 0;font-style:italic;color:rgba(255,255,255,0.9) !important;font-size:15px !important;line-height:1.7 !important}.historia-divider{width:60px;height:3px;background:#F5C800;border-radius:2px;margin:1rem 0 1.5rem}.historia-footer-nota{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.15);font-size:13px;color:rgba(255,255,255,0.5);font-style:italic}.footer{background:#F0EFE9;border-top:1px solid rgba(0,0,0,0.06);padding:3rem 2rem 2rem;display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem}.footer-brand p{font-size:13px;color:var(--texto-suave);line-height:1.7;max-width:260px;margin-top:10px}.footer-col h4{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--texto-suave);margin-bottom:14px;font-weight:500}.footer-col a{display:block;font-size:14px;color:var(--texto-suave);margin-bottom:8px}.footer-col a:hover{color:var(--verde)}.footer-bottom{background:#ECEAE3;border-top:1px solid rgba(0,0,0,0.06);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center}.footer-bottom p{font-size:12px;color:var(--texto-suave)}.lang-switcher-desktop{display:flex}.lang-switcher-mobile{display:none;position:absolute;bottom:1.5rem;right:1.2rem}
+.carousel{display:flex;gap:1.25rem;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x mandatory;padding-bottom:1rem;cursor:grab;scrollbar-width:none;-webkit-overflow-scrolling:touch;transform:translateZ(0);-webkit-transform:translateZ(0)}.carousel::-webkit-scrollbar{display:none}.carousel:active{cursor:grabbing}.poi-card{background:#fffffe;border-radius:var(--radio);border:1px solid var(--borde);overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;flex:0 0 280px;scroll-snap-align:start;position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.07)}@media(hover:hover){.poi-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.13)}}.poi-img{height:150px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.poi-img img{width:100%;height:100%;object-fit:cover;display:block}.poi-img.verde{background:#E1F5EE}.poi-img.azul{background:#E6F1FB}.poi-img.ambar{background:#FAEEDA}.poi-img.coral{background:#FAECE7}.poi-img.morado{background:#EEEDFE}.poi-body{padding:1rem 1.25rem}.poi-category{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--verde);font-weight:500;margin-bottom:5px}.poi-nombre-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}.poi-emoji{font-size:20px;flex-shrink:0;line-height:1}.poi-nombre{font-size:15px;font-weight:500;line-height:1.3}.poi-body p{font-size:13px;color:var(--texto-suave);line-height:1.5;margin-bottom:10px}.poi-stars{display:flex;align-items:center;gap:6px;margin-bottom:10px}.stars{display:flex;gap:2px}.star{font-size:18px;cursor:pointer;color:#d1d5db;transition:color 0.1s;line-height:1;padding:4px 3px;display:inline-block;user-select:none}.star.activa{color:#F5C800}.star:hover{color:#F5C800}.stars-count{font-size:11px;color:var(--texto-suave)}.poi-share{display:flex;gap:6px;margin-bottom:10px}.poi-share-btn{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--borde);background:var(--fondo);font-size:13px;transition:background 0.15s;text-decoration:none}.poi-share-btn:hover{background:var(--verde-claro)}.poi-opiniones{margin-top:8px;border-top:1px solid var(--borde);padding-top:10px}.poi-opiniones-lista{max-height:80px;overflow-y:auto;margin-bottom:8px}.opinion-item{font-size:12px;color:var(--texto-suave);padding:4px 0;border-bottom:1px solid #f0f0f0;line-height:1.4}.opinion-item strong{color:var(--texto);font-size:11px}.opinion-form{display:flex;gap:6px}.opinion-input{flex:1;border:1px solid var(--borde);border-radius:8px;padding:6px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--texto);background:var(--fondo)}.opinion-input:focus{border-color:var(--verde)}.opinion-send{background:var(--verde);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}.poi-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px}.poi-dist{font-size:12px;color:var(--texto-suave);background:var(--verde-claro);padding:3px 10px;border-radius:12px;font-weight:500}.poi-dist.calculando{color:#aaa;background:#f0f0f0}.poi-btn{font-size:12px;color:var(--verde);font-weight:500;cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif}.poi-btn:hover{text-decoration:underline}.carousel-nav{display:flex;justify-content:center;gap:12px;margin-top:1rem}.carousel-arrow{width:36px;height:36px;border-radius:50%;background:var(--blanco);border:1px solid var(--borde);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all 0.15s}.carousel-arrow:hover{background:var(--verde);color:#fff;border-color:var(--verde)}.historia-section{background:linear-gradient(155deg,#0d5e49 0%,#163354 60%,#122840 100%);padding:4rem 2rem;position:relative;overflow:hidden}.historia-section::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:50px 50px;pointer-events:none}.historia-inner{max-width:860px;margin:0 auto;position:relative;z-index:2}.historia-tag{display:inline-block;background:rgba(255,255,255,0.15);color:#fff;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;padding:6px 14px;border-radius:20px;margin-bottom:1rem;border:1px solid rgba(255,255,255,0.25)}.historia-section h2{font-family:'Playfair Display',serif;font-size:32px;color:#fff;line-height:1.2;margin-bottom:0.5rem}.historia-section h3{font-family:'Playfair Display',serif;font-size:20px;color:rgba(255,255,255,0.9);margin:2rem 0 0.75rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.15)}.historia-subtitulo{color:rgba(255,255,255,0.6);font-size:14px;margin-bottom:2rem;font-style:italic}.historia-section p{color:rgba(255,255,255,0.82);font-size:15px;line-height:1.85;margin-bottom:1rem}.historia-destacado{background:rgba(255,255,255,0.1);border-left:3px solid #F5C800;padding:1.2rem 1.5rem;border-radius:0 var(--radio) var(--radio) 0;margin:1.5rem 0;font-style:italic;color:rgba(255,255,255,0.9) !important;font-size:15px !important;line-height:1.7 !important}.historia-divider{width:60px;height:3px;background:#F5C800;border-radius:2px;margin:1rem 0 1.5rem}.historia-footer-nota{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.15);font-size:13px;color:rgba(255,255,255,0.5);font-style:italic}.footer{background:#F0EFE9;border-top:1px solid rgba(0,0,0,0.06);padding:3rem 2rem 2rem;display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem}.footer-brand p{font-size:13px;color:var(--texto-suave);line-height:1.7;max-width:260px;margin-top:10px}.footer-col h4{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--texto-suave);margin-bottom:14px;font-weight:500}.footer-col a{display:block;font-size:14px;color:var(--texto-suave);margin-bottom:8px}.footer-col a:hover{color:var(--verde)}.footer-bottom{background:#ECEAE3;border-top:1px solid rgba(0,0,0,0.06);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center}.footer-bottom p{font-size:12px;color:var(--texto-suave)}.lang-switcher-desktop{display:none}.lang-switcher-header-desktop{display:flex}.lang-switcher-mobile{display:none;position:absolute;bottom:1.5rem;right:1.2rem}
 @media (max-width:768px){.header{padding:0 1rem;background:url('https://i.postimg.cc/HnGvFWjJ/headr4.png') center/cover no-repeat;border-bottom:1px solid rgba(0,0,0,0.15);position:relative}.header::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.06) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0}.header>*{position:relative;z-index:1}nav{display:none}.hamburger{display:flex}.hamburger span{background:#fff}.donate-hero{display:none}.logo-desktop{display:none!important}.header-mobile-brand{display:flex!important}.header-lang-mobile{display:flex!important}.hero{display:none!important}.hero-layout{grid-template-columns:1fr}.hero-tag-row{margin-bottom:6px;margin-top:0}.hero h1{font-size:26px}.map-section{padding:0 1.25rem}#map{height:420px}.map-title-block{padding:1rem 1.2rem 0.5rem!important}.section{padding:2rem 1rem}.historia-section{padding:2.5rem 1rem}.historia-section h2{font-size:24px}.footer{grid-template-columns:1fr;gap:2rem;padding:2rem 1rem}.footer-bottom{flex-direction:column;gap:8px;text-align:center;padding:1rem}.footer-donate{flex-direction:column;align-items:flex-start;padding:1.5rem 1rem}.poi-card{flex:0 0 260px}
 .lang-switcher-desktop{display:none}
+.lang-switcher-header-desktop{display:none}
 .lang-switcher-mobile{display:flex}
 .hero-sub-wrap{margin-bottom:2.5rem;height:52px;overflow:hidden}
 .hero-gallery{display:none}
@@ -241,6 +242,12 @@
     <a href='#' id='nav-contacto' onclick='abrirContactoDrawer();return false'>✉️ Contacto</a>
     <a href='#' id='nav-donaciones' onclick='abrirDonacionesDrawer();return false'>🙏 Donaciones</a>
   </nav>
+  <!-- Idiomas desktop en header -->
+  <div class='lang-switcher lang-switcher-header-desktop' style='display:flex;gap:5px;margin-left:12px'>
+    <button class='lang-btn activo' id='btn-gl-hd' onclick='cambiarIdioma(&quot;gl&quot;)' title='Galego'><svg viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'><clipPath id='c-gl-hd'><circle cx='18' cy='18' r='18'></circle></clipPath><g clip-path='url(#c-gl-hd)'><rect fill='#ffffff' height='36' width='36'></rect><polygon fill='#003DA5' points='36,7 29,0 0,29 7,36'></polygon></g></svg></button>
+    <button class='lang-btn' id='btn-en-hd' onclick='cambiarIdioma(&quot;en&quot;)' title='English'><svg viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'><clipPath id='c-en-hd'><circle cx='18' cy='18' r='18'></circle></clipPath><g clip-path='url(#c-en-hd)'><rect fill='#012169' height='36' width='36'></rect><line stroke='#fff' stroke-width='7' x1='0' x2='36' y1='0' y2='36'></line><line stroke='#fff' stroke-width='7' x1='36' x2='0' y1='0' y2='36'></line><line stroke='#CF142B' stroke-width='4' x1='0' x2='36' y1='0' y2='36'></line><line stroke='#CF142B' stroke-width='4' x1='36' x2='0' y1='0' y2='36'></line><rect fill='#fff' height='36' width='8' x='14' y='0'></rect><rect fill='#fff' height='8' width='36' y='14'></rect><rect fill='#CF142B' height='36' width='5' x='15.5' y='0'></rect><rect fill='#CF142B' height='5' width='36' y='15.5'></rect></g></svg></button>
+    <button class='lang-btn' id='btn-es-hd' onclick='cambiarIdioma(&quot;es&quot;)' title='Español'><svg viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'><clipPath id='c-es-hd'><circle cx='18' cy='18' r='18'></circle></clipPath><g clip-path='url(#c-es-hd)'><rect fill='#c60b1e' height='9' width='36'></rect><rect fill='#ffc300' height='18' width='36' y='9'></rect><rect fill='#c60b1e' height='9' width='36' y='27'></rect></g></svg></button>
+  </div>
   <!-- HAMBURGUESA solo visible en móvil -->
   <button aria-label='Menú' class='hamburger' id='hamburger' onclick='toggleMenu()' style='margin-left:8px'>
     <span></span><span></span><span></span><span></span>
@@ -3302,12 +3309,12 @@ function _abrirSlide(panelId) {
   var _panelTitles = {
     "poi-drawer": "📍 "+(_t.navPuntos||'Ranking'),
     "album-panel": "🏅 "+(_t.rankingTitulo||'Ranking del Peregrino'),
-    "tablero-drawer": "🐚 "+(_t.coleccionTitulo||'Colección del Peregrino'),
+    "tablero-drawer": (_t.coleccionTitulo||'🐚 Colección del Peregrino'),
     "album-recuerdos-drawer": "📷 "+(_t.btnAlbumRec||'Álbum'),
     "brujula-drawer": "🧭 "+(_t.navBrujula||'Brújula'),
     "meteo-drawer": "🌤️ "+(_t.meteoTitulo||'Previsión meteorológica'),
     "sos-drawer": "🆘 "+(_t.navEmergencias||'Emergencias').replace(/^🆘\s*/,''),
-    "historia-drawer": "🐚 "+(_t.navHistoria||'Historia Compostelana'),
+    "historia-drawer": (_t.navHistoria||'🐚 Historia Compostelana'),
     "donaciones-drawer": "❤️ "+(_t.navDonaciones||'Donaciones'),
     "comousar-drawer": "ℹ️ "+(_t.navComoUsar||'Cómo usar'),
     "contacto-drawer": "✉️ "+(_t.navContacto||'Contacto'),
@@ -4705,38 +4712,34 @@ function abrirHeroModal() {
   // Catálogo de opciones con descripción extendida
   var _opcionesCatalogo = [
     {
-      emoji: '🔍',
-      titulo: _t.asistOp1Tit||'¿Necesitas buscar algo próximo a ti en el mapa?',
-      desc: _t.asistOp1Desc||'Busca cualquier lugar o servicio en un radio de 1 km.',
-      directo: true,
-      detalle: [
-        'Escribe lo que necesitas — un albergue, una farmacia, un restaurante, una fuente, una iglesia — y lo localizaremos en el mapa en un radio de 1 km alrededor de tu posición actual.',
-        'Los resultados aparecen directamente sobre el mapa con su distancia y un acceso directo para cómo llegar.',
-        '📍 Radio 1 km · 🏠 Albergues · 💊 Farmacias · 🍽️ Restaurantes · ⛲ Fuentes · ⛪ Iglesias'
-      ],
-      abrir: function() {
-        _abrirBusquedaProxima();
-      }
-    },
-    {
-      emoji: '🐚',
-      titulo: _t.asistOp2Tit||'Historia Compostelana',
-      desc: _t.asistOp2Desc||'El Camino, los templarios, las rutas históricas…',
-      detalle: [
-        'Aquí encontrarás los textos históricos que dan vida al Camino: desde los orígenes del culto jacobeo hasta la presencia templaria en Galicia, pasando por las rutas medievales y sus etapas más emblemáticas.',
-        'Cada sección está escrita con rigor histórico y pensada para el peregrino curioso. Puedes leerla tranquilamente antes de salir o consultarla en cualquier momento del Camino.',
-        '📜 Textos históricos · ⚔️ Legado Templario · 🗺️ Rutas y etapas · 🏛️ Arte y arquitectura jacobea'
+      emoji: '🆘',
+      titulo: _t.asistOp5Tit||'Emergencias y seguridad',
+      desc: _t.asistOp5Desc||'Teléfonos útiles y recursos para el Camino.',
+      detalle: _t.asistOp5Det||[
+        'Un panel de recursos esenciales pensado para cuando el Camino se complica: teléfonos de emergencia, contactos de la Guardia Civil, Cruz Roja y servicios sanitarios en las principales etapas.',
+        'También encontrarás consejos básicos de seguridad para peregrinos: qué hacer si te pierdes, cómo gestionar una lesión en ruta y cómo activar tu localización de emergencia desde el móvil.',
+        '📞 Teléfonos de emergencia · 🏥 Servicios sanitarios · 🧭 Protocolos de seguridad · 🆘 Localización GPS'
       ],
       abrir: function() {
         cerrar();
-        setTimeout(function(){ _irAlMapa(); setTimeout(abrirHistoriaDrawer, 400); }, 340);
+        setTimeout(function(){ _irAlMapa(); setTimeout(abrirSOSDrawer, 400); }, 340);
+      }
+    },
+    {
+      emoji: '🧭',
+      titulo: _t.asistBtnBrujula||'Usar la brújula',
+      desc: _t.asistBtnBrujulaDesc||'Oriéntate con la brújula digital del Camino',
+      directo: true,
+      detalle: [],
+      abrir: function() {
+        _renderBrujulaModal();
       }
     },
     {
       emoji: '🎲',
       titulo: _t.asistOp3Tit||'Juego del Tablero de la Oca',
       desc: _t.asistOp3Desc||'63 casillas jacobeas. Desbloquéalas visitando lugares reales.',
-      detalle: [
+      detalle: _t.asistOp3Det||[
         'Una versión jacobea del clásico juego de la oca con 63 casillas inspiradas en el Camino. Cada casilla tiene su nombre en latín, su mecánica especial y su simbolismo peregrino.',
         'Las casillas se desbloquean automáticamente cuando visitas los lugares reales del Camino con el GPS activado. Casillas especiales como la Muerte, el Laberinto o la Cárcel tienen mecánicas únicas que condicionan tu avance.',
         '🎲 63 casillas · 📍 Desbloqueo por GPS · ⚔️ Casillas especiales · 🏆 Progresión real en el Camino'
@@ -4750,7 +4753,7 @@ function abrirHeroModal() {
       emoji: '🏅',
       titulo: _t.asistOp4Tit||'Álbum del Peregrino',
       desc: _t.asistOp4Desc||'Tu colección de cromos desbloqueados en el Camino.',
-      detalle: [
+      detalle: _t.asistOp4Det||[
         'El Álbum registra cada lugar que visitas a lo largo del Camino. Cuando te acercas a menos de 25 metros de un punto de interés con el GPS activo, desbloqueas automáticamente su cromo coleccionable.',
         'Cada cromo tiene diseño de postal barroca con iconografía jacobea, el nombre del lugar, su descripción histórica y tu fecha de visita. Cuantos más reúnas, mayor será tu rango de peregrino: desde Aspirante hasta Ultreia 🏆.',
         '🐚 Cromos coleccionables · 📍 GPS automático · 🏆 Sistema de rangos · 📅 Historial de visitas'
@@ -4758,20 +4761,6 @@ function abrirHeroModal() {
       abrir: function() {
         cerrar();
         setTimeout(function(){ _irAlMapa(); setTimeout(abrirAlbumPanel, 400); }, 340);
-      }
-    },
-    {
-      emoji: '🆘',
-      titulo: _t.asistOp5Tit||'Emergencias y seguridad',
-      desc: _t.asistOp5Desc||'Teléfonos útiles y recursos para el Camino.',
-      detalle: [
-        'Un panel de recursos esenciales pensado para cuando el Camino se complica: teléfonos de emergencia, contactos de la Guardia Civil, Cruz Roja y servicios sanitarios en las principales etapas.',
-        'También encontrarás consejos básicos de seguridad para peregrinos: qué hacer si te pierdes, cómo gestionar una lesión en ruta y cómo activar tu localización de emergencia desde el móvil.',
-        '📞 Teléfonos de emergencia · 🏥 Servicios sanitarios · 🧭 Protocolos de seguridad · 🆘 Localización GPS'
-      ],
-      abrir: function() {
-        cerrar();
-        setTimeout(function(){ _irAlMapa(); setTimeout(abrirSOSDrawer, 400); }, 340);
       }
     }
   ];
@@ -5025,7 +5014,7 @@ function abrirHeroModal() {
 
     var tit = document.createElement('div');
     tit.style.cssText = 'font-family:IM Fell English,serif;font-size:20px;color:#1a0800;margin-bottom:4px;display:flex;align-items:center;gap:8px';
-    tit.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:36px;height:36px;object-fit:contain;flex-shrink:0">¿Qué te apetece explorar?';
+    tit.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:36px;height:36px;object-fit:contain;flex-shrink:0">' + (_t.asistMenuTit||'¿Qué te apetece explorar?');
     header.appendChild(tit);
 
     var orn = document.createElement('div');
@@ -5041,8 +5030,8 @@ function abrirHeroModal() {
 
     var opciones = [
       { emoji:'🔍', tit:_t.asistBtnBuscar||'🔍 Buscar algo próximo',          desc:_t.asistBuscarSub||'Busca cualquier lugar o servicio en un radio de 1 km.',       accion:function(){ _abrirBusquedaProxima(); } },
+      { emoji:'🐚', tit:_t.asistOp2Tit||'Historia Compostelana',               desc:_t.asistOp2Desc||'El Camino, los templarios, las rutas históricas…',              accion:function(){ cerrar(); setTimeout(function(){ _irAlMapa(); setTimeout(abrirHistoriaDrawer, 400); }, 340); } },
       { emoji:'📍', tit:_t.asistBtnAnadirPunto||'📍 Añadir punto o alerta',    desc:_t.asistBtnAnadirDesc||'Recomienda un lugar, añade una alerta o un punto de interés', accion:function(){ cerrar(); setTimeout(function(){ _irAlMapa(); setTimeout(abrirFormPOI, 400); }, 340); } },
-      { emoji:'🧭', tit:_t.asistBtnBrujula||'🧭 Usar la brújula',              desc:_t.asistBtnBrujulaDesc||'Oriéntate con la brújula digital del Camino',               accion:function(){ _renderBrujulaModal(); } },
       { emoji:'✨', tit:_t.asistBtnMasOpc||'✨ Más opciones interesantes',      desc:_t.asistBtnMasOpcDesc||'Historia, álbum, juego de la oca, emergencias…',             accion:function(){ _renderSugerencias(); } }
     ];
 
@@ -5105,7 +5094,7 @@ function abrirHeroModal() {
 
     var titulo = document.createElement('div');
     titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:20px;font-weight:400;color:#1a0800;margin-bottom:6px;line-height:1.3';
-    titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">Aquí tienes otras funciones que quizás te gustarán';
+    titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">' + (_t.asistSugTit||'Aquí tienes otras funciones que quizás te gustarán');
     inner.appendChild(titulo);
 
     var hint = document.createElement('p');
@@ -5192,7 +5181,7 @@ function abrirHeroModal() {
     // ¿Ver otra opción?
     var pregunta = document.createElement('p');
     pregunta.style.cssText = 'font-size:15px;color:#1a0800;text-align:center;margin-bottom:10px';
-    pregunta.textContent = '¿Quieres ver otra opción?';
+    pregunta.textContent = _t.asistDetallePreg||'¿Quieres ver otra opción?';
     inner.appendChild(pregunta);
 
     var btnRow = document.createElement('div');
@@ -5219,7 +5208,7 @@ function abrirHeroModal() {
 
     var titulo = document.createElement('div');
     titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:20px;font-weight:400;color:#fff;margin-bottom:6px';
-    titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">Tu ruta actual';
+    titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">' + (_t.asistRevTit||'Tu ruta actual');
     inner.appendChild(titulo);
 
     // Aviso de cromos si tiene alguno
@@ -5228,7 +5217,7 @@ function abrirHeroModal() {
       var _rng = window._getRango(_nCromos);
       var cromoBanner = document.createElement('div');
       cromoBanner.style.cssText = 'background:rgba(245,200,0,0.12);border:1px solid rgba(245,200,0,0.3);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:14px;color:rgba(255,255,255,0.8);line-height:1.5';
-      cromoBanner.innerHTML = _rng.emoji + ' <strong style="color:#F5C800">' + _rng.label + '</strong> · ' + _nCromos + ' cromo' + (_nCromos !== 1 ? 's' : '') + ' desbloqueado' + (_nCromos !== 1 ? 's' : '') + '. Sigue visitando para subir de rango.';
+      cromoBanner.innerHTML = _rng.emoji + ' <strong style="color:#F5C800">' + _rng.label + '</strong> · ' + _nCromos + ' ' + (_nCromos !== 1 ? (_t.asistRevCromosP||'cromos desbloqueados') : (_t.asistRevCromos||'cromo desbloqueado')) + '. ' + (_t.asistRevSigue||'Sigue visitando para subir de rango.');
       inner.appendChild(cromoBanner);
     }
 
@@ -5292,7 +5281,7 @@ function abrirHeroModal() {
 
     var titulo = document.createElement('div');
     titulo.style.cssText = 'font-family:IM Fell English,serif;font-size:20px;font-weight:400;color:#1a0800;margin-bottom:6px;line-height:1.3';
-    titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">Selecciona qué te gustaría visitar';
+    titulo.innerHTML = '<img src="https://i.postimg.cc/m2TbCRTs/casc4.png" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:8px">' + (_t.asistPaso2Tit||'Selecciona qué te gustaría visitar');
     inner.appendChild(titulo);
 
     var adornoPaso2 = document.createElement('div');
@@ -9276,6 +9265,7 @@ var T={
     asistNoVolver:'No, volver al mapa',
     asistPreguntaVisitar:'¿Te gustaría visitar alguno?',
     asistSiVerLugares:'Sí, ver lugares',
+    asistPaso2Tit:'Selecciona qué te gustaría visitar',
     asistAhoraNno:'Ahora no',
     asistMasCosa:'Hay mucho más en la guía. Elige algo que te llame la atención:',
     asistBuscarTit:'🔍 Buscar algo próximo a ti',
@@ -9308,6 +9298,14 @@ var T={
     asistOp4Desc:'Tu colección de cromos desbloqueados en el Camino.',
     asistOp5Tit:'Emergencias y seguridad',
     asistOp5Desc:'Teléfonos útiles y recursos para el Camino.',
+    asistBtnBuscar:'Buscar algo próximo',
+    asistBuscarTit:'🔍 Buscar algo próximo a ti',
+    asistBtnAnadirPunto:'Añadir punto o alerta',
+    asistBtnAnadirDesc:'Recomienda un lugar, añade una alerta o un punto de interés',
+    asistBtnBrujula:'Usar la brújula',
+    asistBtnBrujulaDesc:'Oriéntate con la brújula digital del Camino',
+    asistBtnMasOpc:'Más opciones interesantes',
+    asistBtnMasOpcDesc:'Historia, álbum, juego de la oca, emergencias…',
     asistVerDetalle:'Ver detalle →',
     asistAbrir:'Abrir ',
     asistCuriosidades:[
@@ -9331,7 +9329,14 @@ var T={
     asistSubRutaP:'Tienes {n} lugares en ruta. ¿Salimos?',
     asistSubAmbos:'Llevas {n} cromo y una ruta con {r} parada. ¡El Camino te espera!',
     asistSubAmbosP:'Llevas {n} cromos y una ruta con {r} paradas. ¡El Camino te espera!',
-    asistCercanosPre:'Tienes',
+    asistMenuTit:'¿Qué te apetece explorar?',
+    asistSugTit:'Aquí tienes otras funciones que quizás te gustarán',
+    asistDetallePreg:'¿Quieres ver otra opción?',
+    asistRevTit:'Tu ruta actual',
+    asistRevCromos:'cromo desbloqueado',
+    asistRevCromosP:'cromos desbloqueados',
+    asistRevSigue:'Sigue visitando para subir de rango.',
+        asistCercanosPre:'Tienes',
     asistCercanosLugar:'lugar',
     asistCercanosLugares:'lugares',
     asistCercanosDe:'del Camino cerca de ti. El más próximo es',
@@ -9345,7 +9350,7 @@ var T={
     albumVacio:'Tu álbum está vacío',
     albumVacioSub:'Activa el seguimiento GPS y acércate a los puntos del Camino. Cada visita desbloquea el cromo.',
     albumContador:'Visita lugares para desbloquear cromos',
-    rankingTitulo:'🏅 Ranking del Peregrino',
+    rankingTitulo:'Ranking del Peregrino',
     rankingContador:'Visita lugares del Camino para avanzar en el ranking',
     rankingPrimer:'Visita tu primer lugar para comenzar',
     rankingLogros:'Logros',
@@ -9368,7 +9373,7 @@ var T={
     coleccionVacio:'Visita lugares del Camino para obtener cromos',
     coleccionContador:'de 63 casillas',
     coleccionAbierto:'abierto',coleccionAbiertos:'abiertos',coleccionMazo:'en mazo',
-    mazoTitulo:'Mazo sin abrir',mazoPendiente:'cromo pendiente',mazoPendientes:'cromos pendientes',mazoTap:'Pulsa para abrir el siguiente',
+    mazoTitulo:'Mazo sin abrir',mazoPendiente:'cromo pendiente',mazoPendientes:'cromos pendientes',mazoTap:'Pulsa para abrir el siguiente',mazoAbrir:'Abrir cromo',
     visitaDesbloquear:'Visita el lugar para desbloquear y añadir tu imagen',
     rankingTitulo:'Mi ranking',
     rankingVacio:'You haven\'t visited any place yet',
@@ -9641,6 +9646,7 @@ var T={
     asistNoVolver:'Non, volver ao mapa',
     asistPreguntaVisitar:'¿Che gustaría visitar algún?',
     asistSiVerLugares:'Si, ver lugares',
+    asistPaso2Tit:'Selecciona o que che gustaría visitar',
     asistAhoraNno:'Agora non',
     asistMasCosa:'Hai moito máis na guía. Escolle algo que che chame a atención:',
     asistBuscarTit:'🔍 Buscar algo próximo a ti',
@@ -9673,6 +9679,17 @@ var T={
     asistOp4Desc:'A túa colección de cromos desbloqueados no Camiño.',
     asistOp5Tit:'Emerxencias e seguridade',
     asistOp5Desc:'Teléfonos útiles e recursos para o Camiño.',
+    asistOp3Det:['Unha versión xacobea do clásico xogo da oca con 63 casillas inspiradas no Camiño. Cada casilla ten o seu nome en latín, a súa mecánica especial e o seu simbolismo peregrino.','As casillas desbloquéanse automaticamente cando visitas os lugares reais do Camiño co GPS activado. Casillas especiais como a Morte, o Labirinto ou a Cadea teñen mecánicas únicas que condicionan o teu avance.','🎲 63 casillas · 📍 Desbloqueo por GPS · ⚔️ Casillas especiais · 🏆 Progresión real no Camiño'],
+    asistOp4Det:['O Álbum rexistra cada lugar que visitas ao longo do Camiño. Cando te achegues a menos de 25 metros dun punto de interese co GPS activo, desbloqueas automaticamente o seu cromo coleccionable.','Cada cromo ten deseño de postal barroca con iconografía xacobea, o nome do lugar, a súa descrición histórica e a túa data de visita. Canto máis reúnas, maior será o teu rango de peregrino: desde Aspirante ata Ultreia 🏆.','🐚 Cromos coleccionables · 📍 GPS automático · 🏆 Sistema de rangos · 📅 Historial de visitas'],
+    asistOp5Det:['Un panel de recursos esenciais pensado para cando o Camiño se complica: teléfonos de emerxencia, contactos da Garda Civil, Cruz Vermella e servizos sanitarios nas principais etapas.','Tamén atoparás consellos básicos de seguridade para peregrinos: que facer se te perdes, como xestionar unha lesión en ruta e como activar a túa localización de emerxencia desde o móbil.','📞 Teléfonos de emerxencia · 🏥 Servizos sanitarios · 🧭 Protocolos de seguridade · 🆘 Localización GPS'],
+    asistBtnBuscar:'Buscar algo próximo',
+    asistBuscarTit:'🔍 Buscar algo próximo a ti',
+    asistBtnAnadirPunto:'Engadir punto ou alerta',
+    asistBtnAnadirDesc:'Recomenda un lugar, engade unha alerta ou un punto de interese',
+    asistBtnBrujula:'Usar a brúxula',
+    asistBtnBrujulaDesc:'Oriéntate coa brúxula dixital do Camiño',
+    asistBtnMasOpc:'Máis opcións interesantes',
+    asistBtnMasOpcDesc:'Historia, álbum, xogo da oca, emerxencias…',
     asistVerDetalle:'Ver detalle →',
     asistAbrir:'Abrir ',
     asistCuriosidades:[
@@ -9696,7 +9713,14 @@ var T={
     asistSubRutaP:'Tes {n} lugares en ruta. ¿Saímos?',
     asistSubAmbos:'Levas {n} cromo e unha ruta con {r} parada. ¡O Camiño agárdache!',
     asistSubAmbosP:'Levas {n} cromos e unha ruta con {r} paradas. ¡O Camiño agárdache!',
-    asistCercanosPre:'Tes',
+    asistMenuTit:'¿Que che apetece explorar?',
+    asistSugTit:'Aquí tes outras funcións que quizais che gustarán',
+    asistDetallePreg:'¿Queres ver outra opción?',
+    asistRevTit:'A túa ruta actual',
+    asistRevCromos:'cromo desbloqueado',
+    asistRevCromosP:'cromos desbloqueados',
+    asistRevSigue:'Segue visitando para subir de rango.',
+        asistCercanosPre:'Tes',
     asistCercanosLugar:'lugar',
     asistCercanosLugares:'lugares',
     asistCercanosDe:'do Camiño cerca de ti. O máis próximo é',
@@ -9711,7 +9735,7 @@ var T={
     albumVacioSub:'Activa o seguimento GPS e achégate aos puntos do Camiño. Cada visita desbloquea o cromo.',
     albumContador:'Visita lugares para desbloquear cromos',
     visitaDesbloquear:'Visita o lugar para desbloquear e engadir a túa imaxe',
-    rankingTitulo:'🏅 Ranking do Peregrino',
+    rankingTitulo:'Ranking do Peregrino',
     rankingContador:'Visita lugares do Camiño para avanzar no ranking',
     rankingPrimer:'Visita o teu primeiro lugar para comezar',
     rankingLogros:'Logros',
@@ -9727,7 +9751,7 @@ var T={
     coleccionSuper:'Xogo da Oca Xacobeo',coleccionTitulo:'🐚 Colección do Peregrino',
     coleccionVacio:'Visita lugares do Camiño para obter cromos',coleccionContador:'de 63 cadros',
     coleccionAbierto:'aberto',coleccionAbiertos:'abertos',coleccionMazo:'no mazo',
-    mazoTitulo:'Mazo sen abrir',mazoPendiente:'cromo pendente',mazoPendientes:'cromos pendentes',mazoTap:'Preme para abrir o seguinte',
+    mazoTitulo:'Mazo sen abrir',mazoPendiente:'cromo pendente',mazoPendientes:'cromos pendentes',mazoTap:'Preme para abrir o seguinte',mazoAbrir:'Abrir cromo',
     rankingVacio:'Aínda non visitaches ningún punto',
     dificultadLabel:'Dificultade',
     ascenso:'Ascenso',
@@ -10152,7 +10176,7 @@ var T={
     mazoTitulo:'Unopened deck',
     mazoPendiente:'card pending',
     mazoPendientes:'cards pending',
-    mazoTap:'Tap to open the next one',
+    mazoTap:'Tap to open the next one',mazoAbrir:'Open card',
     coleccionAbierto:'opened',
     coleccionContador:'of 63 squares',
     donacionesH2:'Donations',
@@ -10181,6 +10205,7 @@ var T={
     asistNoVolver:'No, back to map',
     asistPreguntaVisitar:'Would you like to visit one?',
     asistSiVerLugares:'Yes, see places',
+    asistPaso2Tit:'Select what you would like to visit',
     asistAhoraNno:'Not now',
     asistMasCosa:'There is much more in the guide. Pick something that interests you:',
     asistBuscarTit:'🔍 Search nearby',
@@ -10213,6 +10238,17 @@ var T={
     asistOp4Desc:"Your collection of stamps unlocked on the Way.",
     asistOp5Tit:'Emergencies and safety',
     asistOp5Desc:'Useful numbers and resources for the Way.',
+    asistOp3Det:['A Jacobean take on the classic board game with 63 squares inspired by the Camino. Each square has its own Latin name, special mechanic, and pilgrim symbolism.','Squares unlock automatically when you visit real Camino locations with GPS active. Special squares like Death, the Labyrinth, and the Prison have unique mechanics that affect your progress.','🎲 63 squares · 📍 GPS unlock · ⚔️ Special squares · 🏆 Real Camino progression'],
+    asistOp4Det:['The Album records every place you visit along the Way. When you get within 25 metres of a point of interest with GPS active, you automatically unlock its collectible stamp.','Each stamp has a Baroque postcard design with Jacobean iconography, the place name, its historical description, and your visit date. The more you collect, the higher your pilgrim rank: from Aspirante to Ultreia 🏆.','🐚 Collectible stamps · 📍 Automatic GPS · 🏆 Ranking system · 📅 Visit history'],
+    asistOp5Det:['An essential resource panel for when the Way gets difficult: emergency numbers, Civil Guard contacts, Red Cross, and medical services at the main stages.','You will also find basic safety tips for pilgrims: what to do if you get lost, how to manage an injury on the route, and how to activate your emergency location from your phone.','📞 Emergency numbers · 🏥 Medical services · 🧭 Safety protocols · 🆘 GPS location'],
+    asistBtnBuscar:'Search nearby',
+    asistBuscarTit:'🔍 Search something near you',
+    asistBtnAnadirPunto:'Add a point or alert',
+    asistBtnAnadirDesc:'Recommend a place, add an alert or a point of interest',
+    asistBtnBrujula:'Use the compass',
+    asistBtnBrujulaDesc:'Get your bearings with the digital Camino compass',
+    asistBtnMasOpc:'More interesting options',
+    asistBtnMasOpcDesc:'History, album, board game, emergencies…',
     asistVerDetalle:'See details →',
     asistAbrir:'Open ',
     asistCuriosidades:[
@@ -10236,14 +10272,21 @@ var T={
     asistSubRutaP:'You have {n} places on your route. Shall we go?',
     asistSubAmbos:'You have {n} stamp and a route with {r} stop. The Way awaits!',
     asistSubAmbosP:'You have {n} stamps and a route with {r} stops. The Way awaits!',
-    asistCercanosPre:'You have',
+    asistMenuTit:'What would you like to explore?',
+    asistSugTit:'Here are some other features you might enjoy',
+    asistDetallePreg:'Would you like to see another option?',
+    asistRevTit:'Your current route',
+    asistRevCromos:'stamp unlocked',
+    asistRevCromosP:'stamps unlocked',
+    asistRevSigue:'Keep visiting to move up the ranks.',
+        asistCercanosPre:'You have',
     asistCercanosLugar:'place',
     asistCercanosLugares:'places',
     asistCercanosDe:'on the Camino nearby. The closest is',
     asistCercanosA:'at',
-    asistSaludoM:['Good morning, pilgrim! 🌅','Ultreia! The Way awaits you. 🌄','Rise, wanderer! The dawn is yours. ☀️','A new day on the Camino. Safe travels! 🥾','May today's journey be light, pilgrim! 🌤️'],
+    asistSaludoM:['Good morning, pilgrim! 🌅','Ultreia! The Way awaits you. 🌄','Rise, wanderer! The dawn is yours. ☀️','A new day on the Camino. Safe travels! 🥾','May the journey be light today, pilgrim! 🌤️'],
     asistSaludoT:['Good afternoon, pilgrim! ☀️','How is the Camino treating you this afternoon? 🛤️','Afternoon on the Way! How many kilometres today? 🥾','The afternoon is a great time to plan. 🗺️','Ultreia et suseia, pilgrim! ⛰️'],
-    asistSaludoN:['Good night, pilgrim! 🌙','The Camino rests, but you plan ahead. 🌟','Pilgrim's night. Shall we set off tomorrow? ⭐','Good night! Dawn brings a new Camino. 🌙','Time to rest those legs... or plan the next stage. 🗺️'],
+    asistSaludoN:['Good night, pilgrim! 🌙','The Camino rests, but you plan ahead. 🌟','A pilgrim night. Shall we set off tomorrow? ⭐','Good night! Dawn brings a new Camino. 🌙','Time to rest those legs... or plan the next stage. 🗺️'],
     asistSubDefault:'The Way awaits. How can I help you?',
     asistPaso3Uno:'Place added to your route!',
     asistPaso3Multi:'{n} places added to your route!',
@@ -10271,6 +10314,7 @@ function cambiarIdioma(lang){
   var btn=document.getElementById('btn-'+lang);if(btn)btn.classList.add('activo');
   var btnM=document.getElementById('btn-'+lang+'-m');if(btnM)btnM.classList.add('activo');
   var btnH=document.getElementById('btn-'+lang+'-h');if(btnH)btnH.classList.add('activo');
+  var btnHd=document.getElementById('btn-'+lang+'-hd');if(btnHd)btnHd.classList.add('activo');
   var t=T[lang]||T.es;
   // Hero
   var el=document.getElementById('hero-sub');if(el)el.textContent=FRASES[lang][0];
@@ -10443,7 +10487,7 @@ function cambiarIdioma(lang){
   el=document.getElementById('chip-etapa-primitivo-btn');if(el)el.textContent=t.chipPrimitivo||'🟣 Primitivo';
   el=document.getElementById('chip-etapa-ingles-btn');if(el)el.textContent=t.chipIngles||'🟡 Inglés';
   // Panel Ranking
-  el=document.getElementById('album-panel-titulo');if(el)el.textContent=t.rankingTitulo||'🏅 Ranking del Peregrino';
+  el=document.getElementById('album-panel-titulo');if(el)el.textContent=t.rankingTitulo||'Ranking del Peregrino';
   if(el&&!el.textContent.match(/\d/)){el=document.getElementById('album-panel-contador');if(el)el.textContent=t.rankingContador||'Visita lugares del Camino para avanzar en el ranking';}
   el=document.getElementById('ranking-logros-label');if(el)el.textContent=t.rankingLogros||'Logros';
   el=document.getElementById('ranking-stats-label');if(el)el.textContent=t.rankingEstadisticas||'Estadísticas';
@@ -10503,7 +10547,7 @@ function cambiarIdioma(lang){
     if(txt.includes('Por ver')||txt.includes('To visit')||txt.includes('ver')) b.textContent='🔒 '+(t.btnPorVer||'Por ver');
   });
   // Panel ranking título y contador
-  el=document.getElementById('album-panel-titulo');if(el)el.textContent=t.rankingTitulo||'🏅 Ranking del Peregrino';
+  el=document.getElementById('album-panel-titulo');if(el)el.textContent=t.rankingTitulo||'Ranking del Peregrino';
   el=document.getElementById('album-panel-contador');if(el&&!el.textContent.match(/\d/))el.textContent=t.rankingContador||'Visita lugares del Camino para avanzar en el ranking';
   el=document.getElementById('ranking-stats-label');if(el)el.textContent=t.rankingEstadisticas||'Estadísticas';
   el=document.getElementById('tablero-hard-reset-btn');if(el)el.textContent=t.rankingHardReset||'🗑️ Borrar cromos y visitas';
@@ -10942,7 +10986,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1053";
+var _APP_VERSION = "v1068";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -11902,7 +11946,7 @@ function _renderTableroOca() {
           +'<div style="font-size:14px;color:rgba(26,8,0,0.65)">'+(mazo.length>1?'×'+mazo.length+' '+(_tTab.mazoPendientes||'cromos pendientes'):'1 '+(_tTab.mazoPendiente||'cromo pendiente'))+'</div>'
           +'<div style="font-size:13px;color:rgba(26,8,0,0.45);margin-top:2px">'+(_tTab.mazoTap||'Pulsa para abrir el siguiente')+'</div>'
           +'</div>'
-          +'<div style="font-size:20px">▶️</div>';
+          +'<div style="background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:1.5px solid #4a7a2e;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;font-family:IM Fell English,serif;white-space:nowrap;flex-shrink:0">'+(_tTab.mazoAbrir||'Abrir')+'</div>';
         mazoEl.addEventListener('mouseenter',function(){this.style.background='rgba(0,0,0,0.25)';});
         mazoEl.addEventListener('mouseleave',function(){this.style.background='rgba(0,0,0,0.15)';});
         mazoEl.addEventListener('click',function(){_abrirCromoDelMazo(mazo[0]);});
@@ -12656,7 +12700,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1053</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1068</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
