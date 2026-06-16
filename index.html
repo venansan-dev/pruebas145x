@@ -2225,8 +2225,7 @@
     <div id='album-panel-titulo' style='display:none'></div>
     <div id='album-panel-contador' style='display:none'></div>
     <!-- Botones -->
-    <div style='flex-shrink:0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px'>
-      <button id='btn-porver-ranking' onclick='cerrarAlbumPanel();abrirPoiDrawer()' style='display:flex;align-items:center;justify-content:center;gap:3px;background:rgba(122,31,31,0.25);border:1px solid rgba(180,60,60,0.5);border-radius:8px;padding:6px 4px;color:#ffd0d0;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>Por ver</button>
+    <div style='flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:5px'>
       <button id='btn-album-ranking' onclick='abrirAlbumDrawer()' style='display:flex;align-items:center;justify-content:center;gap:3px;background:rgba(0,0,0,0.18);border:1px solid #7a5010;border-radius:8px;padding:6px 4px;color:#fff8e8;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>Álbum</button>
       <button id='btn-ranking-coleccion' onclick='_abrirColeccionDesdeRanking()' style='display:flex;align-items:center;justify-content:center;gap:3px;background:rgba(80,50,0,0.3);border:1px solid rgba(200,160,0,0.55);border-radius:8px;padding:6px 4px;color:#ffe58a;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 0 5px rgba(200,160,0,0.15)'>Colección</button>
     </div>
@@ -13135,7 +13134,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1198";
+var _APP_VERSION = "v1199";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -14849,7 +14848,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1198</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1199</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
