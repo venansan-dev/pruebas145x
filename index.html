@@ -269,7 +269,7 @@
   /* ─── HERO ─── */
   .dl-hero {
     background:#fff;
-    padding:5rem 2rem 4rem;
+    padding:2.5rem 2rem 3rem;
     display:flex; align-items:center; justify-content:center;
     gap:6rem;
     max-width:1100px; margin:0 auto;
@@ -12642,7 +12642,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1180";
+var _APP_VERSION = "v1182";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -13332,12 +13332,12 @@ if ('serviceWorker' in navigator) {
   // ---- Detección de proximidad durante el seguimiento GPS ----
   // Se engancha al watchPosition existente comprobando cada posición
   var _albumYaNotificado = {};
-  var RADIO_VISITA_M = 25; // metros para registrar visita
+  var RADIO_VISITA_M = 2000; // metros para registrar visita (PRUEBAS — producción: 25)
 
   window._albumCheckProximidad = function(lat, lng, accuracy) {
     if (typeof PUNTOS === 'undefined') return;
-    // Ignorar posiciones con GPS poco fiable (>50 m de error)
-    if (accuracy && accuracy > 50) return;
+    // Ignorar posiciones con GPS muy poco fiable (>200 m de error) durante pruebas
+    if (accuracy && accuracy > 200) return;
     PUNTOS.forEach(function(poi) {
       if (_albumYaNotificado[poi.id]) return;
       // Puntos de usuario, alertas y búsquedas no entran en el juego
@@ -14356,7 +14356,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1180</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1182</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
