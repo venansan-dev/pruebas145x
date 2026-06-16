@@ -9873,7 +9873,7 @@ function _modalPergamino(config) {
   var subEl = null;
   if (config.subtitulo) {
     subEl = document.createElement('p');
-    subEl.style.cssText = 'font-size:12px;color:rgba(26,8,0,0.55);text-align:center;margin:0 0 14px;position:relative;z-index:1;font-style:italic';
+    subEl.style.cssText = 'font-size:12px;color:rgba(26,8,0,0.55);text-align:left;margin:0 0 14px;position:relative;z-index:1;font-style:italic';
     box.appendChild(subEl);
   }
 
@@ -9935,7 +9935,9 @@ function _modalPergamino(config) {
     if (subEl && config.subtitulo) {
       setTimeout(function() {
         cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
-        _twGlobal(subEl, config.subtitulo, 28, function() {
+        // Velocidad adaptativa: textos largos van más rápido para no cansar
+        var subSpeed = config.subtitulo.length > 80 ? 18 : 28;
+        _twGlobal(subEl, config.subtitulo, subSpeed, function() {
           cascoImg.style.animation = 'none';
           setTimeout(function() { box.appendChild(optsWrap); if (cancelBtn) box.appendChild(cancelBtn); }, 80);
         });
@@ -13142,7 +13144,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1203";
+var _APP_VERSION = "v1205";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -14856,7 +14858,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1203</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1205</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
