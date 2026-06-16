@@ -4982,36 +4982,30 @@ function abrirHeroModal() {
         items.forEach(function(it) {
           var lat = it.lat, lng = it.lng, nombre = it.nombre, dist = it.dist;
           var mk = L.marker([lat, lng], { icon: iconoBusc }).addTo(mapa);
-          mk.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>' + nombre + '</strong><br><span style="font-size:11px;color:#6b7280">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + '</span>' + (it.tel ? '<br>📞 ' + it.tel : '') + '<br><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button onclick="_toggleBusquedaRuta(this,encodeURIComponent(\'' + nombre.replace(/\'/g,"\\'") + '\'),' + lat + ',' + lng + ');" style="background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">➕ Añadir a ruta</button><button onclick="irACoordenadasNav(' + lat + ',' + lng + ')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">🗺️ Cómo llegar</button></div></div>');
+          var popupEl = document.createElement('div');
+          popupEl.style.cssText = 'font-family:DM Sans,sans-serif;min-width:160px';
+          popupEl.innerHTML = '<strong>' + nombre + '</strong><br><span style="font-size:11px;color:#6b7280">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + '</span>' + (it.tel ? '<br>📞 ' + it.tel : '');
+          var btnDiv = document.createElement('div');
+          btnDiv.style.cssText = 'display:flex;gap:6px;margin-top:8px;flex-wrap:wrap';
+          var btnAdd = document.createElement('button');
+          btnAdd.textContent = '➕ Añadir a ruta';
+          btnAdd.style.cssText = 'background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+          (function(la,lo,no,b){ b.addEventListener('click', function(){ _toggleBusquedaRuta(b,encodeURIComponent(no),la,lo); }); })(lat,lng,nombre,btnAdd);
+          var btnNav = document.createElement('button');
+          btnNav.textContent = '🗺️ Cómo llegar';
+          btnNav.style.cssText = 'background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif';
+          (function(la,lo){ btnNav.addEventListener('click', function(){ irACoordenadasNav(la,lo); }); })(lat,lng);
+          btnDiv.appendChild(btnAdd); btnDiv.appendChild(btnNav);
+          popupEl.appendChild(btnDiv);
+          mk.bindPopup(popupEl);
           window._wizSearchMarkers.push(mk);
           bounds.push([lat, lng]);
-
-          var fila = document.createElement('div');
-          fila.style.cssText = 'background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:9px 12px';
-          fila.innerHTML = '<div style="font-size:15px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px">' + nombre + '</div>'
-            + '<div style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:8px">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + (it.tel ? ' · 📞 ' + it.tel : '') + '</div>'
-            + '<div style="display:flex;gap:6px">'
-            + '<button class="wiz-mapa-btn" style="flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:7px 8px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap">🗺️ Mostrar en mapa</button>'
-            + '<button class="wiz-ir-btn" style="flex:1;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:7px 8px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap">▶ Ir (navegación)</button>'
-            + '</div>';
-          (function(la, lo, mk2){
-            fila.querySelector('.wiz-mapa-btn').addEventListener('click', function(e){
-              e.stopPropagation();
-              cerrarModal();
-              cerrar();
-              _mostrarEnMapaConRuta(la, lo, nombre);
-            });
-            fila.querySelector('.wiz-ir-btn').addEventListener('click', function(e){
-              e.stopPropagation();
-              cerrarModal();
-              cerrar();
-              irACoordenadasNav(la, lo);
-            });
-          })(lat, lng, mk);
-          resultados.appendChild(fila);
         });
 
-        if (bounds.length === 1) mapa.setView(bounds[0], 17);
+        // Cerrar cajón y mostrar resultados en el mapa
+        cerrarModal();
+
+                if (bounds.length === 1) mapa.setView(bounds[0], 17);
         else if (bounds.length > 1) mapa.fitBounds(bounds, { padding:[50,50] });
 
         setTimeout(function(){ var el=document.getElementById('map'); if(el){ var rect=el.getBoundingClientRect(); window.scrollTo({top:Math.max(0,window.pageYOffset+rect.top-(window.innerHeight/2)+(rect.height/2)),behavior:'smooth'}); } }, 600);
@@ -11719,7 +11713,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1152";
+var _APP_VERSION = "v1153";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -13433,7 +13427,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1152</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1153</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
