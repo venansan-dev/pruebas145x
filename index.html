@@ -9109,20 +9109,20 @@ function guardarRuta() {
     var btn = document.getElementById('btn-guardar-restaurar');
     if (btn) { btn.style.background='#4f46e5'; btn.textContent='✅'; }
     setTimeout(function() { _actualizarBtnGuardarRestaurar(); }, 2000);
-    // Globo emergente
-    var cartel = document.getElementById('guardar-ruta-cartel');
-    if (!cartel) {
-      cartel = document.createElement('div');
-      cartel.id = 'guardar-ruta-cartel';
-      cartel.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:99999;pointer-events:none;background:rgba(0,0,0,0.82);color:#fff;padding:16px 22px;border-radius:16px;font-family:DM Sans,sans-serif;font-size:15px;font-weight:500;text-align:center;max-width:280px;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,0.3);backdrop-filter:blur(8px);transition:opacity 0.5s;';
-      document.body.appendChild(cartel);
-    }
     var tC = T[idiomaActual] || T.es;
-    cartel.innerHTML = '💾 <strong>' + (tC.guardandoRuta||'Ruta guardada ✓') + '</strong><br><span style="font-size:14px;color:rgba(255,255,255,0.85)">' + (tC.guardandoRutaSub||'') + '</span>';
-    cartel.style.opacity = '1';
-    clearTimeout(cartel._t);
-    cartel._t = setTimeout(function(){ cartel.style.opacity = '0'; }, 3500);
-  } catch(e) { mostrarToast('⚠️ No se pudo guardar'); }
+    _modalPergamino({
+      id: 'modal-ruta-guardada',
+      titulo: tC.guardandoRuta || 'Ruta guardada ✓',
+      subtitulo: tC.guardandoRutaSub || 'Esta guía es gratuita y sin publicidad. Solo el apoyo de peregrinos como tú hace posible que siga creciendo. 🙏',
+      cancelTxt: tC.asistSinApoyo || 'Continuar sin apoyar',
+      opciones: [
+        { emoji:'💚', tit: tC.asistApoyo || 'Apoyar la guía',
+          colorTit:'#1a3d12',
+          estilo:'background:linear-gradient(135deg,rgba(45,74,30,0.35),rgba(30,50,18,0.35));border:1.5px solid #5a8040;',
+          accion: function(){ abrirDonacionesDrawer(); } }
+      ]
+    });
+  } catch(e) { mostrarToast('\u26a0\ufe0f No se pudo guardar'); }
 }
 
 function cargarRutaGuardada() {
@@ -11621,7 +11621,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1143";
+var _APP_VERSION = "v1144";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -13335,7 +13335,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1143</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1144</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
