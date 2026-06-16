@@ -5800,15 +5800,22 @@ function abrirBuscadorAsistente() {
   // Input + botón buscar
   var inputWrap = document.createElement('div');
   inputWrap.style.cssText = 'display:flex;gap:8px;margin-bottom:12px';
+  var inputCont = document.createElement('div');
+  inputCont.style.cssText = 'flex:1;position:relative;display:flex;align-items:center';
   var input = document.createElement('input');
   input.type = 'text';
   input.placeholder = _t.asistBuscarPh || 'albergue, farmacia, fuente, café…';
-  input.style.cssText = 'flex:1;background:rgba(255,240,200,0.6);border:1.5px solid #7a5010;border-radius:8px;padding:10px 14px;font-size:16px;color:#1a0e00;font-family:DM Sans,sans-serif;outline:none;-webkit-appearance:none';
+  input.style.cssText = 'width:100%;background:rgba(255,240,200,0.6);border:1.5px solid #7a5010;border-radius:8px;padding:10px 36px 10px 14px;font-size:16px;color:#1a0e00;font-family:DM Sans,sans-serif;outline:none;-webkit-appearance:none;box-sizing:border-box';
   input.setAttribute('autocomplete', 'off');
+  var spinnerEl = document.createElement('span');
+  spinnerEl.textContent = '⏳';
+  spinnerEl.style.cssText = 'position:absolute;right:10px;font-size:16px;display:none;pointer-events:none';
+  inputCont.appendChild(input);
+  inputCont.appendChild(spinnerEl);
   var btnBuscar = document.createElement('button');
   btnBuscar.textContent = _t.asistBuscarBtn || 'Buscar';
   btnBuscar.style.cssText = 'background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:10px 16px;font-size:16px;font-weight:700;cursor:pointer;font-family:Playfair Display,serif;white-space:nowrap;flex-shrink:0';
-  inputWrap.appendChild(input);
+  inputWrap.appendChild(inputCont);
   inputWrap.appendChild(btnBuscar);
   box.appendChild(inputWrap);
 
@@ -5845,8 +5852,9 @@ function abrirBuscadorAsistente() {
     if (!q || !q.trim()) return;
     q = q.trim();
     resultados.innerHTML = '';
-    estado.style.display = 'block';
-    estado.textContent = '⏳ Buscando ' + q + ' cerca de ti…';
+    estado.style.display = 'none';
+    spinnerEl.style.display = 'block';
+    input.style.borderColor = '#a07828';
 
     var refLat = (typeof userLat !== 'undefined' && userLat) ? userLat : (typeof mapa !== 'undefined' ? mapa.getCenter().lat : null);
     var refLng = (typeof userLng !== 'undefined' && userLng) ? userLng : (typeof mapa !== 'undefined' ? mapa.getCenter().lng : null);
@@ -5858,8 +5866,10 @@ function abrirBuscadorAsistente() {
     var radio = 1000;
     var osmTag = (typeof _OVERPASS_TAGS !== 'undefined') ? _OVERPASS_TAGS[q.toLowerCase()] : null;
 
+
     function _mostrarResultados(items) {
-      estado.style.display = 'none';
+      spinnerEl.style.display = 'none';
+      input.style.borderColor = '#7a5010';
       resultados.innerHTML = '';
       if (!items || items.length === 0) {
         estado.style.display = 'block';
@@ -5871,38 +5881,34 @@ function abrirBuscadorAsistente() {
       window._wizSearchMarkers = [];
 
       var iconoBusc = (typeof iconoBusqueda !== 'undefined') ? iconoBusqueda
-        : L.divIcon({ html:'<div style="background:#DC2626;color:#fff;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.25)"><span style="transform:rotate(45deg);font-size:16px">🔍</span></div>', className:'', iconSize:[32,32], iconAnchor:[16,32], popupAnchor:[0,-32] });
+        : L.divIcon({ html:'<div style="background:#DC2626;color:#fff;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:2px solid #fff"><span style="transform:rotate(45deg);font-size:16px">🔍</span></div>', className:'', iconSize:[32,32], iconAnchor:[16,32], popupAnchor:[0,-32] });
 
       var bounds = [];
       items.forEach(function(it) {
         var lat = it.lat, lng = it.lng, nombre = it.nombre, dist = it.dist;
         var mk = L.marker([lat, lng], { icon: iconoBusc }).addTo(mapa);
-        mk.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>' + nombre + '</strong><br><span style="font-size:11px;color:#6b7280">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + '</span>' + (it.tel ? '<br>📞 ' + it.tel : '') + '<br><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button onclick="_toggleBusquedaRuta(this,encodeURIComponent(\'' + nombre.replace(/\'/g, "\\'") + '\'),' + lat + ',' + lng + ');" style="background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">➕ Añadir a ruta</button><button onclick="irACoordenadasNav(' + lat + ',' + lng + ')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">🗺️ Cómo llegar</button></div></div>');
+        var popupEl = document.createElement('div');
+        popupEl.style.cssText = 'font-family:DM Sans,sans-serif;min-width:160px';
+        popupEl.innerHTML = '<strong>' + nombre + '</strong><br><span style="font-size:11px;color:#6b7280">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + '</span>' + (it.tel ? '<br>📞 ' + it.tel : '');
+        var btnDiv = document.createElement('div');
+        btnDiv.style.cssText = 'display:flex;gap:6px;margin-top:8px;flex-wrap:wrap';
+        var btnAdd = document.createElement('button');
+        btnAdd.textContent = '➕ Añadir a ruta';
+        btnAdd.style.cssText = 'background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+        (function(la,lo,no,b){ b.addEventListener('click', function(){ _toggleBusquedaRuta(b,encodeURIComponent(no),la,lo); }); })(lat,lng,nombre,btnAdd);
+        var btnNav = document.createElement('button');
+        btnNav.textContent = '🗺️ Cómo llegar';
+        btnNav.style.cssText = 'background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif';
+        (function(la,lo){ btnNav.addEventListener('click', function(){ irACoordenadasNav(la,lo); }); })(lat,lng);
+        btnDiv.appendChild(btnAdd); btnDiv.appendChild(btnNav);
+        popupEl.appendChild(btnDiv);
+        mk.bindPopup(popupEl);
         window._wizSearchMarkers.push(mk);
         bounds.push([lat, lng]);
-
-        var fila = document.createElement('div');
-        fila.style.cssText = 'background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:9px 12px';
-        fila.innerHTML = '<div style="font-size:15px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px">' + nombre + '</div>'
-          + '<div style="font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:8px">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + (it.tel ? ' · 📞 ' + it.tel : '') + '</div>'
-          + '<div style="display:flex;gap:6px">'
-          + '<button class="lupa-mapa-btn" style="flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:7px 8px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap">🗺️ Mostrar en mapa</button>'
-          + '<button class="lupa-ir-btn" style="flex:1;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:7px 8px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap">▶ Ir (navegación)</button>'
-          + '</div>';
-        (function(la, lo, nombre){
-          fila.querySelector('.lupa-mapa-btn').addEventListener('click', function(e){
-            e.stopPropagation();
-            cerrarModal();
-            if (typeof _mostrarEnMapaConRuta === 'function') _mostrarEnMapaConRuta(la, lo, nombre);
-            else mapa.setView([la, lo], 17);
-          });
-          fila.querySelector('.lupa-ir-btn').addEventListener('click', function(e){
-            e.stopPropagation();
-            cerrarModal();
-            if (typeof irACoordenadasNav === 'function') irACoordenadasNav(la, lo);
-          });
-        })(lat, lng, nombre);
       });
+
+      // Cerrar cajetin y mostrar resultados en el mapa
+      cerrarModal();
 
       if (bounds.length === 1) mapa.setView(bounds[0], 17);
       else if (bounds.length > 1) mapa.fitBounds(bounds, { padding:[50,50] });
@@ -11727,7 +11733,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1154";
+var _APP_VERSION = "v1155";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -13441,7 +13447,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1154</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1155</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
