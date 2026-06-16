@@ -4999,7 +4999,7 @@ function abrirHeroModal() {
               e.stopPropagation();
               cerrarModal();
               cerrar();
-              _mostrarEnMapaConRuta(la, lo);
+              _mostrarEnMapaConRuta(la, lo, nombre);
             });
             fila.querySelector('.wiz-ir-btn').addEventListener('click', function(e){
               e.stopPropagation();
@@ -5881,11 +5881,11 @@ function abrirBuscadorAsistente() {
           + '<button class="lupa-mapa-btn" style="flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:7px 8px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap">🗺️ Mostrar en mapa</button>'
           + '<button class="lupa-ir-btn" style="flex:1;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:7px 8px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap">▶ Ir (navegación)</button>'
           + '</div>';
-        (function(la, lo){
+        (function(la, lo, nombre){
           fila.querySelector('.lupa-mapa-btn').addEventListener('click', function(e){
             e.stopPropagation();
             cerrarModal();
-            if (typeof _mostrarEnMapaConRuta === 'function') _mostrarEnMapaConRuta(la, lo);
+            if (typeof _mostrarEnMapaConRuta === 'function') _mostrarEnMapaConRuta(la, lo, nombre);
             else mapa.setView([la, lo], 17);
           });
           fila.querySelector('.lupa-ir-btn').addEventListener('click', function(e){
@@ -5893,8 +5893,7 @@ function abrirBuscadorAsistente() {
             cerrarModal();
             if (typeof irACoordenadasNav === 'function') irACoordenadasNav(la, lo);
           });
-        })(lat, lng);
-        resultados.appendChild(fila);
+        })(lat, lng, nombre);
       });
 
       if (bounds.length === 1) mapa.setView(bounds[0], 17);
@@ -8447,21 +8446,26 @@ function _addBusquedaRuta(nombreEnc, lat, lng) {
     if (b3) b3.style.display = 'flex';
   }, 350);
 }
-function _mostrarEnMapaConRuta(lat, lng) {
+function _mostrarEnMapaConRuta(lat, lng, nombre) {
   mapa.closePopup();
-  var tmpId = '_busqueda_tmp';
+  var tmpId = '_busq_' + lat.toString().replace('.','') + '_' + lng.toString().replace('.','');
+  var nombreFinal = nombre || 'Destino';
   PUNTOS = PUNTOS.filter(function(p){ return p.id !== tmpId; });
   rutaPuntos = rutaPuntos.filter(function(p){ return p.id !== tmpId; });
-  var tmp = { id:tmpId, nombre:'Destino', lat:lat, lng:lng, categoria:'busqueda', emoji:'📍' };
+  var tmp = { id:tmpId, nombre:nombreFinal, lat:lat, lng:lng, categoria:'busqueda', emoji:'📍' };
   PUNTOS.push(tmp);
   addToRoute(tmpId);
+  // Marcador en el mapa con popup toggle
+  if (!window._wizSearchMarkers) window._wizSearchMarkers = [];
+  var mk = L.marker([lat, lng], { icon: iconoBusqueda }).addTo(mapa);
+  mk.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>' + nombreFinal + '</strong><br><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button onclick="_toggleBusquedaRuta(this,encodeURIComponent(\'' + nombreFinal.replace(/'/g,"\\'") + '\'),' + lat + ',' + lng + ');" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">✓ En ruta</button><button onclick="irACoordenadasNav(' + lat + ',' + lng + ')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">🗺️ Cómo llegar</button></div></div>');
+  window._wizSearchMarkers.push(mk);
   // Vista radio 1km igual que el botón del mapa
   mapa.setView([lat, lng], 15);
   radioKm = 1;
   _aplicarEstadoRadioBtns(1);
   if (userLat) aplicarRadio(1);
   document.activeElement && document.activeElement.blur();
-  // Trazar ruta con flechas sin activar navegación por voz
   setTimeout(function() {
     if (typeof dibujarLineaEstática === 'function') dibujarLineaEstática();
   }, 500);
@@ -11715,7 +11719,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1151";
+var _APP_VERSION = "v1152";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -13429,7 +13433,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1151</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1152</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
