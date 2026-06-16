@@ -4990,8 +4990,16 @@ function abrirHeroModal() {
           return;
         }
         if (!window._wizSearchMarkers) window._wizSearchMarkers = [];
+        // Limpiar marcadores anteriores y sus puntos de la ruta
+        var _busqIds = window._wizSearchMarkers.map(function(m){ return m._busqId; }).filter(Boolean);
         window._wizSearchMarkers.forEach(function(m){ try{ mapa.removeLayer(m); }catch(e){} });
         window._wizSearchMarkers = [];
+        if (_busqIds.length > 0) {
+          var _teniaRutaBusq = rutaPuntos.some(function(p){ return _busqIds.indexOf(p.id) !== -1; });
+          rutaPuntos = rutaPuntos.filter(function(p){ return _busqIds.indexOf(p.id) === -1; });
+          PUNTOS = PUNTOS.filter(function(p){ return _busqIds.indexOf(p.id) === -1; });
+          if (_teniaRutaBusq) actualizarRuta();
+        }
 
         var iconoBusc = (typeof iconoBusqueda !== 'undefined') ? iconoBusqueda
           : L.divIcon({ html:'<div style="background:#DC2626;color:#fff;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.25)"><span style="transform:rotate(45deg);font-size:16px">🔍</span></div>', className:'', iconSize:[32,32], iconAnchor:[16,32], popupAnchor:[0,-32] });
@@ -4999,7 +5007,9 @@ function abrirHeroModal() {
         var bounds = [];
         items.forEach(function(it) {
           var lat = it.lat, lng = it.lng, nombre = it.nombre, dist = it.dist;
+          var tmpId_mk = '_busq_' + lat.toString().replace('.','') + '_' + lng.toString().replace('.','');
           var mk = L.marker([lat, lng], { icon: iconoBusc }).addTo(mapa);
+          mk._busqId = tmpId_mk;
           var popupEl = document.createElement('div');
           popupEl.style.cssText = 'font-family:DM Sans,sans-serif;min-width:160px';
           popupEl.innerHTML = '<strong>' + nombre + '</strong><br><span style="font-size:11px;color:#6b7280">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + '</span>' + (it.tel ? '<br>📞 ' + it.tel : '');
@@ -5888,8 +5898,16 @@ function abrirBuscadorAsistente() {
         return;
       }
       if (!window._wizSearchMarkers) window._wizSearchMarkers = [];
+      // Limpiar marcadores anteriores y sus puntos de la ruta
+      var _busqIds = window._wizSearchMarkers.map(function(m){ return m._busqId; }).filter(Boolean);
       window._wizSearchMarkers.forEach(function(m){ try{ mapa.removeLayer(m); }catch(e){} });
       window._wizSearchMarkers = [];
+      if (_busqIds.length > 0) {
+        var _teniaRutaBusq = rutaPuntos.some(function(p){ return _busqIds.indexOf(p.id) !== -1; });
+        rutaPuntos = rutaPuntos.filter(function(p){ return _busqIds.indexOf(p.id) === -1; });
+        PUNTOS = PUNTOS.filter(function(p){ return _busqIds.indexOf(p.id) === -1; });
+        if (_teniaRutaBusq) actualizarRuta();
+      }
 
       var iconoBusc = (typeof iconoBusqueda !== 'undefined') ? iconoBusqueda
         : L.divIcon({ html:'<div style="background:#DC2626;color:#fff;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:2px solid #fff"><span style="transform:rotate(45deg);font-size:16px">🔍</span></div>', className:'', iconSize:[32,32], iconAnchor:[16,32], popupAnchor:[0,-32] });
@@ -5897,7 +5915,9 @@ function abrirBuscadorAsistente() {
       var bounds = [];
       items.forEach(function(it) {
         var lat = it.lat, lng = it.lng, nombre = it.nombre, dist = it.dist;
+        var tmpId_mk = '_busq_' + lat.toString().replace('.','') + '_' + lng.toString().replace('.','');
         var mk = L.marker([lat, lng], { icon: iconoBusc }).addTo(mapa);
+        mk._busqId = tmpId_mk;
         var popupEl = document.createElement('div');
         popupEl.style.cssText = 'font-family:DM Sans,sans-serif;min-width:160px';
         popupEl.innerHTML = '<strong>' + nombre + '</strong><br><span style="font-size:11px;color:#6b7280">📍 ' + (typeof formatDist==='function'?formatDist(dist):Math.round(dist)+'m') + '</span>' + (it.tel ? '<br>📞 ' + it.tel : '');
@@ -11763,7 +11783,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1160";
+var _APP_VERSION = "v1161";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -13477,7 +13497,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1160</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1161</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
