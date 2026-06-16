@@ -9998,7 +9998,7 @@ function limpiarRuta() {
       cancelTxt: tl.cancelar || 'Cancelar',
       opciones: [
         { emoji:'🗑️', tit: tl.confirmLimpiarOk || 'Sí, eliminar la ruta',
-          colorTit:'#dc2626', estilo:'background:rgba(220,38,38,0.12);border:1.5px solid #fca5a5;',
+          colorTit:'#7a1a1a', estilo:'background:rgba(120,30,30,0.18);border:1.5px solid rgba(160,60,60,0.6);',
           accion: function(){ _ejecutarLimpiarRutaSoloMapa(true); } }
       ]
     });
@@ -10019,8 +10019,8 @@ function limpiarRuta() {
     accion: function(){ _borrarSoloMemoria(); } });
   opciones.push({ emoji:'🗑️', tit: tl.limpiarOptTodoTit||'Limpiar memoria y mapa',
     sub: tl.limpiarOptTodoSub||'Borra todo — mapa y memoria guardada',
-    colorTit:'#dc2626', colorSub:'#ef4444',
-    estilo:'background:rgba(220,38,38,0.12);border:1.5px solid #fca5a5;',
+    colorTit:'#7a1a1a', colorSub:'rgba(140,50,50,0.85)',
+    estilo:'background:rgba(120,30,30,0.18);border:1.5px solid rgba(160,60,60,0.6);',
     accion: function(){ _ejecutarLimpiarRuta(); } });
   _modalPergamino({
     id: 'modal-confirm-limpiar',
@@ -13178,7 +13178,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1209";
+var _APP_VERSION = "v1210";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -14892,7 +14892,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1209</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1210</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
