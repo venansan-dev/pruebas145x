@@ -5017,6 +5017,7 @@ function abrirHeroModal() {
 
         // Cerrar cajón y mostrar resultados en el mapa
         spinnerEl.style.display = 'none'; input.style.borderColor = '#7a5010';
+        _actualizarBtnLimpiar();
         cerrarModal();
 
                 if (bounds.length === 1) mapa.setView(bounds[0], 17);
@@ -5908,6 +5909,7 @@ function abrirBuscadorAsistente() {
       });
 
       // Cerrar cajetin y mostrar resultados en el mapa
+      _actualizarBtnLimpiar();
       cerrarModal();
 
       if (bounds.length === 1) mapa.setView(bounds[0], 17);
@@ -8016,6 +8018,7 @@ function limpiarBusquedaMapa() {
   searchMarkers = [];
   // Limpiar marcadores del asistente
   if (window._wizSearchMarkers) { window._wizSearchMarkers.forEach(function(m){ try{ mapa.removeLayer(m); }catch(e){} }); window._wizSearchMarkers = []; }
+  _actualizarBtnLimpiar();
   // Quitar puntos de búsqueda de la ruta y de PUNTOS
   rutaPuntos = rutaPuntos.filter(function(p){ return p.categoria !== 'busqueda'; });
   PUNTOS = PUNTOS.filter(function(p){ return p.categoria !== 'busqueda'; });
@@ -8778,6 +8781,18 @@ function limpiarRuta() {
     opciones: opciones
   });
 }
+function _actualizarBtnLimpiar() {
+  var btnClr = document.getElementById('ruta-bar-btn-clear');
+  if (!btnClr) return;
+  var hayRuta = rutaPuntos.length > 0;
+  var hayBusqueda = window._wizSearchMarkers && window._wizSearchMarkers.length > 0;
+  if (hayRuta || hayBusqueda) {
+    btnClr.style.display = 'block';
+    btnClr.disabled = false;
+  } else {
+    btnClr.style.display = 'none';
+  }
+}
 function _borrarSoloMemoria() {
   try { localStorage.removeItem('rutaGuardadaV2'); } catch(e) {}
   _actualizarBtnGuardarRestaurar();
@@ -8796,6 +8811,7 @@ function _ejecutarLimpiarRuta() {
   try {
     if (window._wizSearchMarkers) { window._wizSearchMarkers.forEach(function(m){ try{mapa.removeLayer(m);}catch(e){} }); window._wizSearchMarkers = []; }
   } catch(e) { window._wizSearchMarkers = []; }
+  _actualizarBtnLimpiar();
   var btnVer=document.getElementById('ruta-bar-btn-ver');
   if(btnVer) btnVer.style.background='#185FA5';
   var panel=document.getElementById('map-ruta-panel');
@@ -9323,6 +9339,7 @@ function _ejecutarLimpiarRutaSoloMapa(silencioso) {
   try { if (_rutaLinea && mapa) { mapa.removeLayer(_rutaLinea); _rutaLinea = null; } } catch(e) { _rutaLinea = null; }
   try { if (window._rutaFlechas) { window._rutaFlechas.forEach(function(m){ try{mapa.removeLayer(m);}catch(e){}; }); window._rutaFlechas = []; } } catch(e) {}
   try { if (window._wizSearchMarkers) { window._wizSearchMarkers.forEach(function(m){ try{mapa.removeLayer(m);}catch(e){}; }); window._wizSearchMarkers = []; } } catch(e) {}
+  _actualizarBtnLimpiar();
   rutaPuntos = [];
   var btnClrBar = document.getElementById('ruta-bar-btn-clear'); if(btnClrBar){ btnClrBar.style.display='none'; btnClrBar.disabled=false; }
   var btnNavBar = document.getElementById('ruta-nav-btn'); if(btnNavBar) btnNavBar.style.display='none';
@@ -11736,7 +11753,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1158";
+var _APP_VERSION = "v1159";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -13450,7 +13467,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1158</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1159</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
