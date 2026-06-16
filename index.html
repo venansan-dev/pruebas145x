@@ -2234,7 +2234,7 @@
     <!-- Botones -->
     <div style='flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:5px'>
       <button id='btn-album-ranking' onclick='abrirAlbumDrawer()' style='display:flex;align-items:center;justify-content:center;gap:3px;background:rgba(0,0,0,0.18);border:1px solid #7a5010;border-radius:8px;padding:6px 4px;color:#fff8e8;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>Álbum</button>
-      <button id='btn-ranking-coleccion' onclick='_abrirColeccionDesdeRanking()' style='display:flex;align-items:center;justify-content:center;gap:3px;background:rgba(80,50,0,0.3);border:1px solid rgba(200,160,0,0.55);border-radius:8px;padding:6px 4px;color:#ffe58a;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 0 5px rgba(200,160,0,0.15)'>Colección</button>
+      <button id='btn-ranking-coleccion' onclick='_abrirColeccionDesdeRanking()' style='display:flex;align-items:center;justify-content:center;gap:3px;background:rgba(80,50,0,0.3);border:1px solid rgba(200,160,0,0.55);border-radius:8px;padding:6px 4px;color:#ffe58a;font-size:11px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 0 5px rgba(200,160,0,0.15)'>Tablero de juego</button>
     </div>
     <!-- Tarjeta ranking -->
     <div style='flex-shrink:0;background:rgba(0,0,0,0.18);border:1px solid #7a5010;border-radius:14px;padding:1rem;box-shadow:inset 0 1px 0 rgba(255,220,120,0.1)'>
@@ -4587,21 +4587,22 @@ function abrirAlbumPanel(origen) {
             window._ocaGetCromosConKeys(function(entries) {
               try {
                 var mazo = entries.filter(function(e){ return e && e.item && !e.item.resuelto; });
+                var abiertos = entries.filter(function(e){ return e && e.item && e.item.resuelto; });
+                var numAb = {};
+                abiertos.forEach(function(e){ numAb[e.item.num] = (numAb[e.item.num]||0)+1; });
+                var casillas = Object.keys(numAb).length;
                 if (mazo.length === 0) return;
                 var t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : {};
-                var rango = window._getRango ? window._getRango(n) : null;
+                var rango = window._getRango ? window._getRango(casillas) : null;
                 var rangoTxt = rango ? ' ' + rango.emoji + ' <strong>' + rango.label + '</strong>.' : '';
-                var nCromos = n === 1
-                  ? ('Llevas 1 cromo en tu álbum.' + rangoTxt)
-                  : ('Llevas ' + n + ' cromos en tu álbum.' + rangoTxt);
+                var nCromos = 'Tienes ' + casillas + ' casillas en tu tablero.' + rangoTxt;
                 var mazoTxt = mazo.length === 1
-                  ? '🎴 Tienes <strong>1 cromo sin abrir</strong> en tu mazo. ¡Ábrelo desde la sección Colección!'
-                  : '🎴 Tienes <strong>' + mazo.length + ' cromos sin abrir</strong> en tu mazo. ¡Ábrelos desde la sección Colección!';
+                  ? '🎴 Tienes <strong>1 cromo sin abrir</strong> en tu mazo. ¡Ábrelo desde la sección Tablero de Juego!'
+                  : '🎴 Tienes <strong>' + mazo.length + ' cromos sin abrir</strong> en tu mazo. ¡Ábrelos desde la sección Tablero de Juego!';
                 _modalPergamino({
                   id: 'modal-ranking-aviso',
-                  titulo: t.rankingTitulo || '🏅 Ranking del Peregrino',
-                  subtitulo: nCromos,
-                  opciones: [{ emoji:'🎴', tit: t.btnColeccion || 'Colección', sub: t.abrirCromos || 'Abrir cromos del mazo', accion: function(){ _abrirColeccionDesdeRanking(); } }],
+                  titulo: nCromos,
+                  opciones: [{ emoji:'🎲', tit: 'Juego Oca — Abrir cromos del mazo', sub: 'Tablero de Juego', accion: function(){ _abrirColeccionDesdeRanking(); } }],
                   cancelTxt: t.cerrar || 'Cerrar',
                   extraHtml: '<div style="background:rgba(0,0,0,0.15);border-left:3px solid #c9a84c;border-radius:0 8px 8px 0;padding:10px 12px;font-size:13px;color:#1a0800;line-height:1.6">' + mazoTxt + '</div>'
                 });
@@ -13187,7 +13188,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1213";
+var _APP_VERSION = "v1215";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -14901,7 +14902,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1213</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1215</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
