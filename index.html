@@ -8272,7 +8272,7 @@ function irDesdeCarrusel(id) {
   }, 600);
 }
 function verEnMapa(lat,lng) {
-  mapa.setView([lat,lng],16);
+  mapa.setView([lat,lng],14);
   document.activeElement && document.activeElement.blur(); setTimeout(function(){ var el=document.getElementById('map'); if(el){ var rect=el.getBoundingClientRect(); var center=window.pageYOffset+rect.top-(window.innerHeight/2)+(rect.height/2); window.scrollTo({top:Math.max(0,center),behavior:'smooth'}); } },600);
 }
 function _addBusquedaRuta(nombreEnc, lat, lng) {
@@ -8463,7 +8463,7 @@ function limpiarRuta() {
     document.body.appendChild(overlaySimple);
     overlaySimple.addEventListener('click', function(e){ if(e.target===overlaySimple) overlaySimple.remove(); });
     document.getElementById('limpiar-simple-cancel').addEventListener('click', function(){ overlaySimple.remove(); });
-    document.getElementById('limpiar-simple-ok').addEventListener('click', function(){ overlaySimple.remove(); _ejecutarLimpiarRutaSoloMapa(); });
+    document.getElementById('limpiar-simple-ok').addEventListener('click', function(){ overlaySimple.remove(); _ejecutarLimpiarRutaSoloMapa(true); });
     return;
   }
   var existing = document.getElementById('modal-confirm-limpiar');
@@ -9048,7 +9048,7 @@ function _restaurarRutaGuardada() {
   cargarRutaGuardada();
   _actualizarBtnRestauraRuta();
 }
-function _ejecutarLimpiarRutaSoloMapa() {
+function _ejecutarLimpiarRutaSoloMapa(silencioso) {
   _verRutaMapa = false;
   try { if (_rutaLinea && mapa) { mapa.removeLayer(_rutaLinea); _rutaLinea = null; } } catch(e) { _rutaLinea = null; }
   try { if (window._rutaFlechas) { window._rutaFlechas.forEach(function(m){ try{mapa.removeLayer(m);}catch(e){}; }); window._rutaFlechas = []; } } catch(e) {}
@@ -9069,7 +9069,7 @@ function _ejecutarLimpiarRutaSoloMapa() {
   try { actualizarRuta(); } catch(e) {}
   try { actualizarBotonesRuta(); } catch(e) {}
   _actualizarBtnRestauraRuta();
-  mostrarToast('🗺️ Mapa limpiado — ruta guardada disponible');
+  if (!silencioso) mostrarToast('🗺️ Mapa limpiado — ruta guardada disponible');
 }
 // ═══════════════════════════════════════════════
 //  NAVEGACIÓN POR VOZ CON OSRM
@@ -11436,7 +11436,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1131";
+var _APP_VERSION = "v1133";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -13150,7 +13150,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1131</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1133</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
