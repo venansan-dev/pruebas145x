@@ -5223,9 +5223,9 @@ function _cargarMeteoDrawer(lat,lng) {
     if(xhr.readyState!==4||xhr.status!==200) return;
     try {
       var data=JSON.parse(xhr.responseText);
-      var now=new Date(); var ha=now.getHours();
+      var now=new Date(); var ha=now.getHours(); var haF=Math.min(ha+2,23);
       var times=data.hourly.time; var ci=0;
-      for(var i=0;i<times.length;i++){if(parseInt(times[i].split('T')[1])===ha){ci=i;break;}}
+      for(var i=0;i<times.length;i++){if(parseInt(times[i].split('T')[1])===haF){ci=i;break;}}
       // Guardar datos clave para el asistente
       window._meteoActual = {
         temp: Math.round(data.hourly.temperature_2m[ci]),
@@ -5974,8 +5974,8 @@ function abrirHeroModal() {
         if (xhr.status === 200) {
           try {
             var data = JSON.parse(xhr.responseText);
-            var ha = new Date().getHours(); var ci = 0;
-            for (var i=0; i<data.hourly.time.length; i++) { if (parseInt(data.hourly.time[i].split('T')[1])===ha){ci=i;break;} }
+            var ha = new Date().getHours(); var haF = Math.min(ha + 2, 23); var ci = 0;
+            for (var i=0; i<data.hourly.time.length; i++) { if (parseInt(data.hourly.time[i].split('T')[1])===haF){ci=i;break;} }
             window._meteoActual = {
               temp: Math.round(data.hourly.temperature_2m[ci]),
               code: data.hourly.weathercode[ci],
@@ -13356,7 +13356,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1239";
+var _APP_VERSION = "v1240";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15070,7 +15070,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1239</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1240</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
