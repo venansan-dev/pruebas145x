@@ -240,7 +240,7 @@
 .poi-card:hover::before{opacity:1}
 .modal-box h3{font-family:'Playfair Display',serif}
 @keyframes bounceDownArrow{0%,100%{transform:translateY(0);}45%{transform:translateY(8px);}65%{transform:translateY(3px);}}
-.pergamino-body{font-family:'IM Fell English',serif;font-size:14px;line-height:1.7}.pergamino-body::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");border-radius:inherit;opacity:1}.pergamino-body .num,.pergamino-body strong{font-size:1.15em;font-variant-numeric:oldstyle-nums}.pergamino-body span[style*='float:left']{font-family:'Cinzel',serif}</style>
+.pergamino-body{font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.7}.pergamino-body::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");border-radius:inherit;opacity:1}.pergamino-body .num,.pergamino-body strong{font-size:1.15em;font-variant-numeric:oldstyle-nums}.pergamino-body span[style*='float:left']{font-family:'Cinzel',serif}</style>
 
 
   <!-- Schema.org Structured Data -->
@@ -5896,9 +5896,9 @@ function abrirHeroModal() {
     var dia = new Date().getDay(); // 0=dom, 6=sab
     var finde = (dia === 0 || dia === 6);
 
-    var mañana = (_t.asistSaludoM)||['¡Buenos días, peregrino! 🌅','¡Ultreia! El Camino te espera. 🌄','¡Arriba, caminante! El alba es tuya. ☀️','Un nuevo día en el Camino. ¡Buen paso! 🥾','¡Que la jornada te sea leve, peregrino! 🌤️'];
-    var tarde = (_t.asistSaludoT)||['¡Buenas tardes, peregrino! ☀️','¿Cómo lleva el Camino la tarde de hoy? 🛤️','¡Tarde de Camino! ¿Cuántos kilómetros hoy? 🥾','La tarde es buena hora para planificar. 🗺️','¡Ultreia et suseia, peregrino! ⛰️'];
-    var noche = (_t.asistSaludoN)||['¡Buenas noches, peregrino! 🌙','El Camino descansa, pero tú planificas. 🌟','Noche de peregrino. ¿Mañana salimos? ⭐','¡Buenas noches! El alba trae nuevo Camino. 🌙','Hora de descansar las piernas... o de planificar. 🗺️'];
+    var mañana = (_t.asistSaludoM)||['¡Buenos días, peregrino!','¡Ultreia! El Camino te espera.','¡Arriba, caminante! El alba es tuya.','Un nuevo día en el Camino. ¡Buen paso!','¡Que la jornada te sea leve, peregrino!'];
+    var tarde = (_t.asistSaludoT)||['¡Buenas tardes, peregrino!','¿Cómo lleva el Camino la tarde de hoy?','¡Tarde de Camino! ¿Cuántos kilómetros hoy?','La tarde es buena hora para planificar.','¡Ultreia et suseia, peregrino!'];
+    var noche = (_t.asistSaludoN)||['¡Buenas noches, peregrino!','El Camino descansa, pero tú planificas.','Noche de peregrino. ¿Mañana salimos?','¡Buenas noches! El alba trae nuevo Camino.','Hora de descansar las piernas... o de planificar.'];
 
     var pool = hora < 13 ? mañana : hora < 20 ? tarde : noche;
     return pool[Math.floor(Math.random() * pool.length)];
@@ -13356,7 +13356,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1223";
+var _APP_VERSION = "v1225";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15070,7 +15070,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1223</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1225</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
