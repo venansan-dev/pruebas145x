@@ -6135,7 +6135,7 @@ function abrirHeroModal() {
           if (_hayRuta) {
             // Rama ruta activa
             var sub = document.createElement('p');
-            sub.style.cssText = 'font-size:16px;color:#1a0800;line-height:1.6;margin-bottom:20px';
+            sub.style.cssText = 'font-size:15px;color:#1a0800;line-height:1.6;margin-bottom:20px';
             var btnRow = document.createElement('div');
             btnRow.style.cssText = 'display:flex;gap:10px';
             var btnSi = document.createElement('button');
@@ -6156,7 +6156,7 @@ function abrirHeroModal() {
           } else if (cercanos.length === 0) {
             // Rama sin GPS
             var noGps = document.createElement('p');
-            noGps.style.cssText = 'font-size:16px;color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px';
+            noGps.style.cssText = 'font-size:15px;color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px';
             var btnCerrar = document.createElement('button');
             btnCerrar.textContent = _t.asistCerrar||'Cerrar';
             btnCerrar.style.cssText = 'width:100%;background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
@@ -6170,7 +6170,7 @@ function abrirHeroModal() {
             var primero = cercanos[0];
             var distTexto = primero.dist < 1000 ? Math.round(primero.dist) + ' m' : (primero.dist/1000).toFixed(1) + ' km';
             var sub = document.createElement('p');
-            sub.style.cssText = 'font-size:16px;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:6px';
+            sub.style.cssText = 'font-size:15px;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:6px';
             var sub2 = document.createElement('p');
             sub2.style.cssText = 'font-size:15px;color:#1a0800;line-height:1.5;margin-bottom:12px';
             var btnRow = document.createElement('div');
@@ -13356,7 +13356,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1234";
+var _APP_VERSION = "v1235";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15070,7 +15070,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1234</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1235</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
