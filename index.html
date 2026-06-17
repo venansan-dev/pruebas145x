@@ -6078,7 +6078,7 @@ function abrirHeroModal() {
 
     // Casco solo, centrado, con pulso suave
     var cascoWrap = document.createElement('div');
-    cascoWrap.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:10px';
+    cascoWrap.style.cssText = 'display:flex;align-items:flex-end;gap:10px;margin-bottom:10px';
     var cascoImg = document.createElement('img');
     cascoImg.src = 'https://i.postimg.cc/m2TbCRTs/casc4.png';
     cascoImg.style.cssText = 'width:38px;height:38px;object-fit:contain;flex-shrink:0;animation:_casc-pulse 2.4s ease-in-out infinite';
@@ -6092,7 +6092,7 @@ function abrirHeroModal() {
 
     // Texto del saludo con typewriter — sin icono, fuente conversacional
     var saludoEl = document.createElement('div');
-    saludoEl.style.cssText = 'font-family:DM Sans,sans-serif;font-size:15px;font-weight:500;color:#1a0800;line-height:1.4;flex:1';
+    saludoEl.style.cssText = 'font-family:DM Sans,sans-serif;font-size:15px;font-weight:500;color:#1a0800;line-height:1.4;flex:1;margin-bottom:6px';
     cascoWrap.appendChild(saludoEl);
     inner.appendChild(cascoWrap);
 
@@ -13356,7 +13356,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1232";
+var _APP_VERSION = "v1233";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15070,7 +15070,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1232</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1233</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
