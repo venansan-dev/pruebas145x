@@ -5226,6 +5226,15 @@ function _cargarMeteoDrawer(lat,lng) {
       var now=new Date(); var ha=now.getHours();
       var times=data.hourly.time; var ci=0;
       for(var i=0;i<times.length;i++){if(parseInt(times[i].split('T')[1])===ha){ci=i;break;}}
+      // Guardar datos clave para el asistente
+      window._meteoActual = {
+        temp: Math.round(data.hourly.temperature_2m[ci]),
+        code: data.hourly.weathercode[ci],
+        prob: data.hourly.precipitation_probability[ci],
+        maxT: data.daily ? Math.round(data.daily.temperature_2m_max[0]) : null,
+        minT: data.daily ? Math.round(data.daily.temperature_2m_min[0]) : null,
+        icon: (typeof WMO_ICONS!=='undefined'&&WMO_ICONS[data.hourly.weathercode[ci]]) ? WMO_ICONS[data.hourly.weathercode[ci]] : '🌡️'
+      };
       var horasEl=document.getElementById('meteo-drawer-horas');
       if(horasEl){
         var html='';
@@ -5828,25 +5837,53 @@ function abrirHeroModal() {
   }
 
   function _subtituloContextual() {
-    var n = _numCromosActuales();
-    var ruta = (typeof rutaPuntos !== 'undefined') ? rutaPuntos.length : 0;
-    if (n === 0 && ruta === 0) {
-      var frases = _t.asistSubPrimera || ['Parece que es tu primera vez por aquí. ¡Bienvenido al Camino!','Todo está listo para tu peregrinación. ¿Por dónde empezamos?','El Camino empieza con el primer paso. ¿Damos el tuyo?'];
-      return frases[Math.floor(Math.random() * frases.length)];
+    var _t = T[idiomaActual] || T.es;
+    var now = new Date();
+    var dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+    var diasGL = ['domingo','luns','martes','mércores','xoves','venres','sábado'];
+    var diasEN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var diaIdx = now.getDay();
+    var diaNom = idiomaActual==='gl' ? diasGL[diaIdx] : idiomaActual==='en' ? diasEN[diaIdx] : dias[diaIdx];
+    var m = window._meteoActual;
+
+    // Frases aleatorias según tiempo y día
+    var mensajes;
+    if (!m) {
+      // Sin datos meteorológicos
+      var sinMeteo = {
+        es: ['¡Buen '+diaNom+', peregrino! El Camino te espera.','Feliz '+diaNom+'. ¿Damos el primer paso hoy?','¡Hoy es '+diaNom+'! Un buen día para explorar.'],
+        gl: ['¡Bo '+diaNom+', peregrino! O Camiño agárdache.','Bo '+diaNom+'. ¿Damos o primeiro paso hoxe?','¡Hoxe é '+diaNom+'! Un bo día para explorar.'],
+        en: ['Happy '+diaNom+', pilgrim! The Way awaits.','Good '+diaNom+'. Shall we take the first step today?','Today is '+diaNom+'! A good day to explore.']
+      };
+      var arr = sinMeteo[idiomaActual] || sinMeteo.es;
+      return arr[Math.floor(Math.random()*arr.length)];
     }
-    if (n > 0 && ruta === 0) {
-      var rango = (window._getRango) ? window._getRango(n) : null;
-      var rangoTxt = rango ? (_t.asistSubEres||' Eres ') + rango.emoji + ' ' + rango.label + '.' : '';
-      var base = (n !== 1 ? (_t.asistSubCromosP||'Llevas {n} cromos en tu álbum.') : (_t.asistSubCromos||'Llevas {n} cromo en tu álbum.')).replace('{n}',n);
-      return base + rangoTxt + (_t.asistSubSigue||' ¡Sigue así!');
+
+    var icon = m.icon || '🌡️';
+    var temp = m.temp + '°';
+    var lluvia = m.prob > 50;
+    var frio = m.temp < 10;
+    var calor = m.temp > 26;
+    var viento = false; // no tenemos viento actual sin más datos
+
+    var frases;
+    if (idiomaActual === 'en') {
+      if (lluvia)   frases = ['Happy '+diaNom+'! '+icon+' '+temp+' and '+m.prob+'% chance of rain — bring your cape, pilgrim.','It\'s '+diaNom+', '+icon+' '+temp+'. Looks like rain — watch those stone paths!',''+icon+' '+temp+' this '+diaNom+' with rain likely. A wet Camino is still a Camino!'];
+      else if (frio) frases = ['Good '+diaNom+'! '+icon+' '+temp+' — wrap up warm, pilgrim.',''+icon+' '+temp+' this '+diaNom+'. Cold but clear — perfect light for the route.','It\'s a fresh '+diaNom+' at '+icon+' '+temp+'. Bundle up and walk on!'];
+      else if (calor) frases = ['Happy '+diaNom+'! '+icon+' '+temp+' — stay hydrated on the Camino.',''+icon+' Hot '+diaNom+' at '+temp+'! Early start recommended.','It\'s '+icon+' '+temp+' this '+diaNom+'. Shade and water are your best friends today.'];
+      else           frases = ['Good '+diaNom+'! '+icon+' '+temp+' — ideal Camino weather.',''+icon+' '+temp+' this '+diaNom+'. A great day to discover new places.','Happy '+diaNom+'! '+icon+' '+temp+' — the Way is calling.'];
+    } else if (idiomaActual === 'gl') {
+      if (lluvia)   frases = ['Bo '+diaNom+'! '+icon+' '+temp+' e '+m.prob+'% de choiva — non esquezas o chuvasqueiro, peregrino.','Hoxe é '+diaNom+', '+icon+' '+temp+'. Parece que vai chover — ollo cos camiños de pedra!',''+icon+' '+temp+' este '+diaNom+' con choiva probable. Un Camiño mollado tamén é Camiño!'];
+      else if (frio) frases = ['Bo '+diaNom+'! '+icon+' '+temp+' — abrígate ben, peregrino.',''+icon+' '+temp+' este '+diaNom+'. Frío pero despexado — luz perfecta para a ruta.','Fresco '+diaNom+' a '+icon+' '+temp+'. Abrígate e segue camiñando!'];
+      else if (calor) frases = ['Bo '+diaNom+'! '+icon+' '+temp+' — bebe auga e descansa á sombra.',''+icon+' '+diaNom+' quente a '+temp+'! Recoméndase saír cedo.','Fai '+icon+' '+temp+' este '+diaNom+'. A sombra e a auga son os teus mellores amigos hoxe.'];
+      else           frases = ['Bo '+diaNom+'! '+icon+' '+temp+' — tempo ideal para o Camiño.',''+icon+' '+temp+' este '+diaNom+'. Un bo día para descubrir novos lugares.','Bo '+diaNom+'! '+icon+' '+temp+' — o Camiño chámache.'];
+    } else {
+      if (lluvia)   frases = ['¡Feliz '+diaNom+'! '+icon+' '+temp+' y '+m.prob+'% de probabilidad de lluvia — no olvides el chubasquero, peregrino.','Hoy es '+diaNom+', '+icon+' '+temp+'. Parece que lloverá — ¡ojo con los caminos de piedra!',''+icon+' '+temp+' este '+diaNom+' con lluvia probable. ¡Un Camino mojado también es Camino!'];
+      else if (frio) frases = ['¡Buen '+diaNom+'! '+icon+' '+temp+' — abrígate bien, peregrino.',''+icon+' '+temp+' este '+diaNom+'. Frío pero despejado — luz perfecta para la ruta.','¡'+diaNom+' fresquito a '+icon+' '+temp+'! Abrígate y sigue caminando.'];
+      else if (calor) frases = ['¡Feliz '+diaNom+'! '+icon+' '+temp+' — hidrátate bien en el Camino.',''+icon+' '+diaNom+' caluroso a '+temp+'! Se recomienda salir temprano.','Hace '+icon+' '+temp+' este '+diaNom+'. La sombra y el agua son tus mejores aliados hoy.'];
+      else           frases = ['¡Buen '+diaNom+'! '+icon+' '+temp+' — tiempo ideal para el Camino.',''+icon+' '+temp+' este '+diaNom+'. Un gran día para descubrir nuevos lugares.','¡Feliz '+diaNom+'! '+icon+' '+temp+' — el Camino te llama.'];
     }
-    if (ruta > 0 && n === 0) {
-      return (ruta !== 1 ? (_t.asistSubRutaP||'Tienes {n} lugares en ruta. ¿Salimos?') : (_t.asistSubRuta||'Tienes {n} lugar en ruta. ¿Salimos?')).replace('{n}',ruta);
-    }
-    if (ruta > 0 && n > 0) {
-      return (n !== 1 ? (_t.asistSubAmbosP||'Llevas {n} cromos y una ruta con {r} paradas. ¡El Camino te espera!') : (_t.asistSubAmbos||'Llevas {n} cromo y una ruta con {r} parada. ¡El Camino te espera!')).replace('{n}',n).replace('{r}',ruta);
-    }
-    return _t.asistSubDefault||'El Camino te espera. ¿En qué puedo ayudarte?';
+    return frases[Math.floor(Math.random()*frases.length)];
   }
 
   // Inserta un bloque de curiosidad con estilo discreto
@@ -13188,7 +13225,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1215";
+var _APP_VERSION = "v1216";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -14902,7 +14939,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1215</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1216</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
