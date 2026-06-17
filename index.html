@@ -627,17 +627,24 @@
     padding:5rem 2rem;
     overflow:hidden;
   }
-  .dl-gallery {
-    display:flex; gap:1.5rem; justify-content:center;
-    flex-wrap:wrap;
+  .dl-gallery-carousel-wrap {
     max-width:1100px; margin:2.5rem auto 0;
   }
+  .dl-gallery {
+    display:flex; gap:1.5rem;
+    overflow-x:auto; scroll-behavior:smooth;
+    scroll-snap-type:x mandatory;
+    padding:4px 4px 1rem;
+    scrollbar-width:none;
+  }
+  .dl-gallery::-webkit-scrollbar { display:none; }
   .dl-gallery-item {
     border-radius:18px; overflow:hidden;
     border:1px solid rgba(0,0,0,0.08);
     box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.1);
     flex:0 0 auto;
     width:180px;
+    scroll-snap-align:start;
     transition:transform .3s, box-shadow .3s;
   }
   .dl-gallery-item:hover {
@@ -645,14 +652,28 @@
     box-shadow:0 16px 48px rgba(0,0,0,0.18);
   }
   .dl-gallery-item img {
-    width:100%; display:block;
-    aspect-ratio:9/16; object-fit:cover; object-position:top;
+    width:180px; height:320px; display:block;
+    object-fit:cover; object-position:top;
   }
   .dl-gallery-label {
     padding:10px 12px;
     font-size:12px; font-weight:600; color:#94a3b8;
     text-align:center; background:rgba(255,255,255,0.05);
     border-top:1px solid rgba(0,0,0,0.06);
+  }
+  .dl-gallery-nav {
+    display:flex; justify-content:center; gap:10px;
+    margin-top:0.25rem;
+  }
+  .dl-gallery-arrow {
+    width:36px; height:36px; border-radius:50%;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:16px; color:#fff;
+    transition:all .2s; box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  }
+  .dl-gallery-arrow:hover {
+    background:#1a3a6e; color:#fff; border-color:rgba(255,255,255,0.2);
   }
   /* Placeholder de pantalla cuando no hay imagen real */
   .dl-screen-placeholder {
@@ -1198,7 +1219,8 @@
   <section id="dl-gallery" class="dl-gallery-wrap">
     <h2 class="dl-section-title" id="dl-gal-title">La app en acción</h2>
     <p class="dl-section-sub" id="dl-gal-sub">Capturas reales desde el móvil</p>
-    <div class="dl-gallery">
+    <div class="dl-gallery-carousel-wrap">
+      <div class="dl-gallery" id="dl-gallery-track">
       <div class="dl-gallery-item">
         <img src="https://i.postimg.cc/PqwvgqYt/mipunto2.png" alt="Añade tus propios puntos"/>
         <div class="dl-gallery-label" id="dl-gal1">Añade tus propios puntos</div>
@@ -1222,6 +1244,11 @@
       <div class="dl-gallery-item">
         <img src="https://i.postimg.cc/SKMYBKCN/alertas2.png" alt="Crea y recibe alertas en tiempo real"/>
         <div class="dl-gallery-label" id="dl-gal6">Crea y recibe alertas en tiempo real</div>
+      </div>
+      </div>
+      <div class="dl-gallery-nav">
+        <div class="dl-gallery-arrow" onclick="document.getElementById('dl-gallery-track').scrollBy({left:-200,behavior:'smooth'})">‹</div>
+        <div class="dl-gallery-arrow" onclick="document.getElementById('dl-gallery-track').scrollBy({left:200,behavior:'smooth'})">›</div>
       </div>
     </div>
     <p style="text-align:center;margin-top:2rem;font-size:13px;color:#94a3b8" id="dl-gal-hint">
@@ -13350,7 +13377,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1245";
+var _APP_VERSION = "v1246";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15064,7 +15091,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:none;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1245</div>
+<div id='version-badge' style='display:none;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1246</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
