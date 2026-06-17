@@ -5829,7 +5829,7 @@ function abrirHeroModal() {
   // Helper: casco + typewriter reutilizable para todos los _render
   function _cascoTypewriter(container, texto, extraCss, speed, onDone) {
     var wrap = document.createElement('div');
-    wrap.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:10px' + (extraCss ? ';' + extraCss : '');
+    wrap.style.cssText = 'display:flex;align-items:flex-end;gap:10px;margin-bottom:10px' + (extraCss ? ';' + extraCss : '');
     var img = document.createElement('img');
     img.src = 'https://i.postimg.cc/m2TbCRTs/casc4.png';
     img.style.cssText = 'width:36px;height:36px;object-fit:contain;flex-shrink:0;animation:_casc-pulse 2.4s ease-in-out infinite';
@@ -13356,7 +13356,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1227";
+var _APP_VERSION = "v1228";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15070,7 +15070,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1227</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1228</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
