@@ -5703,6 +5703,10 @@ function toggleAlertasFirebase(){
 
 
 function abrirHeroModal() {
+  // Desbloquear AudioContext en iOS (requiere gesto del usuario)
+  if (window._cascoAudioCtx && window._cascoAudioCtx.state === 'suspended') {
+    window._cascoAudioCtx.resume();
+  }
   var _t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : T['es'];
   function _capital(txt) {
     if (!txt || typeof txt !== 'string') return txt;
@@ -5959,32 +5963,42 @@ function abrirHeroModal() {
       return txt;
     }
 
-    // Si no, intentamos obtenerlos con GPS antes de responder
-    if (cb && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(pos) {
-        var lat = pos.coords.latitude, lng = pos.coords.longitude;
-        var url = 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lng
-          +'&hourly=temperature_2m,weathercode,precipitation_probability&timezone=Europe/Madrid&forecast_days=1';
-        var xhr = new XMLHttpRequest(); xhr.open('GET', url, true);
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState !== 4) return;
-          if (xhr.status === 200) {
-            try {
-              var data = JSON.parse(xhr.responseText);
-              var ha = new Date().getHours(); var ci = 0;
-              for (var i=0; i<data.hourly.time.length; i++) { if (parseInt(data.hourly.time[i].split('T')[1])===ha){ci=i;break;} }
-              window._meteoActual = {
-                temp: Math.round(data.hourly.temperature_2m[ci]),
-                code: data.hourly.weathercode[ci],
-                prob: data.hourly.precipitation_probability[ci],
-                icon: (typeof WMO_ICONS!=='undefined'&&WMO_ICONS[data.hourly.weathercode[ci]])?WMO_ICONS[data.hourly.weathercode[ci]]:'🌡️'
-              };
-            } catch(e) {}
-          }
-          cb(_construir(window._meteoActual || null));
-        };
-        xhr.send();
-      }, function() { cb(_construir(null)); }, {timeout:4000});
+    // Usar coordenadas ya disponibles (GPS ya activo en la app)
+    function _fetchMeteo(lat, lng) {
+      var url = 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lng
+        +'&hourly=temperature_2m,weathercode,precipitation_probability&timezone=Europe/Madrid&forecast_days=1';
+      var xhr = new XMLHttpRequest(); xhr.open('GET', url, true);
+      xhr.timeout = 3000;
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status === 200) {
+          try {
+            var data = JSON.parse(xhr.responseText);
+            var ha = new Date().getHours(); var ci = 0;
+            for (var i=0; i<data.hourly.time.length; i++) { if (parseInt(data.hourly.time[i].split('T')[1])===ha){ci=i;break;} }
+            window._meteoActual = {
+              temp: Math.round(data.hourly.temperature_2m[ci]),
+              code: data.hourly.weathercode[ci],
+              prob: data.hourly.precipitation_probability[ci],
+              icon: (typeof WMO_ICONS!=='undefined'&&WMO_ICONS[data.hourly.weathercode[ci]])?WMO_ICONS[data.hourly.weathercode[ci]]:'🌡️'
+            };
+          } catch(e) {}
+        }
+        cb(_construir(window._meteoActual || null));
+      };
+      xhr.ontimeout = function() { cb(_construir(null)); };
+      xhr.send();
+    }
+
+    if (typeof userLat !== 'undefined' && userLat) {
+      // Coordenadas GPS ya disponibles — fetch directo sin pedir permiso
+      _fetchMeteo(userLat, userLng);
+    } else if (cb && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function(pos) { _fetchMeteo(pos.coords.latitude, pos.coords.longitude); },
+        function() { cb(_construir(null)); },
+        {timeout:3000, maximumAge:60000}
+      );
     } else {
       var res = _construir(null);
       if (cb) { cb(res); return; }
@@ -5994,8 +6008,7 @@ function abrirHeroModal() {
 
   // Inserta un bloque de curiosidad con estilo discreto
   function _appendCuriosidad(container) {
-    // Solo mostrar ~60% de las veces para que no sea predecible
-    if (Math.random() > 0.6) return;
+    // Siempre mostrar
     var wrap = document.createElement('div');
     wrap.style.cssText = 'background:rgba(0,0,0,0.15);border-left:3px solid #7a5010;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:16px';
     var label = document.createElement('div');
@@ -6137,6 +6150,7 @@ function abrirHeroModal() {
             btnRow.appendChild(btnNo);
             _twSeq([[sub, (_t.asistTieneRuta||'Tienes una ruta seleccionada con ') + rutaPuntos.length + (rutaPuntos.length !== 1 ? (_t.asistTieneRutaSufP||' lugares. ¿Quieres revisarla o modificarla?') : (_t.asistTieneRutaSuf||' lugar. ¿Quieres revisarla o modificarla?')), 32, inner]], cascoImg, function() {
               inner.appendChild(btnRow);
+              _appendCuriosidad(inner);
             });
 
           } else if (cercanos.length === 0) {
@@ -6175,11 +6189,9 @@ function abrirHeroModal() {
               [sub, (_t.asistCercanosPre||'Tienes') + ' ' + cercanos.length + ' ' + (cercanos.length !== 1 ? (_t.asistCercanosLugares||'lugares') : (_t.asistCercanosLugar||'lugar')) + ' ' + (_t.asistCercanosDe||'del Camino cerca de ti. El más próximo es') + ' ' + primero.poi.nombre + ', ' + (_t.asistCercanosA||'a') + ' ' + distTexto + '.', 30, inner],
               [sub2, _t.asistPreguntaVisitar||'¿Te gustaría visitar alguno?', 35, inner]
             ], cascoImg, function() {
-              _appendCuriosidad(inner);
               inner.appendChild(btnRow);
+              _appendCuriosidad(inner);
             });
-          }
-          }); // fin _typewriter subCtx
         }, 120); // fin setTimeout
       }); // fin _subtituloContextual callback
     }); // fin _typewriter saludo
@@ -13342,7 +13354,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1219";
+var _APP_VERSION = "v1220";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15056,7 +15068,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1219</div>
+<div id='version-badge' style='position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1220</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
