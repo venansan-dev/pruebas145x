@@ -6361,63 +6361,47 @@ function abrirHeroModal() {
 
   // ── Sonido carga de casete (Web Audio API) ──────────────────
   var _cascoAudioCtx = null;
-  var _cascoSoundNode = null;
+  var _cascoNodes = [];
+  var _cascoInterval = null;
+
   function _cascoSonido(duracion) {
+    if (window._casc_mute) return;
+    _cascoSonidoStop();
     try {
-      // Respetar preferencias de silencio del sistema
-      if (window._casc_mute) return;
-      // Reusar el contexto global creado en el gesto del usuario
-      if (!_cascoAudioCtx) _cascoAudioCtx = window._cascoAudioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      var ctx = _cascoAudioCtx;
-      if (ctx.state === 'suspended') ctx.resume();
-      // Detener sonido anterior si sigue activo
-      if (_cascoSoundNode) { try { _cascoSoundNode.stop(); } catch(e){} }
+      var ctx = window._cascoAudioCtx;
+      if (!ctx) return;
+      if (ctx.state === 'suspended') { ctx.resume(); }
 
-      var dur = duracion || 2.5;
-      var buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
-      var data = buf.getChannelData(0);
-
-      // Generar ruido estilo casete: ruido blanco modulado con frecuencias variables
-      for (var i = 0; i < data.length; i++) {
-        var t = i / ctx.sampleRate;
-        // Ruido base
-        var noise = (Math.random() * 2 - 1) * 0.3;
-        // Tono chirriante que sube y baja (efecto carga)
-        var freq1 = 800 + 600 * Math.sin(t * 8.5);
-        var freq2 = 1200 + 400 * Math.cos(t * 13.7);
-        var tone1 = Math.sin(2 * Math.PI * freq1 * t) * 0.12;
-        var tone2 = Math.sin(2 * Math.PI * freq2 * t) * 0.08;
-        // Modulación en amplitud (el "chrrr" característico)
-        var mod = 0.5 + 0.5 * Math.sin(2 * Math.PI * 22 * t);
-        data[i] = (noise + tone1 + tone2) * mod;
+      // Patrón de pulsos estilo casete de datos: frecuencias alternas rápidas
+      var freqs = [1320, 880, 1760, 660, 2200, 440, 1100, 1650];
+      var fi = 0;
+      function _pulso() {
+        try {
+          var osc = ctx.createOscillator();
+          var g   = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.value = freqs[fi % freqs.length];
+          fi++;
+          g.gain.setValueAtTime(0.0, ctx.currentTime);
+          g.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.005);
+          g.gain.linearRampToValueAtTime(0.0,  ctx.currentTime + 0.055);
+          osc.connect(g);
+          g.connect(ctx.destination);
+          osc.start(ctx.currentTime);
+          osc.stop(ctx.currentTime + 0.06);
+          _cascoNodes.push(osc);
+        } catch(e) {}
       }
-
-      var src = ctx.createBufferSource();
-      src.buffer = buf;
-
-      // Filtro paso-banda para ese sonido metálico de casete
-      var filter = ctx.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.value = 1100;
-      filter.Q.value = 0.8;
-
-      // Ganancia con fade-in y fade-out suaves
-      var gain = ctx.createGain();
-      gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 0.08);
-      gain.gain.setValueAtTime(0.35, ctx.currentTime + dur - 0.12);
-      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
-
-      src.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
-      src.start(ctx.currentTime);
-      src.stop(ctx.currentTime + dur);
-      _cascoSoundNode = src;
-    } catch(e) { /* Web Audio no disponible, sin sonido */ }
+      _pulso();
+      _cascoInterval = setInterval(_pulso, 65);
+      if (duracion) setTimeout(_cascoSonidoStop, duracion * 1000);
+    } catch(e) {}
   }
+
   function _cascoSonidoStop() {
-    if (_cascoSoundNode) { try { _cascoSoundNode.stop(); } catch(e){} _cascoSoundNode = null; }
+    if (_cascoInterval) { clearInterval(_cascoInterval); _cascoInterval = null; }
+    _cascoNodes.forEach(function(n){ try { n.stop(); } catch(e){} });
+    _cascoNodes = [];
   }
 
   window._cascoSonido = _cascoSonido;
@@ -14043,7 +14027,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1270";
+var _APP_VERSION = "v1271";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15780,7 +15764,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1270</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1271</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
