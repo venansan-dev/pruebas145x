@@ -1501,7 +1501,7 @@
     <a href='#' id='nav-emergencias' onclick='abrirSOSDrawer();return false'>🆘 Emergencias</a>
     <a href='#' id='nav-historia' onclick='abrirHistoriaDrawer();return false'>🐚 Historia Compostelana</a>
     <a href='#' id='nav-mapa' onclick='cerrarTodosLosPaneles();_irAlMapa();return false'>🗺️ Mapa</a>
-    <a href='#' id='nav-puntos' onclick='abrirPoiDrawer();return false'>🏅 Ranking</a>
+    <a href='#' id='nav-puntos' onclick='cerrarMenu();abrirAlbumPanel();return false'>🏅 Ranking</a>
     <a href='#' id='nav-brujula' onclick='abrirBrujulaDrawer();return false'>🧭 Brújula</a>
     <a href='#' id='nav-comousar' onclick='abrirComoUsarDrawer();return false'>📖 Cómo usar</a>
     <a href='#' id='nav-contacto' onclick='abrirContactoDrawer();return false'>✉️ Contacto</a>
@@ -1525,7 +1525,7 @@
   <a href='#' id='nav-m-emergencias' onclick='cerrarMenu();setTimeout(function(){_irAlMapa();setTimeout(abrirSOSDrawer,500)},50);return false'><span style='font-size:18px;margin-right:8px'>🆘</span>Emergencias</a>
   <a href='#' id='nav-m-historia' onclick='cerrarMenu();setTimeout(abrirHistoriaDrawer,350);return false'><span style='font-size:18px;margin-right:8px'>🐚</span>Historia Xacobea</a>
   <a href='#' id='nav-m-mapa' onclick='cerrarMenu();cerrarTodosLosPaneles();_irAlMapa();return false'><span style='font-size:18px;margin-right:8px'>🗺️</span>Mapa</a>
-  <a href='#' id='nav-m-puntos' onclick='cerrarMenu();setTimeout(abrirPoiDrawer,350);return false'><span style='font-size:18px;margin-right:8px'>🏅</span>Ranking</a>
+  <a href='#' id='nav-m-puntos' onclick='cerrarMenu();setTimeout(abrirAlbumPanel,350);return false'><span style='font-size:18px;margin-right:8px'>🏅</span>Ranking</a>
   <a href='#' id='nav-m-brujula' onclick='cerrarMenu();setTimeout(function(){_irAlMapa();setTimeout(abrirBrujulaDrawer,500)},50);return false'><span style='font-size:18px;margin-right:8px'>🧭</span>Brújula</a>
   <a href='#' id='nav-m-comousar' onclick='cerrarMenu();setTimeout(abrirComoUsarDrawer,350);return false'><span style='font-size:18px;margin-right:8px'>📖</span>Cómo usar</a>
   <a href='#' id='nav-m-contacto' onclick='cerrarMenu();setTimeout(abrirContactoDrawer,350);return false'><span style='font-size:18px;margin-right:8px'>✉️</span>Contacto</a>
@@ -6798,7 +6798,7 @@ function abrirHeroModal() {
         btnVolver.style.cssText = 'width:100%;background:rgba(80,40,0,0.18);color:#fff8e8;border:1.5px solid #7a5010;border-radius:8px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:8px';
         btnVolver.addEventListener('click', function(){ _renderDespedida(); });
         var btnOtras = document.createElement('button');
-        btnOtras.textContent = '☰ Otras opciones';
+        btnOtras.textContent = _t.asistOtrasOpc||'☰ Otras opciones';
         btnOtras.style.cssText = 'width:100%;background:rgba(80,40,0,0.10);color:#5a3008;border:1px solid #b07030;border-radius:8px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
         btnOtras.addEventListener('click', function(){ _renderMenuPrincipal(); });
         setTimeout(function() {
@@ -6829,7 +6829,7 @@ function abrirHeroModal() {
             var _epNombreCompleto = (idiomaActual==='gl'&&_ep.p.nombre_gl)?_ep.p.nombre_gl:(idiomaActual==='en'&&_ep.p.nombre_en)?_ep.p.nombre_en:_ep.p.nombre;
             var _epPartes = _epNombreCompleto.split('·');
             var _epNombreCorto = _epPartes.length>1 ? _epPartes[1].split('→')[0].trim() : _epNombreCompleto;
-            btnEtapa.textContent = '🗺️ Marcar la ruta hacia ' + _epNombreCorto + ' →';
+            btnEtapa.textContent = (_t.asistMarcarRuta||'🗺️ Marcar la ruta hacia') + ' ' + _epNombreCorto + ' →';
             btnEtapa.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 2px 8px rgba(45,74,30,0.4);margin-bottom:14px;display:flex;align-items:center;gap:8px';
             btnEtapa.addEventListener('click', function() {
               addToRoute(_ep.p.id);
@@ -12119,7 +12119,9 @@ var T={
     asistPreguntaVisitar:'¿Te gustaría visitar alguno?',
     asistSiVerLugares:'Sí, ver lugares',
     asistPaso2Tit:'Selecciona qué te gustaría visitar',
-    asistAhoraNno:'Ahora no',
+    asistAhoraNno:'Otras opciones',
+    asistOtrasOpc:'☰ Otras opciones',
+    asistMarcarRuta:'🗺️ Marcar la ruta hacia',
     asistMasCosa:'Hay mucho más en la guía. Elige algo que te llame la atención:',
     asistBuscarTit:'🔍 Buscar algo próximo a ti',
     asistBuscarSub:'Escribe lo que necesitas. Los resultados aparecerán en el mapa en un radio de 1 km.',
@@ -12192,7 +12194,7 @@ var T={
         asistCercanosPre:'Tienes',
     asistCercanosLugar:'lugar',
     asistCercanosLugares:'lugares',
-    asistCercanosDe:'del Camino cerca de ti. El más próximo es',
+    asistCercanosDe:'interesantes cerca de ti. El más próximo es',
     asistCercanosA:'a',
     asistSaludoM:['¡Buenos días, peregrino!','¡Ultreia! El Camino te espera.','¡Arriba, caminante! El alba es tuya.','Un nuevo día en el Camino. ¡Buen paso!','¡Que la jornada te sea leve, peregrino!'],
     asistSaludoT:['¡Buenas tardes, peregrino!','¿Cómo lleva el Camino la tarde de hoy?','¡Tarde de Camino! ¿Cuántos kilómetros hoy?','La tarde es buena hora para planificar.','¡Ultreia et suseia, peregrino!'],
@@ -12500,7 +12502,9 @@ var T={
     asistPreguntaVisitar:'¿Che gustaría visitar algún?',
     asistSiVerLugares:'Si, ver lugares',
     asistPaso2Tit:'Selecciona o que che gustaría visitar',
-    asistAhoraNno:'Agora non',
+    asistAhoraNno:'Outras opcións',
+    asistOtrasOpc:'☰ Outras opcións',
+    asistMarcarRuta:'🗺️ Marcar a ruta cara a',
     asistMasCosa:'Hai moito máis na guía. Escolle algo que che chame a atención:',
     asistBuscarTit:'🔍 Buscar algo próximo a ti',
     asistBuscarSub:'Escribe o que necesitas. Os resultados aparecerán no mapa nun radio de 1 km.',
@@ -13079,7 +13083,9 @@ var T={
     asistPreguntaVisitar:'Would you like to visit one?',
     asistSiVerLugares:'Yes, see places',
     asistPaso2Tit:'Select what you would like to visit',
-    asistAhoraNno:'Not now',
+    asistAhoraNno:'More options',
+    asistOtrasOpc:'☰ More options',
+    asistMarcarRuta:'🗺️ Set route to',
     asistMasCosa:'There is much more in the guide. Pick something that interests you:',
     asistBuscarTit:'🔍 Search nearby',
     asistBuscarSub:'Type what you need. Results will appear on the map within 1 km.',
@@ -13155,7 +13161,7 @@ var T={
         asistCercanosPre:'You have',
     asistCercanosLugar:'place',
     asistCercanosLugares:'places',
-    asistCercanosDe:'on the Camino nearby. The closest is',
+    asistCercanosDe:'interesting places nearby. The closest is',
     asistCercanosA:'at',
     asistSaludoM:['Good morning, pilgrim!','Ultreia! The Way awaits you.','Rise, wanderer! The dawn is yours.','A new day on the Camino. Safe travels!','May the journey be light today, pilgrim!'],
     asistSaludoT:['Good afternoon, pilgrim!','How is the Camino treating you this afternoon?','Afternoon on the Way! How many kilometres today?','The afternoon is a great time to plan.','Ultreia et suseia, pilgrim!'],
@@ -14031,7 +14037,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1265";
+var _APP_VERSION = "v1268";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15768,7 +15774,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1265</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1268</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
