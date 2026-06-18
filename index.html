@@ -1834,7 +1834,6 @@
       <button onclick='cerrarMeteoDrawer()' id='meteo-panel-volver' style='display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.2);border:1px solid #7a5010;border-radius:10px;padding:7px 14px;color:#fff8e8;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif;width:fit-content'>← Volver</button>
       <div style='text-align:center;flex:1;padding:0 12px'>
         <div style='font-family:Playfair Display,serif;font-size:17px;font-weight:600;color:#1a0800;line-height:1.2' id='meteo-header-loc'>🌤️ Previsión</div>
-        <div style='font-size:13px;color:rgba(26,8,0,0.65);margin-top:3px;font-weight:500' id='meteo-header-fecha'></div>
       </div>
       <div style='width:80px'></div>
     </div>
@@ -5734,21 +5733,21 @@ function _cargarMeteoDrawer(lat,lng) {
   var url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lng+
     '&hourly=temperature_2m,weathercode,precipitation_probability,windspeed_10m'+
     '&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum,windspeed_10m_max'+
-    '&timezone=Europe/Madrid&forecast_days=1';
+    '&timezone=Europe/Madrid&forecast_days=2';
   var xhr=new XMLHttpRequest(); xhr.open('GET',url,true);
   xhr.onreadystatechange=function(){
     if(xhr.readyState!==4||xhr.status!==200) return;
     try {
       var data=JSON.parse(xhr.responseText);
-      var now=new Date(); var ha=now.getHours(); var haF=Math.min(ha+2,23);
+      var now=new Date(); var ha=now.getHours();
       var times=data.hourly.time; var ci=0;
-      for(var i=0;i<times.length;i++){if(parseInt(times[i].split('T')[1])===haF){ci=i;break;}}
+      for(var i=0;i<times.length;i++){if(parseInt(times[i].split('T')[1])===ha){ci=i;break;}}
       // Guardar datos clave para el asistente
       window._meteoActual = {
         temp: Math.round(data.hourly.temperature_2m[ci]),
         code: data.hourly.weathercode[ci],
         prob: data.hourly.precipitation_probability[ci],
-        hora: haF,
+        hora: ha,
         maxT: data.daily ? Math.round(data.daily.temperature_2m_max[0]) : null,
         minT: data.daily ? Math.round(data.daily.temperature_2m_min[0]) : null,
         icon: (typeof WMO_ICONS!=='undefined'&&WMO_ICONS[data.hourly.weathercode[ci]]) ? WMO_ICONS[data.hourly.weathercode[ci]] : '🌡️'
@@ -5838,20 +5837,20 @@ function _meteoMensajeCasco(m) {
     var hEN = horaStr ? 'at '+horaStr : 'in the next few hours';
     var hGL = horaStr ? 'ás '+horaStr : 'nas próximas horas';
     if (lang === 'en') {
-      if (lluvia)   msg = icon+' Forecast for '+hEN+': '+temp+' with '+m.prob+'% chance of rain. Pack your waterproof cape and watch your step on wet stone paths.';
-      else if (frio) msg = icon+' '+temp+' expected '+hEN+'. Dress in layers and bring a windproof jacket — it will make a real difference on the route.';
-      else if (calor) msg = icon+' '+temp+' forecast '+hEN+'. Keep water close, cover your head and plan your rest stops in the shade.';
-      else           msg = icon+' '+temp+' forecast '+hEN+' — ideal walking weather. Enjoy the Camino, pilgrim!';
+      if (lluvia)   msg = fechaTxt+' · '+icon+' Forecast for '+hEN+': '+temp+' with '+m.prob+'% chance of rain. Pack your waterproof cape and watch your step on wet stone paths.';
+      else if (frio) msg = fechaTxt+' · '+icon+' '+temp+' expected '+hEN+'. Dress in layers and bring a windproof jacket — it will make a real difference on the route.';
+      else if (calor) msg = fechaTxt+' · '+icon+' '+temp+' forecast '+hEN+'. Keep water close, cover your head and plan your rest stops in the shade.';
+      else           msg = fechaTxt+' · '+icon+' '+temp+' forecast '+hEN+' — ideal walking weather. Enjoy the Camino, pilgrim!';
     } else if (lang === 'gl') {
-      if (lluvia)   msg = icon+' Previsión '+hGL+': '+temp+' con '+m.prob+'% de choiva. Leva o chuvasqueiro e coidado cos camiños de pedra mollados.';
-      else if (frio) msg = icon+' '+temp+' previstos '+hGL+'. Vai en capas e leva un cortalventos — notarase moito na ruta.';
-      else if (calor) msg = icon+' '+temp+' previstos '+hGL+'. Leva auga, tapa a cabeza e para á sombra cando poidas.';
-      else           msg = icon+' '+temp+' previstos '+hGL+' — tempo ideal para camiñar. ¡Bo Camiño, peregrino!';
+      if (lluvia)   msg = fechaTxt+' · '+icon+' Previsión '+hGL+': '+temp+' con '+m.prob+'% de choiva. Leva o chuvasqueiro e coidado cos camiños de pedra mollados.';
+      else if (frio) msg = fechaTxt+' · '+icon+' '+temp+' previstos '+hGL+'. Vai en capas e leva un cortalventos — notarase moito na ruta.';
+      else if (calor) msg = fechaTxt+' · '+icon+' '+temp+' previstos '+hGL+'. Leva auga, tapa a cabeza e para á sombra cando poidas.';
+      else           msg = fechaTxt+' · '+icon+' '+temp+' previstos '+hGL+' — tempo ideal para camiñar. ¡Bo Camiño, peregrino!';
     } else {
-      if (lluvia)   msg = icon+' Previsión '+h+': '+temp+' con '+m.prob+'% de lluvia. Lleva el chubasquero y cuidado con los caminos de piedra mojados.';
-      else if (frio) msg = icon+' '+temp+' previstos '+h+'. Abrígate en capas y lleva un cortavientos — lo notarás en el camino.';
-      else if (calor) msg = icon+' '+temp+' previstos '+h+'. Lleva agua, cúbrete la cabeza y busca sombra en las paradas.';
-      else           msg = icon+' '+temp+' previstos '+h+' — tiempo ideal para caminar. ¡Buen Camino, peregrino!';
+      if (lluvia)   msg = fechaTxt+' · '+icon+' Previsión '+h+': '+temp+' con '+m.prob+'% de lluvia. Lleva el chubasquero y cuidado con los caminos de piedra mojados.';
+      else if (frio) msg = fechaTxt+' · '+icon+' '+temp+' previstos '+h+'. Abrígate en capas y lleva un cortavientos — lo notarás en el camino.';
+      else if (calor) msg = fechaTxt+' · '+icon+' '+temp+' previstos '+h+'. Lleva agua, cúbrete la cabeza y busca sombra en las paradas.';
+      else           msg = fechaTxt+' · '+icon+' '+temp+' previstos '+h+' — tiempo ideal para caminar. ¡Buen Camino, peregrino!';
     }
   }
 
@@ -13598,12 +13597,7 @@ function cargarTiempo(lat, lng) {
   // Actualizar header del panel meteo con ubicación y fecha
   var locEl = document.getElementById('meteo-header-loc');
   var fechaEl = document.getElementById('meteo-header-fecha');
-  if (fechaEl) {
-    var hoy = new Date();
-    var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-    var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-    fechaEl.textContent = dias[hoy.getDay()] + ' ' + hoy.getDate() + ' ' + meses[hoy.getMonth()];
-  }
+  // fecha movida al bloque del casco
   if (locEl) {
     // Geocodificación inversa ligera con Nominatim
     fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lng+'&format=json&accept-language=es')
@@ -13951,7 +13945,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1247";
+var _APP_VERSION = "v1249";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15688,7 +15682,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1247</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1249</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
