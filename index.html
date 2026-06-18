@@ -1838,9 +1838,9 @@
       <div style='width:80px'></div>
     </div>
     <!-- Bloque casco + mensaje contextual -->
-    <div id='meteo-casco-bloque' style='display:flex;align-items:flex-end;gap:10px;margin-bottom:0.85rem;background:rgba(0,0,0,0.15);border:1px solid #7a5010;border-radius:12px;padding:0.85rem 1rem;min-height:56px'>
-      <img id='meteo-casco-img' src='https://i.postimg.cc/m2TbCRTs/casc4.png' style='width:36px;height:36px;object-fit:contain;flex-shrink:0;animation:_casc-pulse 2.4s ease-in-out infinite' alt=''>
-      <div id='meteo-casco-txt' style='font-size:13px;color:#fff8e8;line-height:1.5;flex:1;border-right:2px solid #7a5010'></div>
+    <div id='meteo-casco-bloque' style='display:flex;align-items:flex-start;gap:10px;margin-bottom:0.85rem;background:rgba(0,0,0,0.15);border:1px solid #7a5010;border-radius:12px;padding:0.85rem 1rem;min-height:56px'>
+      <img id='meteo-casco-img' src='https://i.postimg.cc/m2TbCRTs/casc4.png' style='width:36px;height:36px;object-fit:contain;flex-shrink:0;align-self:flex-start;animation:_casc-pulse 2.4s ease-in-out infinite' alt=''>
+      <div id='meteo-casco-txt' style='font-size:13px;color:#fff8e8;line-height:1.5;flex:1;border-right:2px solid #7a5010;padding-top:22px'></div>
     </div>
     <!-- Título ornamental -->
     <div style='text-align:center;margin-bottom:0.6rem'>
@@ -6870,7 +6870,7 @@ function abrirHeroModal() {
             btnSi.style.cssText = 'flex:1;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
             btnSi.addEventListener('click', function(){ _renderPaso2(cercanos); });
             var btnNo = document.createElement('button');
-            btnNo.textContent = _t.asistAhoraNno||'Ahora no';
+            btnNo.textContent = _t.asistAhoraNno||'Otras opciones';
             btnNo.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
             btnNo.addEventListener('click', function(){ _renderMenuPrincipal(); });
             btnRow.appendChild(btnSi);
@@ -14031,7 +14031,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1261";
+var _APP_VERSION = "v1263";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15768,7 +15768,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1261</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1263</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
