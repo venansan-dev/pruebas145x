@@ -1838,6 +1838,11 @@
       </div>
       <div style='width:80px'></div>
     </div>
+    <!-- Bloque casco + mensaje contextual -->
+    <div id='meteo-casco-bloque' style='display:flex;align-items:flex-start;gap:10px;margin-bottom:0.85rem;background:rgba(0,0,0,0.15);border:1px solid #7a5010;border-radius:12px;padding:0.85rem 1rem;min-height:56px'>
+      <img id='meteo-casco-img' src='https://i.postimg.cc/m2TbCRTs/casc4.png' style='width:36px;height:36px;object-fit:contain;flex-shrink:0;animation:_casc-pulse 2.4s ease-in-out infinite' alt=''>
+      <div id='meteo-casco-txt' style='font-size:13px;color:#fff8e8;line-height:1.6;flex:1;border-right:2px solid #7a5010'></div>
+    </div>
     <!-- Título ornamental -->
     <div style='text-align:center;margin-bottom:0.6rem'>
       <div style='font-size:11px;color:rgba(26,8,0,0.4);letter-spacing:3px'>✦ ✦ ✦</div>
@@ -1853,8 +1858,6 @@
     <div style='text-align:center;color:rgba(90,48,0,0.3);font-size:13px;letter-spacing:4px;margin-top:0.75rem'>✦ ✦ ✦</div>
   </div>
 </div>
-
-<!-- PANEL HISTORIA -->
 <div id='historia-drawer' class='map-slide-panel historia-section' style='overflow-y:auto'>
   <div style='padding:1rem 1.5rem 1.5rem'>
     <button onclick='cerrarHistoriaDrawer()' id='historia-panel-volver-top' style='display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:7px 14px;color:rgba(255,255,255,0.85);font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif;width:fit-content;margin-bottom:0.6rem'>← Volver</button>
@@ -5786,12 +5789,86 @@ function _cargarMeteoDrawer(lat,lng) {
           +'<div style="color:rgba(255,255,255,0.6);font-size:13px">&#128168; '+wMax+' km/h m&#225;x</div>';
         resEl.style.display='block';
       }
+      // ── Casco animado con mensaje contextual ────────────────────
+      _meteoMensajeCasco(window._meteoActual);
     } catch(e){
       var h2=document.getElementById('meteo-drawer-horas');
       if(h2) h2.innerHTML='<div style="color:rgba(255,255,255,0.4);font-size:13px">No se pudieron cargar los datos</div>';
+      _meteoMensajeCasco(null);
     }
   };
   xhr.send();
+}
+
+function _meteoMensajeCasco(m) {
+  var txtEl = document.getElementById('meteo-casco-txt');
+  var imgEl = document.getElementById('meteo-casco-img');
+  if (!txtEl || !imgEl) return;
+
+  var now = new Date();
+  var dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  var diasGL = ['domingo','luns','martes','mércores','xoves','venres','sábado'];
+  var diasEN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var mesesGL = ['xaneiro','febreiro','marzo','abril','maio','xuño','xullo','agosto','setembro','outubro','novembro','decembro'];
+  var mesesEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var diaIdx = now.getDay(); var diaMes = now.getDate(); var mesIdx = now.getMonth();
+  var lang = (typeof idiomaActual !== 'undefined') ? idiomaActual : 'es';
+  var diaNom = lang==='gl' ? diasGL[diaIdx] : lang==='en' ? diasEN[diaIdx] : dias[diaIdx];
+  var mesNom = lang==='gl' ? mesesGL[mesIdx] : lang==='en' ? mesesEN[mesIdx] : meses[mesIdx];
+  var fechaTxt = lang==='en' ? diaNom+', '+mesNom+' '+diaMes : diaNom+' '+diaMes+' de '+mesNom;
+
+  var msg;
+  if (!m) {
+    var sinMeteo = {
+      es: ['¡Buen '+fechaTxt+'! El Camino te espera.','Feliz '+fechaTxt+'. ¿Damos el primer paso hoy?','¡Hoy es '+fechaTxt+'! Un buen día para explorar.'],
+      gl: ['¡Bo '+fechaTxt+'! O Camiño agárdache.','Bo '+fechaTxt+'. ¿Damos o primeiro paso hoxe?','¡Hoxe é '+fechaTxt+'! Un bo día para explorar.'],
+      en: ['Happy '+fechaTxt+'! The Way awaits.','Good '+fechaTxt+'. Shall we take the first step today?','Today is '+fechaTxt+'! A good day to explore.']
+    };
+    var arr = sinMeteo[lang] || sinMeteo.es;
+    msg = arr[Math.floor(Math.random()*arr.length)];
+  } else {
+    var icon = m.icon || '🌡️';
+    var temp = m.temp + '°';
+    var lluvia = m.prob > 50;
+    var frio = m.temp < 10;
+    var calor = m.temp > 26;
+    var horaStr = m.hora !== undefined ? m.hora + ':00h' : null;
+    var h  = horaStr ? 'a las '+horaStr : 'en las próximas horas';
+    var hEN = horaStr ? 'at '+horaStr : 'in the next few hours';
+    var hGL = horaStr ? 'ás '+horaStr : 'nas próximas horas';
+    if (lang === 'en') {
+      if (lluvia)   msg = icon+' Forecast for '+hEN+': '+temp+' with '+m.prob+'% chance of rain. Pack your waterproof cape and watch your step on wet stone paths.';
+      else if (frio) msg = icon+' '+temp+' expected '+hEN+'. Dress in layers and bring a windproof jacket — it will make a real difference on the route.';
+      else if (calor) msg = icon+' '+temp+' forecast '+hEN+'. Keep water close, cover your head and plan your rest stops in the shade.';
+      else           msg = icon+' '+temp+' forecast '+hEN+' — ideal walking weather. Enjoy the Camino, pilgrim!';
+    } else if (lang === 'gl') {
+      if (lluvia)   msg = icon+' Previsión '+hGL+': '+temp+' con '+m.prob+'% de choiva. Leva o chuvasqueiro e coidado cos camiños de pedra mollados.';
+      else if (frio) msg = icon+' '+temp+' previstos '+hGL+'. Vai en capas e leva un cortalventos — notarase moito na ruta.';
+      else if (calor) msg = icon+' '+temp+' previstos '+hGL+'. Leva auga, tapa a cabeza e para á sombra cando poidas.';
+      else           msg = icon+' '+temp+' previstos '+hGL+' — tempo ideal para camiñar. ¡Bo Camiño, peregrino!';
+    } else {
+      if (lluvia)   msg = icon+' Previsión '+h+': '+temp+' con '+m.prob+'% de lluvia. Lleva el chubasquero y cuidado con los caminos de piedra mojados.';
+      else if (frio) msg = icon+' '+temp+' previstos '+h+'. Abrígate en capas y lleva un cortavientos — lo notarás en el camino.';
+      else if (calor) msg = icon+' '+temp+' previstos '+h+'. Lleva agua, cúbrete la cabeza y busca sombra en las paradas.';
+      else           msg = icon+' '+temp+' previstos '+h+' — tiempo ideal para caminar. ¡Buen Camino, peregrino!';
+    }
+  }
+
+  txtEl.textContent = '';
+  txtEl.style.borderRight = '2px solid #7a5010';
+  imgEl.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
+  var i = 0;
+  var iv = setInterval(function() {
+    if (i <= msg.length) {
+      txtEl.textContent = msg.slice(0, i);
+      i++;
+    } else {
+      clearInterval(iv);
+      txtEl.style.borderRight = 'none';
+      imgEl.style.animation = 'none';
+    }
+  }, 22);
 }
 
 
@@ -9810,8 +9887,7 @@ function mostrarToast(msg) {
     t.id = 'map-toast';
     t.style.cssText = 'position:fixed;bottom:72px;left:50%;transform:translateX(-50%);z-index:99999;pointer-events:none;display:flex;align-items:center;gap:10px;padding:9px 16px 9px 10px;border-radius:24px;font-family:DM Sans,sans-serif;font-size:14px;font-weight:500;white-space:nowrap;transition:opacity 0.35s;max-width:88vw;box-sizing:border-box;background:rgba(0,0,0,0.75);color:#fff;box-shadow:0 4px 18px rgba(0,0,0,0.35);backdrop-filter:blur(8px)';
     var cascoEl = document.createElement('span');
-    cascoEl.style.cssText = 'font-size:22px;flex-shrink:0;line-height:1;display:inline-block';
-    cascoEl.textContent = '⚔️';
+    cascoEl.style.cssText = 'display:none';
     cascoEl.id = 'map-toast-casco';
     var txtEl = document.createElement('span');
     txtEl.id = 'map-toast-txt';
@@ -13875,7 +13951,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1246";
+var _APP_VERSION = "v1247";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15612,7 +15688,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1246</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1247</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
