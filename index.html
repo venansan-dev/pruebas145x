@@ -6542,8 +6542,8 @@ function abrirHeroModal() {
     var distStr = distKm < 1 ? Math.round(distKm*1000)+' m' : distKm.toFixed(1)+' km';
 
     var msgs = {
-      es: 'Tu siguiente meta es alcanzar la '+nombre+', a '+distStr+'. Desde allí quedan aproximadamente '+distSCQ+' km hasta alcanzar Santiago de Compostela.',
-      gl: 'O teu seguinte obxectivo é alcanzar a '+nombre+', a '+distStr+'. Desde alí quedan aproximadamente '+distSCQ+' km para chegar a Santiago de Compostela.',
+      es: 'Tu siguiente meta es alcanzar '+nombre+', a '+distStr+'. Desde allí quedan aproximadamente '+distSCQ+' km hasta alcanzar Santiago de Compostela.',
+      gl: 'O teu seguinte obxectivo é alcanzar '+nombre+', a '+distStr+'. Desde alí quedan aproximadamente '+distSCQ+' km para chegar a Santiago de Compostela.',
       en:  'Your next goal is to reach '+nombre+', '+distStr+' away. From there it is approximately '+distSCQ+' km to Santiago de Compostela.'
     };
     window._etapaProxima = mejor;
@@ -14027,7 +14027,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1271";
+var _APP_VERSION = "v1272";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15764,7 +15764,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1271</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1272</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
