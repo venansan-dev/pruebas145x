@@ -6826,7 +6826,10 @@ function abrirHeroModal() {
           if (window._etapaProxima) {
             var btnEtapa = document.createElement('button');
             var _ep = window._etapaProxima;
-            btnEtapa.textContent = '🗺️ Marcar la ruta hacia la etapa →';
+            var _epNombreCompleto = (idiomaActual==='gl'&&_ep.p.nombre_gl)?_ep.p.nombre_gl:(idiomaActual==='en'&&_ep.p.nombre_en)?_ep.p.nombre_en:_ep.p.nombre;
+            var _epPartes = _epNombreCompleto.split('·');
+            var _epNombreCorto = _epPartes.length>1 ? _epPartes[1].split('→')[0].trim() : _epNombreCompleto;
+            btnEtapa.textContent = '🗺️ Marcar la ruta hacia ' + _epNombreCorto + ' →';
             btnEtapa.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 2px 8px rgba(45,74,30,0.4);margin-bottom:14px;display:flex;align-items:center;gap:8px';
             btnEtapa.addEventListener('click', function() {
               addToRoute(_ep.p.id);
@@ -14028,7 +14031,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1259";
+var _APP_VERSION = "v1260";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15765,7 +15768,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1259</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1260</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
