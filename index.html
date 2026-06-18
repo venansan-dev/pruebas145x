@@ -15407,7 +15407,30 @@ function _abrirModalPOI(punto) {
   // Cuerpo scrollable: descripción + imagen al fondo
   var bodyDiv = document.createElement('div');
   bodyDiv.style.cssText = 'flex:1;overflow-y:auto;padding:16px 16px 12px;min-height:0;-webkit-overflow-scrolling:touch';
-  bodyDiv.innerHTML = '<div style="font-size:13px;color:#4b5563;line-height:1.75">'+desc+'</div>'
+  var tecnicoHTML = '';
+  if (punto.categoria === 'etapa' && (punto.km || punto.dificultad)) {
+    var difColor = {'Fácil':'#16a34a','Baja':'#16a34a','Moderada':'#ca8a04','Media':'#ca8a04','Media-Alta':'#ea580c','Difícil':'#dc2626','Muy difícil':'#9333ea'}[punto.dificultad] || '#6b7280';
+    tecnicoHTML = '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">'
+      + (punto.km ? '<div style="display:flex;flex-direction:column;align-items:center;background:#f0fdf9;border:1px solid #c6eadd;border-radius:10px;padding:7px 12px;min-width:64px">'
+        + '<span style="font-size:18px;font-weight:700;color:#0F6E56;line-height:1">'+punto.km+'</span>'
+        + '<span style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">km</span>'
+        + '</div>' : '')
+      + (punto.desnivel_pos ? '<div style="display:flex;flex-direction:column;align-items:center;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:7px 12px;min-width:64px">'
+        + '<span style="font-size:18px;font-weight:700;color:#9a3412;line-height:1">+'+punto.desnivel_pos+'</span>'
+        + '<span style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">m ↑</span>'
+        + '</div>' : '')
+      + (punto.desnivel_neg ? '<div style="display:flex;flex-direction:column;align-items:center;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:7px 12px;min-width:64px">'
+        + '<span style="font-size:18px;font-weight:700;color:#1d4ed8;line-height:1">−'+punto.desnivel_neg+'</span>'
+        + '<span style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">m ↓</span>'
+        + '</div>' : '')
+      + (punto.dificultad ? '<div style="display:flex;flex-direction:column;align-items:center;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:7px 12px;min-width:64px">'
+        + '<span style="font-size:13px;font-weight:700;color:'+difColor+';line-height:1.2;text-align:center">'+punto.dificultad+'</span>'
+        + '<span style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">Dificultad</span>'
+        + '</div>' : '')
+      + '</div>';
+  }
+  bodyDiv.innerHTML = tecnicoHTML
+    + '<div style="font-size:13px;color:#4b5563;line-height:1.75">'+desc+'</div>'
     + (punto.imagen ? '<img src="'+punto.imagen+'" style="width:100%;height:180px;object-fit:cover;border-radius:12px;margin-top:14px;display:block" loading="lazy">' : '');
   box.appendChild(bodyDiv);
 
@@ -15589,7 +15612,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:none;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1246</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1246</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
