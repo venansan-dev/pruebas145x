@@ -6538,7 +6538,16 @@ function abrirHeroModal() {
     }
 
     var distKm = mejor.distUser;
-    var nombre = lang==='gl' && mejor.p.nombre_gl ? mejor.p.nombre_gl : lang==='en' && mejor.p.nombre_en ? mejor.p.nombre_en : mejor.p.nombre;
+    var _nombreCompleto = lang==='gl' && mejor.p.nombre_gl ? mejor.p.nombre_gl : lang==='en' && mejor.p.nombre_en ? mejor.p.nombre_en : mejor.p.nombre;
+    // Extraer solo la ciudad de origen: texto entre "·" y "→"
+    var _partes = _nombreCompleto.split('·');
+    var nombre;
+    if (_partes.length > 1) {
+      var _dest = _partes[1].split('→')[0].trim();
+      nombre = _dest || _nombreCompleto;
+    } else {
+      nombre = _nombreCompleto;
+    }
     var distSCQ = Math.round(mejor.distSCQ);
     var distStr = distKm < 1 ? Math.round(distKm*1000)+' m' : distKm.toFixed(1)+' km';
 
@@ -6748,7 +6757,7 @@ function abrirHeroModal() {
 
     // Subtítulo (aparece tras el saludo)
     var subCtx = document.createElement('p');
-    subCtx.style.cssText = 'font-size:15px;color:#1a0800;margin-bottom:12px;line-height:1.5;min-height:5em;overflow:hidden;font-weight:600';
+    subCtx.style.cssText = 'font-size:15px;color:#1a0800;margin-bottom:12px;line-height:1.5;min-height:5em;overflow:hidden';
     inner.appendChild(subCtx);
 
     // Preparar elementos y botones de las tres ramas (sin insertar aún los párrafos)
@@ -6864,7 +6873,7 @@ function abrirHeroModal() {
             btnRow.appendChild(btnSi);
             btnRow.appendChild(btnNo);
             _twSeq([
-              [sub, (_t.asistCercanosPre||'Tienes') + ' ' + cercanos.length + ' ' + (cercanos.length !== 1 ? (_t.asistCercanosLugares||'lugares') : (_t.asistCercanosLugar||'lugar')) + ' ' + (_t.asistCercanosDe||'del Camino cerca de ti. El más próximo es') + ' ' + primero.poi.nombre + ', ' + (_t.asistCercanosA||'a') + ' ' + distTexto + '.', 30, inner],
+              [sub, (_t.asistCercanosPre||'Tienes') + ' ' + cercanos.length + ' ' + (cercanos.length !== 1 ? (_t.asistCercanosLugares||'lugares') : (_t.asistCercanosLugar||'lugar')) + ' ' + (_t.asistCercanosDe||'interesantes cerca de ti. El más próximo es') + ' ' + primero.poi.nombre + ', ' + (_t.asistCercanosA||'a') + ' ' + distTexto + '.', 30, inner],
               [sub2, _t.asistPreguntaVisitar||'¿Te gustaría visitar alguno?', 35, inner]
             ], cascoImg, function() {
               inner.appendChild(btnRow);
@@ -14019,7 +14028,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1258";
+var _APP_VERSION = "v1259";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15756,7 +15765,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1258</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1259</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
