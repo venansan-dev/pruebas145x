@@ -6294,10 +6294,15 @@ function toggleAlertasFirebase(){
 
 
 function abrirHeroModal() {
-  // Desbloquear AudioContext en iOS (requiere gesto del usuario)
-  if (window._cascoAudioCtx && window._cascoAudioCtx.state === 'suspended') {
-    window._cascoAudioCtx.resume();
-  }
+  // Desbloquear / crear AudioContext en el mismo gesto del usuario (obligatorio en iOS/Safari)
+  try {
+    if (!window._cascoAudioCtx) {
+      window._cascoAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (window._cascoAudioCtx.state === 'suspended') {
+      window._cascoAudioCtx.resume();
+    }
+  } catch(e) {}
   var _t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : T['es'];
   function _capital(txt) {
     if (!txt || typeof txt !== 'string') return txt;
@@ -6361,7 +6366,8 @@ function abrirHeroModal() {
     try {
       // Respetar preferencias de silencio del sistema
       if (window._casc_mute) return;
-      if (!_cascoAudioCtx) _cascoAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      // Reusar el contexto global creado en el gesto del usuario
+      if (!_cascoAudioCtx) _cascoAudioCtx = window._cascoAudioCtx || new (window.AudioContext || window.webkitAudioContext)();
       var ctx = _cascoAudioCtx;
       if (ctx.state === 'suspended') ctx.resume();
       // Detener sonido anterior si sigue activo
@@ -6398,8 +6404,8 @@ function abrirHeroModal() {
       // Ganancia con fade-in y fade-out suaves
       var gain = ctx.createGain();
       gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.08);
-      gain.gain.setValueAtTime(0.18, ctx.currentTime + dur - 0.12);
+      gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.35, ctx.currentTime + dur - 0.12);
       gain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
 
       src.connect(filter);
@@ -14037,7 +14043,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1269";
+var _APP_VERSION = "v1270";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15774,7 +15780,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1269</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1270</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
