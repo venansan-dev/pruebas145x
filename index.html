@@ -6543,9 +6543,9 @@ function abrirHeroModal() {
     var distStr = distKm < 1 ? Math.round(distKm*1000)+' m' : distKm.toFixed(1)+' km';
 
     var msgs = {
-      es: 'Tu siguiente meta es alcanzar la <strong>'+nombre+'</strong>, a '+distStr+'. Desde allí quedan aproximadamente '+distSCQ+' km hasta alcanzar Santiago de Compostela.',
-      gl: 'O teu seguinte obxectivo é alcanzar a <strong>'+nombre+'</strong>, a '+distStr+'. Desde alí quedan aproximadamente '+distSCQ+' km para chegar a Santiago de Compostela.',
-      en:  'Your next goal is to reach <strong>'+nombre+'</strong>, '+distStr+' away. From there it is approximately '+distSCQ+' km to Santiago de Compostela.'
+      es: 'Tu siguiente meta es alcanzar la '+nombre+', a '+distStr+'. Desde allí quedan aproximadamente '+distSCQ+' km hasta alcanzar Santiago de Compostela.',
+      gl: 'O teu seguinte obxectivo é alcanzar a '+nombre+', a '+distStr+'. Desde alí quedan aproximadamente '+distSCQ+' km para chegar a Santiago de Compostela.',
+      en:  'Your next goal is to reach '+nombre+', '+distStr+' away. From there it is approximately '+distSCQ+' km to Santiago de Compostela.'
     };
     window._etapaProxima = mejor;
     if (cb) cb(msgs[lang] || msgs.es);
@@ -6748,7 +6748,7 @@ function abrirHeroModal() {
 
     // Subtítulo (aparece tras el saludo)
     var subCtx = document.createElement('p');
-    subCtx.style.cssText = 'font-size:15px;color:#1a0800;margin-bottom:12px;line-height:1.5;min-height:5em;overflow:hidden';
+    subCtx.style.cssText = 'font-size:15px;color:#1a0800;margin-bottom:12px;line-height:1.5;min-height:5em;overflow:hidden;font-weight:600';
     inner.appendChild(subCtx);
 
     // Preparar elementos y botones de las tres ramas (sin insertar aún los párrafos)
@@ -6782,11 +6782,11 @@ function abrirHeroModal() {
         sub.style.cssText = 'font-size:15px;color:#1a0800;line-height:1.6;margin-bottom:16px';
         var btnSi = document.createElement('button');
         btnSi.textContent = _t.asistSiVerRuta||'Sí, ver ruta';
-        btnSi.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 2px 8px rgba(45,74,30,0.4);margin-bottom:8px';
+        btnSi.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 2px 8px rgba(45,74,30,0.4);margin-bottom:8px';
         btnSi.addEventListener('click', function(){ _renderRevision(); });
         var btnVolver = document.createElement('button');
         btnVolver.textContent = _t.asistNoVolver||'No, volver al mapa';
-        btnVolver.style.cssText = 'width:100%;background:rgba(80,40,0,0.18);color:#fff8e8;border:1.5px solid #7a5010;border-radius:8px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:8px';
+        btnVolver.style.cssText = 'width:100%;background:rgba(80,40,0,0.18);color:#fff8e8;border:1.5px solid #7a5010;border-radius:8px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;margin-bottom:8px';
         btnVolver.addEventListener('click', function(){ _renderDespedida(); });
         var btnOtras = document.createElement('button');
         btnOtras.textContent = '☰ Otras opciones';
@@ -6817,7 +6817,7 @@ function abrirHeroModal() {
           if (window._etapaProxima) {
             var btnEtapa = document.createElement('button');
             var _ep = window._etapaProxima;
-            btnEtapa.textContent = '🗺️ Marcar la ruta hacia la etapa';
+            btnEtapa.textContent = '🗺️ Marcar la ruta hacia la etapa →';
             btnEtapa.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 2px 8px rgba(45,74,30,0.4);margin-bottom:14px;display:flex;align-items:center;gap:8px';
             btnEtapa.addEventListener('click', function() {
               addToRoute(_ep.p.id);
@@ -6855,11 +6855,11 @@ function abrirHeroModal() {
             btnRow.style.cssText = 'display:flex;gap:10px';
             var btnSi = document.createElement('button');
             btnSi.textContent = _t.asistSiVerLugares||'Sí, ver lugares';
-            btnSi.style.cssText = 'flex:1;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:16px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
+            btnSi.style.cssText = 'flex:1;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
             btnSi.addEventListener('click', function(){ _renderPaso2(cercanos); });
             var btnNo = document.createElement('button');
             btnNo.textContent = _t.asistAhoraNno||'Ahora no';
-            btnNo.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:13px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+            btnNo.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
             btnNo.addEventListener('click', function(){ _renderMenuPrincipal(); });
             btnRow.appendChild(btnSi);
             btnRow.appendChild(btnNo);
@@ -14019,7 +14019,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1257";
+var _APP_VERSION = "v1258";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15756,7 +15756,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1257</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1258</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
