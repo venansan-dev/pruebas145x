@@ -5765,12 +5765,12 @@ function _cargarMeteoDrawer(lat,lng) {
           var icon=(typeof WMO_ICONS!=='undefined'&&WMO_ICONS[code])?WMO_ICONS[code]:'&#127777;';
           var lbl=j===0?'Ahora':hora;
           var al=j===0?'0.15':'0.08'; var alb=j===0?'0.25':'0.1';
-          html+='<div style="flex-shrink:0;background:rgba(255,255,255,'+al+');border-radius:12px;padding:10px 12px;text-align:center;min-width:62px;border:1px solid rgba(255,255,255,'+alb+')">'
-            +'<div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:4px">'+lbl+'</div>'
-            +'<div style="font-size:22px;margin-bottom:4px">'+icon+'</div>'
-            +'<div style="font-size:14px;font-weight:700;color:#fff">'+temp+'&#176;</div>'
-            +(prob>15?'<div style="font-size:10px;color:#60a5fa;margin-top:2px">&#128167;'+prob+'%</div>':'')
-            +'<div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px">&#128168;'+wind+'</div>'
+          html+='<div style="flex-shrink:0;background:rgba(255,255,255,'+al+');border-radius:10px;padding:6px 10px;text-align:center;min-width:52px;border:1px solid rgba(255,255,255,'+alb+')">'
+            +'<div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:2px">'+lbl+'</div>'
+            +'<div style="font-size:18px;margin-bottom:2px">'+icon+'</div>'
+            +'<div style="font-size:13px;font-weight:700;color:#fff">'+temp+'&#176;</div>'
+            +(prob>15?'<div style="font-size:9px;color:#60a5fa;margin-top:1px">&#128167;'+prob+'%</div>':'')
+            +'<div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:1px">&#128168;'+wind+'</div>'
             +'</div>';
         }
         horasEl.innerHTML=html;
@@ -14031,7 +14031,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1264";
+var _APP_VERSION = "v1265";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15768,7 +15768,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1264</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1265</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
