@@ -6495,6 +6495,61 @@ function abrirHeroModal() {
     return pool[Math.floor(Math.random() * pool.length)];
   }
 
+  function _subtituloEtapaCercana(cb) {
+    var lang = idiomaActual || 'es';
+    // Buscar etapa más cercana a Santiago (más corta de llegar a SCQ)
+    // Usamos la etapa del camino más próxima geográficamente al usuario
+    if (typeof PUNTOS === 'undefined' || !userLat) {
+      // Sin GPS: fallback a subtítulo contextual
+      return _subtituloContextual(cb);
+    }
+    var etapas = PUNTOS.filter(function(p) { return p.categoria === 'etapa' && p.lat && p.lng; });
+    if (!etapas.length) return _subtituloContextual(cb);
+
+    // Distancia haversine en km
+    function _hav(lat1, lng1, lat2, lng2) {
+      var R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLng = (lng2-lng1)*Math.PI/180;
+      var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    // Santiago de Compostela coords
+    var SCQ_LAT = 42.8805, SCQ_LNG = -8.5457;
+
+    // Para cada etapa calculamos su distancia al usuario
+    var distUserSCQ = _hav(userLat, userLng, SCQ_LAT, SCQ_LNG);
+
+    var conDist = etapas.map(function(p) {
+      return { p: p, distUser: _hav(userLat, userLng, p.lat, p.lng), distSCQ: _hav(p.lat, p.lng, SCQ_LAT, SCQ_LNG) };
+    });
+
+    // Etapas que están más cerca de Santiago que el usuario (por delante en la ruta)
+    var porDelante = conDist.filter(function(x) { return x.distSCQ < distUserSCQ; });
+
+    var mejor;
+    if (porDelante.length > 0) {
+      // De las que quedan por delante, la más lejana de Santiago = la inmediatamente siguiente
+      porDelante.sort(function(a, b) { return b.distSCQ - a.distSCQ; });
+      mejor = porDelante[0];
+    } else {
+      // Ya más cerca de Santiago que cualquier etapa: mostrar la más cercana al usuario
+      conDist.sort(function(a, b) { return a.distUser - b.distUser; });
+      mejor = conDist[0];
+    }
+
+    var distKm = mejor.distUser;
+    var nombre = lang==='gl' && mejor.p.nombre_gl ? mejor.p.nombre_gl : lang==='en' && mejor.p.nombre_en ? mejor.p.nombre_en : mejor.p.nombre;
+    var distSCQ = Math.round(mejor.distSCQ);
+    var distStr = distKm < 1 ? Math.round(distKm*1000)+' m' : distKm.toFixed(1)+' km';
+
+    var msgs = {
+      es: '📍 Tu próxima etapa es <strong>'+nombre+'</strong>, a '+distStr+'. Desde allí quedan aproximadamente <strong>'+distSCQ+' km</strong> hasta Santiago de Compostela.',
+      gl: '📍 A túa próxima etapa é <strong>'+nombre+'</strong>, a '+distStr+'. Desde alí quedan aproximadamente <strong>'+distSCQ+' km</strong> ata Santiago de Compostela.',
+      en:  '📍 Your next stage is <strong>'+nombre+'</strong>, '+distStr+' away. From there it is approximately <strong>'+distSCQ+' km</strong> to Santiago de Compostela.'
+    };
+    if (cb) cb(msgs[lang] || msgs.es);
+  }
+
   function _subtituloContextual(cb) {
     var now = new Date();
     var dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
@@ -6714,11 +6769,11 @@ function abrirHeroModal() {
 
     var saludoTexto = _saludoConContexto();
 
-    // Typewriter saludo → subtítulo (con datos meteo, async) → párrafos de contexto
+    // Typewriter saludo → subtítulo etapa más cercana → párrafos de contexto
     _typewriter(saludoEl, saludoTexto, 45, function() {
       cascoImg.style.animation = 'none';
       _cascoSonidoStop();
-      _subtituloContextual(function(subTexto) {
+      _subtituloEtapaCercana(function(subTexto) {
         setTimeout(function() {
           cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
           _cascoSonido(2.5);
@@ -13945,7 +14000,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1249";
+var _APP_VERSION = "v1251";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15682,7 +15737,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1249</div>
+<div id='version-badge' style='display:flex;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1251</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
