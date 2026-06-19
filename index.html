@@ -1475,7 +1475,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1300 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1301 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -6824,10 +6824,30 @@ function abrirHeroModal() {
   panel.appendChild(inner);
 
   // ── Sonido carga de casete (Web Audio API) ──────────────────
+  // En vez de un bucle a ritmo fijo, el sonido se dispara por _cascoTick(),
+  // que el typewriter llama una vez por cada carácter que aparece — así la
+  // cadencia del sonido es siempre la misma que la de la escritura.
   var _cascoAudioCtx = null;
   var _cascoNodes = [];
-  var _cascoInterval = null;
+  var _cascoActive = false;
+  var _cascoStopTimer = null;
 
+  // Portadoras estilo FSK de módem / carga de casete (Bell 103 / ZX Spectrum tape)
+  var _cascoCarriers = [1070, 1270, 2025, 2225, 1850, 980];
+
+  function _cascoEnsureNoiseBuffer(ctx) {
+    if (!window._cascoNoiseBuffer) {
+      var len = Math.floor(ctx.sampleRate * 0.3);
+      var buf = ctx.createBuffer(1, len, ctx.sampleRate);
+      var d = buf.getChannelData(0);
+      for (var ni = 0; ni < len; ni++) d[ni] = Math.random() * 2 - 1;
+      window._cascoNoiseBuffer = buf;
+    }
+  }
+
+  // Arma el sonido: se queda "activo" hasta que se llame a _cascoSonidoStop
+  // (o hasta que pase `duracion`, como salvaguarda). No suena nada por sí solo:
+  // cada bit se reproduce vía _cascoTick(), llamado por el typewriter.
   function _cascoSonido(duracion) {
     if (window._casc_mute) return;
     _cascoSonidoStop();
@@ -6835,70 +6855,66 @@ function abrirHeroModal() {
       var ctx = window._cascoAudioCtx;
       if (!ctx) return;
       if (ctx.state === 'suspended') { ctx.resume(); }
-
-      // Buffer de ruido blanco reutilizable (textura de cinta/línea de módem)
-      if (!window._cascoNoiseBuffer) {
-        var len = Math.floor(ctx.sampleRate * 0.3);
-        var buf = ctx.createBuffer(1, len, ctx.sampleRate);
-        var d = buf.getChannelData(0);
-        for (var ni = 0; ni < len; ni++) d[ni] = Math.random() * 2 - 1;
-        window._cascoNoiseBuffer = buf;
-      }
-
-      // Portadoras estilo FSK de módem / carga de casete (Bell 103 / ZX Spectrum tape)
-      var carriers = [1070, 1270, 2025, 2225, 1850, 980];
-
-      function _pulso() {
-        try {
-          var now = ctx.currentTime;
-
-          // Bit de datos: tono cuadrado corto y seco
-          var osc = ctx.createOscillator();
-          var g   = ctx.createGain();
-          osc.type = 'square';
-          osc.frequency.value = carriers[(Math.random() * carriers.length) | 0];
-          g.gain.setValueAtTime(0.0, now);
-          g.gain.linearRampToValueAtTime(0.07, now + 0.003);
-          g.gain.linearRampToValueAtTime(0.0, now + 0.022);
-          osc.connect(g);
-          g.connect(ctx.destination);
-          osc.start(now);
-          osc.stop(now + 0.025);
-          _cascoNodes.push(osc);
-
-          // Capa de ruido filtrado: el "siseo" de cinta/línea
-          var noise = ctx.createBufferSource();
-          noise.buffer = window._cascoNoiseBuffer;
-          var bp = ctx.createBiquadFilter();
-          bp.type = 'bandpass';
-          bp.frequency.value = 2800 + Math.random() * 2400;
-          bp.Q.value = 5;
-          var ng = ctx.createGain();
-          ng.gain.setValueAtTime(0.0, now);
-          ng.gain.linearRampToValueAtTime(0.028, now + 0.003);
-          ng.gain.linearRampToValueAtTime(0.0, now + 0.02);
-          noise.connect(bp);
-          bp.connect(ng);
-          ng.connect(ctx.destination);
-          noise.start(now);
-          noise.stop(now + 0.025);
-          _cascoNodes.push(noise);
-        } catch(e) {}
-      }
-      _pulso();
-      _cascoInterval = setInterval(_pulso, 30);
-      if (duracion) setTimeout(_cascoSonidoStop, duracion * 1000);
+      _cascoEnsureNoiseBuffer(ctx);
+      _cascoActive = true;
+      if (duracion) _cascoStopTimer = setTimeout(_cascoSonidoStop, duracion * 1000);
     } catch(e) {}
   }
 
   function _cascoSonidoStop() {
-    if (_cascoInterval) { clearInterval(_cascoInterval); _cascoInterval = null; }
+    _cascoActive = false;
+    if (_cascoStopTimer) { clearTimeout(_cascoStopTimer); _cascoStopTimer = null; }
     _cascoNodes.forEach(function(n){ try { n.stop(); } catch(e){} });
     _cascoNodes = [];
   }
 
+  // Un único "bit" de sonido — pensado para llamarse una vez por carácter escrito.
+  function _cascoTick() {
+    if (!_cascoActive || window._casc_mute) return;
+    try {
+      var ctx = window._cascoAudioCtx;
+      if (!ctx) return;
+      var now = ctx.currentTime;
+
+      // Bit de datos: tono cuadrado corto y seco
+      var osc = ctx.createOscillator();
+      var g   = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = _cascoCarriers[(Math.random() * _cascoCarriers.length) | 0];
+      g.gain.setValueAtTime(0.0, now);
+      g.gain.linearRampToValueAtTime(0.075, now + 0.004);
+      g.gain.linearRampToValueAtTime(0.0, now + 0.032);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.035);
+      _cascoNodes.push(osc);
+
+      // Capa de ruido filtrado: el "siseo" de cinta/línea
+      if (window._cascoNoiseBuffer) {
+        var noise = ctx.createBufferSource();
+        noise.buffer = window._cascoNoiseBuffer;
+        var bp = ctx.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 2800 + Math.random() * 2400;
+        bp.Q.value = 5;
+        var ng = ctx.createGain();
+        ng.gain.setValueAtTime(0.0, now);
+        ng.gain.linearRampToValueAtTime(0.02, now + 0.004);
+        ng.gain.linearRampToValueAtTime(0.0, now + 0.03);
+        noise.connect(bp);
+        bp.connect(ng);
+        ng.connect(ctx.destination);
+        noise.start(now);
+        noise.stop(now + 0.035);
+        _cascoNodes.push(noise);
+      }
+    } catch(e) {}
+  }
+
   window._cascoSonido = _cascoSonido;
   window._cascoSonidoStop = _cascoSonidoStop;
+  window._cascoTick = _cascoTick;
 
   // Calcula cuánto va a tardar el typewriter en escribir "texto" a "speed" ms/carácter,
   // para que el sonido dure exactamente lo mismo y no se desincronice.
@@ -7192,6 +7208,7 @@ function abrirHeroModal() {
       if (i < text.length) {
         i++;
         _render();
+        if (text[i-1] !== ' ' && window._cascoTick) window._cascoTick();
       } else {
         clearInterval(cursor);
         el.innerHTML = html;
@@ -11323,7 +11340,7 @@ function _modalPergamino(config) {
     }
     _rg();
     var t = setInterval(function() {
-      if (i < text.length) { i++; _rg(); }
+      if (i < text.length) { i++; _rg(); if (text[i-1] !== ' ' && window._cascoTick) window._cascoTick(); }
       else { clearInterval(t); el.innerHTML = html; if (onDone) onDone(); }
     }, speed || 26);
   }
@@ -13731,7 +13748,7 @@ window._dlT = {
     qrDesc:'Xacobeapp es una Progressive Web App optimizada para pantallas de móvil. Escanea el QR con la cámara de tu teléfono para abrirla directamente, sin descargas.',
     qrS1:'Abre la cámara de tu móvil',qrS2:'Apunta al código QR de la derecha',qrS3:'Toca el enlace que aparece → xacobeapp.com',qrS4:'Instálala como app desde el navegador',
     footSub:'Guía gratuita del Camino de Santiago · Hecha con ❤️ en Galicia',
-    footVersion:'App gratuita, sin publicidad. Versión v1298 · Disponible como PWA en iOS y Android',
+    footVersion:'App gratuita, sin publicidad. Versión v1301 · Disponible como PWA en iOS y Android',
     navFunciones:'Funciones',navCapturas:'Capturas',navRutas:'Rutas',navQr:'Ver en móvil →',
     badge:'🐚 Gratuita · Sin publicidad'
   },
@@ -13767,7 +13784,7 @@ window._dlT = {
     qrDesc:'Xacobeapp é unha Progressive Web App optimizada para pantallas de móbil. Escanea o QR coa cámara do teu teléfono para abrila directamente, sen descargas.',
     qrS1:'Abre a cámara do teu móbil',qrS2:'Apunta ao código QR da dereita',qrS3:'Toca a ligazón que aparece → xacobeapp.com',qrS4:'Instálaa como app desde o navegador',
     footSub:'Guía gratuíta do Camiño de Santiago · Feita con ❤️ en Galicia',
-    footVersion:'App gratuíta, sen publicidade. Versión v1298 · Dispoñible como PWA en iOS e Android',
+    footVersion:'App gratuíta, sen publicidade. Versión v1301 · Dispoñible como PWA en iOS e Android',
     navFunciones:'Funcións',navCapturas:'Capturas',navRutas:'Rutas',navQr:'Ver no móbil →',
     badge:'🐚 Gratuíta · Sen publicidade'
   },
@@ -13803,7 +13820,7 @@ window._dlT = {
     qrDesc:'Xacobeapp is a Progressive Web App optimised for mobile screens. Scan the QR with your phone camera to open it directly, no download needed.',
     qrS1:'Open your phone camera',qrS2:'Point it at the QR code on the right',qrS3:'Tap the link that appears → xacobeapp.com',qrS4:'Install it as an app from your browser',
     footSub:'Free guide to the Camino de Santiago · Made with ❤️ in Galicia',
-    footVersion:'Free app, no ads. Version v1298 · Available as PWA on iOS and Android',
+    footVersion:'Free app, no ads. Version v1301 · Available as PWA on iOS and Android',
     navFunciones:'Features',navCapturas:'Screenshots',navRutas:'Routes',navQr:'Open on phone →',
     badge:'🐚 Free · No ads'
   }
@@ -14549,7 +14566,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1298";
+var _APP_VERSION = "v1301";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -16286,7 +16303,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:block;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1298</div>
+<div id='version-badge' style='display:block;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1301</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
