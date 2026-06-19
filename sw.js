@@ -1,12 +1,11 @@
-const CACHE_NAME = 'guia-compostelana-v1272';
+const CACHE_NAME = 'guia-compostelana-v1291';
 const TILE_CACHE = 'guia-tiles-v5';
 const IMG_CACHE  = 'guia-imgs-v5';
 
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json',
-  '/data.js'
+  '/manifest.json'
 ];
 
 // Imágenes POIs
