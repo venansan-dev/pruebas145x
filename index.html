@@ -6892,6 +6892,7 @@ function abrirHeroModal() {
     wrap.appendChild(img);
     wrap.appendChild(txt);
     container.appendChild(wrap);
+    _cascoSonido(_cascoDur(texto, speed || 42));
     _typewriter(txt, texto, speed || 42, function() {
       img.style.animation = 'none';
       _cascoSonidoStop();
