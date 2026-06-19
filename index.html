@@ -1475,7 +1475,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1301 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1302 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -6824,6 +6824,8 @@ function abrirHeroModal() {
   panel.appendChild(inner);
 
   // ── Sonido carga de casete (Web Audio API) ──────────────────
+  // Silenciado de momento — para reactivarlo, cambia esto a false.
+  window._casc_mute = true;
   // En vez de un bucle a ritmo fijo, el sonido se dispara por _cascoTick(),
   // que el typewriter llama una vez por cada carácter que aparece — así la
   // cadencia del sonido es siempre la misma que la de la escritura.
@@ -13748,7 +13750,7 @@ window._dlT = {
     qrDesc:'Xacobeapp es una Progressive Web App optimizada para pantallas de móvil. Escanea el QR con la cámara de tu teléfono para abrirla directamente, sin descargas.',
     qrS1:'Abre la cámara de tu móvil',qrS2:'Apunta al código QR de la derecha',qrS3:'Toca el enlace que aparece → xacobeapp.com',qrS4:'Instálala como app desde el navegador',
     footSub:'Guía gratuita del Camino de Santiago · Hecha con ❤️ en Galicia',
-    footVersion:'App gratuita, sin publicidad. Versión v1301 · Disponible como PWA en iOS y Android',
+    footVersion:'App gratuita, sin publicidad. Versión v1302 · Disponible como PWA en iOS y Android',
     navFunciones:'Funciones',navCapturas:'Capturas',navRutas:'Rutas',navQr:'Ver en móvil →',
     badge:'🐚 Gratuita · Sin publicidad'
   },
@@ -13784,7 +13786,7 @@ window._dlT = {
     qrDesc:'Xacobeapp é unha Progressive Web App optimizada para pantallas de móbil. Escanea o QR coa cámara do teu teléfono para abrila directamente, sen descargas.',
     qrS1:'Abre a cámara do teu móbil',qrS2:'Apunta ao código QR da dereita',qrS3:'Toca a ligazón que aparece → xacobeapp.com',qrS4:'Instálaa como app desde o navegador',
     footSub:'Guía gratuíta do Camiño de Santiago · Feita con ❤️ en Galicia',
-    footVersion:'App gratuíta, sen publicidade. Versión v1301 · Dispoñible como PWA en iOS e Android',
+    footVersion:'App gratuíta, sen publicidade. Versión v1302 · Dispoñible como PWA en iOS e Android',
     navFunciones:'Funcións',navCapturas:'Capturas',navRutas:'Rutas',navQr:'Ver no móbil →',
     badge:'🐚 Gratuíta · Sen publicidade'
   },
@@ -13820,7 +13822,7 @@ window._dlT = {
     qrDesc:'Xacobeapp is a Progressive Web App optimised for mobile screens. Scan the QR with your phone camera to open it directly, no download needed.',
     qrS1:'Open your phone camera',qrS2:'Point it at the QR code on the right',qrS3:'Tap the link that appears → xacobeapp.com',qrS4:'Install it as an app from your browser',
     footSub:'Free guide to the Camino de Santiago · Made with ❤️ in Galicia',
-    footVersion:'Free app, no ads. Version v1301 · Available as PWA on iOS and Android',
+    footVersion:'Free app, no ads. Version v1302 · Available as PWA on iOS and Android',
     navFunciones:'Features',navCapturas:'Screenshots',navRutas:'Routes',navQr:'Open on phone →',
     badge:'🐚 Free · No ads'
   }
@@ -14566,7 +14568,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1301";
+var _APP_VERSION = "v1302";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -16303,7 +16305,7 @@ function abrirSobreNosotros() {
   <div class='rotate-title'>Gira el móvil</div>
   <div class='rotate-sub'>Esta guía está optimizada<br>para uso en vertical</div>
 </div>
-<div id='version-badge' style='display:block;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1301</div>
+<div id='version-badge' style='display:block;position:fixed;bottom:10px;left:10px;z-index:9999;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-family:monospace;padding:3px 8px;border-radius:10px;pointer-events:none;backdrop-filter:blur(4px)'>v1302</div>
 
 <!-- Modal alertas toggle -->
 <div id='modal-alertas-bg' class='modal-bg' onclick='this.classList.remove("visible")'>
