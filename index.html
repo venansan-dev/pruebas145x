@@ -6871,6 +6871,15 @@ function abrirHeroModal() {
   window._cascoSonido = _cascoSonido;
   window._cascoSonidoStop = _cascoSonidoStop;
 
+  // Calcula cuánto va a tardar el typewriter en escribir "texto" a "speed" ms/carácter,
+  // para que el sonido dure exactamente lo mismo y no se desincronice.
+  function _cascoDur(texto, speed) {
+    var plano = String(texto || '').replace(/<[^>]+>/g, '');
+    var ms = plano.length * (speed || 28);
+    return Math.max(0.3, ms / 1000 + 0.1); // pequeño margen de cola
+  }
+  window._cascoDur = _cascoDur;
+
   // Helper: casco + typewriter reutilizable para todos los _render
   function _cascoTypewriter(container, texto, extraCss, speed, onDone) {
     var wrap = document.createElement('div');
@@ -7180,7 +7189,7 @@ function abrirHeroModal() {
     if (cont && el.parentNode !== cont) cont.appendChild(el);
     // Activar casco
     if (cascoImg) cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
-    _cascoSonido(2.5);
+    _cascoSonido(_cascoDur(html, speed));
     _typewriter(el, html, speed, function() {
       // Parar casco al terminar este párrafo
       if (cascoImg) cascoImg.style.animation = 'none';
@@ -7264,7 +7273,7 @@ function abrirHeroModal() {
         btnOtras.addEventListener('click', function(){ _renderMenuPrincipal(); });
         setTimeout(function() {
           cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
-          _cascoSonido(2.5);
+          _cascoSonido(_cascoDur((_t.asistTieneRuta||'Tienes una ruta seleccionada con ') + rutaPuntos.length + (rutaPuntos.length !== 1 ? (_t.asistTieneRutaSufP||' lugares. ¿Quieres revisarla o modificarla?') : (_t.asistTieneRutaSuf||' lugar. ¿Quieres revisarla o modificarla?')), 32));
           _twSeq([[sub, (_t.asistTieneRuta||'Tienes una ruta seleccionada con ') + rutaPuntos.length + (rutaPuntos.length !== 1 ? (_t.asistTieneRutaSufP||' lugares. ¿Quieres revisarla o modificarla?') : (_t.asistTieneRutaSuf||' lugar. ¿Quieres revisarla o modificarla?')), 32, inner]], cascoImg, function() {
             inner.appendChild(btnSi);
             inner.appendChild(btnVolver);
@@ -7278,7 +7287,7 @@ function abrirHeroModal() {
       _subtituloEtapaCercana(function(subTexto) {
         setTimeout(function() {
           cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
-          _cascoSonido(2.5);
+          _cascoSonido(_cascoDur(subTexto, 35));
           _typewriter(subCtx, subTexto, 35, function() {
             cascoImg.style.animation = 'none';
             _cascoSonidoStop();
@@ -11289,16 +11298,16 @@ function _modalPergamino(config) {
   }
 
   cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
-  if(window._cascoSonido) _cascoSonido(2.5);
+  if(window._cascoSonido) _cascoSonido(_cascoDur(config.titulo, 42));
   _twGlobal(titEl, config.titulo, 42, function() {
     cascoImg.style.animation = 'none';
     if(window._cascoSonidoStop) _cascoSonidoStop();
     if (subEl && config.subtitulo) {
       setTimeout(function() {
         cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
-        if(window._cascoSonido) _cascoSonido(2.5);
         // Velocidad adaptativa: textos largos van más rápido para no cansar
         var subSpeed = config.subtitulo.length > 80 ? 18 : 28;
+        if(window._cascoSonido) _cascoSonido(_cascoDur(config.subtitulo, subSpeed));
         _twGlobal(subEl, config.subtitulo, subSpeed, function() {
           cascoImg.style.animation = 'none';
           if(window._cascoSonidoStop) _cascoSonidoStop();
