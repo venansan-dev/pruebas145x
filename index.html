@@ -1475,7 +1475,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1298 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1299 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -7251,6 +7251,7 @@ function abrirHeroModal() {
     var saludoTexto = _saludoConContexto();
 
     // Typewriter saludo
+    _cascoSonido(_cascoDur(saludoTexto, 45));
     _typewriter(saludoEl, saludoTexto, 45, function() {
       cascoImg.style.animation = 'none';
       _cascoSonidoStop();
