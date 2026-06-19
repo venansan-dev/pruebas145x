@@ -1475,7 +1475,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1299 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1300 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -6836,28 +6836,57 @@ function abrirHeroModal() {
       if (!ctx) return;
       if (ctx.state === 'suspended') { ctx.resume(); }
 
-      // Patrón de pulsos estilo casete de datos: frecuencias alternas rápidas
-      var freqs = [1320, 880, 1760, 660, 2200, 440, 1100, 1650];
-      var fi = 0;
+      // Buffer de ruido blanco reutilizable (textura de cinta/línea de módem)
+      if (!window._cascoNoiseBuffer) {
+        var len = Math.floor(ctx.sampleRate * 0.3);
+        var buf = ctx.createBuffer(1, len, ctx.sampleRate);
+        var d = buf.getChannelData(0);
+        for (var ni = 0; ni < len; ni++) d[ni] = Math.random() * 2 - 1;
+        window._cascoNoiseBuffer = buf;
+      }
+
+      // Portadoras estilo FSK de módem / carga de casete (Bell 103 / ZX Spectrum tape)
+      var carriers = [1070, 1270, 2025, 2225, 1850, 980];
+
       function _pulso() {
         try {
+          var now = ctx.currentTime;
+
+          // Bit de datos: tono cuadrado corto y seco
           var osc = ctx.createOscillator();
           var g   = ctx.createGain();
           osc.type = 'square';
-          osc.frequency.value = freqs[fi % freqs.length];
-          fi++;
-          g.gain.setValueAtTime(0.0, ctx.currentTime);
-          g.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.005);
-          g.gain.linearRampToValueAtTime(0.0,  ctx.currentTime + 0.055);
+          osc.frequency.value = carriers[(Math.random() * carriers.length) | 0];
+          g.gain.setValueAtTime(0.0, now);
+          g.gain.linearRampToValueAtTime(0.07, now + 0.003);
+          g.gain.linearRampToValueAtTime(0.0, now + 0.022);
           osc.connect(g);
           g.connect(ctx.destination);
-          osc.start(ctx.currentTime);
-          osc.stop(ctx.currentTime + 0.06);
+          osc.start(now);
+          osc.stop(now + 0.025);
           _cascoNodes.push(osc);
+
+          // Capa de ruido filtrado: el "siseo" de cinta/línea
+          var noise = ctx.createBufferSource();
+          noise.buffer = window._cascoNoiseBuffer;
+          var bp = ctx.createBiquadFilter();
+          bp.type = 'bandpass';
+          bp.frequency.value = 2800 + Math.random() * 2400;
+          bp.Q.value = 5;
+          var ng = ctx.createGain();
+          ng.gain.setValueAtTime(0.0, now);
+          ng.gain.linearRampToValueAtTime(0.028, now + 0.003);
+          ng.gain.linearRampToValueAtTime(0.0, now + 0.02);
+          noise.connect(bp);
+          bp.connect(ng);
+          ng.connect(ctx.destination);
+          noise.start(now);
+          noise.stop(now + 0.025);
+          _cascoNodes.push(noise);
         } catch(e) {}
       }
       _pulso();
-      _cascoInterval = setInterval(_pulso, 65);
+      _cascoInterval = setInterval(_pulso, 30);
       if (duracion) setTimeout(_cascoSonidoStop, duracion * 1000);
     } catch(e) {}
   }
