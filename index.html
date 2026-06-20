@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script>
+// Detección temprana de "modo demo embebido" (app cargada dentro del iframe del
+// mockup del teléfono en la home de escritorio). Apagamos animaciones decorativas
+// pesadas para no duplicar carga de CPU/GPU cuando hay dos instancias de la página
+// corriendo a la vez.
+(function(){
+  try {
+    if (window.top !== window.self) {
+      window._EMBED_DEMO = true;
+      document.documentElement.classList.add('embed-demo');
+    }
+  } catch(e) { window._EMBED_DEMO = true; document.documentElement.classList.add('embed-demo'); }
+})();
+</script>
+<style>
+  .embed-demo *, .embed-demo *::before, .embed-demo *::after {
+    animation-play-state: paused !important;
+    animation: none !important;
+    transition: none !important;
+  }
+</style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7FH29XPZX0"></script>
 <script>
@@ -5118,6 +5139,7 @@ function lanzarOndaTitulo(elId) {
 }
 
 function initOndaTitulos() {
+  if (window._EMBED_DEMO) return;
   // Solo aplicar onda al banner pequeño — el grande tiene estructura HTML interna
   aplicarOndaTitulo('footer-don-title');
   setTimeout(function() {
@@ -12602,6 +12624,7 @@ var galeria_slots = [null, null, null]; // img actual en cada slot
 var _galeriaIniciada = false;
 function iniciarGaleria() {
   if (window.innerWidth < 769) return;
+  if (window._EMBED_DEMO) return;
   if (_galeriaIniciada) return;
   _galeriaIniciada = true;
   // Cargar las 3 imágenes iniciales
@@ -12652,6 +12675,7 @@ var FRASES={
 };
 var fraseIdx=0;
 function iniciarFrases(){
+  if (window._EMBED_DEMO) return;
   setInterval(function(){
     var el=document.getElementById('hero-sub');if(!el)return;
     el.classList.add('oculto');
@@ -14714,7 +14738,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1339";
+var _APP_VERSION = "v1340";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -14731,6 +14755,9 @@ if ('serviceWorker' in navigator) {
     });
   }
   window.addEventListener('load', function() {
+    // No registrar el SW cuando la app corre embebida (demo del móvil en el hero de escritorio):
+    // evita el aviso de cuota de almacenamiento y el precaching pesado de tiles/imágenes.
+    if (window.top !== window.self) return;
     navigator.serviceWorker.register('/sw.js').then(function(reg) {
     }).catch(function(err) {
       console.warn('SW error:', err);
