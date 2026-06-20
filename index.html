@@ -1475,7 +1475,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1307 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1308 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -7385,15 +7385,16 @@ function abrirHeroModal() {
             cascoImg.style.animation = 'none';
             _cascoSonidoStop();
 
-          // Botón marcar ruta a próxima etapa
+          // Botón marcar ruta a próxima etapa (se añade más abajo, justo encima de los botones de acción)
+          var btnEtapa = null;
           if (window._etapaProxima) {
-            var btnEtapa = document.createElement('button');
+            btnEtapa = document.createElement('button');
             var _ep = window._etapaProxima;
             var _epNombreCompleto = (idiomaActual==='gl'&&_ep.p.nombre_gl)?_ep.p.nombre_gl:(idiomaActual==='en'&&_ep.p.nombre_en)?_ep.p.nombre_en:_ep.p.nombre;
             var _epPartes = _epNombreCompleto.split('·');
             var _epNombreCorto = _epPartes.length>1 ? _epPartes[1].split('→')[0].trim() : _epNombreCompleto;
-            btnEtapa.textContent = (_t.asistMarcarRuta||'🗺️ Marcar la ruta hacia') + ' ' + _epNombreCorto + ' →';
-            btnEtapa.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 2px 8px rgba(45,74,30,0.4);margin-bottom:14px;display:flex;align-items:center;gap:8px';
+            btnEtapa.textContent = (_t.asistMarcarRuta||'🗺️ Marcar etapa hacia') + ' ' + _epNombreCorto + ' →';
+            btnEtapa.style.cssText = 'width:100%;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:none;border-radius:8px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 2px 8px rgba(45,74,30,0.4);margin-bottom:10px;display:flex;align-items:center;gap:8px';
             btnEtapa.addEventListener('click', function() {
               addToRoute(_ep.p.id);
               cerrar();
@@ -7401,7 +7402,6 @@ function abrirHeroModal() {
                 if (mapa && _ep.p.lat && _ep.p.lng) mapa.setView([_ep.p.lat, _ep.p.lng], 13);
               }, 350);
             });
-            inner.appendChild(btnEtapa);
           }
 
           if (false) { // placeholder — rama ruta ya gestionada arriba
@@ -7415,6 +7415,7 @@ function abrirHeroModal() {
             btnCerrar.style.cssText = 'width:100%;background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
             btnCerrar.addEventListener('click', function(){ _renderDespedida(); });
             _twSeq([[noGps, _capital(_t.asistSinGps||'Activa el GPS para ver los lugares del Camino más cercanos a ti.'), 32, inner]], cascoImg, function() {
+              if (btnEtapa) inner.appendChild(btnEtapa);
               inner.appendChild(btnCerrar);
             });
 
@@ -7429,7 +7430,7 @@ function abrirHeroModal() {
             var btnRow = document.createElement('div');
             btnRow.style.cssText = 'display:flex;gap:10px';
             var btnSi = document.createElement('button');
-            btnSi.textContent = _t.asistSiVerLugares||'Sí, ver lugares';
+            btnSi.textContent = _t.asistSiVerLugares||'Ver lugares cercanos';
             btnSi.style.cssText = 'flex:1;background:#fff;color:#0F6E56;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
             btnSi.addEventListener('click', function(){ _renderPaso2(cercanos); });
             var btnNo = document.createElement('button');
@@ -7439,9 +7440,10 @@ function abrirHeroModal() {
             btnRow.appendChild(btnSi);
             btnRow.appendChild(btnNo);
             _twSeq([
-              [sub, (_t.asistCercanosPre||'Tienes') + ' ' + cercanos.length + ' ' + (cercanos.length !== 1 ? (_t.asistCercanosLugares||'lugares') : (_t.asistCercanosLugar||'lugar')) + ' ' + (_t.asistCercanosDe||'interesantes cerca de ti. El más próximo es') + ' ' + primero.poi.nombre + ', ' + (_t.asistCercanosA||'a') + ' ' + distTexto + '.', 30, inner],
-              [sub2, _t.asistPreguntaVisitar||'¿Te gustaría visitar alguno?', 35, inner]
+              [sub, (_t.asistCercanosPre||'Además tienes') + ' ' + cercanos.length + ' ' + (cercanos.length !== 1 ? (_t.asistCercanosLugares||'lugares') : (_t.asistCercanosLugar||'lugar')) + ' ' + (_t.asistCercanosDe||'interesantes cerca de ti. El más próximo es') + ' ' + primero.poi.nombre + ', ' + (_t.asistCercanosA||'a') + ' ' + distTexto + '.', 30, inner],
+              [sub2, _t.asistPreguntaVisitar||'¿Cómo quieres proceder?', 35, inner]
             ], cascoImg, function() {
+              if (btnEtapa) inner.appendChild(btnEtapa);
               inner.appendChild(btnRow);
               
             });
@@ -12690,12 +12692,12 @@ var T={
     asistTieneRutaSufP:' lugares. ¿Quieres revisarla o modificarla?',
     asistSiVerRuta:'Sí, ver ruta',
     asistNoVolver:'No, volver al mapa',
-    asistPreguntaVisitar:'¿Te gustaría visitar alguno?',
-    asistSiVerLugares:'Sí, ver lugares',
+    asistPreguntaVisitar:'¿Cómo quieres proceder?',
+    asistSiVerLugares:'Ver lugares cercanos',
     asistPaso2Tit:'Selecciona qué te gustaría visitar',
     asistAhoraNno:'Otras opciones',
     asistOtrasOpc:'☰ Otras opciones',
-    asistMarcarRuta:'🗺️ Marcar la ruta hacia',
+    asistMarcarRuta:'🗺️ Marcar etapa hacia',
     asistMasCosa:'Hay mucho más en la guía. Elige algo que te llame la atención:',
     asistBuscarTit:'🔍 Buscar algo próximo a ti',
     asistBuscarSub:'Escribe lo que necesitas. Los resultados aparecerán en el mapa en un radio de 1 km.',
@@ -12765,7 +12767,7 @@ var T={
     asistRevCromos:'cromo desbloqueado',
     asistRevCromosP:'cromos desbloqueados',
     asistRevSigue:'Sigue visitando para subir de rango.',
-        asistCercanosPre:'Tienes',
+        asistCercanosPre:'Además tienes',
     asistCercanosLugar:'lugar',
     asistCercanosLugares:'lugares',
     asistCercanosDe:'interesantes cerca de ti. El más próximo es',
@@ -13073,12 +13075,12 @@ var T={
     asistTieneRutaSufP:' lugares. ¿Queres revisala ou modificala?',
     asistSiVerRuta:'Si, ver ruta',
     asistNoVolver:'Non, volver ao mapa',
-    asistPreguntaVisitar:'¿Che gustaría visitar algún?',
-    asistSiVerLugares:'Si, ver lugares',
+    asistPreguntaVisitar:'¿Como queres proceder?',
+    asistSiVerLugares:'Ver lugares preto de ti',
     asistPaso2Tit:'Selecciona o que che gustaría visitar',
     asistAhoraNno:'Outras opcións',
     asistOtrasOpc:'☰ Outras opcións',
-    asistMarcarRuta:'🗺️ Marcar a ruta cara a',
+    asistMarcarRuta:'🗺️ Marcar etapa cara a',
     asistMasCosa:'Hai moito máis na guía. Escolle algo que che chame a atención:',
     asistBuscarTit:'🔍 Buscar algo próximo a ti',
     asistBuscarSub:'Escribe o que necesitas. Os resultados aparecerán no mapa nun radio de 1 km.',
@@ -13151,7 +13153,7 @@ var T={
     asistRevCromos:'cromo desbloqueado',
     asistRevCromosP:'cromos desbloqueados',
     asistRevSigue:'Segue visitando para subir de rango.',
-        asistCercanosPre:'Tes',
+        asistCercanosPre:'Ademais tes',
     asistCercanosLugar:'lugar',
     asistCercanosLugares:'lugares',
     asistCercanosDe:'do Camiño cerca de ti. O máis próximo é',
@@ -13654,12 +13656,12 @@ var T={
     asistTieneRutaSufP:' stops. Would you like to review or change it?',
     asistSiVerRuta:'Yes, view route',
     asistNoVolver:'No, back to map',
-    asistPreguntaVisitar:'Would you like to visit one?',
-    asistSiVerLugares:'Yes, see places',
+    asistPreguntaVisitar:'How would you like to proceed?',
+    asistSiVerLugares:'See nearby places',
     asistPaso2Tit:'Select what you would like to visit',
     asistAhoraNno:'More options',
     asistOtrasOpc:'☰ More options',
-    asistMarcarRuta:'🗺️ Set route to',
+    asistMarcarRuta:'🗺️ Set stage to',
     asistMasCosa:'There is much more in the guide. Pick something that interests you:',
     asistBuscarTit:'🔍 Search nearby',
     asistBuscarSub:'Type what you need. Results will appear on the map within 1 km.',
@@ -13732,7 +13734,7 @@ var T={
     asistRevCromos:'stamp unlocked',
     asistRevCromosP:'stamps unlocked',
     asistRevSigue:'Keep visiting to move up the ranks.',
-        asistCercanosPre:'You have',
+        asistCercanosPre:'Also, you have',
     asistCercanosLugar:'place',
     asistCercanosLugares:'places',
     asistCercanosDe:'interesting places nearby. The closest is',
@@ -13793,7 +13795,7 @@ window._dlT = {
     qrDesc:'Xacobeapp es una Progressive Web App optimizada para pantallas de móvil. Escanea el QR con la cámara de tu teléfono para abrirla directamente, sin descargas.',
     qrS1:'Abre la cámara de tu móvil',qrS2:'Apunta al código QR de la derecha',qrS3:'Toca el enlace que aparece → xacobeapp.com',qrS4:'Instálala como app desde el navegador',
     footSub:'Guía gratuita del Camino de Santiago · Hecha con ❤️ en Galicia',
-    footVersion:'App gratuita, sin publicidad. Versión v1307 · Disponible como PWA en iOS y Android',
+    footVersion:'App gratuita, sin publicidad. Versión v1308 · Disponible como PWA en iOS y Android',
     navFunciones:'Funciones',navCapturas:'Capturas',navRutas:'Rutas',navQr:'Ver en móvil →',
     badge:'🐚 Gratuita · Sin publicidad'
   },
@@ -13829,7 +13831,7 @@ window._dlT = {
     qrDesc:'Xacobeapp é unha Progressive Web App optimizada para pantallas de móbil. Escanea o QR coa cámara do teu teléfono para abrila directamente, sen descargas.',
     qrS1:'Abre a cámara do teu móbil',qrS2:'Apunta ao código QR da dereita',qrS3:'Toca a ligazón que aparece → xacobeapp.com',qrS4:'Instálaa como app desde o navegador',
     footSub:'Guía gratuíta do Camiño de Santiago · Feita con ❤️ en Galicia',
-    footVersion:'App gratuíta, sen publicidade. Versión v1307 · Dispoñible como PWA en iOS e Android',
+    footVersion:'App gratuíta, sen publicidade. Versión v1308 · Dispoñible como PWA en iOS e Android',
     navFunciones:'Funcións',navCapturas:'Capturas',navRutas:'Rutas',navQr:'Ver no móbil →',
     badge:'🐚 Gratuíta · Sen publicidade'
   },
@@ -13865,7 +13867,7 @@ window._dlT = {
     qrDesc:'Xacobeapp is a Progressive Web App optimised for mobile screens. Scan the QR with your phone camera to open it directly, no download needed.',
     qrS1:'Open your phone camera',qrS2:'Point it at the QR code on the right',qrS3:'Tap the link that appears → xacobeapp.com',qrS4:'Install it as an app from your browser',
     footSub:'Free guide to the Camino de Santiago · Made with ❤️ in Galicia',
-    footVersion:'Free app, no ads. Version v1307 · Available as PWA on iOS and Android',
+    footVersion:'Free app, no ads. Version v1308 · Available as PWA on iOS and Android',
     navFunciones:'Features',navCapturas:'Screenshots',navRutas:'Routes',navQr:'Open on phone →',
     badge:'🐚 Free · No ads'
   }
@@ -14611,7 +14613,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1307";
+var _APP_VERSION = "v1308";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
