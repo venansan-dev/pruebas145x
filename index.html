@@ -1475,7 +1475,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1306 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1307 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -6867,8 +6867,7 @@ function abrirHeroModal() {
   panel.appendChild(inner);
 
   // ── Sonido carga de casete (Web Audio API) ──────────────────
-  // Silenciado de momento — para reactivarlo, cambia esto a false.
-  window._casc_mute = true;
+  window._casc_mute = false;
   // En vez de un bucle a ritmo fijo, el sonido se dispara por _cascoTick(),
   // que el typewriter llama una vez por cada carácter que aparece — así la
   // cadencia del sonido es siempre la misma que la de la escritura.
@@ -6878,7 +6877,8 @@ function abrirHeroModal() {
   var _cascoStopTimer = null;
 
   // Portadoras estilo FSK de módem / carga de casete (Bell 103 / ZX Spectrum tape)
-  var _cascoCarriers = [1070, 1270, 2025, 2225, 1850, 980];
+  // — tono grave, una octava por debajo del original
+  var _cascoCarriers = [535, 635, 1012, 1112, 925, 490];
 
   function _cascoEnsureNoiseBuffer(ctx) {
     if (!window._cascoNoiseBuffer) {
@@ -6941,7 +6941,7 @@ function abrirHeroModal() {
         noise.buffer = window._cascoNoiseBuffer;
         var bp = ctx.createBiquadFilter();
         bp.type = 'bandpass';
-        bp.frequency.value = 2800 + Math.random() * 2400;
+        bp.frequency.value = 1500 + Math.random() * 1400;
         bp.Q.value = 5;
         var ng = ctx.createGain();
         ng.gain.setValueAtTime(0.0, now);
@@ -13793,7 +13793,7 @@ window._dlT = {
     qrDesc:'Xacobeapp es una Progressive Web App optimizada para pantallas de móvil. Escanea el QR con la cámara de tu teléfono para abrirla directamente, sin descargas.',
     qrS1:'Abre la cámara de tu móvil',qrS2:'Apunta al código QR de la derecha',qrS3:'Toca el enlace que aparece → xacobeapp.com',qrS4:'Instálala como app desde el navegador',
     footSub:'Guía gratuita del Camino de Santiago · Hecha con ❤️ en Galicia',
-    footVersion:'App gratuita, sin publicidad. Versión v1306 · Disponible como PWA en iOS y Android',
+    footVersion:'App gratuita, sin publicidad. Versión v1307 · Disponible como PWA en iOS y Android',
     navFunciones:'Funciones',navCapturas:'Capturas',navRutas:'Rutas',navQr:'Ver en móvil →',
     badge:'🐚 Gratuita · Sin publicidad'
   },
@@ -13829,7 +13829,7 @@ window._dlT = {
     qrDesc:'Xacobeapp é unha Progressive Web App optimizada para pantallas de móbil. Escanea o QR coa cámara do teu teléfono para abrila directamente, sen descargas.',
     qrS1:'Abre a cámara do teu móbil',qrS2:'Apunta ao código QR da dereita',qrS3:'Toca a ligazón que aparece → xacobeapp.com',qrS4:'Instálaa como app desde o navegador',
     footSub:'Guía gratuíta do Camiño de Santiago · Feita con ❤️ en Galicia',
-    footVersion:'App gratuíta, sen publicidade. Versión v1306 · Dispoñible como PWA en iOS e Android',
+    footVersion:'App gratuíta, sen publicidade. Versión v1307 · Dispoñible como PWA en iOS e Android',
     navFunciones:'Funcións',navCapturas:'Capturas',navRutas:'Rutas',navQr:'Ver no móbil →',
     badge:'🐚 Gratuíta · Sen publicidade'
   },
@@ -13865,7 +13865,7 @@ window._dlT = {
     qrDesc:'Xacobeapp is a Progressive Web App optimised for mobile screens. Scan the QR with your phone camera to open it directly, no download needed.',
     qrS1:'Open your phone camera',qrS2:'Point it at the QR code on the right',qrS3:'Tap the link that appears → xacobeapp.com',qrS4:'Install it as an app from your browser',
     footSub:'Free guide to the Camino de Santiago · Made with ❤️ in Galicia',
-    footVersion:'Free app, no ads. Version v1306 · Available as PWA on iOS and Android',
+    footVersion:'Free app, no ads. Version v1307 · Available as PWA on iOS and Android',
     navFunciones:'Features',navCapturas:'Screenshots',navRutas:'Routes',navQr:'Open on phone →',
     badge:'🐚 Free · No ads'
   }
@@ -14611,7 +14611,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1306";
+var _APP_VERSION = "v1307";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
