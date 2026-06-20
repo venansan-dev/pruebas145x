@@ -1142,7 +1142,7 @@
           var img = document.getElementById('dl-phone-shot');
           if (!img) return;
           var iframe = document.createElement('iframe');
-          iframe.src = location.origin + '/';
+          iframe.src = location.href.split('#')[0].split('?')[0];
           iframe.title = 'Xacobeapp en vivo';
           iframe.loading = 'lazy';
           iframe.setAttribute('allow', 'geolocation');
@@ -14714,7 +14714,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1338";
+var _APP_VERSION = "v1339";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
