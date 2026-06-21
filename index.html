@@ -1454,7 +1454,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1399 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1400 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -15148,7 +15148,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1399";
+var _APP_VERSION = "v1400";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15970,7 +15970,10 @@ if ('serviceWorker' in navigator) {
   };
 
   // Al cargar, mostrar chip si ya hay visitas guardadas
+  // (solo en móvil/app — en la landing de escritorio esta función no se usa
+  // y abrir IndexedDB sin necesidad puede disparar el aviso de almacenamiento del navegador)
   window.addEventListener('load', function() {
+    if (window.matchMedia('(min-width:769px)').matches) return;
     _refrescarCacheVisitas(function() {
       var v = Object.keys(window._albumVisitasSet);
     });
