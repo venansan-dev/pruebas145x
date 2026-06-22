@@ -314,7 +314,7 @@
   <style>
   /* ─── RESET DESKTOP: oculta TODO el body excepto la landing ─── */
   @media (min-width:769px){
-    body > *:not(#desktop-landing):not(#admin-tap) { display:none !important; }
+    body > *:not(#desktop-landing):not(#admin-tap):not(#test-admin-btn):not(#modal-login-admin):not(#panel-admin) { display:none !important; }
     #desktop-landing { display:block !important; }
     body {
       background:#0a0f1e !important;
@@ -2647,7 +2647,7 @@
 <div id='admin-tap' style='position:fixed;bottom:0;right:0;width:44px;height:44px;z-index:100;opacity:0;cursor:default' onclick='(function(){var n=(window._adminTaps=(window._adminTaps||0)+1);if(n>=5){window._adminTaps=0;abrirAdmin();}})()' title=''></div>
 
 <!-- ⚠️ BOTÓN TEMPORAL DE PRUEBAS — quitar antes de pasar a producción definitiva -->
-<button onclick='abrirAdmin()' style='position:fixed;bottom:16px;right:16px;z-index:9998;background:#dc2626;color:#fff;border:none;border-radius:24px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,0.3)'>🔐 TEST Moderación</button>
+<button id='test-admin-btn' onclick='abrirAdmin()' style='position:fixed;bottom:16px;right:16px;z-index:9998;background:#dc2626;color:#fff;border:none;border-radius:24px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,0.3)'>🔐 TEST Moderación</button>
 
 <div class='footer-bottom'>
   <p>&#169; 2025 Xacobeapp&#8482; &#8212; Todos los derechos reservados</p>
@@ -15257,7 +15257,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1412";
+var _APP_VERSION = "v1413";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
