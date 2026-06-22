@@ -6473,10 +6473,9 @@ function _renderPoiDrawerCarrusel() {
       return;
     }
     card.innerHTML =
-      (window._imgCromo ? window._imgCromo(p, enRuta, T, idiomaActual) : '<div class="poi-img '+p.color+'" style="position:relative;overflow:hidden">'+
-        '<img src="'+(p.imagen||'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png')+'" alt="'+p.nombre+'" class="poi-img-cover" loading="lazy" decoding="async" fetchpriority="low"/>'+
-
-      '</div>')+
+      (window._imgCromo ? window._imgCromo(p, enRuta, T, idiomaActual) : (p.imagen ? '<div class="poi-img '+p.color+'" style="position:relative;overflow:hidden">'+
+        '<img src="'+p.imagen+'" alt="'+p.nombre+'" class="poi-img-cover" loading="lazy" decoding="async" fetchpriority="low"/>'+
+      '</div>' : ''))+
       (!p.esUsuario ? '<div class="poi-ranking" id="rank-'+p.id+'" style="left:8px;right:auto">&#9733; '+(val.votos>0?media:'-')+'</div>' : '')+
       '<div class="poi-body">'+
         '<div class="poi-category">'+( p.categoria||'')+'</div>'+
@@ -11407,10 +11406,10 @@ function renderCarrusel(categoria) {
       mostrarBtnRuta = (hoy >= fIniExt && hoy <= fFinExt);
     }
     card.innerHTML =
-      (window._imgCromo ? window._imgCromo(p, enRuta, T, idiomaActual) : '<div class="poi-img '+p.color+'" style="position:relative;overflow:hidden">' +
-        '<img src="'+(p.imagen||'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png')+'" alt="'+p.nombre+'" class="poi-img-cover" loading="lazy" decoding="async" fetchpriority="low"/>' +
-        (mostrarBtnRuta && !p.esAlerta && !p.esUsuario && !(window._albumVisitasSet && window._albumVisitasSet[p.id]) ? '<button id="rbtn-'+p.id+'" class="poi-ruta-btn" data-poi="'+p.id+'" style="position:absolute;top:8px;right:8px;z-index:10;font-size:13px;padding:4px 10px;border-radius:10px;backdrop-filter:blur(4px);background:'+(enRuta?'#1D9E75':'rgba(255,255,255,0.92)')+';color:'+(enRuta?'#fff':'#0F6E56')+';border:1px solid '+(enRuta?'#1D9E75':'rgba(29,158,117,0.4)')+'">'+  (enRuta?'&#10003; '+(T[idiomaActual]||T.es).enRuta.replace('✓ ',''):(T[idiomaActual]||T.es).añadirRuta)+'</button>' : '') +
-      '</div>')+
+      (window._imgCromo ? window._imgCromo(p, enRuta, T, idiomaActual) : (p.imagen ? '<div class="poi-img '+p.color+'" style="position:relative;overflow:hidden">' +
+        '<img src="'+p.imagen+'" alt="'+p.nombre+'" class="poi-img-cover" loading="lazy" decoding="async" fetchpriority="low"/>' +
+      '</div>' : ''))+
+      (mostrarBtnRuta && !p.esAlerta && !p.esUsuario && !(window._albumVisitasSet && window._albumVisitasSet[p.id]) ? '<button id="rbtn-'+p.id+'" class="poi-ruta-btn" data-poi="'+p.id+'" style="position:absolute;top:8px;right:8px;z-index:10;font-size:13px;padding:4px 10px;border-radius:10px;backdrop-filter:blur(4px);background:'+(enRuta?'#1D9E75':'rgba(255,255,255,0.92)')+';color:'+(enRuta?'#fff':'#0F6E56')+';border:1px solid '+(enRuta?'#1D9E75':'rgba(29,158,117,0.4)')+'">'+  (enRuta?'&#10003; '+(T[idiomaActual]||T.es).enRuta.replace('✓ ',''):(T[idiomaActual]||T.es).añadirRuta)+'</button>' : '') +
       (!p.esUsuario ? '<div class="poi-ranking" id="rank-'+p.id+'" style="left:8px;right:auto">&#9733; '+(val.votos>0?media:'-')+'</div>' : '')+
       '<div class="poi-body">'+
         '<div class="poi-category">'+(function(c){var t2=T[idiomaActual]||T.es;var cm={'naturaleza':t2.chipNaturaleza,'monumento':t2.chipMonumento,'albergue':t2.chipAlbergue,'mirador':t2.chipMirador,'edificación religiosa':t2.chipEdif,'localización histórica':t2.chipHist,'vestigio arqueológico':t2.chipVest,'edificación histórica':t2.chipEdifH,'naturaleza':t2.chipNat};return cm[c]||c;})(p.categoria)+'</div>'+
@@ -15255,7 +15254,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1414";
+var _APP_VERSION = "v1415";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
