@@ -15507,7 +15507,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1444";
+var _APP_VERSION = "v1445";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -17472,6 +17472,51 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
   }
 
   // ---- VOZ + AVISO VISUAL ----
+  function _modalFueraRuta(){
+    var prev = document.getElementById('modal-fuera-ruta');
+    if(prev) prev.remove();
+    var overlay = document.createElement('div');
+    overlay.id = 'modal-fuera-ruta';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:999999;display:flex;align-items:flex-end;justify-content:center;-webkit-tap-highlight-color:transparent;font-family:DM Sans,sans-serif';
+    var panel = document.createElement('div');
+    panel.style.cssText = 'background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 32px;width:100%;max-width:480px;position:relative;box-sizing:border-box;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1)';
+    function cerrar(){ panel.style.transform='translateY(100%)'; setTimeout(function(){ overlay.remove(); }, 300); }
+    var btnX = document.createElement('button');
+    btnX.textContent = '\u2715';
+    btnX.style.cssText = 'position:absolute;top:12px;right:12px;width:36px;height:36px;background:#f0f0f0;border:none;border-radius:50%;font-size:16px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;color:#555;-webkit-appearance:none';
+    btnX.addEventListener('click', cerrar);
+    btnX.addEventListener('touchend', function(e){ e.preventDefault(); cerrar(); });
+    var bar = document.createElement('div');
+    bar.style.cssText = 'width:40px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 18px';
+    var h3 = document.createElement('div');
+    h3.style.cssText = 'font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:10px;font-family:Playfair Display,serif;padding-right:40px';
+    h3.textContent = '🗺️ Estás fuera de ruta';
+    var body = document.createElement('div');
+    body.style.cssText = 'font-size:13px;color:#374151;line-height:1.6;white-space:pre-line;margin-bottom:18px';
+    body.textContent = 'Estás fuera de la ruta oficial. Dirígete al trazado violeta en el mapa o añade un punto sobre el camino amarillo y te guiaré hasta él.';
+    var btnContainer = document.createElement('div');
+    btnContainer.style.cssText = 'display:flex;gap:10px;flex-direction:column';
+    var btnAñadir = document.createElement('button');
+    btnAñadir.textContent = '+ Añadir punto';
+    btnAñadir.style.cssText = 'width:100%;background:#1D9E75;color:#fff;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnAñadir.addEventListener('click', function(){
+      cerrar();
+      setTimeout(function(){ abrirFormPOI(); }, 300);
+    });
+    var btnCerrar = document.createElement('button');
+    btnCerrar.textContent = 'Entendido';
+    btnCerrar.style.cssText = 'width:100%;background:#F5C800;color:#1a1a1a;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnCerrar.addEventListener('click', cerrar);
+    btnContainer.appendChild(btnAñadir);
+    btnContainer.appendChild(btnCerrar);
+    panel.appendChild(btnX); panel.appendChild(bar); panel.appendChild(h3); panel.appendChild(body); panel.appendChild(btnContainer);
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ panel.style.transform='translateY(0)'; }); });
+    overlay.addEventListener('click', function(e){ if(e.target===overlay) cerrar(); });
+    overlay.addEventListener('touchend', function(e){ if(e.target===overlay){ e.preventDefault(); cerrar(); } });
+  }
+
   function avisar(texto, tipo){
     if (typeof hablar === 'function') { try { hablar(texto); } catch(e){} }
     // Si es aviso de "salido del Camino" y no hemos mostrado el modal, mostrarlo
@@ -17828,50 +17873,6 @@ window._INDICE_CAMINOS = [{"id":"es01c_05a","ruta":"Camino Francés","slug":"fra
   // Modal propia (no depende de funciones externas inexistentes). Hoja
   // inferior con título + cuerpo multilínea, coherente con el resto de
   // modales de la app. Muestra el texto explicativo completo del modo.
-  function _modalFueraRuta(){
-    var prev = document.getElementById('modal-fuera-ruta');
-    if(prev) prev.remove();
-    var overlay = document.createElement('div');
-    overlay.id = 'modal-fuera-ruta';
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:999999;display:flex;align-items:flex-end;justify-content:center;-webkit-tap-highlight-color:transparent;font-family:DM Sans,sans-serif';
-    var panel = document.createElement('div');
-    panel.style.cssText = 'background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 32px;width:100%;max-width:480px;position:relative;box-sizing:border-box;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1)';
-    function cerrar(){ panel.style.transform='translateY(100%)'; setTimeout(function(){ overlay.remove(); }, 300); }
-    var btnX = document.createElement('button');
-    btnX.textContent = '\u2715';
-    btnX.style.cssText = 'position:absolute;top:12px;right:12px;width:36px;height:36px;background:#f0f0f0;border:none;border-radius:50%;font-size:16px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;color:#555;-webkit-appearance:none';
-    btnX.addEventListener('click', cerrar);
-    btnX.addEventListener('touchend', function(e){ e.preventDefault(); cerrar(); });
-    var bar = document.createElement('div');
-    bar.style.cssText = 'width:40px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 18px';
-    var h3 = document.createElement('div');
-    h3.style.cssText = 'font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:10px;font-family:Playfair Display,serif;padding-right:40px';
-    h3.textContent = '🗺️ Estás fuera de ruta';
-    var body = document.createElement('div');
-    body.style.cssText = 'font-size:13px;color:#374151;line-height:1.6;white-space:pre-line;margin-bottom:18px';
-    body.textContent = 'Estás fuera de la ruta oficial. Dirígete al trazado violeta en el mapa o añade un punto sobre el camino amarillo y te guiaré hasta él.';
-    var btnContainer = document.createElement('div');
-    btnContainer.style.cssText = 'display:flex;gap:10px;flex-direction:column';
-    var btnAñadir = document.createElement('button');
-    btnAñadir.textContent = '+ Añadir punto';
-    btnAñadir.style.cssText = 'width:100%;background:var(--verde,#1D9E75);color:#fff;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
-    btnAñadir.addEventListener('click', function(){
-      cerrar();
-      setTimeout(function(){ abrirFormPOI(); }, 300);
-    });
-    var btnCerrar = document.createElement('button');
-    btnCerrar.textContent = 'Entendido';
-    btnCerrar.style.cssText = 'width:100%;background:#F5C800;color:#1a1a1a;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
-    btnCerrar.addEventListener('click', cerrar);
-    btnContainer.appendChild(btnAñadir);
-    btnContainer.appendChild(btnCerrar);
-    panel.appendChild(btnX); panel.appendChild(bar); panel.appendChild(h3); panel.appendChild(body); panel.appendChild(btnContainer);
-    overlay.appendChild(panel);
-    document.body.appendChild(overlay);
-    requestAnimationFrame(function(){ requestAnimationFrame(function(){ panel.style.transform='translateY(0)'; }); });
-    overlay.addEventListener('click', function(e){ if(e.target===overlay) cerrar(); });
-    overlay.addEventListener('touchend', function(e){ if(e.target===overlay){ e.preventDefault(); cerrar(); } });
-  }
 
   function _modalRutaOficial(titulo, cuerpo){
     var prev = document.getElementById('modal-ruta-oficial');
