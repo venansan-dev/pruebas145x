@@ -1454,7 +1454,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1437 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1438 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -15450,7 +15450,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1437";
+var _APP_VERSION = "v1438";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -17172,34 +17172,26 @@ function abrirSobreNosotros() {
 }
 
 /* ============================================================
-   TRAZADO OFICIAL POR RUTA — Xacobeapp
-   Al pulsar un chip de Camino (Francés, Norte, Costa…) dibuja en
-   el mapa el trazado oficial COMPLETO de esa ruta, uniendo todas
-   sus etapas, en color violeta rosáceo. Independiente de los POIs.
-   Usa window._INDICE_CAMINOS y los tracks /tracks/*.json (carga
-   bajo demanda y cacheada). No interfiere con _rutaLinea ni con
-   el Modo Ruta Oficial, que usan sus propias capas.
+   TRAZADO OFICIAL — Xacobeapp
+   Dibuja en el mapa el trazado oficial COMPLETO de TODOS los Caminos
+   a la vez, en color violeta rosáceo, de forma permanente. Se pinta
+   automáticamente al cargar el mapa: no depende de chips ni del Modo
+   Ruta Oficial. Como las rutas comparten tramos al converger en
+   Galicia (la Costa empalma con el Central en Redondela, el Norte y
+   el Primitivo con el Francés cerca de Arzúa…), dibujarlas todas
+   juntas cubre esos tramos compartidos sin huecos.
+   Usa window._INDICE_CAMINOS y los tracks /tracks/*.json (cacheados).
+   No interfiere con _rutaLinea (navegador de POIs) ni con la
+   vigilancia de voz del Modo Ruta Oficial.
    ============================================================ */
 (function(){
   'use strict';
   var COLOR = '#C25FB0';          // violeta rosáceo
   var BASE = 'tracks/';
-  var capa = null;                // L.layerGroup con las polilíneas dibujadas
-  var slugActivo = null;          // ruta dibujada ahora mismo
+  var capa = null;                // L.layerGroup con todas las polilíneas
   var cacheTrack = {};            // {id: [[lat,lng],...]}
-  var token = 0;                  // evita pintar resultados de una carga obsoleta
-
-  // chip "etapa-xxx" -> slug del índice. Coinciden salvo que aquí
-  // normalizamos por si acaso. (interior == interior, costa == costa, …)
-  function slugDesdeCat(cat){
-    if(!cat || cat.indexOf('etapa-')!==0) return null;
-    return cat.replace('etapa-','');
-  }
-
-  function etapasDe(slug){
-    if(!window._INDICE_CAMINOS) return [];
-    return window._INDICE_CAMINOS.filter(function(e){ return e.slug===slug; });
-  }
+  var pintado = false;            // ya se dibujó (evita duplicar)
+  var visible = true;             // estado mostrar/ocultar
 
   function cargar(meta){
     if(cacheTrack[meta.id]) return Promise.resolve(cacheTrack[meta.id]);
@@ -17213,34 +17205,29 @@ function abrirSobreNosotros() {
       .catch(function(){ return []; });
   }
 
-  function limpiar(){
+  function ocultar(){
     if(capa && typeof mapa!=='undefined' && mapa && mapa.hasLayer(capa)){
       mapa.removeLayer(capa);
     }
-    capa = null;
-    slugActivo = null;
+    visible = false;
   }
 
-  // Dibuja el trazado completo de la ruta `slug`.
-  function mostrar(slug){
+  // Dibuja (o re-muestra) el trazado de TODAS las rutas del índice.
+  function mostrarTodo(){
     if(typeof mapa==='undefined' || !mapa || !window.L) return;
-    // Si ya está pintada esta ruta, no rehacer nada.
-    if(slug===slugActivo && capa) return;
-    limpiar();
-    if(!slug) return;
-    var metas = etapasDe(slug);
-    if(!metas.length) return;
-
-    slugActivo = slug;
-    var miToken = ++token;
+    visible = true;
+    // Si ya está pintado, solo reañadir la capa al mapa.
+    if(pintado && capa){
+      if(!mapa.hasLayer(capa)) capa.addTo(mapa);
+      return;
+    }
+    if(!window._INDICE_CAMINOS) return;
+    pintado = true;
     capa = L.layerGroup().addTo(mapa);
-
-    // Cargar todas las etapas y, a medida que llegan, dibujarlas.
-    metas.forEach(function(meta){
+    // Cargar cada etapa de cada ruta y dibujarla en cuanto llega.
+    window._INDICE_CAMINOS.forEach(function(meta){
       cargar(meta).then(function(coords){
-        // Si el usuario cambió de chip mientras cargaba, descartar.
-        if(miToken!==token || !capa) return;
-        if(!coords || coords.length<2) return;
+        if(!capa || !coords || coords.length<2) return;
         L.polyline(coords, {
           color: COLOR,
           weight: 4,
@@ -17252,18 +17239,38 @@ function abrirSobreNosotros() {
     });
   }
 
+  // Auto-inicio: pinta en cuanto el mapa y el índice estén listos.
+  function autoInit(intentos){
+    intentos = intentos || 0;
+    if(typeof mapa!=='undefined' && mapa && window.L && window._INDICE_CAMINOS){
+      mostrarTodo();
+    } else if(intentos < 60){
+      setTimeout(function(){ autoInit(intentos+1); }, 500);
+    }
+  }
+
   // API pública
   window.TrazadoRuta = {
-    color: function(c){ if(c){ COLOR=c; } return COLOR; },
-    // Llamada principal: recibe el `cat` del chip ("etapa-frances", "" , "albergue"…)
-    aplicar: function(cat){
-      var slug = slugDesdeCat(cat);
-      if(slug) mostrar(slug);
-      else limpiar();   // chip que no es de Camino -> quitar trazado
+    color: function(c){
+      if(c){
+        COLOR = c;
+        // Repintar con el nuevo color
+        if(capa){ capa.eachLayer(function(l){ if(l.setStyle) l.setStyle({color:COLOR}); }); }
+      }
+      return COLOR;
     },
-    ocultar: limpiar,
-    activa: function(){ return slugActivo; }
+    mostrar: mostrarTodo,
+    ocultar: ocultar,
+    toggle: function(){ if(visible) ocultar(); else mostrarTodo(); return visible; },
+    visible: function(){ return visible; },
+    // Compat: el antiguo hook de los chips llamaba a aplicar(cat). Ya no
+    // filtra nada (el trazado completo está siempre visible), así que es
+    // un no-op que garantiza que el trazado siga presente.
+    aplicar: function(){ if(!visible) return; if(!pintado) mostrarTodo(); }
   };
+
+  if(document.readyState!=='loading') autoInit();
+  else document.addEventListener('DOMContentLoaded', function(){ autoInit(); });
 })();
 
 </script>
@@ -17484,15 +17491,11 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
 
   // ---- API PÚBLICA ----
   window.Desvio = {
-    // Carga un track {coords:[[lat,lng],...]} y lo dibuja en el mapa.
+    // Carga un track {coords:[[lat,lng],...]} para la vigilancia de voz.
+    // Ya NO dibuja el trazado amarillo: el trazado oficial violeta (TrazadoRuta)
+    // está siempre visible en el mapa, así que el amarillo es redundante.
     cargar: function(track){
       TRACK = track;
-      if (typeof mapa !== 'undefined' && mapa && window.L){
-        if (polyDesvio) mapa.removeLayer(polyDesvio);
-        polyDesvio = L.polyline(track.coords, {
-          color:'#F5C800', weight:5, opacity:0.85
-        }).addTo(mapa);
-      }
       return TRACK.coords.length;
     },
 
