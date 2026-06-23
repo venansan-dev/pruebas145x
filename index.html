@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1444 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1445 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -15507,7 +15507,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1444";
+var _APP_VERSION = "v1445";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -17683,7 +17683,19 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
     },
 
     // Permite ajustar umbrales en caliente.
-    config: function(o){ for (var k in o) if (k in CFG) CFG[k]=o[k]; return CFG; }
+    config: function(o){ for (var k in o) if (k in CFG) CFG[k]=o[k]; return CFG; },
+
+    // ---- Control externo del modal "fuera de ruta" ----
+    // Lo usa Ruta Oficial cuando estás tan lejos que ni se detecta etapa.
+    avisoFueraRuta: function(metros){
+      if (modalDescartado) return;                 // el usuario ya lo cerró en este episodio
+      var ov = document.getElementById('desvio-modal-ov');
+      var yaVisible = ov && ov.style.display !== 'none';
+      if (typeof hablar === 'function' && !yaVisible){ try{ hablar('Estás fuera de la ruta oficial.'); }catch(e){} }
+      mostrarModalDesvio(metros);
+    },
+    resetModal: function(){ modalDescartado = false; },
+    cerrarModal: function(){ cerrarModalDesvio(); }
   };
 
 })();
@@ -17926,14 +17938,24 @@ window._INDICE_CAMINOS = [{"id":"es01c_05a","ruta":"Camino Francés","slug":"fra
   }
 
   // --- MAGIA: detectar etapa y arrancar vigilancia ---
+  var _lejosPrev = false;   // ¿estábamos lejos de TODO Camino en el tick anterior?
   function alMoverse(pos){
     var lat=pos.coords.latitude, lng=pos.coords.longitude, acc=pos.coords.accuracy;
     window.Selector.detectar(lat, lng).then(function(res){
       if(!res || res.distancia > DIST_MAX_CAMINO){
-        // Lejos de todo Camino: no inventamos ruta
-        if(typeof mostrarToast==='function')
-          mostrarToast('No detecto que estés en un Camino ahora mismo');
+        // Lejos de todo Camino: no inventamos ruta → MODAL flotante (en vez del toast)
+        if(!_lejosPrev && window.Desvio && window.Desvio.resetModal) window.Desvio.resetModal();
+        if(window.Desvio && window.Desvio.avisoFueraRuta) window.Desvio.avisoFueraRuta(res ? res.distancia : null);
+        _lejosPrev = true;
         return;
+      }
+      // Volvemos a estar cerca de un Camino tras estar lejos: rearmar y cerrar el modal
+      if(_lejosPrev){
+        if(window.Desvio){
+          if(window.Desvio.resetModal) window.Desvio.resetModal();
+          if(window.Desvio.cerrarModal) window.Desvio.cerrarModal();
+        }
+        _lejosPrev = false;
       }
       if(res.nueva){
         // Cambió de etapa: avisar discretamente (el selector ya cargó el track)
