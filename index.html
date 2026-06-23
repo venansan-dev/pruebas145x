@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1448 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1449 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -12952,6 +12952,13 @@ function distanciaTexto(m) {
 function activarNavegacionVoz() {
   if (typeof _ocultarBtnComenzarNav==='function') _ocultarBtnComenzarNav();
   if (rutaPuntos.length < 1) { mostrarToast((T[idiomaActual]||T.es).navAnnadePunto||'Añade al menos 1 punto a la ruta'); return; }
+  // Pausar Ruta Oficial mientras dura la navegación
+  if (window.RutaOficial && window.RutaOficial.estaActivo()) {
+    window._rutaOficialPausada = true;
+    window.RutaOficial.desactivar();
+  } else {
+    window._rutaOficialPausada = false;
+  }
 
   // Ordenar puntos por cercanía al usuario
   var origen = (userLat && userLng) ? {lat:userLat, lng:userLng} : {lat:rutaPuntos[0].lat, lng:rutaPuntos[0].lng};
@@ -13230,6 +13237,11 @@ function detenerNavegacionVoz() {
   _navActiva = false;
   if (typeof _ocultarBtnComenzarNav==='function') _ocultarBtnComenzarNav();
   if (typeof _quitarMarkerVolver==='function') _quitarMarkerVolver();
+  // Reactivar Ruta Oficial si estaba activa antes de entrar en navegación
+  if (window._rutaOficialPausada) {
+    window._rutaOficialPausada = false;
+    setTimeout(function(){ if(window.RutaOficial) window.RutaOficial.activar(); }, 500);
+  }
   var _btnCascoStop = document.getElementById('btn-asistente-mapa'); if (_btnCascoStop) _btnCascoStop.style.display = 'flex';
 
   // Guardar estado brújula antes de detener
@@ -15607,7 +15619,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1448";
+var _APP_VERSION = "v1449";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -17985,9 +17997,9 @@ window._INDICE_CAMINOS = [{"id":"es01c_05a","ruta":"Camino Francés","slug":"fra
 (function(){
   'use strict';
   var activo = false;
-  var watchId = null;
+  var _intervalId = null;     // setInterval de 5 min para detección de desvío
   var DIST_MAX_CAMINO = 500; // m: si estás a más de esto de todo Camino, no vigila
-  var yaVistoCartel = false;  // para mostrar cartel completo solo la 1ª vez
+  var INTERVALO_DETECCION = 5 * 60 * 1000; // 5 minutos en ms
 
   // Inicializar selector con el índice embebido
   function initSelector(){
@@ -18066,42 +18078,33 @@ window._INDICE_CAMINOS = [{"id":"es01c_05a","ruta":"Camino Francés","slug":"fra
     overlay.addEventListener('touchend', function(e){ if(e.target===overlay){ e.preventDefault(); cerrar(); } });
   }
 
-  // --- MAGIA: detectar etapa y arrancar vigilancia ---
-  var _lejosPrev = false;   // ¿estábamos lejos de TODO Camino en el tick anterior?
-  function alMoverse(pos){
-    var lat=pos.coords.latitude, lng=pos.coords.longitude, acc=pos.coords.accuracy;
-    window.Selector.detectar(lat, lng).then(function(res){
-      if(!res || res.distancia > DIST_MAX_CAMINO){
-        // Lejos de todo Camino: no inventamos ruta → MODAL flotante (en vez del toast)
-        if(!_lejosPrev && window.Desvio && window.Desvio.resetModal) window.Desvio.resetModal();
-        if(window.Desvio && window.Desvio.avisoFueraRuta) window.Desvio.avisoFueraRuta(res ? res.distancia : null);
-        _lejosPrev = true;
-        return;
-      }
-      // Volvemos a estar cerca de un Camino tras estar lejos: rearmar y cerrar el modal
-      if(_lejosPrev){
+  // --- DETECCIÓN CADA 5 MINUTOS: pide posición puntual y comprueba desvío ---
+  function _comprobarPosicion(){
+    if(!activo) return;
+    navigator.geolocation.getCurrentPosition(function(pos){
+      if(!activo) return; // pudo desactivarse mientras esperábamos el GPS
+      var lat=pos.coords.latitude, lng=pos.coords.longitude, acc=pos.coords.accuracy;
+      window.Selector.detectar(lat, lng).then(function(res){
+        if(!res || res.distancia > DIST_MAX_CAMINO){
+          // Lejos de todo Camino: mostrar modal de aviso
+          if(window.Desvio && window.Desvio.resetModal) window.Desvio.resetModal();
+          if(window.Desvio && window.Desvio.avisoFueraRuta) window.Desvio.avisoFueraRuta(res ? res.distancia : null);
+          return;
+        }
+        // Estamos cerca de un Camino: cerrar modal si estaba visible y cargar track
         if(window.Desvio){
-          if(window.Desvio.resetModal) window.Desvio.resetModal();
           if(window.Desvio.cerrarModal) window.Desvio.cerrarModal();
+          if(!window._desvioVigilando){
+            window.Desvio.iniciarExterno();
+            window._desvioVigilando = true;
+          }
+          window.Desvio.alimentar(lat, lng, acc);
         }
-        _lejosPrev = false;
-      }
-      if(res.nueva){
-        // Cambió de etapa: avisar discretamente (el selector ya cargó el track)
-        if(typeof mostrarToast==='function')
+        if(res.nueva && typeof mostrarToast==='function'){
           mostrarToast('Vigilando: '+res.ruta+' · '+res.etapa);
-      }
-      // El selector ya cargó el track en el motor. Activamos la vigilancia
-      // UNA vez (sin abrir un segundo watch) y la alimentamos con esta misma
-      // posición: un único watchPosition para todo el modo.
-      if(window.Desvio){
-        if(!window._desvioVigilando){
-          window.Desvio.iniciarExterno();
-          window._desvioVigilando = true;
         }
-        window.Desvio.alimentar(lat, lng, acc);
-      }
-    }).catch(function(){});
+      }).catch(function(){});
+    }, function(){}, {enableHighAccuracy:true, maximumAge:0, timeout:20000});
   }
 
   // --- API del botón ---
@@ -18113,17 +18116,18 @@ window._INDICE_CAMINOS = [{"id":"es01c_05a","ruta":"Camino Francés","slug":"fra
         return false;
       }
       activo = true;
-      mostrar(cartelActivar(), !yaVistoCartel);
-      yaVistoCartel = true;
-      // watchPosition propio del modo (independiente de la navegación normal)
-      watchId = navigator.geolocation.watchPosition(alMoverse, function(){},
-        {enableHighAccuracy:true, maximumAge:5000, timeout:15000});
+      // Mostrar siempre el modal completo al activar
+      _modalRutaOficial(cartelActivar().titulo, cartelActivar().cuerpo);
+      // Lanzar primera comprobación inmediatamente y luego cada 5 minutos
+      _comprobarPosicion();
+      if(_intervalId) clearInterval(_intervalId);
+      _intervalId = setInterval(_comprobarPosicion, INTERVALO_DETECCION);
       actualizarBoton();
       return true;
     },
     desactivar: function(){
       activo = false;
-      if(watchId!=null){ navigator.geolocation.clearWatch(watchId); watchId=null; }
+      if(_intervalId){ clearInterval(_intervalId); _intervalId=null; }
       if(window.Desvio){ window.Desvio.detener(); window._desvioVigilando=false; }
       if(typeof _limpiarVolverRuta==='function') _limpiarVolverRuta();
       mostrar(cartelDesactivar(), false);
