@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1445 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1446 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -9664,6 +9664,64 @@ function añadirMarcadorUsuario(p) {
 
 
 // Abrir/cerrar formulario
+// ============================================================
+// VOLVER A LA RUTA OFICIAL (automático): coloca el punto más cercano del
+// trazado, dibuja la línea con las flechas de color y ofrece "Comenzar".
+// ============================================================
+function volverARuta(){
+  var lat = (typeof userLat!=='undefined' && userLat) ? userLat : null;
+  var lng = (typeof userLng!=='undefined' && userLng) ? userLng : null;
+  if (lat==null || lng==null){
+    if (typeof mostrarToast==='function') mostrarToast('Necesito tu ubicación GPS para guiarte');
+    return;
+  }
+  if (!window.Desvio || !window.Desvio.puntoMasCercano){
+    if (typeof mostrarToast==='function') mostrarToast('No hay trazado oficial cargado todavía');
+    return;
+  }
+  var pc = window.Desvio.puntoMasCercano(lat, lng);
+  if (!pc){
+    if (typeof mostrarToast==='function') mostrarToast('No detecto un trazado oficial cercano');
+    return;
+  }
+  if (window.Desvio.cerrarModal) window.Desvio.cerrarModal();
+  // Insertar el punto de retorno como destino (sin duplicar) al principio.
+  rutaPuntos = rutaPuntos.filter(function(p){ return p.id !== '_volver_ruta'; });
+  rutaPuntos.unshift({ id:'_volver_ruta', nombre:'Volver a la ruta oficial', lat:pc.lat, lng:pc.lng, categoria:'volver' });
+  if (typeof actualizarRuta==='function') actualizarRuta();   // dibuja línea+flechas, muestra ▶ Ir
+  if (typeof _irAlMapa==='function') _irAlMapa();
+  setTimeout(function(){
+    if (typeof dibujarLineaEstática==='function') dibujarLineaEstática();
+    _mostrarBtnComenzarNav();
+  }, 450);
+  if (typeof hablar==='function'){ try{ hablar('He marcado el punto más cercano de la ruta. Pulsa comenzar para que te guíe.'); }catch(e){} }
+}
+
+function _mostrarBtnComenzarNav(){
+  var b = document.getElementById('btn-comenzar-nav');
+  if (!b){
+    b = document.createElement('button');
+    b.id = 'btn-comenzar-nav';
+    b.type = 'button';
+    b.style.cssText =
+      'position:fixed;left:50%;transform:translateX(-50%);bottom:90px;z-index:9997;'+
+      'background:#1D9E75;color:#fff;border:none;border-radius:24px;padding:13px 22px;'+
+      'font-size:15px;font-weight:700;font-family:DM Sans,sans-serif;cursor:pointer;'+
+      'box-shadow:0 6px 22px rgba(0,0,0,0.32);display:flex;align-items:center;gap:8px';
+    b.innerHTML = '<span style="font-size:17px;line-height:1">▶</span> Comenzar navegación';
+    b.addEventListener('click', function(){
+      _ocultarBtnComenzarNav();
+      if (typeof activarNavegacionVoz==='function') activarNavegacionVoz();
+    });
+    document.body.appendChild(b);
+  }
+  b.style.display = 'flex';
+}
+function _ocultarBtnComenzarNav(){
+  var b = document.getElementById('btn-comenzar-nav');
+  if (b) b.style.display = 'none';
+}
+
 function abrirFormPOI() {
   poiFormLat = null; poiFormLng = null;
   document.getElementById('poi-input-nombre').value = '';
@@ -12147,6 +12205,7 @@ function _modalPergamino(config) {
 
 function limpiarRuta() {
   if (_navActiva) detenerNavegacionVoz();
+  if (typeof _ocultarBtnComenzarNav==='function') _ocultarBtnComenzarNav();
   var hayActiva = rutaPuntos.length > 0;
   var hayGuardada = false;
   try { hayGuardada = !!localStorage.getItem('rutaGuardadaV2'); } catch(e) {}
@@ -12853,6 +12912,7 @@ function distanciaTexto(m) {
 }
 
 function activarNavegacionVoz() {
+  if (typeof _ocultarBtnComenzarNav==='function') _ocultarBtnComenzarNav();
   if (rutaPuntos.length < 1) { mostrarToast((T[idiomaActual]||T.es).navAnnadePunto||'Añade al menos 1 punto a la ruta'); return; }
 
   // Ordenar puntos por cercanía al usuario
@@ -13130,6 +13190,7 @@ function toggleVozNav() {
 
 function detenerNavegacionVoz() {
   _navActiva = false;
+  if (typeof _ocultarBtnComenzarNav==='function') _ocultarBtnComenzarNav();
   var _btnCascoStop = document.getElementById('btn-asistente-mapa'); if (_btnCascoStop) _btnCascoStop.style.display = 'flex';
 
   // Guardar estado brújula antes de detener
@@ -15507,7 +15568,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1445";
+var _APP_VERSION = "v1446";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -17456,6 +17517,22 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
     return Math.hypot(px-cx, py-cy);
   }
 
+  // Proyección del punto P sobre el segmento AB → devuelve {lat,lng,d} del
+  // punto más cercano del segmento (no solo la distancia).
+  function proyectarEnSegmento(P, A, B){
+    var latRef = rad(A[0]);
+    var mLat = 111320, mLng = 111320 * Math.cos(latRef);
+    var px = P[1]*mLng, py = P[0]*mLat;
+    var ax = A[1]*mLng, ay = A[0]*mLat;
+    var bx = B[1]*mLng, by = B[0]*mLat;
+    var dx = bx-ax, dy = by-ay;
+    var L2 = dx*dx + dy*dy;
+    var t = (L2 === 0) ? 0 : ((px-ax)*dx + (py-ay)*dy) / L2;
+    t = Math.max(0, Math.min(1, t));
+    var cx = ax + t*dx, cy = ay + t*dy;
+    return { lat: cy/mLat, lng: cx/mLng, d: Math.hypot(px-cx, py-cy) };
+  }
+
   // Distancia mínima del usuario a TODA la senda.
   // Optimización: solo evalúa segmentos cuyo punto A está dentro de una
   // ventana de ~300m, para no recorrer 1000+ puntos en cada tick.
@@ -17537,10 +17614,10 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
               '<button type="button" id="desvio-modal-cerrar" style="flex:1;background:#fff;'+
               'color:#6b7280;border:1px solid #e5e7eb;border-radius:12px;padding:10px;font-size:13px;'+
               'font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Entendido</button>'+
-              '<button type="button" id="desvio-modal-add" style="flex:1.5;background:#1D9E75;'+
+              '<button type="button" id="desvio-modal-add" style="flex:1.6;background:#1D9E75;'+
               'color:#fff;border:none;border-radius:12px;padding:10px;font-size:13px;font-weight:700;'+
               'cursor:pointer;font-family:DM Sans,sans-serif;display:flex;align-items:center;'+
-              'justify-content:center;gap:5px"><span style="font-size:16px;font-weight:700;line-height:1">+</span> Añadir punto</button>'+
+              'justify-content:center;gap:5px">🧭 Volver a la ruta</button>'+
             '</div>'+
           '</div>'+
         '</div>';
@@ -17557,7 +17634,7 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
       // Añadir punto → cierra el modal y abre el drawer "Nuevo punto"
       ov.querySelector('#desvio-modal-add').addEventListener('click', function(){
         modalDescartado = true; cerrarModalDesvio();
-        if (typeof abrirFormPOI === 'function'){ try{ abrirFormPOI(); }catch(e){} }
+        if (typeof volverARuta === 'function'){ try{ volverARuta(); }catch(e){} }
       });
     }
     var m = ov.querySelector('#desvio-modal-metros');
@@ -17695,7 +17772,20 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
       mostrarModalDesvio(metros);
     },
     resetModal: function(){ modalDescartado = false; },
-    cerrarModal: function(){ cerrarModalDesvio(); }
+    cerrarModal: function(){ cerrarModalDesvio(); },
+
+    // Devuelve el punto más cercano del trazado oficial cargado a una posición:
+    // {lat, lng, distancia} o null si no hay track.
+    puntoMasCercano: function(lat, lng){
+      if (!TRACK || !TRACK.coords || TRACK.coords.length < 2) return null;
+      var P=[lat,lng], best=null, bestD=Infinity, co=TRACK.coords;
+      for (var i=0;i<co.length-1;i++){
+        var pr = proyectarEnSegmento(P, co[i], co[i+1]);
+        if (pr.d < bestD){ bestD = pr.d; best = pr; }
+      }
+      if (!best) return null;
+      return { lat: best.lat, lng: best.lng, distancia: Math.round(bestD) };
+    }
   };
 
 })();
