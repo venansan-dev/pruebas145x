@@ -1677,10 +1677,10 @@
     <div id='ar-status' style='position:absolute;top:20px;left:20px;color:#fff;font-size:12px;font-family:DM Sans,sans-serif;background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:8px'></div>
   </div>
   <!-- Botón añadir punto (derecha) -->
-  <button id='btn-add-poi-map' onclick='abrirFormPOI()' title='Añadir un punto' style='position:absolute;top:10px;right:10px;z-index:400;height:36px;background:#1a4a9e;color:#fff;border:1.5px solid #2a5aae;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(26,74,158,0.45),0 1px 4px rgba(0,0,0,0.2);padding:0 12px;font-family:DM Sans,sans-serif;white-space:nowrap'><span style='font-size:16px;font-weight:700;line-height:1;color:#fff'>+</span> <span id='btn-add-poi-map-txt'>Punto</span></button>
+  <button id='btn-add-poi-map' onclick='abrirFormPOI()' title='Añadir un punto' style='position:absolute;top:54px;right:10px;z-index:400;height:36px;background:#1a4a9e;color:#fff;border:1.5px solid #2a5aae;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(26,74,158,0.45),0 1px 4px rgba(0,0,0,0.2);padding:0 12px;font-family:DM Sans,sans-serif;white-space:nowrap'><span style='font-size:16px;font-weight:700;line-height:1;color:#fff'>+</span> <span id='btn-add-poi-map-txt'>Punto</span></button>
   <!-- Panel radio en mapa (columna derecha bajo +punto) -->
-  <div id='map-radio-control' style='display:flex;position:absolute;top:54px;right:10px;z-index:400;flex-direction:column;align-items:flex-end;gap:4px;font-family:DM Sans,sans-serif'>
-  <button id='btn-ruta-oficial' onclick='if(window.RutaOficial)RutaOficial.toggle()' style='background:#C25FB0;border:1px solid #a84f98;border-radius:16px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.12);white-space:nowrap;transition:all 0.15s' title='Vigila que sigas el trazado oficial del Camino'>🗺️ Ruta oficial</button>
+  <div id='map-radio-control' style='display:flex;position:absolute;top:10px;right:10px;z-index:400;flex-direction:column;align-items:flex-end;gap:4px;font-family:DM Sans,sans-serif'>
+  <button id='btn-ruta-oficial' onclick='if(window.RutaOficial)RutaOficial.toggle()' style='background:#C25FB0;border:1px solid #a84f98;border-radius:16px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.12);white-space:nowrap;transition:all 0.15s' title='Vigila que sigas el trazado oficial del Camino'>🗺️ Tutor de ruta: OFF</button>
     <div style='height:22px'></div>
     <div class='map-radio-btn active' data-km='1' onclick='cambiarRadio(1,this)' style='background:#1a4a9e;color:#f5e6c8;border:1.5px solid #2a5aae;border-radius:8px;padding:4px 6px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;box-shadow:0 4px 14px rgba(26,74,158,0.4),0 1px 3px rgba(0,0,0,0.18);min-width:40px'>1 km</div>
     <div class='map-radio-btn' data-km='2' onclick='cambiarRadio(2,this)' style='background:rgba(255,245,210,0.9);color:#3d2000;border:1.5px solid #a07828;border-radius:8px;padding:4px 6px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.2),0 1px 3px rgba(0,0,0,0.12);min-width:40px'>2 km</div>
@@ -15507,7 +15507,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1445";
+var _APP_VERSION = "v1446";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -17972,10 +17972,10 @@ window._INDICE_CAMINOS = [{"id":"es01c_05a","ruta":"Camino Francés","slug":"fra
     if(_t.rofTitle) b.title=_t.rofTitle;
     if(activo){
       b.classList.add('activo');
-      b.innerHTML='🟡 '+(_t.rofBtnOn||'Ruta oficial: ON');
+      b.innerHTML='🟡 '+(_t.rofBtnOn||'Tutor de ruta: ON');
     } else {
       b.classList.remove('activo');
-      b.innerHTML='🗺️ '+(_t.rofBtn||'Ruta oficial');
+      b.innerHTML='🗺️ '+(_t.rofBtn||'Tutor de ruta: OFF');
     }
   }
   // Exponer para que cambiarIdioma pueda refrescar el texto del botón.
