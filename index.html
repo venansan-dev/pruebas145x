@@ -16921,7 +16921,7 @@ function _popupEnviarOp(poiId) {
   if (!inp || !inp.value.trim()) return;
   var texto = inp.value.trim();
   inp.value = '';
-  if (typeof enviarOpinion === 'function') enviarOpinion(poiId, texto);
+  if (typeof guardarComentario === 'function') guardarComentario(poiId, texto);
   // Añadir localmente
   if (typeof opiniones !== 'undefined') {
     if (!opiniones[poiId]) opiniones[poiId] = [];
