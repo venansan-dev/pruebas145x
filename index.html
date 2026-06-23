@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1447 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1448 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -9746,6 +9746,19 @@ function _ponerMarkerVolver(lat, lng){
   try{ window._volverMarker.bindPopup('Vuelve aquí a la ruta oficial'); }catch(e){}
 }
 
+// Borra el ayudante "volver a la ruta": botón Comenzar, chincheta y, si existe,
+// el punto de retorno sintético (con lo que su línea/flechas dejan de dibujarse).
+// No toca el resto de la ruta del usuario.
+function _limpiarVolverRuta(){
+  _ocultarBtnComenzarNav();
+  _quitarMarkerVolver();
+  if (typeof rutaPuntos !== 'undefined'){
+    var antes = rutaPuntos.length;
+    rutaPuntos = rutaPuntos.filter(function(p){ return p.id !== '_volver_ruta'; });
+    if (rutaPuntos.length !== antes && typeof actualizarRuta === 'function') actualizarRuta();
+  }
+}
+
 function abrirFormPOI() {
   poiFormLat = null; poiFormLng = null;
   document.getElementById('poi-input-nombre').value = '';
@@ -15594,7 +15607,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1447";
+var _APP_VERSION = "v1448";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -18112,6 +18125,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_05a","ruta":"Camino Francés","slug":"fra
       activo = false;
       if(watchId!=null){ navigator.geolocation.clearWatch(watchId); watchId=null; }
       if(window.Desvio){ window.Desvio.detener(); window._desvioVigilando=false; }
+      if(typeof _limpiarVolverRuta==='function') _limpiarVolverRuta();
       mostrar(cartelDesactivar(), false);
       actualizarBoton();
       return true;
