@@ -5607,6 +5607,17 @@ firebase.initializeApp({
 var db = firebase.database();
 var auth = firebase.auth();
 
+// Autenticación anónima: registra al usuario normal sin pedirle nada,
+// para que pueda comentar/crear alertas cumpliendo las reglas (auth != null).
+// No interfiere con el login de admin (email/contraseña).
+auth.onAuthStateChanged(function(user) {
+  if (!user) {
+    auth.signInAnonymously().catch(function(err) {
+      console.warn('Auth anónima falló:', err && err.code);
+    });
+  }
+});
+
 // ── Sanitización anti-XSS para datos de usuario (comentarios, alertas, POIs) ──
 // Escapa caracteres peligrosos antes de inyectar texto en innerHTML.
 function esc(s){
@@ -15434,7 +15445,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1426";
+var _APP_VERSION = "v1427";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
