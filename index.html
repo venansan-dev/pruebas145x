@@ -10219,7 +10219,9 @@ function guardarComentario(id, texto) {
 var adminActivo = false;
 
 function abrirAdmin() {
-  if (auth.currentUser) {
+  // Solo saltar el login si hay un admin REAL (email/contraseña).
+  // El usuario anónimo no cuenta como admin.
+  if (auth.currentUser && !auth.currentUser.isAnonymous) {
     _mostrarPanelAdmin();
     return;
   }
@@ -15445,7 +15447,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1427";
+var _APP_VERSION = "v1428";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
