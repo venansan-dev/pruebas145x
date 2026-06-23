@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1443 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1444 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -1677,10 +1677,10 @@
     <div id='ar-status' style='position:absolute;top:20px;left:20px;color:#fff;font-size:12px;font-family:DM Sans,sans-serif;background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:8px'></div>
   </div>
   <!-- Botón añadir punto (derecha) -->
-  <button id='btn-add-poi-map' onclick='abrirFormPOI()' title='Añadir un punto' style='position:absolute;top:54px;right:10px;z-index:400;height:36px;background:#1a4a9e;color:#fff;border:1.5px solid #2a5aae;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(26,74,158,0.45),0 1px 4px rgba(0,0,0,0.2);padding:0 12px;font-family:DM Sans,sans-serif;white-space:nowrap'><span style='font-size:16px;font-weight:700;line-height:1;color:#fff'>+</span> <span id='btn-add-poi-map-txt'>Punto</span></button>
+  <button id='btn-add-poi-map' onclick='abrirFormPOI()' title='Añadir un punto' style='position:absolute;top:10px;right:10px;z-index:400;height:36px;background:#1a4a9e;color:#fff;border:1.5px solid #2a5aae;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(26,74,158,0.45),0 1px 4px rgba(0,0,0,0.2);padding:0 12px;font-family:DM Sans,sans-serif;white-space:nowrap'><span style='font-size:16px;font-weight:700;line-height:1;color:#fff'>+</span> <span id='btn-add-poi-map-txt'>Punto</span></button>
   <!-- Panel radio en mapa (columna derecha bajo +punto) -->
-  <div id='map-radio-control' style='display:flex;position:absolute;top:10px;right:10px;z-index:400;flex-direction:column;align-items:flex-end;gap:4px;font-family:DM Sans,sans-serif'>
-  <button id='btn-ruta-oficial' onclick='if(window.RutaOficial)RutaOficial.toggle()' style='background:#C25FB0;border:1px solid #a84f98;border-radius:16px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.12);white-space:nowrap;transition:all 0.15s' title='Vigila que sigas el trazado oficial del Camino'>🗺️ Tutor de ruta: OFF</button>
+  <div id='map-radio-control' style='display:flex;position:absolute;top:54px;right:10px;z-index:400;flex-direction:column;align-items:flex-end;gap:4px;font-family:DM Sans,sans-serif'>
+  <button id='btn-ruta-oficial' onclick='if(window.RutaOficial)RutaOficial.toggle()' style='background:#C25FB0;border:1px solid #a84f98;border-radius:16px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.12);white-space:nowrap;transition:all 0.15s' title='Vigila que sigas el trazado oficial del Camino'>🗺️ Ruta oficial</button>
     <div style='height:22px'></div>
     <div class='map-radio-btn active' data-km='1' onclick='cambiarRadio(1,this)' style='background:#1a4a9e;color:#f5e6c8;border:1.5px solid #2a5aae;border-radius:8px;padding:4px 6px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;box-shadow:0 4px 14px rgba(26,74,158,0.4),0 1px 3px rgba(0,0,0,0.18);min-width:40px'>1 km</div>
     <div class='map-radio-btn' data-km='2' onclick='cambiarRadio(2,this)' style='background:rgba(255,245,210,0.9);color:#3d2000;border:1.5px solid #a07828;border-radius:8px;padding:4px 6px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.2),0 1px 3px rgba(0,0,0,0.12);min-width:40px'>2 km</div>
@@ -15507,7 +15507,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1446";
+var _APP_VERSION = "v1444";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -17424,7 +17424,6 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
   var watchId = null;
   var estado = 'en-ruta';   // 'en-ruta' | 'alejandose' | 'fuera'
   var ultimoAviso = 0;
-  var modalFueraRutaMostrado = false;  // Control para mostrar modal solo una vez al salir de ruta
 
   // ---- GEOMETRÍA ----
   function rad(d){ return d * Math.PI / 180; }
@@ -17472,60 +17471,9 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
   }
 
   // ---- VOZ + AVISO VISUAL ----
-  function _modalFueraRuta(){
-    var prev = document.getElementById('modal-fuera-ruta');
-    if(prev) prev.remove();
-    var overlay = document.createElement('div');
-    overlay.id = 'modal-fuera-ruta';
-    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:999999;display:flex;align-items:flex-end;justify-content:center;-webkit-tap-highlight-color:transparent;font-family:DM Sans,sans-serif';
-    var panel = document.createElement('div');
-    panel.style.cssText = 'background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 32px;width:100%;max-width:480px;position:relative;box-sizing:border-box;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1)';
-    function cerrar(){ panel.style.transform='translateY(100%)'; setTimeout(function(){ overlay.remove(); }, 300); }
-    var btnX = document.createElement('button');
-    btnX.textContent = '\u2715';
-    btnX.style.cssText = 'position:absolute;top:12px;right:12px;width:36px;height:36px;background:#f0f0f0;border:none;border-radius:50%;font-size:16px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;color:#555;-webkit-appearance:none';
-    btnX.addEventListener('click', cerrar);
-    btnX.addEventListener('touchend', function(e){ e.preventDefault(); cerrar(); });
-    var bar = document.createElement('div');
-    bar.style.cssText = 'width:40px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 18px';
-    var h3 = document.createElement('div');
-    h3.style.cssText = 'font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:10px;font-family:Playfair Display,serif;padding-right:40px';
-    h3.textContent = '🗺️ Estás fuera de ruta';
-    var body = document.createElement('div');
-    body.style.cssText = 'font-size:13px;color:#374151;line-height:1.6;white-space:pre-line;margin-bottom:18px';
-    body.textContent = 'Estás fuera de la ruta oficial. Dirígete al trazado violeta en el mapa o añade un punto sobre el camino amarillo y te guiaré hasta él.';
-    var btnContainer = document.createElement('div');
-    btnContainer.style.cssText = 'display:flex;gap:10px;flex-direction:column';
-    var btnAñadir = document.createElement('button');
-    btnAñadir.textContent = '+ Añadir punto';
-    btnAñadir.style.cssText = 'width:100%;background:#1D9E75;color:#fff;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
-    btnAñadir.addEventListener('click', function(){
-      cerrar();
-      setTimeout(function(){ abrirFormPOI(); }, 300);
-    });
-    var btnCerrar = document.createElement('button');
-    btnCerrar.textContent = 'Entendido';
-    btnCerrar.style.cssText = 'width:100%;background:#F5C800;color:#1a1a1a;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
-    btnCerrar.addEventListener('click', cerrar);
-    btnContainer.appendChild(btnAñadir);
-    btnContainer.appendChild(btnCerrar);
-    panel.appendChild(btnX); panel.appendChild(bar); panel.appendChild(h3); panel.appendChild(body); panel.appendChild(btnContainer);
-    overlay.appendChild(panel);
-    document.body.appendChild(overlay);
-    requestAnimationFrame(function(){ requestAnimationFrame(function(){ panel.style.transform='translateY(0)'; }); });
-    overlay.addEventListener('click', function(e){ if(e.target===overlay) cerrar(); });
-    overlay.addEventListener('touchend', function(e){ if(e.target===overlay){ e.preventDefault(); cerrar(); } });
-  }
-
   function avisar(texto, tipo){
     if (typeof hablar === 'function') { try { hablar(texto); } catch(e){} }
-    // Si es aviso de "salido del Camino" y no hemos mostrado el modal, mostrarlo
-    if (texto.indexOf('salido del Camino') !== -1 && !modalFueraRutaMostrado) {
-      modalFueraRutaMostrado = true;
-      _modalFueraRuta();
-    } else {
-      mostrarBanner(texto, tipo);
-    }
+    mostrarBanner(texto, tipo);
   }
 
   function mostrarBanner(texto, tipo){
@@ -17558,6 +17506,71 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
     }
   }
 
+  // ---- MODAL FLOTANTE DE DESVÍO (sustituye al toast cuando estás FUERA de la ruta) ----
+  var modalDescartado = false;   // el usuario cerró el modal en este episodio "fuera"
+
+  function mostrarModalDesvio(metros){
+    var ov = document.getElementById('desvio-modal-ov');
+    if (!ov){
+      ov = document.createElement('div');
+      ov.id = 'desvio-modal-ov';
+      ov.style.cssText =
+        'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;'+
+        'justify-content:center;padding:20px;background:rgba(10,5,20,0.45);'+
+        '-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);'+
+        'font-family:DM Sans,sans-serif';
+      ov.innerHTML =
+        '<div role="dialog" aria-modal="true" aria-label="Fuera de la ruta oficial" '+
+        'style="background:#fffdf7;border:1.5px solid #a84f98;border-radius:18px;'+
+        'max-width:360px;width:100%;box-shadow:0 14px 44px rgba(0,0,0,0.38);overflow:hidden">'+
+          '<div style="background:linear-gradient(135deg,#C25FB0,#a84f98);color:#fff;'+
+          'padding:14px 18px;display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px">'+
+            '<span style="font-size:20px">🧭</span><span>Fuera de la ruta oficial</span>'+
+          '</div>'+
+          '<div style="padding:18px">'+
+            '<p style="margin:0 0 8px;font-size:14px;line-height:1.55;color:#1a1a1a">'+
+            'Estás fuera de la ruta oficial. Dirígete al <strong style="color:#a84f98">trazado violeta</strong> '+
+            'en el mapa, o añade un punto sobre el <strong style="color:#c9a000">camino amarillo</strong> '+
+            'y te guiaré hasta él.</p>'+
+            '<p id="desvio-modal-metros" style="margin:0;font-size:12px;color:#6b7280"></p>'+
+            '<div style="display:flex;gap:8px;margin-top:16px">'+
+              '<button type="button" id="desvio-modal-cerrar" style="flex:1;background:#fff;'+
+              'color:#6b7280;border:1px solid #e5e7eb;border-radius:12px;padding:10px;font-size:13px;'+
+              'font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Entendido</button>'+
+              '<button type="button" id="desvio-modal-add" style="flex:1.5;background:#1D9E75;'+
+              'color:#fff;border:none;border-radius:12px;padding:10px;font-size:13px;font-weight:700;'+
+              'cursor:pointer;font-family:DM Sans,sans-serif;display:flex;align-items:center;'+
+              'justify-content:center;gap:5px"><span style="font-size:16px;font-weight:700;line-height:1">+</span> Añadir punto</button>'+
+            '</div>'+
+          '</div>'+
+        '</div>';
+      document.body.appendChild(ov);
+
+      // Cerrar con "Entendido"
+      ov.querySelector('#desvio-modal-cerrar').addEventListener('click', function(){
+        modalDescartado = true; cerrarModalDesvio();
+      });
+      // Cerrar tocando el fondo oscuro
+      ov.addEventListener('click', function(ev){
+        if (ev.target === ov){ modalDescartado = true; cerrarModalDesvio(); }
+      });
+      // Añadir punto → cierra el modal y abre el drawer "Nuevo punto"
+      ov.querySelector('#desvio-modal-add').addEventListener('click', function(){
+        modalDescartado = true; cerrarModalDesvio();
+        if (typeof abrirFormPOI === 'function'){ try{ abrirFormPOI(); }catch(e){} }
+      });
+    }
+    var m = ov.querySelector('#desvio-modal-metros');
+    if (m) m.textContent = (metros != null && isFinite(metros))
+      ? ('Estás a unos ' + Math.round(metros) + ' m de la senda señalizada.') : '';
+    ov.style.display = 'flex';
+  }
+
+  function cerrarModalDesvio(){
+    var ov = document.getElementById('desvio-modal-ov');
+    if (ov) ov.style.display = 'none';
+  }
+
   // ---- LÓGICA DE ESTADO (con histéresis anti-falsos-positivos) ----
   function evaluar(P, precision){
     if (!TRACK || !activo) return;
@@ -17571,7 +17584,9 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
       if (d > CFG.umbralDesvio){
         estado = 'fuera';
         ultimoAviso = ahora;
-        avisar('Te has salido del Camino. Vuelve hacia la senda señalizada.', 'error');
+        modalDescartado = false;
+        if (typeof hablar === 'function'){ try{ hablar('Estás fuera de la ruta oficial.'); }catch(e){} }
+        mostrarModalDesvio(d);
       } else if (d > CFG.umbralAviso){
         estado = 'alejandose';
         ultimoAviso = ahora;
@@ -17581,21 +17596,23 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
       if (d > CFG.umbralDesvio){
         estado = 'fuera';
         ultimoAviso = ahora;
-        avisar('Te has salido del Camino. Vuelve hacia la senda señalizada.', 'error');
+        modalDescartado = false;
+        if (typeof hablar === 'function'){ try{ hablar('Estás fuera de la ruta oficial.'); }catch(e){} }
+        mostrarModalDesvio(d);
       } else if (d < CFG.umbralVuelta){
         estado = 'en-ruta';
-        modalFueraRutaMostrado = false;  // Resetear para próxima salida
         mostrarBanner('De nuevo en el Camino ✓', 'ok');
       }
     } else if (estado === 'fuera'){
       if (d < CFG.umbralVuelta){
         estado = 'en-ruta';
-        modalFueraRutaMostrado = false;  // Resetear para próxima salida
+        modalDescartado = false;
+        cerrarModalDesvio();
         avisar('Has vuelto al Camino.', 'ok');
       } else if (ahora - ultimoAviso > CFG.repetirCada){
         ultimoAviso = ahora;
-        avisar('Sigues fuera del Camino. Estás a unos ' +
-               Math.round(d) + ' metros de la senda.', 'error');
+        if (typeof hablar === 'function'){ try{ hablar('Sigues fuera de la ruta. A unos ' + Math.round(d) + ' metros de la senda.'); }catch(e){} }
+        if (!modalDescartado) mostrarModalDesvio(d);
       }
     }
   }
@@ -17636,6 +17653,7 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
       if (watchId != null){ navigator.geolocation.clearWatch(watchId); watchId = null; }
       var b = document.getElementById('desvio-banner');
       if (b){ b.style.display='none'; }
+      cerrarModalDesvio();
       // Quitar el resaltado amarillo de la etapa (el violeta sigue puesto).
       if (polyDesvio && typeof mapa!=='undefined' && mapa && mapa.hasLayer(polyDesvio)){
         mapa.removeLayer(polyDesvio); polyDesvio = null;
@@ -17873,7 +17891,6 @@ window._INDICE_CAMINOS = [{"id":"es01c_05a","ruta":"Camino Francés","slug":"fra
   // Modal propia (no depende de funciones externas inexistentes). Hoja
   // inferior con título + cuerpo multilínea, coherente con el resto de
   // modales de la app. Muestra el texto explicativo completo del modo.
-
   function _modalRutaOficial(titulo, cuerpo){
     var prev = document.getElementById('modal-ruta-oficial');
     if(prev) prev.remove();
@@ -17972,10 +17989,10 @@ window._INDICE_CAMINOS = [{"id":"es01c_05a","ruta":"Camino Francés","slug":"fra
     if(_t.rofTitle) b.title=_t.rofTitle;
     if(activo){
       b.classList.add('activo');
-      b.innerHTML='🟡 '+(_t.rofBtnOn||'Tutor de ruta: ON');
+      b.innerHTML='🟡 '+(_t.rofBtnOn||'Ruta oficial: ON');
     } else {
       b.classList.remove('activo');
-      b.innerHTML='🗺️ '+(_t.rofBtn||'Tutor de ruta: OFF');
+      b.innerHTML='🗺️ '+(_t.rofBtn||'Ruta oficial');
     }
   }
   // Exponer para que cambiarIdioma pueda refrescar el texto del botón.
