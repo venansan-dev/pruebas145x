@@ -12932,11 +12932,7 @@ function activarNavegacionVoz() {
     );
 
     mostrarToast('🔇 Navegación activa · voz desactivada');
-    // Vigilancia de desvío de ruta (si hay track cargado)
-    try { if (window.Desvio && window._TRACK_VIGO_REDONDELA) {
-      window.Desvio.cargar(window._TRACK_VIGO_REDONDELA);
-      window.Desvio.iniciar();
-    } } catch(e){}
+    // (La vigilancia de desvío vive SOLO en el Modo Ruta Oficial)
   }  // fin _iniciarConPasos
 
   // Usar cache si disponible, si no hacer fetch
@@ -15454,7 +15450,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1428";
+var _APP_VERSION = "v1431";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -17424,6 +17420,20 @@ window._TRACK_VIGO_REDONDELA = {"id":"pt-costa-vigo-redondela","ruta":"Camino Po
       if (b){ b.style.display='none'; }
     },
 
+    // Activa la vigilancia SIN abrir su propio watchPosition: la posición
+    // se la suministra otro módulo (p. ej. Ruta Oficial) vía alimentar().
+    // Evita tener dos watch de GPS simultáneos gastando batería.
+    iniciarExterno: function(){
+      if (!TRACK){ console.warn('Desvio: carga un track antes de iniciar'); return; }
+      activo = true; estado = 'en-ruta';
+    },
+
+    // Recibe una posición desde un watch externo y la evalúa.
+    alimentar: function(lat, lng, acc){
+      if (!activo) return;
+      evaluar([lat, lng], acc);
+    },
+
     // Para depurar sin caminar: simula una posición.
     // Fuerza estado activo temporalmente para poder probar sin GPS real.
     _test: function(lat, lng, acc){
@@ -17463,17 +17473,8 @@ window.Desvio.parseGPX = function(gpxText, nombre){
   return { id:'gpx', etapa: nombre||'', coords: coords, elevacion: eles };
 };
 
-/* Auto-carga del track por defecto cuando el mapa Leaflet esté listo */
-(function(){
-  function intentarCargar(){
-    if (typeof mapa !== 'undefined' && mapa && window.Desvio && window._TRACK_VIGO_REDONDELA){
-      try { window.Desvio.cargar(window._TRACK_VIGO_REDONDELA); } catch(e){}
-    } else {
-      setTimeout(intentarCargar, 1500);
-    }
-  }
-  intentarCargar();
-})();
+/* (Auto-carga del track Vigo-Redondela eliminada: el motor de desvío se
+   activa únicamente desde el botón de Ruta Oficial.) */
 </script>
 
 <script>
@@ -17637,19 +17638,53 @@ window._INDICE_CAMINOS = [{"id":"es01c_05a","ruta":"Camino Francés","slug":"fra
     };
   }
 
-  // Mostrar cartel: modal la 1ª vez, toast las siguientes
+  // Mostrar cartel: modal (hoja inferior) la 1ª vez, toast las siguientes
   function mostrar(cartel, primeraVez){
-    if(primeraVez && typeof mostrarModalGenerico === 'function'){
-      try { mostrarModalGenerico(cartel.titulo, cartel.cuerpo); return; } catch(e){}
-    }
-    // Fallback: toast o alert según lo que exista en la app
+    if(primeraVez){ _modalRutaOficial(cartel.titulo, cartel.cuerpo); return; }
     if(typeof mostrarToast === 'function'){ mostrarToast(cartel.titulo); }
     else { try{ alert(cartel.titulo+'\n\n'+cartel.cuerpo); }catch(e){} }
   }
 
+  // Modal propia (no depende de funciones externas inexistentes). Hoja
+  // inferior con título + cuerpo multilínea, coherente con el resto de
+  // modales de la app. Muestra el texto explicativo completo del modo.
+  function _modalRutaOficial(titulo, cuerpo){
+    var prev = document.getElementById('modal-ruta-oficial');
+    if(prev) prev.remove();
+    var overlay = document.createElement('div');
+    overlay.id = 'modal-ruta-oficial';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:999999;display:flex;align-items:flex-end;justify-content:center;-webkit-tap-highlight-color:transparent;font-family:DM Sans,sans-serif';
+    var panel = document.createElement('div');
+    panel.style.cssText = 'background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 32px;width:100%;max-width:480px;position:relative;box-sizing:border-box;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1)';
+    function cerrar(){ panel.style.transform='translateY(100%)'; setTimeout(function(){ overlay.remove(); }, 300); }
+    var btnX = document.createElement('button');
+    btnX.textContent = '\u2715';
+    btnX.style.cssText = 'position:absolute;top:12px;right:12px;width:36px;height:36px;background:#f0f0f0;border:none;border-radius:50%;font-size:16px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;color:#555;-webkit-appearance:none';
+    btnX.addEventListener('click', cerrar);
+    btnX.addEventListener('touchend', function(e){ e.preventDefault(); cerrar(); });
+    var bar = document.createElement('div');
+    bar.style.cssText = 'width:40px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 18px';
+    var h3 = document.createElement('div');
+    h3.style.cssText = 'font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:10px;font-family:Playfair Display,serif;padding-right:40px';
+    h3.textContent = titulo;
+    var body = document.createElement('div');
+    body.style.cssText = 'font-size:13px;color:#374151;line-height:1.6;white-space:pre-line;margin-bottom:18px';
+    body.textContent = cuerpo;
+    var btnOk = document.createElement('button');
+    btnOk.textContent = 'Entendido';
+    btnOk.style.cssText = 'width:100%;background:#F5C800;color:#1a1a1a;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif';
+    btnOk.addEventListener('click', cerrar);
+    panel.appendChild(btnX); panel.appendChild(bar); panel.appendChild(h3); panel.appendChild(body); panel.appendChild(btnOk);
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ panel.style.transform='translateY(0)'; }); });
+    overlay.addEventListener('click', function(e){ if(e.target===overlay) cerrar(); });
+    overlay.addEventListener('touchend', function(e){ if(e.target===overlay){ e.preventDefault(); cerrar(); } });
+  }
+
   // --- MAGIA: detectar etapa y arrancar vigilancia ---
   function alMoverse(pos){
-    var lat=pos.coords.latitude, lng=pos.coords.longitude;
+    var lat=pos.coords.latitude, lng=pos.coords.longitude, acc=pos.coords.accuracy;
     window.Selector.detectar(lat, lng).then(function(res){
       if(!res || res.distancia > DIST_MAX_CAMINO){
         // Lejos de todo Camino: no inventamos ruta
@@ -17658,14 +17693,19 @@ window._INDICE_CAMINOS = [{"id":"es01c_05a","ruta":"Camino Francés","slug":"fra
         return;
       }
       if(res.nueva){
-        // Cambió de etapa: avisar discretamente y (el selector ya cargó el track)
+        // Cambió de etapa: avisar discretamente (el selector ya cargó el track)
         if(typeof mostrarToast==='function')
           mostrarToast('Vigilando: '+res.ruta+' · '+res.etapa);
       }
-      // El motor ya tiene el track cargado por el selector; iniciarlo si no está
-      if(window.Desvio && !window._desvioVigilando){
-        window.Desvio.iniciar();
-        window._desvioVigilando = true;
+      // El selector ya cargó el track en el motor. Activamos la vigilancia
+      // UNA vez (sin abrir un segundo watch) y la alimentamos con esta misma
+      // posición: un único watchPosition para todo el modo.
+      if(window.Desvio){
+        if(!window._desvioVigilando){
+          window.Desvio.iniciarExterno();
+          window._desvioVigilando = true;
+        }
+        window.Desvio.alimentar(lat, lng, acc);
       }
     }).catch(function(){});
   }
