@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1475 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1476 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -1758,6 +1758,12 @@
           <div id='dist-stgo' style='font-size:12px;color:rgba(26,8,0,0.6)'>-- km</div>
         </div>
       </div>
+    </div>
+    <!-- Nota honesta: la aguja a Santiago da dirección, no la senda transitable -->
+    <div id='brujula-aviso-flechas' style='background:rgba(90,48,0,0.12);border:1px solid rgba(122,80,16,0.45);border-radius:10px;padding:7px 11px;margin-top:2px;flex-shrink:0'>
+      <p id='brujula-aviso-txt' style='font-size:10.5px;color:rgba(26,8,0,0.72);margin:0;text-align:center;line-height:1.45;font-style:italic'>
+        La aguja a Santiago marca la <strong>dirección en línea recta</strong>, no el trazado del Camino. Sigue siempre las <strong>flechas amarillas</strong> y el trazado oficial del mapa: rodean ríos, montes y vías intransitables.
+      </p>
     </div>
     <!-- Botones activar + mensaje -->
     <div style='display:flex;gap:8px;justify-content:center;flex-wrap:wrap;flex-shrink:0;margin-top:4px'>
@@ -13932,6 +13938,7 @@ var T={
     brujulaSub:'Norte magnético y rumbo a Santiago',
     brujulaNorte:'Norte',
     brujulaSantiago:'Santiago',
+    brujulaAvisoFlechas:'La aguja a Santiago marca la <strong>dirección en línea recta</strong>, no el trazado del Camino. Sigue siempre las <strong>flechas amarillas</strong> y el trazado oficial del mapa: rodean ríos, montes y vías intransitables.',
     brujulaActivar:'Activar',
     brujulaRecalibrar:'↺ Recalibrar',
     meteoTitulo:'Previsión meteorológica',
@@ -14333,6 +14340,7 @@ var T={
     brujulaSub:'Norte magnético e rumbo a Santiago',
     brujulaNorte:'Norte',
     brujulaSantiago:'Santiago',
+    brujulaAvisoFlechas:'A agulla a Santiago marca a <strong>dirección en liña recta</strong>, non o trazado do Camiño. Segue sempre as <strong>frechas amarelas</strong> e o trazado oficial do mapa: rodean ríos, montes e vías intransitables.',
     brujulaActivar:'Activar',
     brujulaRecalibrar:'↺ Recalibrar',
     meteoTitulo:'Previsión meteorolóxica',
@@ -14624,6 +14632,7 @@ var T={
     brujulaSub:'Magnetic north and bearing to Santiago',
     brujulaNorte:'North',
     brujulaSantiago:'Santiago',
+    brujulaAvisoFlechas:'The needle to Santiago shows the <strong>straight-line direction</strong>, not the Camino route. Always follow the <strong>yellow arrows</strong> and the official track on the map: they go around rivers, hills and impassable roads.',
     brujulaActivar:'Activate',
     brujulaRecalibrar:'↺ Recalibrate',
     meteoTitulo:'Weather forecast',
@@ -15198,6 +15207,7 @@ function cambiarIdioma(lang){
   // Panel Brújula — etiquetas
   el=document.getElementById('brujula-norte-label');if(el)el.textContent=t.brujulaNorte||'Norte';
   el=document.getElementById('brujula-stgo-label');if(el)el.textContent=t.brujulaSantiago||'Santiago';
+  el=document.getElementById('brujula-aviso-txt');if(el)el.innerHTML=t.brujulaAvisoFlechas||'La aguja a Santiago marca la <strong>dirección en línea recta</strong>, no el trazado del Camino. Sigue siempre las <strong>flechas amarillas</strong> y el trazado oficial del mapa: rodean ríos, montes y vías intransitables.';
   el=document.getElementById('brujula-h2');if(el)el.textContent=t.brujulaTitulo||'Brújula';
   el=document.getElementById('historia-drawer-title');if(el)el.textContent=t.historiaDrawerTitulo||'Historia Xacobea';
   el=document.getElementById('historia-drawer-sub');if(el)el.textContent=t.historiaDrawerSub||'Vieira, Temple y el Camino de Santiago';
@@ -15723,7 +15733,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1475";
+var _APP_VERSION = "v1476";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
