@@ -7984,6 +7984,27 @@ function crearIconoUsuario(heading) {
 
 var iconoUsuario = crearIconoUsuario(null);
 
+// Pinta o actualiza el punto azul del usuario desde CUALQUIER módulo que
+// obtenga una posición (no solo la geolocalización de initMapa). Así, si el
+// fix de arranque no entra pero luego Ruta Oficial sí localiza, el punto azul
+// aparece igualmente. También sincroniza userLat/última posición.
+function _pintarPuntoUsuario(lat, lng){
+  if (typeof lat!=='number' || typeof lng!=='number') return;
+  if (typeof mapa==='undefined' || !mapa || !window.L) return;
+  userLat = lat; userLng = lng;
+  _lastKnownLat = lat; _lastKnownLng = lng;
+  if(!window._ultGuardPos || Date.now()-window._ultGuardPos>15000){ window._ultGuardPos=Date.now(); if(typeof _guardarUltimaPos==='function') _guardarUltimaPos(lat, lng); }
+  if (window._userMarker){
+    try{ window._userMarker.setLatLng([lat, lng]); }catch(e){}
+    if (!window._orientacionActiva){ try{ window._userMarker.setIcon(crearIconoUsuario(null)); }catch(e){} }
+  } else {
+    try{
+      window._userMarker = L.marker([lat,lng],{icon:iconoUsuario,zIndexOffset:1000})
+        .addTo(mapa).bindPopup('<strong>'+(T[idiomaActual]||T.es).tuUbicacion+'</strong>');
+    }catch(e){}
+  }
+}
+
 var _COLOR_MAP = {
   'verde':  '#1D9E75',
   'azul':   '#2563EB',
@@ -12912,14 +12933,14 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2002";
+var _APP_VERSION = "v2003";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
   // Limpiar cachés de versiones anteriores (solo las antiguas, nunca las activas)
-  var CACHES_ACTIVAS = ['guia-compostelana-v2002', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
+  var CACHES_ACTIVAS = ['guia-compostelana-v2003', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
@@ -15449,6 +15470,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
     navigator.geolocation.getCurrentPosition(function(pos){
       if(!activo) return;
       var lat=pos.coords.latitude, lng=pos.coords.longitude;
+      if(typeof _pintarPuntoUsuario==='function') _pintarPuntoUsuario(lat, lng);
       if(window.Selector && window.Selector.forzarDeteccion){
         window.Selector.forzarDeteccion(lat, lng).then(function(res){
           if(res && typeof mostrarToast==='function' && res.distancia!=null){
@@ -15470,6 +15492,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
     navigator.geolocation.getCurrentPosition(function(pos){
       if(!activo) return; // pudo desactivarse mientras esperábamos el GPS
       var lat=pos.coords.latitude, lng=pos.coords.longitude, acc=pos.coords.accuracy;
+      if(typeof _pintarPuntoUsuario==='function') _pintarPuntoUsuario(lat, lng);
       window.Selector.detectar(lat, lng).then(function(res){
         if(!res || res.distancia > DIST_MAX_CAMINO){
           // Lejos de todo Camino: mostrar modal de aviso
@@ -15509,6 +15532,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
         navigator.geolocation.getCurrentPosition(function(pos){
           if(!activo) return;
           var lat=pos.coords.latitude, lng=pos.coords.longitude, acc=pos.coords.accuracy;
+          if(typeof _pintarPuntoUsuario==='function') _pintarPuntoUsuario(lat, lng);
           if(window.Selector && window.Selector.detectar){
             window.Selector.detectar(lat, lng).then(function(res){
               if(!res || res.distancia > DIST_MAX_CAMINO){
