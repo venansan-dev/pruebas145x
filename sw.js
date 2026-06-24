@@ -1,4 +1,4 @@
-const CACHE_NAME = 'guia-compostelana-v1511-test';
+const CACHE_NAME = 'guia-compostelana-v1511-test3';
 const TILE_CACHE = 'guia-tiles-v5';
 const IMG_CACHE  = 'guia-imgs-v6';
 const LIB_CACHE  = 'guia-libs-v1';
@@ -128,7 +128,14 @@ const TRACK_URLS = [
 self.addEventListener('install', function(e) {
   e.waitUntil(
     Promise.all([
-      caches.open(CACHE_NAME).then(function(c) { return c.addAll(STATIC_ASSETS); }),
+      caches.open(CACHE_NAME).then(function(c) {
+        // Cacheamos cada recurso por separado (no addAll atómico): si uno
+        // falla, los demás se guardan igual. Antes, si un solo recurso de
+        // STATIC_ASSETS fallaba, no se cacheaba NADA y la app no abría offline.
+        return Promise.allSettled(STATIC_ASSETS.map(function(url) {
+          return c.add(url).catch(function(){});
+        }));
+      }),
       caches.open(IMG_CACHE).then(function(c) {
         return Promise.allSettled(POI_IMAGES.map(function(url) {
           return c.add(url).catch(function(){});
@@ -243,8 +250,18 @@ self.addEventListener('fetch', function(e) {
         }
         return res;
       }).catch(function() {
-        return caches.match(e.request).then(function(cached) {
-          return cached || caches.match('/index.html') || caches.match('/');
+        // Sin conexión: servir el index cacheado. Probamos varias claves e
+        // ignoramos los parámetros de URL (?utm=, start_url del manifest, etc.),
+        // que es la causa de que match(e.request) fallara y saliera la página
+        // blanca del navegador al abrir la PWA tras un cierre total.
+        return caches.match(e.request, { ignoreSearch: true }).then(function(cached) {
+          if (cached) return cached;
+          return caches.match('/index.html', { ignoreSearch: true });
+        }).then(function(cached) {
+          if (cached) return cached;
+          return caches.match('/', { ignoreSearch: true });
+        }).then(function(cached) {
+          return cached || Response.error();
         });
       })
     );

@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1511-test · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1511-test3 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -12836,14 +12836,14 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1511-test";
+var _APP_VERSION = "v1511-test3";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
   // Limpiar cachés de versiones anteriores (solo las antiguas, nunca las activas)
-  var CACHES_ACTIVAS = ['guia-compostelana-v1511-test', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
+  var CACHES_ACTIVAS = ['guia-compostelana-v1511-test3', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
@@ -14542,6 +14542,15 @@ function _rankingColeccionPulsar(on) {
 // Detectar si estamos offline y avisar
 window.addEventListener('online',  function() { ocultarBannerRed(); });
 window.addEventListener('offline', function() { mostrarBannerRed(); });
+// Comprobar el estado de red cuando la página termina de cargar. Los eventos
+// 'online'/'offline' solo saltan al CAMBIAR la conexión con la app abierta;
+// si la PWA se abre ya estando offline (desde segundo plano o cierre total),
+// no se disparan, y sin esto el banner rojo no aparecería al arrancar.
+window.addEventListener('load', function() {
+  try {
+    if (navigator.onLine === false) mostrarBannerRed();
+  } catch(e) {}
+});
 
 function mostrarBannerRed() {
   var b = document.getElementById('offline-red-banner');
