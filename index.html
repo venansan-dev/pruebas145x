@@ -1459,9 +1459,6 @@
     <p style="margin-top:4px">
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
-    <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1511-test3 · Disponible como PWA en iOS y Android
-    </p>
   </footer>
 
 </div>
@@ -10137,6 +10134,18 @@ function distanciaTexto(m) {
 function activarNavegacionVoz() {
   if (typeof _ocultarBtnComenzarNav==='function') _ocultarBtnComenzarNav();
   if (rutaPuntos.length < 1) { mostrarToast((T[idiomaActual]||T.es).navAnnadePunto||'Añade al menos 1 punto a la ruta'); return; }
+  // --- Sin motor de routing offline ---
+  // Si no hay red y no tenemos pasos cacheados de una sesión online previa,
+  // es imposible calcular turn-by-turn (OSRM necesita conexión). En vez de
+  // fallar, conservamos la guía estática que ya pinta dibujarLineaEstática()/
+  // fallback2() —línea amarilla + flechas + chincheta violeta— y avisamos al
+  // usuario, SIN entrar en navegación por voz: no tocamos _navActiva ni
+  // pausamos Ruta Oficial, así el estado queda limpio.
+  if (typeof navigator!=='undefined' && navigator.onLine===false && (!_navPasosCache || _navPasosCache.length === 0)) {
+    if (typeof dibujarLineaEstática==='function') dibujarLineaEstática();
+    mostrarToast((T[idiomaActual]||T.es).navOfflineGuia||'Sin conexión: sigue la línea amarilla y las flechas hasta el punto violeta. Esa es tu guía offline.');
+    return;
+  }
   // Pausar Ruta Oficial mientras dura la navegación
   if (window.RutaOficial && window.RutaOficial.estaActivo()) {
     window._rutaOficialPausada = true;
@@ -10254,7 +10263,19 @@ function activarNavegacionVoz() {
       'https://router.project-osrm.org/route/v1/foot/' + coords.join(';') + '?overview=full&geometries=geojson&steps=true'
     ];
     function _navFetchFallback(i) {
-      if (i >= navEps.length) { mostrarToast('❌ No se pudo calcular la ruta'); return; }
+      if (i >= navEps.length) {
+        // OSRM no responde (offline real, portal cautivo o servidores caídos)
+        // y no hay pasos cacheados. No dejamos el estado a medias: restauramos
+        // para que la guía estática (línea + flechas + chincheta) pueda volver a
+        // dibujarse, y avisamos. No reactivamos Ruta Oficial automáticamente,
+        // coherente con detenerNavegacionVoz(): la reactiva el usuario a mano.
+        _navActiva = false;
+        window._rutaOficialPausada = false;
+        var _bcN = document.getElementById('btn-asistente-mapa'); if (_bcN) _bcN.style.display = 'flex';
+        if (typeof dibujarLineaEstática==='function') dibujarLineaEstática();
+        mostrarToast((T[idiomaActual]||T.es).navOfflineGuia||'Sin conexión: sigue la línea amarilla y las flechas hasta el punto violeta. Esa es tu guía offline.');
+        return;
+      }
       fetch(navEps[i]).then(function(r){ return r.json(); }).then(function(data) {
         if (!data.routes || !data.routes[0]) { _navFetchFallback(i+1); return; }
         var route = data.routes[0];
@@ -11012,6 +11033,7 @@ var T={
     navVozIniciada:'Navegación por voz activada.',
     navAnnadePunto:'Añade al menos 1 punto a la ruta',
     navCalcRuta:'🔄 Calculando ruta...',
+    navOfflineGuia:'Sin conexión: sigue la línea amarilla y las flechas hasta el punto violeta. Esa es tu guía offline.',
     navRecalcRuta:'🔄 Recalculando ruta...',
     navRecalculada:'Ruta recalculada.',
     navActiva:'🎙️ Navegación por voz activa',
@@ -11414,6 +11436,7 @@ var T={
     navVozIniciada:'Navegación por voz activada.',
     navAnnadePunto:'Engade polo menos 1 punto á ruta',
     navCalcRuta:'🔄 Calculando ruta...',
+    navOfflineGuia:'Sen conexión: segue a liña amarela e as frechas ata o punto violeta. Esa é a túa guía offline.',
     navRecalcRuta:'🔄 Recalculando ruta...',
     navRecalculada:'Ruta recalculada.',
     navActiva:'🎙️ Navegación por voz activa',
@@ -11706,6 +11729,7 @@ var T={
     navVozIniciada:'Voice navigation activated.',
     navAnnadePunto:'Add at least 1 point to the route',
     navCalcRuta:'🔄 Calculating route...',
+    navOfflineGuia:'Offline: follow the yellow line and the arrows to the violet pin. That is your offline guide.',
     navRecalcRuta:'🔄 Recalculating route...',
     navRecalculada:'Route recalculated.',
     navActiva:'🎙️ Voice navigation active',
@@ -12390,7 +12414,6 @@ function cambiarIdioma(lang){
     _s('dl-qr-s1',dl.qrS1);_s('dl-qr-s2',dl.qrS2);
     _s('dl-qr-s3',dl.qrS3);_s('dl-qr-s4',dl.qrS4);
     _s('dl-foot-sub',    dl.footSub);
-    _s('dl-foot-version',dl.footVersion.replace('{VER}', (typeof _APP_VERSION!=='undefined'?_APP_VERSION:'')));
     // Nav header desktop landing
     var _dlNav=document.querySelector('.dl-header-nav');
     if(_dlNav){
@@ -12836,14 +12859,14 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1511-test3";
+var _APP_VERSION = "v2000";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
   // Limpiar cachés de versiones anteriores (solo las antiguas, nunca las activas)
-  var CACHES_ACTIVAS = ['guia-compostelana-v1511-test3', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
+  var CACHES_ACTIVAS = ['guia-compostelana-v2000', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
