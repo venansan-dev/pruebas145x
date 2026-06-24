@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1506 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1507 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -11555,8 +11555,9 @@ function initMapa() {
     });
   });
 
+  var _marcadoresCluster = [];
   PUNTOS.forEach(function(p) {
-    var m = L.marker([p.lat,p.lng], { icon:crearIcono(p.emoji, p.categoria==='etapa' ? p.color : null) }).addTo(window._cluster);
+    var m = L.marker([p.lat,p.lng], { icon:crearIcono(p.emoji, p.categoria==='etapa' ? p.color : null) });
     m.on('click', (function(punto) {
       return function() {
         if (window._navBloqPopups) return;
@@ -11564,7 +11565,11 @@ function initMapa() {
       };
     })(p));
     p.marker = m;
+    _marcadoresCluster.push(m);
   });
+  // Añadir todos los marcadores de golpe (bulk). Con addLayers el cluster
+  // se calcula y dibuja en el primer render, sin necesidad de mover el mapa.
+  window._cluster.addLayers(_marcadoresCluster);
 
   var statusEl = document.getElementById('map-status');
   statusEl.classList.add('visible');
@@ -13136,6 +13141,9 @@ function _sincMarcadoresRuta() {
       if (!window._cluster.hasLayer(p.marker)) window._cluster.addLayer(p.marker);
     }
   });
+  if (window._cluster && typeof window._cluster.refreshClusters === 'function') {
+    try { window._cluster.refreshClusters(); } catch(e){}
+  }
 }
 
 function actualizarRuta() {
@@ -16166,14 +16174,14 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1506";
+var _APP_VERSION = "v1507";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
   // Limpiar cachés de versiones anteriores (solo las antiguas, nunca las activas)
-  var CACHES_ACTIVAS = ['guia-compostelana-v1506', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
+  var CACHES_ACTIVAS = ['guia-compostelana-v1507', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
@@ -17633,6 +17641,11 @@ function _filtrarMapaCat(chip, cat) {
     // Categorías normales
     if (p.categoria === cat) _add(p);
   });
+  // Forzar el redibujado del cluster tras reconstruirlo, para que los
+  // marcadores filtrados aparezcan de inmediato sin tener que mover el mapa.
+  if (window._cluster && typeof window._cluster.refreshClusters === 'function') {
+    try { window._cluster.refreshClusters(); } catch(e){}
+  }
   if (window.TrazadoRuta) { try { window.TrazadoRuta.aplicar(cat); } catch(e){} }
 }
 
