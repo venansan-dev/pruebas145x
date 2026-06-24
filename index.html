@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1467 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1468 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -9707,11 +9707,32 @@ function volverARuta(){
     return;
   }
   var pc = window.Desvio.puntoMasCercano(lat, lng);
-  if (!pc){
-    if (typeof mostrarToast==='function') mostrarToast('No detecto un trazado oficial cercano');
+  if (pc){
+    // Caso normal: ya hay un track cargado (estabas cerca). Guiar directo.
+    _volverARutaCon(pc);
     return;
   }
-  if (window.Desvio.cerrarModal) window.Desvio.cerrarModal();
+  // Caso "muy lejos": no hay track cargado en el motor. Buscar en TODO el índice
+  // la etapa más cercana sin límite de distancia, cargarla y guiar hasta ella.
+  if (window.Selector && window.Selector.forzarDeteccion){
+    if (typeof mostrarToast==='function') mostrarToast('Buscando el Camino más cercano…');
+    window.Selector.forzarDeteccion(lat, lng).then(function(res){
+      if (!res || res.lat==null){
+        if (typeof mostrarToast==='function') mostrarToast('No detecto ningún Camino cercano');
+        return;
+      }
+      _volverARutaCon({ lat:res.lat, lng:res.lng, distancia:res.distancia });
+    }).catch(function(){
+      if (typeof mostrarToast==='function') mostrarToast('No detecto ningún Camino cercano');
+    });
+    return;
+  }
+  if (typeof mostrarToast==='function') mostrarToast('No detecto un trazado oficial cercano');
+}
+
+// Inserta el punto de retorno como destino y arranca el ayudante de navegación.
+function _volverARutaCon(pc){
+  if (window.Desvio && window.Desvio.cerrarModal) window.Desvio.cerrarModal();
   // Insertar el punto de retorno como destino (sin duplicar) al principio.
   rutaPuntos = rutaPuntos.filter(function(p){ return p.id !== '_volver_ruta'; });
   rutaPuntos.unshift({ id:'_volver_ruta', nombre:'Volver a la ruta oficial', lat:pc.lat, lng:pc.lng, categoria:'volver' });
@@ -15690,7 +15711,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1467";
+var _APP_VERSION = "v1468";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -18064,6 +18085,45 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
     // Fuerza que la siguiente llamada a detectar() trate la etapa como nueva,
     // redibujando el trazado amarillo aunque la etapa no haya cambiado.
     resetEtapa: function(){ etapaActual = null; },
+
+    // Como detectar(), pero SIN límite de distancia: mide TODAS las etapas del
+    // índice y elige la más cercana aunque estés a kilómetros. Carga su track en
+    // el motor Desvio (dibuja amarillo) y devuelve {ruta, etapa, distancia, lat, lng}
+    // con el punto exacto del trazado más próximo. Para "Volver a la ruta" desde lejos.
+    forzarDeteccion: function(lat, lng){
+      if(!INDICE) return Promise.resolve(null);
+      var P=[lat,lng];
+      // Ordenar TODAS las etapas por distancia de bbox (sin filtrar por umbral)
+      var cand=INDICE
+        .map(function(e){ return {e:e, dbb:distBBox(P,e.bbox)}; })
+        .sort(function(a,b){ return a.dbb-b.dbb; });
+      if(rutaPreferida){
+        var pref=cand.filter(function(o){return o.e.slug===rutaPreferida;});
+        if(pref.length) cand=pref;
+      }
+      cand=cand.slice(0,6); // medir las 6 etapas con bbox más cercano
+      return Promise.all(cand.map(function(o){
+        return cargarTrack(o.e.id)
+          .then(function(t){ return {e:o.e, t:t, d:distTrack(P,t.coords)}; })
+          .catch(function(){ return {e:o.e, t:null, d:Infinity}; });
+      })).then(function(res){
+        res.sort(function(a,b){ return a.d-b.d; });
+        var mejor=res[0];
+        if(!mejor || !mejor.t || mejor.d===Infinity) return null;
+        // Cargar el track en el motor (dibuja amarillo) y marcar etapa activa
+        etapaActual = mejor.e.id;
+        if(window.Desvio) window.Desvio.cargar(mejor.t);
+        // Buscar el punto exacto del trazado más cercano a P
+        var pc = (window.Desvio && window.Desvio.puntoMasCercano)
+          ? window.Desvio.puntoMasCercano(lat, lng) : null;
+        return {
+          ruta: mejor.e.ruta, etapa: mejor.e.etapa,
+          distancia: Math.round(mejor.d),
+          lat: pc ? pc.lat : null, lng: pc ? pc.lng : null
+        };
+      });
+    },
+
     _debug: function(lat,lng){ return elegirEtapa([lat,lng]); }
   };
 })();
