@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1477 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1478 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -6435,7 +6435,49 @@ function _renderAlbumRecuerdos(grid, vacioCont) {
   });
 }
 
-function abrirBrujulaDrawer() { _abrirSlide('brujula-drawer'); cambiarIdioma(idiomaActual); }
+// Efecto typewriter para el casco asistente de la brújula: escribe el aviso
+// letra a letra, anima el casco y reproduce su sonido, igual que el asistente.
+function _brujulaCascoTypewriter() {
+  var el = document.getElementById('brujula-casco-txt');
+  var img = document.getElementById('brujula-casco-img');
+  if (!el) return;
+  var t = (typeof T!=='undefined' && T[idiomaActual]) ? T[idiomaActual] : (typeof T!=='undefined'?T.es:{});
+  var html = t.brujulaAvisoFlechas || el.innerHTML;
+  var text = html.replace(/<[^>]+>/g, '');
+  if (!text) return;
+  // Cancelar cualquier typewriter previo de este casco
+  if (window._brujulaTwTimer) { clearInterval(window._brujulaTwTimer); window._brujulaTwTimer = null; }
+  var i = 0, speed = 34;
+  function _render() {
+    var vis  = text.slice(0, i);
+    var hide = text.slice(i);
+    el.innerHTML = (vis ? '<span>' + vis.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>' : '')
+                 + (hide ? '<span style="visibility:hidden">' + hide.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>' : '');
+  }
+  _render();
+  // Activar animación y sonido del casco mientras escribe
+  if (img) img.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
+  if (window._cascoSonido) { try{ window._cascoSonido(text.length * speed); }catch(e){} }
+  window._brujulaTwTimer = setInterval(function() {
+    if (i < text.length) {
+      i++;
+      _render();
+      if (text[i-1] !== ' ' && window._cascoTick) window._cascoTick();
+    } else {
+      clearInterval(window._brujulaTwTimer); window._brujulaTwTimer = null;
+      el.innerHTML = html; // restaurar con <strong> y formato
+      if (window._cascoSonidoStop) { try{ window._cascoSonidoStop(); }catch(e){} }
+      // El casco sigue con su pulso suave permanente (como en meteo)
+    }
+  }, speed);
+}
+
+function abrirBrujulaDrawer() {
+  _abrirSlide('brujula-drawer');
+  cambiarIdioma(idiomaActual);
+  // Lanzar el efecto typewriter del casco tras abrir el panel
+  setTimeout(_brujulaCascoTypewriter, 350);
+}
 function cerrarBrujulaDrawer() { _cerrarSlide('brujula-drawer'); }
 function abrirSOSDrawer() { _abrirSlide('sos-drawer'); cambiarIdioma(idiomaActual); }
 function cerrarSOSDrawer() { _cerrarSlide('sos-drawer'); }
@@ -15732,7 +15774,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1477";
+var _APP_VERSION = "v1478";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
