@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1478 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1479 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -1761,7 +1761,7 @@
     </div>
     <!-- Casco asistente: aviso honesto sobre la dirección vs el trazado -->
     <div id='brujula-casco-bloque' style='display:flex;align-items:flex-start;gap:10px;margin-top:2px;background:rgba(0,0,0,0.15);border:1px solid #7a5010;border-radius:12px;padding:0.75rem 0.9rem;flex-shrink:0'>
-      <img id='brujula-casco-img' src='https://i.postimg.cc/m2TbCRTs/casc4.png' style='width:34px;height:34px;object-fit:contain;flex-shrink:0;align-self:flex-start;animation:_casc-pulse 2.4s ease-in-out infinite' alt=''>
+      <img id='brujula-casco-img' src='https://i.postimg.cc/m2TbCRTs/casc4.png' style='width:34px;height:34px;object-fit:contain;flex-shrink:0;align-self:flex-start' alt=''>
       <div id='brujula-casco-txt' style='font-size:12px;color:#fff8e8;line-height:1.5;flex:1'>Te oriento, peregrino: esta aguja apunta a Santiago <strong>en línea recta</strong>, pero el Camino no va recto. Fíate de las <strong>flechas amarillas</strong> y del trazado oficial del mapa, que rodean ríos, montes y vías intransitables.</div>
     </div>
     <!-- Botones activar + mensaje -->
@@ -6445,6 +6445,13 @@ function _brujulaCascoTypewriter() {
   var html = t.brujulaAvisoFlechas || el.innerHTML;
   var text = html.replace(/<[^>]+>/g, '');
   if (!text) return;
+  // Garantizar que el keyframe de la animación del casco existe
+  if (!document.getElementById('_casc-pulse-style-global')) {
+    var stG = document.createElement('style');
+    stG.id = '_casc-pulse-style-global';
+    stG.textContent = '@keyframes _casc-pulse{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.08) rotate(3deg)}}';
+    document.head.appendChild(stG);
+  }
   // Cancelar cualquier typewriter previo de este casco
   if (window._brujulaTwTimer) { clearInterval(window._brujulaTwTimer); window._brujulaTwTimer = null; }
   var i = 0, speed = 34;
@@ -6466,8 +6473,8 @@ function _brujulaCascoTypewriter() {
     } else {
       clearInterval(window._brujulaTwTimer); window._brujulaTwTimer = null;
       el.innerHTML = html; // restaurar con <strong> y formato
+      if (img) img.style.animation = 'none'; // el casco se detiene al acabar, como el asistente
       if (window._cascoSonidoStop) { try{ window._cascoSonidoStop(); }catch(e){} }
-      // El casco sigue con su pulso suave permanente (como en meteo)
     }
   }, speed);
 }
@@ -15774,7 +15781,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1478";
+var _APP_VERSION = "v1479";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
