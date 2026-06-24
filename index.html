@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1460 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1461 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -1591,19 +1591,19 @@
 <div id='mapa-cat-bar' style='background:linear-gradient(180deg,#dfc888 0%,#c9a84c 100%);border-top:1.5px solid #a07828;border-bottom:1.5px solid #a07828;padding:0 12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;white-space:nowrap;display:flex;align-items:center;gap:6px;-webkit-overflow-scrolling:touch;position:relative;box-shadow:inset 0 1px 0 rgba(255,240,180,0.4),inset 0 -1px 0 rgba(80,40,0,0.15);height:40px;flex-wrap:nowrap'>
   <div id='mapa-cat-panel-title' style='display:none;position:absolute;inset:0;background:linear-gradient(180deg,#dfc888 0%,#c9a84c 100%);align-items:center;justify-content:center;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;color:#3d2000'></div>
   <button id='chip-mapa-todos' onclick='_filtrarMapaCat(this,"")' class='mapa-cat-chip' style='flex-shrink:0;background:linear-gradient(135deg,#2d4a1e,#1e3212);color:#f5e6c8;border:1px solid #1a2e0f;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;box-shadow:0 1px 4px rgba(0,0,0,0.3)'>📍 Todos</button>
+  <button id='chip-mapa-albergue' onclick='_filtrarMapaCat(this,"albergue")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🏠 Albergues</button>
   <button id='chip-usuario-mapa' onclick='_filtrarMapaCat(this,"usuario")' class='mapa-cat-chip' style='flex-shrink:0;display:none;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>👤 Mis puntos</button>
   <button id='chip-alerta-mapa' onclick='_filtrarMapaCat(this,"alerta")' class='mapa-cat-chip' style='flex-shrink:0;display:none;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🚨 Alertas</button>
-  <button id='chip-mapa-visitados' onclick='_filtrarMapaCat(this,"visitado")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>👁️ Visitados</button>
-  <button id='chip-mapa-sinvisitar' onclick='_filtrarMapaCat(this,"no-visitado")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🔒 Sin visitar</button>
   <button id='chip-mapa-costa' onclick='_filtrarMapaCat(this,"etapa-costa")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🔵 Costa</button>
   <button id='chip-mapa-interior' onclick='_filtrarMapaCat(this,"etapa-interior")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🟢 Interior</button>
   <button id='chip-mapa-frances' onclick='_filtrarMapaCat(this,"etapa-frances")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🔴 Francés</button>
   <button id='chip-mapa-norte' onclick='_filtrarMapaCat(this,"etapa-norte")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🟠 Norte</button>
   <button id='chip-mapa-primitivo' onclick='_filtrarMapaCat(this,"etapa-primitivo")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🟣 Primitivo</button>
   <button id='chip-mapa-ingles' onclick='_filtrarMapaCat(this,"etapa-ingles")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🟡 Inglés</button>
+  <button id='chip-mapa-visitados' onclick='_filtrarMapaCat(this,"visitado")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>👁️ Visitados</button>
+  <button id='chip-mapa-sinvisitar' onclick='_filtrarMapaCat(this,"no-visitado")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🔒 Sin visitar</button>
   <button id='chip-mapa-religiosa' onclick='_filtrarMapaCat(this,"edificación religiosa")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>⛪ Religiosos</button>
   <button id='chip-mapa-arq' onclick='_filtrarMapaCat(this,"vestigio arqueológico")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🔍 Arqueológicos</button>
-  <button id='chip-mapa-albergue' onclick='_filtrarMapaCat(this,"albergue")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🏠 Albergues</button>
   <button id='chip-mapa-hist' onclick='_filtrarMapaCat(this,"edificación histórica")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🏛️ Históricos</button>
   <button id='chip-mapa-loc' onclick='_filtrarMapaCat(this,"localización histórica")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>📜 Localizaciones</button>
   <button id='chip-mapa-mon' onclick='_filtrarMapaCat(this,"monumento")' class='mapa-cat-chip' style='flex-shrink:0;background:rgba(255,245,210,0.85);color:#3d2000;border:1px solid #a07828;border-radius:16px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;font-family:DM Sans,sans-serif'>🗿 Monumentos</button>
@@ -15690,7 +15690,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1460";
+var _APP_VERSION = "v1461";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
