@@ -1,4 +1,4 @@
-const CACHE_NAME = 'guia-compostelana-v1509';
+const CACHE_NAME = 'guia-compostelana-v1511-test';
 const TILE_CACHE = 'guia-tiles-v5';
 const IMG_CACHE  = 'guia-imgs-v6';
 const LIB_CACHE  = 'guia-libs-v1';
@@ -7,6 +7,7 @@ const TRACK_CACHE = 'guia-tracks-v4';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
+  '/pois.js',
   '/manifest.json'
 ];
 
@@ -244,6 +245,23 @@ self.addEventListener('fetch', function(e) {
       }).catch(function() {
         return caches.match(e.request).then(function(cached) {
           return cached || caches.match('/index.html') || caches.match('/');
+        });
+      })
+    );
+    return;
+  }
+
+  // pois.js (datos de POIs) → cache first con actualización en segundo plano.
+  // Carga instantánea desde caché; si hay red, refresca para la próxima vez.
+  if (url.endsWith('/pois.js')) {
+    e.respondWith(
+      caches.open(CACHE_NAME).then(function(c) {
+        return c.match(e.request).then(function(cached) {
+          var red = fetch(e.request).then(function(res) {
+            if (res && res.status === 200) c.put(e.request, res.clone());
+            return res;
+          }).catch(function() { return cached; });
+          return cached || red;
         });
       })
     );
