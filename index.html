@@ -1460,7 +1460,7 @@
       <a href="https://xacobeapp.com">xacobeapp.com</a>
     </p>
     <p style="margin-top:12px;font-size:12px;color:#aaa" id="dl-foot-version">
-      App gratuita, sin publicidad. Versión v1471 · Disponible como PWA en iOS y Android
+      App gratuita, sin publicidad. Versión v1473 · Disponible como PWA en iOS y Android
     </p>
   </footer>
 
@@ -15711,7 +15711,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v1471";
+var _APP_VERSION = "v1473";
 if ('serviceWorker' in navigator) {
   // Limpiar TODAS las cachés y re-registrar si la versión no coincide
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -18273,19 +18273,53 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
           mostrarToast('Vigilando: '+res.ruta+' · '+res.etapa);
         }
       }).catch(function(err){
-        // No tragar el error: avisar para que el usuario sepa qué pasa offline.
+        // detectar() falló (p. ej. offline sin ese track en cache). En vez de
+        // quedarnos callados, tratamos la situación como "fuera de ruta" y
+        // mostramos el modal de aviso, que es lo que el usuario espera ver.
         console.warn('RutaOficial detectar() error:', err);
-        if(typeof mostrarToast==='function') mostrarToast('No pude cargar el trazado. ¿Abriste la app con conexión al menos una vez?');
+        if(window.Desvio && window.Desvio.resetModal) window.Desvio.resetModal();
+        if(window.Desvio && window.Desvio.avisoFueraRuta){
+          window.Desvio.avisoFueraRuta(null);
+        } else if(typeof mostrarToast==='function'){
+          mostrarToast('No pude cargar el trazado. ¿Abriste la app con conexión al menos una vez?');
+        }
       });
     }, function(err){
       console.warn('RutaOficial GPS error:', err);
+      // Si el GPS tardó (timeout) o no hay posición nueva, intentar una última
+      // vez aceptando una posición reciente cacheada (offline el fix tarda más).
+      if(err && (err.code===3 || err.code===2) && navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(function(pos){
+          if(!activo) return;
+          var lat=pos.coords.latitude, lng=pos.coords.longitude, acc=pos.coords.accuracy;
+          if(window.Selector && window.Selector.detectar){
+            window.Selector.detectar(lat, lng).then(function(res){
+              if(!res || res.distancia > DIST_MAX_CAMINO){
+                if(window.Desvio && window.Desvio.resetModal) window.Desvio.resetModal();
+                if(window.Desvio && window.Desvio.avisoFueraRuta) window.Desvio.avisoFueraRuta(res ? res.distancia : null);
+                return;
+              }
+              if(window.Desvio){
+                if(window.Desvio.cerrarModal) window.Desvio.cerrarModal();
+                if(!window._desvioVigilando){ window.Desvio.iniciarExterno(); window._desvioVigilando = true; }
+                window.Desvio.alimentar(lat, lng, acc);
+              }
+            }).catch(function(){
+              if(window.Desvio && window.Desvio.resetModal) window.Desvio.resetModal();
+              if(window.Desvio && window.Desvio.avisoFueraRuta) window.Desvio.avisoFueraRuta(null);
+            });
+          }
+        }, function(){
+          if(typeof mostrarToast==='function') mostrarToast('El GPS tarda en responder. Inténtalo en un sitio despejado');
+        }, {enableHighAccuracy:false, maximumAge:120000, timeout:30000});
+        return;
+      }
       if(typeof mostrarToast==='function'){
         var msg = (err && err.code===1) ? 'Activa el permiso de ubicación para el modo Ruta Oficial'
-                : (err && err.code===3) ? 'El GPS tarda en responder. Inténtalo en un sitio despejado'
                 : 'No consigo tu ubicación GPS';
         mostrarToast(msg);
       }
-    }, {enableHighAccuracy:true, maximumAge:0, timeout:20000});
+    }, {enableHighAccuracy:true, maximumAge:15000, timeout:25000});
   }
 
   // --- API del botón ---
