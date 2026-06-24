@@ -8237,9 +8237,14 @@ function initMapa() {
   if (window.matchMedia('(min-width:769px)').matches) {
     statusEl.classList.remove('visible');
   } else if (navigator.geolocation) {
+    // Sembrar última posición conocida de una sesión previa (no toca userLat,
+    // reservado a fixes reales; solo respalda el centrado del mapa si falla).
+    var _upSeed = (typeof _cargarUltimaPos==='function') ? _cargarUltimaPos() : null;
+    if(_upSeed){ _lastKnownLat = _upSeed.lat; _lastKnownLng = _upSeed.lng; }
     navigator.geolocation.getCurrentPosition(
       function(pos) {
         userLat = pos.coords.latitude; userLng = pos.coords.longitude;
+        _lastKnownLat = userLat; _lastKnownLng = userLng; _guardarUltimaPos(userLat, userLng);
         statusEl.classList.remove('visible');
         var mt=document.getElementById('map-title');if(mt){mt.style.opacity='0';setTimeout(function(){mt.innerHTML=(T[idiomaActual]||T.es).mapTitle+" <svg width='22' height='30' viewBox='0 0 22 30' fill='none' xmlns='http://www.w3.org/2000/svg' style='animation:bounceDownArrow 1.4s ease-in-out infinite;flex-shrink:0;display:inline-block;vertical-align:middle;'><path d='M11 2 L11 22 M3 15 L11 24 L19 15' stroke='#dc2626' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/></svg>";mt.style.opacity='1';},300);}
         var ms=document.getElementById('map-subtitle');if(ms)ms.textContent=(T[idiomaActual]||T.es).mapSubtitle;
@@ -8248,9 +8253,36 @@ function initMapa() {
         calcularDistancias();
         cargarTiempo(userLat, userLng);
       },
-      function() {
-        statusEl.innerHTML = (T[idiomaActual]||T.es).ubicNoDisp;
-        setTimeout(function(){statusEl.classList.remove('visible');},3000);
+      function(err) {
+        // Permiso denegado (código 1): reintentar no sirve. En iOS la PWA puede
+        // perder el permiso de ubicación entre relanzamientos; mostramos un
+        // aviso accionable (reactivarlo en Ajustes). Si es posición no
+        // disponible o timeout (2 o 3), reintentamos con parámetros relajados,
+        // que es lo que suele rescatar el fix al relanzar la app.
+        if (err && err.code === 1) {
+          statusEl.innerHTML = (T[idiomaActual]||T.es).ubicDenegada || (T[idiomaActual]||T.es).ubicNoDisp;
+          return; // dejar el aviso visible: requiere acción del usuario
+        }
+        navigator.geolocation.getCurrentPosition(
+          function(pos) {
+            userLat = pos.coords.latitude; userLng = pos.coords.longitude;
+            _lastKnownLat = userLat; _lastKnownLng = userLng; _guardarUltimaPos(userLat, userLng);
+            statusEl.classList.remove('visible');
+            if (window._userMarker) { try{ mapa.removeLayer(window._userMarker); }catch(e){} window._userMarker = null; }
+            window._userMarker = L.marker([userLat,userLng],{icon:iconoUsuario,zIndexOffset:1000}).addTo(mapa).bindPopup('<strong>'+(T[idiomaActual]||T.es).tuUbicacion+'</strong>');
+            radioKm = 1; aplicarRadio(1);
+            calcularDistancias();
+            cargarTiempo(userLat, userLng);
+          },
+          function() {
+            statusEl.innerHTML = (T[idiomaActual]||T.es).ubicNoDisp;
+            // Centrar en la última posición conocida (si la hay) en vez de
+            // dejar el mapa en el centro por defecto.
+            if (_lastKnownLat && _lastKnownLng && mapa) { try{ mapa.setView([_lastKnownLat,_lastKnownLng], 14); }catch(e){} }
+            setTimeout(function(){statusEl.classList.remove('visible');},4000);
+          },
+          { enableHighAccuracy:false, timeout:30000, maximumAge:120000 }
+        );
       },
       { enableHighAccuracy:true, timeout:15000, maximumAge:30000 }
     );
@@ -8267,6 +8299,7 @@ function initMapa() {
         // Ya tenemos posición, actualizar marcador y círculo SIN cambiar vista
         userLat = pos.coords.latitude; userLng = pos.coords.longitude;
         _lastKnownLat = userLat; _lastKnownLng = userLng;
+        if(!window._ultGuardPos || Date.now()-window._ultGuardPos>15000){ window._ultGuardPos=Date.now(); _guardarUltimaPos(userLat, userLng); }
         if (window._albumCheckProximidad) window._albumCheckProximidad(userLat, userLng, pos.coords.accuracy);
         if (window._userMarker) {
           window._userMarker.setLatLng([userLat, userLng]);
@@ -8296,8 +8329,20 @@ function initMapa() {
 }
 
 
-// Última posición GPS conocida
+// Última posición GPS conocida (en memoria + persistida en localStorage para
+// sobrevivir a reinicios: si el GPS tarda o el permiso falla al relanzar la
+// PWA, al menos centramos el mapa cerca de donde estabas).
 var _lastKnownLat = null, _lastKnownLng = null;
+function _guardarUltimaPos(lat, lng){
+  try{ localStorage.setItem('gcl_last_pos', JSON.stringify({lat:lat, lng:lng, t:Date.now()})); }catch(e){}
+}
+function _cargarUltimaPos(){
+  try{
+    var s = localStorage.getItem('gcl_last_pos');
+    if(s){ var o = JSON.parse(s); if(o && typeof o.lat==='number' && typeof o.lng==='number') return o; }
+  }catch(e){}
+  return null;
+}
 
 function _gpsErrorHandler() {
   if (typeof mapa === 'undefined' || !mapa) return;
@@ -10698,6 +10743,7 @@ var T={
     opinionPlaceholder:'Deja tu opinión...',
     sinPuntos:'No hay puntos en esta categoría.',
     ubicNoDisp:'📍 Ubicación no disponible',
+    ubicDenegada:'📍 Activa la ubicación para esta app en Ajustes › Privacidad › Localización',
     noGeolocal:'Tu navegador no soporta geolocalización',
     copiado:'Copiado',
     numCopiado:'Número copiado',
@@ -11116,6 +11162,7 @@ var T={
     opinionPlaceholder:'Deixa a túa opinión...',
     sinPuntos:'Non hai puntos nesta categoría.',
     ubicNoDisp:'📍 Localización non dispoñible',
+    ubicDenegada:'📍 Activa a localización para esta app en Axustes › Privacidade › Localización',
     noGeolocal:'O teu navegador non admite xeolocalización',
     copiado:'Copiado',
     numCopiado:'Número copiado',
@@ -11539,6 +11586,7 @@ var T={
     opinionPlaceholder:'Leave your opinion...',
     sinPuntos:'No points in this category.',
     ubicNoDisp:'📍 Location not available',
+    ubicDenegada:'📍 Enable location for this app in Settings › Privacy › Location',
     noGeolocal:'Your browser does not support geolocation',
     copiado:'Copied',
     numCopiado:'Number copied',
@@ -12864,14 +12912,14 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2001";
+var _APP_VERSION = "v2002";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
   // Limpiar cachés de versiones anteriores (solo las antiguas, nunca las activas)
-  var CACHES_ACTIVAS = ['guia-compostelana-v2001', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
+  var CACHES_ACTIVAS = ['guia-compostelana-v2002', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
