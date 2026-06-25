@@ -1674,11 +1674,12 @@
     <div id='ar-status' style='position:absolute;top:20px;left:20px;color:#fff;font-size:12px;font-family:DM Sans,sans-serif;background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:8px'></div>
   </div>
   <!-- Botón añadir punto (derecha) -->
-  <button id='btn-add-poi-map' onclick='abrirFormPOI()' title='Añadir un punto' style='position:absolute;top:10px;right:10px;z-index:400;height:36px;background:#1a4a9e;color:#fff;border:1.5px solid #2a5aae;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(26,74,158,0.45),0 1px 4px rgba(0,0,0,0.2);padding:0 12px;font-family:DM Sans,sans-serif;white-space:nowrap'><span style='font-size:16px;font-weight:700;line-height:1;color:#fff'>+</span> <span id='btn-add-poi-map-txt'>Punto</span></button>
+  <button id='btn-add-poi-map' onclick='abrirFormPOI()' title='Añadir un punto' style='position:absolute;top:48px;right:10px;z-index:400;height:36px;background:#1a4a9e;color:#fff;border:1.5px solid #2a5aae;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(26,74,158,0.45),0 1px 4px rgba(0,0,0,0.2);padding:0 12px;font-family:DM Sans,sans-serif;white-space:nowrap'><span style='font-size:16px;font-weight:700;line-height:1;color:#fff'>+</span> <span id='btn-add-poi-map-txt'>Punto</span></button>
   <!-- Panel radio en mapa (columna derecha bajo +punto) -->
-  <div id='map-radio-control' style='display:flex;position:absolute;top:54px;right:10px;z-index:400;flex-direction:column;align-items:flex-end;gap:4px;font-family:DM Sans,sans-serif'>
-  <button id='btn-ruta-oficial' onclick='if(window.RutaOficial)RutaOficial.toggle()' style='background:#C25FB0;border:1px solid #a84f98;border-radius:16px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.12);white-space:nowrap;transition:all 0.15s' title='Vigila que sigas el trazado oficial del Camino'>🗺️ Ruta oficial</button>
-    <div style='height:22px'></div>
+  <!-- Ruta oficial: arriba del todo (columna derecha) -->
+  <button id='btn-ruta-oficial' onclick='if(window.RutaOficial)RutaOficial.toggle()' style='position:absolute;top:8px;right:10px;z-index:400;background:#C25FB0;border:1px solid #a84f98;border-radius:16px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.12);white-space:nowrap;transition:all 0.15s' title='Vigila que sigas el trazado oficial del Camino'>🗺️ Ruta oficial</button>
+  <!-- Panel radio (solo km) — separado, debajo de Descargar mapa -->
+  <div id='map-radio-control' style='display:flex;position:absolute;top:128px;right:10px;z-index:400;flex-direction:column;align-items:flex-end;gap:4px;font-family:DM Sans,sans-serif'>
     <div class='map-radio-btn active' data-km='1' onclick='cambiarRadio(1,this)' style='background:#1a4a9e;color:#f5e6c8;border:1.5px solid #2a5aae;border-radius:8px;padding:4px 6px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;box-shadow:0 4px 14px rgba(26,74,158,0.4),0 1px 3px rgba(0,0,0,0.18);min-width:40px'>1 km</div>
     <div class='map-radio-btn' data-km='2' onclick='cambiarRadio(2,this)' style='background:rgba(255,245,210,0.9);color:#3d2000;border:1.5px solid #a07828;border-radius:8px;padding:4px 6px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.2),0 1px 3px rgba(0,0,0,0.12);min-width:40px'>2 km</div>
     <div class='map-radio-btn' data-km='3' onclick='cambiarRadio(3,this)' style='background:rgba(255,245,210,0.9);color:#3d2000;border:1.5px solid #a07828;border-radius:8px;padding:4px 6px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.2),0 1px 3px rgba(0,0,0,0.12);min-width:40px'>3 km</div>
@@ -1697,9 +1698,9 @@
   <!-- Botón POI (derecha, sobre Buscar) -->
   <button id='btn-poi-drawer-mapa' onclick='abrirAlbumPanel()' title='Ranking'
     style='display:flex;position:absolute;bottom:124px;right:10px;z-index:400;width:36px;height:36px;background:rgba(255,245,210,0.92);border:1.5px solid #a07828;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 14px rgba(0,0,0,0.28),0 1px 3px rgba(0,0,0,0.18);padding:0'>🏅</button>
-  <!-- Botón descargar mapa offline de la etapa actual (derecha, sobre Ranking) -->
+  <!-- Botón descargar mapa offline de la etapa actual (derecha, tercero, bajo +Punto) -->
   <button id='btn-descargar-mapa' onclick='if(window.DescargaMapa)DescargaMapa.descargarActual()' title='Descargar mapa de esta etapa para usar sin conexión'
-    style='display:flex;position:absolute;bottom:168px;right:10px;z-index:400;width:36px;height:36px;background:rgba(255,245,210,0.92);border:1.5px solid #a07828;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;font-size:17px;box-shadow:0 4px 14px rgba(0,0,0,0.28),0 1px 3px rgba(0,0,0,0.18);padding:0'>🗺️</button>
+    style='display:flex;position:absolute;top:90px;right:10px;z-index:400;width:36px;height:36px;background:rgba(255,245,210,0.92);border:1.5px solid #a07828;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;font-size:17px;box-shadow:0 4px 14px rgba(0,0,0,0.28),0 1px 3px rgba(0,0,0,0.18);padding:0'>🗺️</button>
 
 </div>
 
@@ -8114,6 +8115,7 @@ function initMapa() {
   mapa = L.map('map', { center:[42.2220,-8.7580], zoom:14, zoomControl:false, preferCanvas:true });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    crossOrigin: 'anonymous',
     maxZoom:19,
     keepBuffer:4,
     updateWhenIdle:false,
@@ -8140,7 +8142,7 @@ function initMapa() {
   // Ocultar botón ➕ cuando se abre un popup, restaurar al cerrar
   var _popupAbierto = false;
 
-  var _mapBtns = ['btn-add-poi-map','btn-poi-drawer-mapa','btn-alertas-toggle','btn-brujula-mapa','btn-sos-mapa','btn-buscar-mapa','map-ruta-panel','map-radio-control'];
+  var _mapBtns = ['btn-add-poi-map','btn-poi-drawer-mapa','btn-alertas-toggle','btn-brujula-mapa','btn-sos-mapa','btn-buscar-mapa','btn-ruta-oficial','btn-descargar-mapa','map-ruta-panel','map-radio-control'];
   // Actualizar botón añadir/quitar en popups de resultados de búsqueda al abrirlos
   mapa.on('popupopen', function(e) {
     var container = e.popup.getElement();
@@ -8183,6 +8185,8 @@ function initMapa() {
     b=document.getElementById('btn-buscar-mapa'); if(b&&!_navActiva) b.style.display='flex';
     b=document.getElementById('btn-meteo-mapa'); if(b) b.style.display='flex';
     b=document.getElementById('btn-poi-drawer-mapa'); if(b) b.style.display='flex';
+    b=document.getElementById('btn-ruta-oficial'); if(b) b.style.display='';
+    b=document.getElementById('btn-descargar-mapa'); if(b) b.style.display='flex';
     b=document.getElementById('btn-asistente-mapa'); if(b&&!_navActiva) b.style.display='flex';
     // Restaurar panel ruta siempre visible
     b=document.getElementById('map-ruta-panel'); if(b){b.style.display='flex';b.style.flexDirection='column';}
@@ -12907,14 +12911,14 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2006";
+var _APP_VERSION = "v2009";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
   // Limpiar cachés de versiones anteriores (solo las antiguas, nunca las activas)
-  var CACHES_ACTIVAS = ['guia-compostelana-v2006', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
+  var CACHES_ACTIVAS = ['guia-compostelana-v2009', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
@@ -15385,10 +15389,38 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
     listo:    { es:'✅ Mapa de la etapa descargado para usar sin conexión.', gl:'✅ Mapa da etapa descargado para usar sen conexión.', en:'✅ Stage map downloaded for offline use.' },
     parcial:  { es:'Mapa descargado parcialmente (algunas tiles fallaron).', gl:'Mapa descargado parcialmente (algunhas tiles fallaron).', en:'Map partially downloaded (some tiles failed).' },
     error:    { es:'No se pudo descargar el mapa de la etapa.', gl:'Non se puido descargar o mapa da etapa.', en:'Could not download the stage map.' },
-    grande:   { es:'Etapa demasiado grande para descargar de una vez.', gl:'Etapa grande de máis para descargar dunha vez.', en:'Stage too large to download at once.' }
+    grande:   { es:'Etapa demasiado grande para descargar de una vez.', gl:'Etapa grande de máis para descargar dunha vez.', en:'Stage too large to download at once.' },
+    cerrar:   { es:'Entendido', gl:'Entendido', en:'Got it' }
   };
   function _t(k){ var o=TXT[k]||{}; return o[_idi()]||o.es||''; }
   function _toast(m){ if(typeof mostrarToast==='function') mostrarToast(m); }
+
+  // Modal flotante propio (autosuficiente) para mensajes terminales largos,
+  // que en el toast se cortaban (white-space:nowrap + ellipsis).
+  function _modal(msg){
+    var ov=document.getElementById('descmapa-modal');
+    if(!ov){
+      ov=document.createElement('div');
+      ov.id='descmapa-modal';
+      ov.style.cssText='position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);padding:24px;box-sizing:border-box;font-family:DM Sans,sans-serif';
+      var box=document.createElement('div');
+      box.style.cssText='background:#fff;border-radius:16px;padding:22px 22px 18px;max-width:340px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,0.35);text-align:center;box-sizing:border-box';
+      var txt=document.createElement('div');
+      txt.id='descmapa-modal-txt';
+      txt.style.cssText='font-size:15px;line-height:1.5;color:#1a1a1a;margin-bottom:16px;white-space:normal;word-wrap:break-word';
+      var btn=document.createElement('button');
+      btn.id='descmapa-modal-btn';
+      btn.style.cssText='background:#1D9E75;color:#fff;border:none;border-radius:10px;padding:10px 26px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
+      btn.onclick=function(){ ov.style.display='none'; };
+      ov.onclick=function(e){ if(e.target===ov) ov.style.display='none'; };
+      box.appendChild(txt); box.appendChild(btn);
+      ov.appendChild(box);
+      document.body.appendChild(ov);
+    }
+    document.getElementById('descmapa-modal-txt').textContent=msg;
+    document.getElementById('descmapa-modal-btn').textContent=_t('cerrar');
+    ov.style.display='flex';
+  }
 
   function lon2tile(lon,z){ return Math.floor((lon+180)/360*Math.pow(2,z)); }
   function lat2tile(lat,z){
@@ -15478,26 +15510,26 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
   window.DescargaMapa = {
     descargarActual: function(){
       if(ocupado){ _toast(_t('enCurso')); return; }
-      if(typeof navigator!=='undefined' && navigator.onLine===false){ _toast(_t('sinRed')); return; }
+      if(typeof navigator!=='undefined' && navigator.onLine===false){ _modal(_t('sinRed')); return; }
       ocupado=true;
       _toast(_t('calc'));
       resolverEtapaId().then(function(id){
-        if(!id){ ocupado=false; _toast(_t('sinEtapa')); return; }
+        if(!id){ ocupado=false; _modal(_t('sinEtapa')); return; }
         return coordsDeEtapa(id).then(function(coords){
           var keys=tilesDeTrazado(coords);
-          if(keys.length>TOPE_TILES){ ocupado=false; _toast(_t('grande')); return; }
-          if(!keys.length){ ocupado=false; _toast(_t('error')); return; }
+          if(keys.length>TOPE_TILES){ ocupado=false; _modal(_t('grande')); return; }
+          if(!keys.length){ ocupado=false; _modal(_t('error')); return; }
           return descargarTiles(keys).then(function(res){
             ocupado=false;
-            if(res.fallos===0) _toast(_t('listo'));
-            else if(res.ok>0) _toast(_t('parcial'));
-            else _toast(_t('error'));
+            if(res.fallos===0) _modal(_t('listo'));
+            else if(res.ok>0) _modal(_t('parcial'));
+            else _modal(_t('error'));
           });
         });
       }).catch(function(err){
         ocupado=false;
         console.warn('DescargaMapa error:', err);
-        _toast(_t('error'));
+        _modal(_t('error'));
       });
     }
   };
