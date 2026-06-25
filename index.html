@@ -8282,9 +8282,9 @@ function initMapa() {
     })();
 
     // ── watchPosition único: fuente de verdad para la posición ──
-    // maximumAge:0 → siempre la lectura más reciente del sensor, sin caché, para
-    // que el punto azul no vaya por detrás del peregrino. El GPS funciona sin
-    // conexión; localStorage guarda la última posición para centrar al arrancar.
+    // maximumAge:5000 → posiciones frescas (≤5 s) para que el punto azul siga
+    // al peregrino sin desfase. El GPS funciona sin conexión; localStorage
+    // guarda la última posición para centrar el mapa en el próximo arranque.
     var _watchId = navigator.geolocation.watchPosition(function(pos) {
       var lat = pos.coords.latitude, lng = pos.coords.longitude;
       var esNuevo = !userLat;
@@ -8316,7 +8316,7 @@ function initMapa() {
         }).addTo(mapa);
         calcularDistancias();
       }
-    }, _gpsErrorHandler, { enableHighAccuracy:true, maximumAge:0, timeout:30000 });
+    }, _gpsErrorHandler, { enableHighAccuracy:true, maximumAge:5000, timeout:30000 });
 
     // Escuchar orientación para rotar la flecha
     // Android — activar orientación directamente
@@ -12926,14 +12926,14 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2015";
+var _APP_VERSION = "v2014";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
   // Limpiar cachés de versiones anteriores (solo las antiguas, nunca las activas)
-  var CACHES_ACTIVAS = ['guia-compostelana-v2015', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
+  var CACHES_ACTIVAS = ['guia-compostelana-v2014', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
