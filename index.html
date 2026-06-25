@@ -1697,6 +1697,9 @@
   <!-- Botón POI (derecha, sobre Buscar) -->
   <button id='btn-poi-drawer-mapa' onclick='abrirAlbumPanel()' title='Ranking'
     style='display:flex;position:absolute;bottom:124px;right:10px;z-index:400;width:36px;height:36px;background:rgba(255,245,210,0.92);border:1.5px solid #a07828;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 14px rgba(0,0,0,0.28),0 1px 3px rgba(0,0,0,0.18);padding:0'>🏅</button>
+  <!-- Botón descargar mapa offline de la etapa actual (derecha, sobre Ranking) -->
+  <button id='btn-descargar-mapa' onclick='if(window.DescargaMapa)DescargaMapa.descargarActual()' title='Descargar mapa de esta etapa para usar sin conexión'
+    style='display:flex;position:absolute;bottom:168px;right:10px;z-index:400;width:36px;height:36px;background:rgba(255,245,210,0.92);border:1.5px solid #a07828;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;font-size:17px;box-shadow:0 4px 14px rgba(0,0,0,0.28),0 1px 3px rgba(0,0,0,0.18);padding:0'>🗺️</button>
 
 </div>
 
@@ -12904,14 +12907,14 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2005";
+var _APP_VERSION = "v2006";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
   // Limpiar cachés de versiones anteriores (solo las antiguas, nunca las activas)
-  var CACHES_ACTIVAS = ['guia-compostelana-v2005', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
+  var CACHES_ACTIVAS = ['guia-compostelana-v2006', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
@@ -15345,6 +15348,158 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
     },
 
     _debug: function(lat,lng){ return elegirEtapa([lat,lng]); }
+  };
+})();
+
+/* ============================================================
+   DESCARGA DE MAPA OFFLINE — por etapa
+   Precachea las tiles OSM que cubren el trazado de la etapa actual
+   (zooms Z_MIN..Z_MAX + 1 tile de margen) para que el mapa se vea
+   sin conexión. Las tiles se piden con fetch() y el Service Worker
+   las guarda en su caché TILE_CACHE (cache-first). Descarga iniciada
+   por el usuario, throttled y acotada para respetar el uso de OSM.
+   NO dispara geolocalización nueva (usa la etapa ya detectada o la
+   última posición GPS persistida), para no interferir con el GPS iOS.
+   ============================================================ */
+(function(){
+  'use strict';
+
+  var Z_MIN = 13;          // zoom mínimo (vista general de la etapa)
+  var Z_MAX = 16;          // zoom máximo (detalle a pie)
+  var MARGEN = 1;          // tiles de margen alrededor del trazado
+  var CONCURRENCIA = 5;    // descargas simultáneas (suave con OSM)
+  var TOPE_TILES = 3000;   // tope de seguridad por descarga
+  var SUBS = ['a','b','c'];
+  var ocupado = false;
+
+  // i18n local (autosuficiente, sin tocar el objeto T global)
+  function _idi(){ return (typeof idiomaActual !== 'undefined') ? idiomaActual : 'es'; }
+  var TXT = {
+    sinEtapa: { es:'Activa la Ruta oficial o espera a que el GPS te ubique para descargar el mapa de tu etapa.',
+                gl:'Activa a Ruta oficial ou agarda a que o GPS te ubique para descargar o mapa da túa etapa.',
+                en:'Turn on Official Route or wait for GPS to locate you to download this stage map.' },
+    sinRed:   { es:'Necesitas conexión para descargar el mapa.', gl:'Precisas conexión para descargar o mapa.', en:'You need a connection to download the map.' },
+    enCurso:  { es:'Ya hay una descarga en curso…', gl:'Xa hai unha descarga en curso…', en:'A download is already running…' },
+    calc:     { es:'Preparando mapa de la etapa…', gl:'Preparando mapa da etapa…', en:'Preparing stage map…' },
+    progreso: { es:'Descargando mapa', gl:'Descargando mapa', en:'Downloading map' },
+    listo:    { es:'✅ Mapa de la etapa descargado para usar sin conexión.', gl:'✅ Mapa da etapa descargado para usar sen conexión.', en:'✅ Stage map downloaded for offline use.' },
+    parcial:  { es:'Mapa descargado parcialmente (algunas tiles fallaron).', gl:'Mapa descargado parcialmente (algunhas tiles fallaron).', en:'Map partially downloaded (some tiles failed).' },
+    error:    { es:'No se pudo descargar el mapa de la etapa.', gl:'Non se puido descargar o mapa da etapa.', en:'Could not download the stage map.' },
+    grande:   { es:'Etapa demasiado grande para descargar de una vez.', gl:'Etapa grande de máis para descargar dunha vez.', en:'Stage too large to download at once.' }
+  };
+  function _t(k){ var o=TXT[k]||{}; return o[_idi()]||o.es||''; }
+  function _toast(m){ if(typeof mostrarToast==='function') mostrarToast(m); }
+
+  function lon2tile(lon,z){ return Math.floor((lon+180)/360*Math.pow(2,z)); }
+  function lat2tile(lat,z){
+    var r=lat*Math.PI/180;
+    return Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*Math.pow(2,z));
+  }
+
+  // Conjunto de tiles {z/x/y} que cubre el trazado, con margen.
+  function tilesDeTrazado(coords){
+    var set = {};
+    for(var z=Z_MIN; z<=Z_MAX; z++){
+      var max = Math.pow(2,z)-1;
+      for(var i=0;i<coords.length;i++){
+        var c=coords[i]; if(!c||c.length<2) continue;
+        var tx=lon2tile(c[1],z), ty=lat2tile(c[0],z);
+        for(var dx=-MARGEN; dx<=MARGEN; dx++){
+          for(var dy=-MARGEN; dy<=MARGEN; dy++){
+            var x=tx+dx, y=ty+dy;
+            if(x<0||y<0||x>max||y>max) continue;
+            set[z+'/'+x+'/'+y]=true;
+          }
+        }
+      }
+    }
+    return Object.keys(set);
+  }
+
+  function urlTile(key){
+    var p=key.split('/'), z=p[0], x=parseInt(p[1],10), y=parseInt(p[2],10);
+    var sub=SUBS[Math.abs(x+y)%SUBS.length]; // mismo reparto que Leaflet → acierta en caché
+    return 'https://'+sub+'.tile.openstreetmap.org/'+z+'/'+x+'/'+y+'.png';
+  }
+
+  // Descarga en lotes con concurrencia limitada. Devuelve {ok, fallos}.
+  function descargarTiles(keys){
+    var total=keys.length, idx=0, ok=0, fallos=0;
+    return new Promise(function(resolve){
+      function lanzarUno(){
+        if(idx>=total) return Promise.resolve();
+        var key=keys[idx++];
+        return fetch(urlTile(key), { mode:'cors', cache:'no-cache' })
+          .then(function(r){ if(r&&r.ok) ok++; else fallos++; })
+          .catch(function(){ fallos++; })
+          .then(function(){
+            if((ok+fallos)%20===0 || ok+fallos===total){
+              _toast(_t('progreso')+' '+Math.round((ok+fallos)/total*100)+'%');
+            }
+            return lanzarUno();
+          });
+      }
+      var arranque=[];
+      for(var w=0; w<Math.min(CONCURRENCIA,total); w++) arranque.push(lanzarUno());
+      Promise.all(arranque).then(function(){ resolve({ok:ok, fallos:fallos}); });
+    });
+  }
+
+  // Resuelve el id de etapa a descargar sin pedir GPS nuevo.
+  function resolverEtapaId(){
+    if(window.Selector && window.Selector.etapaActual && window.Selector.etapaActual()){
+      return Promise.resolve(window.Selector.etapaActual());
+    }
+    // Última posición GPS persistida por el watchPosition
+    var pos=null;
+    try { pos=JSON.parse(localStorage.getItem('_gps_last')||'null'); } catch(e){}
+    if(pos && pos.lat && pos.lng && window.Selector && window.Selector.forzarDeteccion){
+      return window.Selector.forzarDeteccion(pos.lat, pos.lng).then(function(){
+        return (window.Selector.etapaActual && window.Selector.etapaActual()) || null;
+      }).catch(function(){ return null; });
+    }
+    return Promise.resolve(null);
+  }
+
+  function coordsDeEtapa(id){
+    var idx=window._INDICE_CAMINOS||[];
+    var meta=idx.filter(function(e){return e.id===id;})[0];
+    if(!meta) return Promise.reject('sin meta');
+    return fetch('tracks/'+meta.archivo).then(function(r){
+      if(!r||!r.ok) throw new Error('track no disponible');
+      return r.json();
+    }).then(function(t){
+      var coords=(t&&t.coords)?t.coords:(Array.isArray(t)?t:null);
+      if(!coords||!coords.length) throw new Error('sin coords');
+      return coords;
+    });
+  }
+
+  window.DescargaMapa = {
+    descargarActual: function(){
+      if(ocupado){ _toast(_t('enCurso')); return; }
+      if(typeof navigator!=='undefined' && navigator.onLine===false){ _toast(_t('sinRed')); return; }
+      ocupado=true;
+      _toast(_t('calc'));
+      resolverEtapaId().then(function(id){
+        if(!id){ ocupado=false; _toast(_t('sinEtapa')); return; }
+        return coordsDeEtapa(id).then(function(coords){
+          var keys=tilesDeTrazado(coords);
+          if(keys.length>TOPE_TILES){ ocupado=false; _toast(_t('grande')); return; }
+          if(!keys.length){ ocupado=false; _toast(_t('error')); return; }
+          return descargarTiles(keys).then(function(res){
+            ocupado=false;
+            if(res.fallos===0) _toast(_t('listo'));
+            else if(res.ok>0) _toast(_t('parcial'));
+            else _toast(_t('error'));
+          });
+        });
+      }).catch(function(err){
+        ocupado=false;
+        console.warn('DescargaMapa error:', err);
+        _toast(_t('error'));
+      });
+    }
   };
 })();
 
