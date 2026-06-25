@@ -9461,6 +9461,17 @@ function limpiarRuta() {
   var hayActiva = rutaPuntos.length > 0;
   var hayGuardada = false;
   try { hayGuardada = !!localStorage.getItem('rutaGuardadaV2'); } catch(e) {}
+  var hayBusqueda = (window._wizSearchMarkers && window._wizSearchMarkers.length > 0);
+  // Solo hay resultados de búsqueda en el mapa (sin ruta activa ni guardada):
+  // la papelera debe borrarlos directamente, sin modal de confirmación.
+  if (!hayActiva && !hayGuardada && hayBusqueda) {
+    try { window._wizSearchMarkers.forEach(function(m){ try{mapa.removeLayer(m);}catch(e){} }); } catch(e) {}
+    window._wizSearchMarkers = [];
+    try { PUNTOS = PUNTOS.filter(function(p){ return p.categoria !== 'busqueda'; }); } catch(e) {}
+    _actualizarBtnLimpiar();
+    mostrarToast('🗑️ Resultados de búsqueda borrados');
+    return;
+  }
   if (!hayActiva && !hayGuardada) return;
   var tl = T[idiomaActual] || T.es;
   // Sin ruta guardada: pedir confirmación antes de limpiar el mapa
@@ -12937,7 +12948,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2014";
+var _APP_VERSION = "v2017";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
