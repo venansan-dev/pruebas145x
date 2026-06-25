@@ -15917,34 +15917,43 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
 
 <script>
 /* ============================================================================
-   DEMO AUTOMÁTICO — Xacobeapp · para grabar vídeo (Reels/Instagram)
-   - Sin cursor: solo ondas de pulsación (ripple) sobre cada botón.
-   - Recorre TODAS las funciones, crea una ruta con varios puntos y
-     activa la Ruta Oficial. Arranca solo al abrir. Bucle.
+   XACOBEAPP · DEMO REEL — vídeos cortos de impacto para Instagram
+   - Ondas PEQUEÑAS y concentradas sobre el botón (sin cursor).
+   - Cortes rápidos que mezclan funciones y demuestran utilidad:
+     asistente · crear ruta · etapas de un camino · info de un punto · brújula…
+   - Arranca solo. Bucle. Ajustable en CFG.
    ========================================================================== */
 (function () {
   'use strict';
 
   var CFG = {
     fakeLat: 42.2406, fakeLng: -8.7207, accuracy: 12,
-    zoom: 15, startDelay: 3500, loop: true,
+    zoom: 15, startDelay: 3000, loop: true,
 
-    // Duración de cada tipo de paso (ms que queda en pantalla)
-    drawerMs: 2600,   // paneles
-    routeMs: 1300,    // entre puntos añadidos a la ruta
-    walkStepMs: 1100, // entre posiciones al "caminar"
+    // Ritmo de Reel (ms). Más bajo = más rápido y nervioso.
+    holdCorto: 1500,   // vistazo rápido a un panel
+    holdMedio: 2200,   // cuando hay algo que leer
+    entreCortes: 450,  // pausa breve entre acciones
 
-    // Puntos REALES (ids de pois.js) para construir la ruta de demostración
+    // Onda: tamaño máximo del círculo (px). Pequeño = concentrado.
+    ondaMax: 46,
+
+    // Ruta de demostración (ids reales de Vigo)
     rutaIds: ['bouzas','pazo-escudos','campo-torre-coia','estrelladavid-coia','rua-real'],
 
-    // Recorrido del punto azul (lat,lng) para el modo "caminar"
-    walkRoute: [
-      [42.2253,-8.7558],[42.2240,-8.7560],[42.2235,-8.7520],
-      [42.2230,-8.7480],[42.2225,-8.7471],[42.2221,-8.7469]
-    ]
+    // Punto con buena ficha para "ver información"
+    puntoInfo: { lat: 42.22526, lng: -8.75581 },   // Playa de Bouzas
+
+    // Camino cuyas etapas mostrar en el mapa
+    caminoEtapas: 'etapa-frances',
+
+    // Recorrido del punto azul (caminar)
+    walkRoute: [[42.2253,-8.7558],[42.2244,-8.7540],[42.2235,-8.7510],
+                [42.2228,-8.7485],[42.2223,-8.7472]],
+    walkStepMs: 850
   };
 
-  /* ---- 1. Geolocalización falsa (espera a que exista el mapa) ---- */
+  /* ---- Geolocalización falsa (espera a que exista el mapa) ---- */
   var P = { lat: CFG.fakeLat, lng: CFG.fakeLng }, watchers = [];
   function mkPos(){ return { coords:{ latitude:P.lat, longitude:P.lng, accuracy:CFG.accuracy,
     altitude:50, altitudeAccuracy:5, heading:null, speed:0 }, timestamp:Date.now() }; }
@@ -15963,173 +15972,189 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
     try{ if(window._userMarker&&window._userMarker.setLatLng) window._userMarker.setLatLng([lat,lng]); }catch(e){}
   }
 
-  /* ---- 2. Solo ondas de pulsación (sin cursor) ---- */
+  /* ---- Onda pequeña y concentrada (sin cursor) ---- */
   function ui(){
     var s=document.createElement('style');
     s.textContent =
       '.dRip{position:fixed;z-index:2147483646;border-radius:50%;pointer-events:none;'+
-      'border:2px solid rgba(255,255,255,.95);background:rgba(29,158,117,.22);'+
-      'box-shadow:0 0 0 2px rgba(29,158,117,.35);animation:dRip .7s ease-out forwards}'+
-      '@keyframes dRip{0%{width:10px;height:10px;opacity:.95}'+
-      '100%{width:130px;height:130px;opacity:0}}';
+      'border:2.5px solid rgba(255,255,255,.95);background:rgba(29,158,117,.30);'+
+      'box-shadow:0 0 8px rgba(29,158,117,.5);animation:dRip .5s ease-out forwards}'+
+      '@keyframes dRip{0%{width:8px;height:8px;opacity:1}'+
+      '100%{width:'+CFG.ondaMax+'px;height:'+CFG.ondaMax+'px;opacity:0}}';
     document.head.appendChild(s);
   }
-  function rip(x,y){ var r=document.createElement('div'); r.className='dRip';
-    r.style.left=(x-5)+'px'; r.style.top=(y-5)+'px'; document.body.appendChild(r);
-    setTimeout(function(){ r.remove(); },750); }
-  // Onda sobre un botón por id (o en el centro si no se encuentra)
-  function tap(btn){ var el=btn&&document.getElementById(btn), x,y;
-    if(el){ var rc=el.getBoundingClientRect(); x=rc.left+rc.width/2; y=rc.top+rc.height/2; }
-    else { x=window.innerWidth/2; y=window.innerHeight*0.30; }
-    rip(x,y);
+  function ripXY(x,y){ var r=document.createElement('div'); r.className='dRip';
+    var off=CFG.ondaMax/2;
+    r.style.left=(x-4)+'px'; r.style.top=(y-4)+'px';
+    // centrar el crecimiento
+    r.style.marginLeft=(-off+4)+'px'; r.style.marginTop=(-off+4)+'px';
+    document.body.appendChild(r); setTimeout(function(){ r.remove(); },550);
   }
-  // Onda en unas coordenadas concretas de pantalla
-  function ripAt(xRatio,yRatio){ rip(window.innerWidth*xRatio, window.innerHeight*yRatio); }
+  function tap(btn){ var el=btn&&document.getElementById(btn);
+    if(el){ var rc=el.getBoundingClientRect(); ripXY(rc.left+rc.width/2, rc.top+rc.height/2); }
+    else { ripXY(window.innerWidth/2, window.innerHeight*0.30); }
+  }
+  function tapMapa(){ ripXY(window.innerWidth*0.5, window.innerHeight*0.42); }
 
-  /* ---- 3. Utilidades ---- */
+  /* ---- Utilidades ---- */
   function call(fn){ if(fn&&typeof window[fn]==='function'){ try{ return window[fn](); }catch(e){} } }
-  function cerrarTodo(){ call('cerrarTodosLosPaneles'); call('cerrarMenu'); }
+  function cerrarTodo(){ call('cerrarTodosLosPaneles'); call('cerrarMenu');
+    var m=document.getElementById('modal-ruta-oficial'); if(m) m.remove();
+    var lb=document.getElementById('lupa-busqueda-modal'); if(lb) lb.remove();
+  }
 
-  /* ---- 4. GUION: lista de acciones ----
-     Cada acción es una función que recibe "next" y lo llama al terminar. */
-  var acciones = [];
+  /* ====================================================================
+     ESCENAS — cada una es un "clip" corto. Se encadenan con next().
+     Puedes comentar/reordenar libremente para hacer vídeos distintos.
+     ==================================================================== */
+  var escenas = [];
 
-  // Helper: abrir un drawer, mantener, cerrar
-  function pasoDrawer(openFn, closeFn, btn, label){
+  // Vistazo a un panel: onda, abrir, esperar, cerrar
+  function clip(openFn, closeFn, btn, hold){
     return function(next){
       cerrarTodo();
       if(btn) tap(btn);
-      setTimeout(function(){
-        call(openFn);
+      setTimeout(function(){ call(openFn);
         setTimeout(function(){ call(closeFn); cerrarTodo();
-          setTimeout(next, 600);
-        }, CFG.drawerMs);
-      }, 650);
+          setTimeout(next, CFG.entreCortes);
+        }, hold || CFG.holdCorto);
+      }, 400);
     };
   }
 
-  // 4.1 — Menú hamburguesa: abrir y mostrar opciones
-  acciones.push(function(next){
-    tap('hamburger');
-    setTimeout(function(){ call('toggleMenu');
-      setTimeout(function(){ call('cerrarMenu'); setTimeout(next,500); }, 2200);
-    }, 650);
+  // ── Escena: ASISTENTE / buscador (se abre, se ve un instante, se cierra) ──
+  escenas.push(function(next){
+    cerrarTodo();
+    tap('btn-asistente-mapa');
+    setTimeout(function(){ call('abrirBuscadorAsistente');
+      setTimeout(function(){
+        var lb=document.getElementById('lupa-busqueda-modal'); if(lb) lb.remove();
+        setTimeout(next, CFG.entreCortes);
+      }, CFG.holdMedio);
+    }, 400);
   });
 
-  // 4.2 — Cómo usar
-  acciones.push(pasoDrawer('abrirComoUsarDrawer','cerrarComoUsarDrawer', null));
-
-  // 4.3 — Brújula
-  acciones.push(pasoDrawer('abrirBrujulaDrawer','cerrarBrujulaDrawer','btn-brujula-mapa'));
-
-  // 4.4 — Meteo
-  acciones.push(pasoDrawer('abrirMeteoDrawer','cerrarMeteoDrawer','btn-meteo-mapa'));
-
-  // 4.5 — Historia Xacobea
-  acciones.push(pasoDrawer('abrirHistoriaDrawer','cerrarHistoriaDrawer', null));
-
-  // 4.6 — Puntos de interés (drawer POI / ranking de puntos)
-  acciones.push(pasoDrawer('abrirPoiDrawer','cerrarPoiDrawer','btn-poi-drawer-mapa'));
-
-  // 4.7 — Ranking / Álbum del peregrino (lo que abre el botón del menú)
-  acciones.push(function(next){
+  // ── Escena: CREAR UNA RUTA (puntos añadidos rápido, uno tras otro) ──
+  escenas.push(function(next){
     cerrarTodo();
-    setTimeout(function(){ call('abrirAlbumPanel');
-      setTimeout(function(){ call('cerrarAlbumPanel'); cerrarTodo();
-        setTimeout(next,600);
-      }, CFG.drawerMs);
-    }, 500);
-  });
-
-  // 4.8 — Colección / Tablero (cromos)
-  acciones.push(function(next){
-    cerrarTodo();
-    setTimeout(function(){ call('abrirTableroDrawer');
-      setTimeout(function(){ call('cerrarTableroDrawer'); cerrarTodo();
-        setTimeout(next,600);
-      }, CFG.drawerMs);
-    }, 500);
-  });
-
-  // 4.9 — SOS / Emergencias
-  acciones.push(pasoDrawer('abrirSOSDrawer','cerrarSOSDrawer','btn-sos-mapa'));
-
-  // 4.10 — Donaciones
-  acciones.push(pasoDrawer('abrirDonacionesDrawer','cerrarDonacionesDrawer', null));
-
-  // 4.11 — Contacto
-  acciones.push(pasoDrawer('abrirContactoDrawer','cerrarContactoDrawer', null));
-
-  // 4.12 — CREAR UNA RUTA con varios puntos (uno a uno, con onda)
-  acciones.push(function(next){
-    cerrarTodo();
-    var ids = CFG.rutaIds.slice();
-    var i = 0;
-    (function añadir(){
-      if(i >= ids.length){ setTimeout(next, 1400); return; }
-      ripAt(0.5, 0.42);                 // onda en el mapa
+    var ids=CFG.rutaIds.slice(), i=0;
+    (function add(){
+      if(i>=ids.length){ setTimeout(next, CFG.holdCorto); return; }
+      tapMapa();
       try{ window.addToRoute && window.addToRoute(ids[i]); }catch(e){}
-      i++;
-      setTimeout(añadir, CFG.routeMs);
+      i++; setTimeout(add, 700);
     })();
   });
 
-  // 4.13 — RUTA OFICIAL: activar (muestra cartel), mantener, cerrar y desactivar
-  acciones.push(function(next){
-    tap('btn-ruta-oficial');
+  // ── Escena: ETAPAS DE UN CAMINO en el mapa (Francés) ──
+  escenas.push(function(next){
+    cerrarTodo();
+    try{ window.limpiarRuta && window.limpiarRuta(); }catch(e){}
+    tapMapa();
+    try{ window._filtrarMapaCat && window._filtrarMapaCat(null, CFG.caminoEtapas); }catch(e){}
+    // Acercar un poco para que se vea la ristra de etapas
+    try{ if(window.mapa) window.mapa.setZoom(11); }catch(e){}
     setTimeout(function(){
-      try{ if(window.RutaOficial && window.RutaOficial.activar) window.RutaOficial.activar(); }catch(e){}
-      // Dejar ver el cartel "Ruta Oficial" un momento, luego cerrar el modal
-      setTimeout(function(){
-        var m = document.getElementById('modal-ruta-oficial'); if(m) m.remove();
-      }, 2600);
-      // Mantener la ruta oficial pintada un poco más y desactivar
-      setTimeout(function(){
-        try{ if(window.RutaOficial && window.RutaOficial.desactivar) window.RutaOficial.desactivar(); }catch(e){}
-        setTimeout(function(){
-          var m2 = document.getElementById('modal-ruta-oficial'); if(m2) m2.remove();
-          var md = document.getElementById('modal-desvio'); if(md) md.remove();
-          next();
-        }, 1500);
-      }, 4200);
-    }, 650);
+      try{ window._filtrarMapaCat && window._filtrarMapaCat(null, ''); }catch(e){} // volver a todo
+      try{ if(window.mapa) window.mapa.setView([P.lat,P.lng],CFG.zoom); }catch(e){}
+      setTimeout(next, CFG.entreCortes);
+    }, CFG.holdMedio);
   });
 
-  // 4.14 — CAMINAR el punto azul por la ruta
-  acciones.push(function(next){
-    var pts = CFG.walkRoute, i = 0;
-    (function st(){
-      if(i >= pts.length){ setTimeout(next, 1000); return; }
-      setPos(pts[i][0], pts[i][1]);
-      try{ if(window.mapa && window.mapa.panTo) window.mapa.panTo(pts[i]); }catch(e){}
+  // ── Escena: VER INFORMACIÓN DE UN PUNTO (centra y abre su ficha) ──
+  escenas.push(function(next){
+    cerrarTodo();
+    var p=CFG.puntoInfo;
+    try{ if(window.mapa) window.mapa.setView([p.lat,p.lng],16,{animate:true}); }catch(e){}
+    setTimeout(function(){
+      tapMapa();
+      try{ if(window.mapa) window.mapa.eachLayer(function(layer){
+        if(layer.getLatLng && layer._popup){ var ll=layer.getLatLng();
+          if(Math.abs(ll.lat-p.lat)<0.0004 && Math.abs(ll.lng-p.lng)<0.0004) layer.openPopup();
+        }
+      }); }catch(e){}
+      setTimeout(function(){
+        try{ if(window.mapa) window.mapa.closePopup(); }catch(e){}
+        try{ if(window.mapa) window.mapa.setView([P.lat,P.lng],CFG.zoom); }catch(e){}
+        setTimeout(next, CFG.entreCortes);
+      }, CFG.holdMedio);
+    }, 500);
+  });
+
+  // ── Escena: BRÚJULA ──
+  escenas.push(clip('abrirBrujulaDrawer','cerrarBrujulaDrawer','btn-brujula-mapa', CFG.holdCorto));
+
+  // ── Escena: METEO ──
+  escenas.push(clip('abrirMeteoDrawer','cerrarMeteoDrawer','btn-meteo-mapa', CFG.holdCorto));
+
+  // ── Escena: HISTORIA (vistazo) ──
+  escenas.push(clip('abrirHistoriaDrawer','cerrarHistoriaDrawer', null, CFG.holdMedio));
+
+  // ── Escena: PUNTOS DE INTERÉS (drawer) ──
+  escenas.push(clip('abrirPoiDrawer','cerrarPoiDrawer','btn-poi-drawer-mapa', CFG.holdCorto));
+
+  // ── Escena: RANKING / ÁLBUM ──
+  escenas.push(function(next){
+    cerrarTodo();
+    setTimeout(function(){ call('abrirAlbumPanel');
+      setTimeout(function(){ call('cerrarAlbumPanel'); cerrarTodo();
+        setTimeout(next, CFG.entreCortes);
+      }, CFG.holdCorto);
+    }, 350);
+  });
+
+  // ── Escena: SOS ──
+  escenas.push(clip('abrirSOSDrawer','cerrarSOSDrawer','btn-sos-mapa', CFG.holdCorto));
+
+  // ── Escena: RUTA OFICIAL (activar, ver cartel, pintar, desactivar) ──
+  escenas.push(function(next){
+    cerrarTodo();
+    tap('btn-ruta-oficial');
+    setTimeout(function(){
+      try{ if(window.RutaOficial&&window.RutaOficial.activar) window.RutaOficial.activar(); }catch(e){}
+      setTimeout(function(){ var m=document.getElementById('modal-ruta-oficial'); if(m) m.remove(); }, CFG.holdMedio);
+      setTimeout(function(){
+        try{ if(window.RutaOficial&&window.RutaOficial.desactivar) window.RutaOficial.desactivar(); }catch(e){}
+        setTimeout(function(){
+          var m2=document.getElementById('modal-ruta-oficial'); if(m2) m2.remove();
+          var md=document.getElementById('modal-desvio'); if(md) md.remove();
+          next();
+        }, 1200);
+      }, CFG.holdMedio+2200);
+    }, 400);
+  });
+
+  // ── Escena: CAMINAR el punto azul ──
+  escenas.push(function(next){
+    var pts=CFG.walkRoute, i=0;
+    (function st(){ if(i>=pts.length){ setTimeout(next, 700); return; }
+      setPos(pts[i][0],pts[i][1]);
+      try{ if(window.mapa&&window.mapa.panTo) window.mapa.panTo(pts[i]); }catch(e){}
       i++; setTimeout(st, CFG.walkStepMs);
     })();
   });
 
-  // 4.15 — Limpiar la ruta al final (deja la app lista para repetir)
-  acciones.push(function(next){
+  // ── Cierre: limpiar para repetir ──
+  escenas.push(function(next){
     try{ window.limpiarRuta && window.limpiarRuta(); }catch(e){}
     cerrarTodo();
-    setTimeout(next, 1200);
+    setPos(CFG.fakeLat, CFG.fakeLng);
+    try{ if(window.mapa) window.mapa.setView([CFG.fakeLat,CFG.fakeLng],CFG.zoom); }catch(e){}
+    setTimeout(next, 900);
   });
 
-  /* ---- 5. Motor del guion ---- */
-  function correr(){
-    var k = 0;
-    (function siguiente(){
-      if(k >= acciones.length){
-        if(CFG.loop){ k = 0; setTimeout(siguiente, 1500); return; }
-        return;
-      }
-      var accion = acciones[k++];
-      try{ accion(siguiente); }catch(e){ setTimeout(siguiente, 500); }
+  /* ---- Motor ---- */
+  function correr(){ var k=0;
+    (function sig(){
+      if(k>=escenas.length){ if(CFG.loop){ k=0; setTimeout(sig,1200); return; } return; }
+      var e=escenas[k++];
+      try{ e(sig); }catch(err){ setTimeout(sig,400); }
     })();
   }
 
-  /* ---- 6. Arranque ---- */
+  /* ---- Arranque ---- */
   function listo(){ return window.mapa && window.mapa.setView && typeof window.abrirHistoriaDrawer==='function'; }
-  function init(){
-    ui();
+  function init(){ ui();
     var n=0, iv=setInterval(function(){ n++;
       if(listo()){ clearInterval(iv);
         try{ window.mapa.setView([P.lat,P.lng],CFG.zoom); }catch(e){}
