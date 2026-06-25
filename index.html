@@ -16114,6 +16114,9 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
 
   function runStep(step, done) {
     busy = true;
+    // Cerrar SIEMPRE cualquier panel previo antes de abrir el nuevo.
+    // Evita que dos drawers se solapen y dejen la pantalla bloqueada.
+    closeEverything();
     flash(step.label);
     tapButton(step.btn);
     setTimeout(function () {
@@ -16121,10 +16124,11 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
       var wait = autoMode ? DEMO_CONFIG.stepDelay : 999999; // SEMI: espera tecla
       step._closeTimer = setTimeout(function () {
         call(step.close);
+        closeEverything(); // doble seguro: cierra aunque la función propia falle
         busy = false;
         if (done) done();
       }, wait);
-    }, 600);
+    }, 750);
   }
 
   function forceCloseCurrent() {
@@ -16192,18 +16196,31 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
     buildUI();
     // (cartel de ayuda inicial desactivado para que el vídeo quede limpio)
 
-    if (DEMO_CONFIG.centerOnFake) {
-      var t = setInterval(function () {
-        if (window.mapa && window.mapa.setView) {
-          clearInterval(t);
-          try { window.mapa.setView([_pos.lat, _pos.lng], DEMO_CONFIG.centerZoom); } catch (e) {}
-          setFakePosition(_pos.lat, _pos.lng);
-        }
-      }, 400);
-      setTimeout(function () { clearInterval(t); }, 12000);
+    // Espera a que la app esté REALMENTE lista antes de empezar.
+    // En iPhone SE (lento) la app tarda en crear el mapa; si arrancábamos
+    // a ciegas a los 1,5 s, la secuencia se descoordinaba y se quedaba
+    // atascada en un panel (la "pantalla negra" en #historia).
+    function appLista() {
+      return window.mapa && window.mapa.setView &&
+             typeof window.abrirHistoriaDrawer === 'function';
     }
 
-    if (DEMO_CONFIG.autoStart) setTimeout(startAuto, 1500);
+    var intentos = 0;
+    var espera = setInterval(function () {
+      intentos++;
+      if (appLista()) {
+        clearInterval(espera);
+        // Centrar mapa en el punto falso y fijar el punto azul
+        try { window.mapa.setView([_pos.lat, _pos.lng], DEMO_CONFIG.centerZoom); } catch (e) {}
+        setFakePosition(_pos.lat, _pos.lng);
+        // Pequeño margen extra y arrancamos la secuencia
+        if (DEMO_CONFIG.autoStart) setTimeout(startAuto, 1200);
+      } else if (intentos > 40) {
+        // 40 x 500ms = 20s máximo de espera; arrancamos igualmente
+        clearInterval(espera);
+        if (DEMO_CONFIG.autoStart) startAuto();
+      }
+    }, 500);
   }
 
   document.addEventListener('keydown', function (e) {
