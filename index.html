@@ -9414,9 +9414,24 @@ function _modalPergamino(config) {
   document.body.appendChild(overlay);
   overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
 
-  // Typewriter en casco: título → subtítulo → opciones
+  // Typewriter del casco con cadencia natural: ritmo pausado, micro-pausas
+  // tras la puntuación y respiro en los saltos de párrafo. El casco y su
+  // sonido se arman para TODA la duración (pausas incluidas), de modo que
+  // animación y dictado quedan acompasados de principio a fin.
+  function _pausaCad(ch) {
+    if (ch === '\n') return 520;                                   // párrafo: respiro
+    if (ch === '.' || ch === '!' || ch === '?' || ch === '\u2026') return 360; // fin de frase
+    if (ch === ',' || ch === ';' || ch === ':') return 180;        // inciso
+    return 0;
+  }
+  function _durCad(text, base) {
+    var ms = 0;
+    for (var k = 0; k < text.length; k++) { ms += base + _pausaCad(text[k]); }
+    return ms / 1000 + 0.25; // a segundos, con margen de cola
+  }
   function _twGlobal(el, html, speed, onDone) {
     var text = html.replace(/<[^>]+>/g, '');
+    var base = speed || 45;
     var i = 0;
     function _rg() {
       var vis  = text.slice(0, i);
@@ -9425,31 +9440,35 @@ function _modalPergamino(config) {
                    + (hide ? '<span style="visibility:hidden">' + hide.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>' : '');
     }
     _rg();
-    var t = setInterval(function() {
-      if (i < text.length) { i++; _rg(); if (text[i-1] !== ' ' && window._cascoTick) window._cascoTick(); }
-      else { clearInterval(t); el.innerHTML = html; if (onDone) onDone(); }
-    }, speed || 26);
+    cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
+    if (window._cascoSonido) _cascoSonido(_durCad(text, base));
+    function _fin() {
+      el.innerHTML = html;
+      cascoImg.style.animation = 'none';
+      if (window._cascoSonidoStop) _cascoSonidoStop();
+      if (onDone) onDone();
+    }
+    function _paso() {
+      if (i >= text.length) { _fin(); return; }
+      i++; _rg();
+      var ch = text[i-1];
+      if (ch !== ' ' && ch !== '\n' && window._cascoTick) window._cascoTick();
+      setTimeout(_paso, base + _pausaCad(ch));
+    }
+    setTimeout(_paso, base);
   }
 
-  cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
-  if(window._cascoSonido) _cascoSonido(_cascoDur(config.titulo, 42));
-  _twGlobal(titEl, config.titulo, 42, function() {
-    cascoImg.style.animation = 'none';
-    if(window._cascoSonidoStop) _cascoSonidoStop();
+  // Título y subtítulo con la misma cadencia pausada, y un respiro entre
+  // ambos como si el casco tomara aire antes de seguir.
+  _twGlobal(titEl, config.titulo, 44, function() {
     if (subEl && config.subtitulo) {
       setTimeout(function() {
-        cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
-        // Velocidad adaptativa: textos largos van más rápido para no cansar
-        var subSpeed = config.subtitulo.length > 80 ? 18 : 28;
-        if(window._cascoSonido) _cascoSonido(_cascoDur(config.subtitulo, subSpeed));
-        _twGlobal(subEl, config.subtitulo, subSpeed, function() {
-          cascoImg.style.animation = 'none';
-          if(window._cascoSonidoStop) _cascoSonidoStop();
-          setTimeout(function() { box.appendChild(optsWrap); if (cancelBtn) box.appendChild(cancelBtn); }, 80);
+        _twGlobal(subEl, config.subtitulo, 44, function() {
+          setTimeout(function() { box.appendChild(optsWrap); if (cancelBtn) box.appendChild(cancelBtn); }, 140);
         });
-      }, 100);
+      }, 480);
     } else {
-      setTimeout(function() { box.appendChild(optsWrap); if (cancelBtn) box.appendChild(cancelBtn); }, 80);
+      setTimeout(function() { box.appendChild(optsWrap); if (cancelBtn) box.appendChild(cancelBtn); }, 140);
     }
   });
 }
@@ -12948,7 +12967,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2020";
+var _APP_VERSION = "v2021";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
