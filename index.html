@@ -8297,7 +8297,7 @@ function initMapa() {
         }).addTo(mapa);
         calcularDistancias();
       }
-    }, _gpsErrorHandler, { enableHighAccuracy:true });
+    }, _gpsErrorHandler, { enableHighAccuracy:true, maximumAge:300000 });
 
     // Escuchar orientación para rotar la flecha
     // Android — activar orientación directamente
@@ -8320,7 +8320,19 @@ function _gpsErrorHandler() {
   var lat = _lastKnownLat || (typeof userLat !== 'undefined' && userLat ? userLat : null);
   var lng = _lastKnownLng || (typeof userLng !== 'undefined' && userLng ? userLng : null);
   if (lat && lng) {
+    // Actualizar variables globales para que el resto del código tenga posición
+    if (!userLat) { userLat = lat; userLng = lng; }
     mapa.setView([lat, lng], 15, {animate: true});
+    // Crear o actualizar marcador del usuario con la última posición conocida
+    var icon = (typeof crearIconoUsuario === 'function') ? crearIconoUsuario(window._orientacionActiva ? (window._userHeading || null) : null) : (typeof iconoUsuario !== 'undefined' ? iconoUsuario : null);
+    if (icon) {
+      if (window._userMarker) {
+        window._userMarker.setLatLng([lat, lng]);
+      } else {
+        window._userMarker = L.marker([lat, lng], {icon: icon, zIndexOffset:1000}).addTo(mapa);
+        try { window._userMarker.bindPopup('<strong>' + ((T[idiomaActual]||T.es).tuUbicacion || 'Tu ubicación') + '</strong>'); } catch(e) {}
+      }
+    }
   }
 }
 
