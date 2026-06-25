@@ -8608,7 +8608,7 @@ function pedirOrientacion() {
 
   if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
     DeviceOrientationEvent.requestPermission().then(function(s) {
-      if (s === 'granted') activar();
+      if (s === 'granted') { window._orientacionConcedida = true; activar(); }
     }).catch(function(){});
   } else if (window.DeviceOrientationEvent) {
     activar();
@@ -10144,6 +10144,17 @@ function activarNavegacionVoz() {
   if (typeof navigator!=='undefined' && navigator.onLine===false && (!_navPasosCache || _navPasosCache.length === 0)) {
     if (typeof dibujarLineaEstática==='function') dibujarLineaEstática();
     mostrarToast((T[idiomaActual]||T.es).navOfflineGuia||'Sin conexión: sigue la línea amarilla y las flechas hasta el punto violeta. Esa es tu guía offline.');
+    // Offline no hay turn-by-turn, pero sí podemos darte rumbo: activamos la
+    // brújula (triángulo azul sobre tu punto) lanzando el permiso de orientación
+    // DENTRO de este gesto del usuario (iOS lo exige). Solo si no estaba ya
+    // activa, para no apagarla con el propio toggle de pedirOrientacion().
+    if (!window._orientacionActiva){
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function' && window._orientacionConcedida !== true){
+        mostrarToast((T[idiomaActual]||T.es).navBrujulaActivar||'Pulsa 🧭 una vez (con conexión) para activar la brújula');
+      } else if (typeof pedirOrientacion==='function'){
+        pedirOrientacion();
+      }
+    }
     return;
   }
   // Pausar Ruta Oficial mientras dura la navegación
@@ -11034,6 +11045,7 @@ var T={
     navAnnadePunto:'Añade al menos 1 punto a la ruta',
     navCalcRuta:'🔄 Calculando ruta...',
     navOfflineGuia:'Sin conexión: sigue la línea amarilla y las flechas hasta el punto violeta. Esa es tu guía offline.',
+    navBrujulaActivar:'Pulsa 🧭 una vez (con conexión) para activar la brújula',
     navRecalcRuta:'🔄 Recalculando ruta...',
     navRecalculada:'Ruta recalculada.',
     navActiva:'🎙️ Navegación por voz activa',
@@ -11437,6 +11449,7 @@ var T={
     navAnnadePunto:'Engade polo menos 1 punto á ruta',
     navCalcRuta:'🔄 Calculando ruta...',
     navOfflineGuia:'Sen conexión: segue a liña amarela e as frechas ata o punto violeta. Esa é a túa guía offline.',
+    navBrujulaActivar:'Preme 🧭 unha vez (con conexión) para activar a brúxula',
     navRecalcRuta:'🔄 Recalculando ruta...',
     navRecalculada:'Ruta recalculada.',
     navActiva:'🎙️ Navegación por voz activa',
@@ -11730,6 +11743,7 @@ var T={
     navAnnadePunto:'Add at least 1 point to the route',
     navCalcRuta:'🔄 Calculating route...',
     navOfflineGuia:'Offline: follow the yellow line and the arrows to the violet pin. That is your offline guide.',
+    navBrujulaActivar:'Tap 🧭 once (while online) to enable the compass',
     navRecalcRuta:'🔄 Recalculating route...',
     navRecalculada:'Route recalculated.',
     navActiva:'🎙️ Voice navigation active',
@@ -12859,14 +12873,14 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2000";
+var _APP_VERSION = "v2005";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
   // Limpiar cachés de versiones anteriores (solo las antiguas, nunca las activas)
-  var CACHES_ACTIVAS = ['guia-compostelana-v2000', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
+  var CACHES_ACTIVAS = ['guia-compostelana-v2005', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
