@@ -5,18 +5,10 @@
 (function(){
   if(!('serviceWorker' in navigator)) return;
   try {
-    // Registrar el SW NUEVO del demo. Reemplaza al viejo (skipWaiting/claim)
-    // y borra todas las cachés antiguas, así nunca sirve versiones obsoletas.
-    navigator.serviceWorker.register('sw-demo.js').then(function(reg){
-      // Si ya hay uno activo, forzar actualización inmediata
-      reg.update && reg.update();
-    }).catch(function(){});
-    // Cuando el SW nuevo tome control, recargar una sola vez para servir fresco
-    var recargado = false;
+    navigator.serviceWorker.register('sw-demo.js').then(function(reg){ reg.update && reg.update(); }).catch(function(){});
+    var recargado=false;
     navigator.serviceWorker.addEventListener('controllerchange', function(){
-      if (recargado) return; recargado = true;
-      // Pequeño respiro y recarga limpia
-      setTimeout(function(){ location.reload(); }, 200);
+      if(recargado) return; recargado=true; setTimeout(function(){ location.reload(); },200);
     });
   } catch(e){}
 })();
@@ -15924,38 +15916,41 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
 
 
 <script>
-/* DEMO AUTOMÁTICO — Xacobeapp · para grabar vídeo. Arranca solo al abrir. */
+/* ============================================================================
+   DEMO AUTOMÁTICO — Xacobeapp · para grabar vídeo (Reels/Instagram)
+   - Sin cursor: solo ondas de pulsación (ripple) sobre cada botón.
+   - Recorre TODAS las funciones, crea una ruta con varios puntos y
+     activa la Ruta Oficial. Arranca solo al abrir. Bucle.
+   ========================================================================== */
 (function () {
   'use strict';
+
   var CFG = {
     fakeLat: 42.2406, fakeLng: -8.7207, accuracy: 12,
-    stepDelay: 2800, zoom: 16, startDelay: 3500, loop: true,
-    walkRoute: [[42.2406,-8.7207],[42.2418,-8.7225],[42.2431,-8.7244],
-                [42.2447,-8.7262],[42.2460,-8.7280],[42.2475,-8.7299]],
-    walkStepMs: 1000,
-    script: [
-      { open:'toggleMenu',           close:'cerrarMenu',            btn:'hamburger' },
-      { open:'abrirComoUsarDrawer',  close:'cerrarComoUsarDrawer' },
-      { open:'abrirBrujulaDrawer',   close:'cerrarBrujulaDrawer',   btn:'btn-brujula-mapa' },
-      { open:'abrirMeteoDrawer',     close:'cerrarMeteoDrawer',     btn:'btn-meteo-mapa' },
-      { open:'abrirHistoriaDrawer',  close:'cerrarHistoriaDrawer' },
-      { open:'abrirPoiDrawer',       close:'cerrarPoiDrawer',       btn:'btn-poi-drawer-mapa' },
-      { open:'abrirSOSDrawer',       close:'cerrarSOSDrawer',       btn:'btn-sos-mapa' },
-      { open:'abrirDonacionesDrawer',close:'cerrarDonacionesDrawer' },
-      { open:'abrirContactoDrawer',  close:'cerrarContactoDrawer' }
+    zoom: 15, startDelay: 3500, loop: true,
+
+    // Duración de cada tipo de paso (ms que queda en pantalla)
+    drawerMs: 2600,   // paneles
+    routeMs: 1300,    // entre puntos añadidos a la ruta
+    walkStepMs: 1100, // entre posiciones al "caminar"
+
+    // Puntos REALES (ids de pois.js) para construir la ruta de demostración
+    rutaIds: ['bouzas','pazo-escudos','campo-torre-coia','estrelladavid-coia','rua-real'],
+
+    // Recorrido del punto azul (lat,lng) para el modo "caminar"
+    walkRoute: [
+      [42.2253,-8.7558],[42.2240,-8.7560],[42.2235,-8.7520],
+      [42.2230,-8.7480],[42.2225,-8.7471],[42.2221,-8.7469]
     ]
   };
 
-  /* ---- Geolocalización falsa: solo responde cuando el mapa ya existe ---- */
+  /* ---- 1. Geolocalización falsa (espera a que exista el mapa) ---- */
   var P = { lat: CFG.fakeLat, lng: CFG.fakeLng }, watchers = [];
   function mkPos(){ return { coords:{ latitude:P.lat, longitude:P.lng, accuracy:CFG.accuracy,
     altitude:50, altitudeAccuracy:5, heading:null, speed:0 }, timestamp:Date.now() }; }
-  function entregar(ok){
-    var n=0, iv=setInterval(function(){ n++;
-      if (window.mapa && window.mapa.setView){ clearInterval(iv); try{ok(mkPos());}catch(e){} }
-      else if (n>60){ clearInterval(iv); try{ok(mkPos());}catch(e){} }
-    },500);
-  }
+  function entregar(ok){ var n=0, iv=setInterval(function(){ n++;
+    if (window.mapa && window.mapa.setView){ clearInterval(iv); try{ok(mkPos());}catch(e){} }
+    else if (n>60){ clearInterval(iv); try{ok(mkPos());}catch(e){} } },500); }
   try {
     Object.defineProperty(navigator,'geolocation',{ configurable:true, value:{
       getCurrentPosition:function(ok){ entregar(ok); },
@@ -15968,53 +15963,170 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
     try{ if(window._userMarker&&window._userMarker.setLatLng) window._userMarker.setLatLng([lat,lng]); }catch(e){}
   }
 
-  /* ---- Cursor + ondas de pulsación ---- */
-  var cursor;
+  /* ---- 2. Solo ondas de pulsación (sin cursor) ---- */
   function ui(){
     var s=document.createElement('style');
     s.textContent =
-      '#dCur{position:fixed;z-index:2147483647;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;'+
-      'border:2px solid rgba(255,255,255,.9);background:rgba(0,0,0,.18);box-shadow:0 2px 10px rgba(0,0,0,.35);'+
-      'pointer-events:none;transition:left .55s cubic-bezier(.5,0,.2,1),top .55s cubic-bezier(.5,0,.2,1);left:50%;top:72%}'+
-      '#dCur::after{content:"";position:absolute;inset:10px;border-radius:50%;background:rgba(255,255,255,.85)}'+
-      '.dRip{position:fixed;z-index:2147483646;border-radius:50%;pointer-events:none;border:2px solid rgba(29,158,117,.9);'+
-      'background:rgba(29,158,117,.18);animation:dRip .65s ease-out forwards}'+
-      '@keyframes dRip{0%{width:8px;height:8px;opacity:.9}100%{width:120px;height:120px;opacity:0}}';
+      '.dRip{position:fixed;z-index:2147483646;border-radius:50%;pointer-events:none;'+
+      'border:2px solid rgba(255,255,255,.95);background:rgba(29,158,117,.22);'+
+      'box-shadow:0 0 0 2px rgba(29,158,117,.35);animation:dRip .7s ease-out forwards}'+
+      '@keyframes dRip{0%{width:10px;height:10px;opacity:.95}'+
+      '100%{width:130px;height:130px;opacity:0}}';
     document.head.appendChild(s);
-    cursor=document.createElement('div'); cursor.id='dCur'; document.body.appendChild(cursor);
   }
-  function moveTo(x,y){ if(cursor){ cursor.style.left=x+'px'; cursor.style.top=y+'px'; } }
   function rip(x,y){ var r=document.createElement('div'); r.className='dRip';
-    r.style.left=(x-4)+'px'; r.style.top=(y-4)+'px'; document.body.appendChild(r);
-    setTimeout(function(){ r.remove(); },700); }
+    r.style.left=(x-5)+'px'; r.style.top=(y-5)+'px'; document.body.appendChild(r);
+    setTimeout(function(){ r.remove(); },750); }
+  // Onda sobre un botón por id (o en el centro si no se encuentra)
   function tap(btn){ var el=btn&&document.getElementById(btn), x,y;
     if(el){ var rc=el.getBoundingClientRect(); x=rc.left+rc.width/2; y=rc.top+rc.height/2; }
-    else { x=window.innerWidth/2; y=window.innerHeight*0.28; }
-    moveTo(x,y); setTimeout(function(){ rip(x,y); },520);
+    else { x=window.innerWidth/2; y=window.innerHeight*0.30; }
+    rip(x,y);
   }
+  // Onda en unas coordenadas concretas de pantalla
+  function ripAt(xRatio,yRatio){ rip(window.innerWidth*xRatio, window.innerHeight*yRatio); }
 
-  /* ---- Motor ---- */
-  var idx=0, t=null;
-  function call(fn){ if(fn&&typeof window[fn]==='function'){ try{ window[fn](); }catch(e){} } }
+  /* ---- 3. Utilidades ---- */
+  function call(fn){ if(fn&&typeof window[fn]==='function'){ try{ return window[fn](); }catch(e){} } }
   function cerrarTodo(){ call('cerrarTodosLosPaneles'); call('cerrarMenu'); }
-  function paso(){
-    cerrarTodo();
-    if(idx>=CFG.script.length){ idx=0; if(!CFG.loop) return; }
-    var s=CFG.script[idx++];
-    tap(s.btn);
-    setTimeout(function(){ call(s.open);
-      t=setTimeout(function(){ call(s.close); cerrarTodo();
-        t=setTimeout(paso,800);
-      }, CFG.stepDelay);
-    },750);
-  }
-  function caminar(){ var pts=CFG.walkRoute, i=0;
-    (function st(){ if(i>=pts.length) return; setPos(pts[i][0],pts[i][1]);
-      try{ if(window.mapa&&window.mapa.panTo) window.mapa.panTo(pts[i]); }catch(e){}
-      i++; setTimeout(st,CFG.walkStepMs); })();
+
+  /* ---- 4. GUION: lista de acciones ----
+     Cada acción es una función que recibe "next" y lo llama al terminar. */
+  var acciones = [];
+
+  // Helper: abrir un drawer, mantener, cerrar
+  function pasoDrawer(openFn, closeFn, btn, label){
+    return function(next){
+      cerrarTodo();
+      if(btn) tap(btn);
+      setTimeout(function(){
+        call(openFn);
+        setTimeout(function(){ call(closeFn); cerrarTodo();
+          setTimeout(next, 600);
+        }, CFG.drawerMs);
+      }, 650);
+    };
   }
 
-  /* ---- Arranque: espera a que el mapa exista de verdad ---- */
+  // 4.1 — Menú hamburguesa: abrir y mostrar opciones
+  acciones.push(function(next){
+    tap('hamburger');
+    setTimeout(function(){ call('toggleMenu');
+      setTimeout(function(){ call('cerrarMenu'); setTimeout(next,500); }, 2200);
+    }, 650);
+  });
+
+  // 4.2 — Cómo usar
+  acciones.push(pasoDrawer('abrirComoUsarDrawer','cerrarComoUsarDrawer', null));
+
+  // 4.3 — Brújula
+  acciones.push(pasoDrawer('abrirBrujulaDrawer','cerrarBrujulaDrawer','btn-brujula-mapa'));
+
+  // 4.4 — Meteo
+  acciones.push(pasoDrawer('abrirMeteoDrawer','cerrarMeteoDrawer','btn-meteo-mapa'));
+
+  // 4.5 — Historia Xacobea
+  acciones.push(pasoDrawer('abrirHistoriaDrawer','cerrarHistoriaDrawer', null));
+
+  // 4.6 — Puntos de interés (drawer POI / ranking de puntos)
+  acciones.push(pasoDrawer('abrirPoiDrawer','cerrarPoiDrawer','btn-poi-drawer-mapa'));
+
+  // 4.7 — Ranking / Álbum del peregrino (lo que abre el botón del menú)
+  acciones.push(function(next){
+    cerrarTodo();
+    setTimeout(function(){ call('abrirAlbumPanel');
+      setTimeout(function(){ call('cerrarAlbumPanel'); cerrarTodo();
+        setTimeout(next,600);
+      }, CFG.drawerMs);
+    }, 500);
+  });
+
+  // 4.8 — Colección / Tablero (cromos)
+  acciones.push(function(next){
+    cerrarTodo();
+    setTimeout(function(){ call('abrirTableroDrawer');
+      setTimeout(function(){ call('cerrarTableroDrawer'); cerrarTodo();
+        setTimeout(next,600);
+      }, CFG.drawerMs);
+    }, 500);
+  });
+
+  // 4.9 — SOS / Emergencias
+  acciones.push(pasoDrawer('abrirSOSDrawer','cerrarSOSDrawer','btn-sos-mapa'));
+
+  // 4.10 — Donaciones
+  acciones.push(pasoDrawer('abrirDonacionesDrawer','cerrarDonacionesDrawer', null));
+
+  // 4.11 — Contacto
+  acciones.push(pasoDrawer('abrirContactoDrawer','cerrarContactoDrawer', null));
+
+  // 4.12 — CREAR UNA RUTA con varios puntos (uno a uno, con onda)
+  acciones.push(function(next){
+    cerrarTodo();
+    var ids = CFG.rutaIds.slice();
+    var i = 0;
+    (function añadir(){
+      if(i >= ids.length){ setTimeout(next, 1400); return; }
+      ripAt(0.5, 0.42);                 // onda en el mapa
+      try{ window.addToRoute && window.addToRoute(ids[i]); }catch(e){}
+      i++;
+      setTimeout(añadir, CFG.routeMs);
+    })();
+  });
+
+  // 4.13 — RUTA OFICIAL: activar (muestra cartel), mantener, cerrar y desactivar
+  acciones.push(function(next){
+    tap('btn-ruta-oficial');
+    setTimeout(function(){
+      try{ if(window.RutaOficial && window.RutaOficial.activar) window.RutaOficial.activar(); }catch(e){}
+      // Dejar ver el cartel "Ruta Oficial" un momento, luego cerrar el modal
+      setTimeout(function(){
+        var m = document.getElementById('modal-ruta-oficial'); if(m) m.remove();
+      }, 2600);
+      // Mantener la ruta oficial pintada un poco más y desactivar
+      setTimeout(function(){
+        try{ if(window.RutaOficial && window.RutaOficial.desactivar) window.RutaOficial.desactivar(); }catch(e){}
+        setTimeout(function(){
+          var m2 = document.getElementById('modal-ruta-oficial'); if(m2) m2.remove();
+          var md = document.getElementById('modal-desvio'); if(md) md.remove();
+          next();
+        }, 1500);
+      }, 4200);
+    }, 650);
+  });
+
+  // 4.14 — CAMINAR el punto azul por la ruta
+  acciones.push(function(next){
+    var pts = CFG.walkRoute, i = 0;
+    (function st(){
+      if(i >= pts.length){ setTimeout(next, 1000); return; }
+      setPos(pts[i][0], pts[i][1]);
+      try{ if(window.mapa && window.mapa.panTo) window.mapa.panTo(pts[i]); }catch(e){}
+      i++; setTimeout(st, CFG.walkStepMs);
+    })();
+  });
+
+  // 4.15 — Limpiar la ruta al final (deja la app lista para repetir)
+  acciones.push(function(next){
+    try{ window.limpiarRuta && window.limpiarRuta(); }catch(e){}
+    cerrarTodo();
+    setTimeout(next, 1200);
+  });
+
+  /* ---- 5. Motor del guion ---- */
+  function correr(){
+    var k = 0;
+    (function siguiente(){
+      if(k >= acciones.length){
+        if(CFG.loop){ k = 0; setTimeout(siguiente, 1500); return; }
+        return;
+      }
+      var accion = acciones[k++];
+      try{ accion(siguiente); }catch(e){ setTimeout(siguiente, 500); }
+    })();
+  }
+
+  /* ---- 6. Arranque ---- */
   function listo(){ return window.mapa && window.mapa.setView && typeof window.abrirHistoriaDrawer==='function'; }
   function init(){
     ui();
@@ -16022,13 +16134,12 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
       if(listo()){ clearInterval(iv);
         try{ window.mapa.setView([P.lat,P.lng],CFG.zoom); }catch(e){}
         setPos(P.lat,P.lng);
-        setTimeout(paso, CFG.startDelay);
-      } else if(n>60){ clearInterval(iv); setTimeout(paso,CFG.startDelay); }
+        setTimeout(correr, CFG.startDelay);
+      } else if(n>60){ clearInterval(iv); setTimeout(correr, CFG.startDelay); }
     },500);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
   else init();
-  window.DEMO={ caminar:caminar, setPos:setPos };
 })();
 
 </script>
