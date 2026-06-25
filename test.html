@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test demo</title>
+<style>
+  html,body{margin:0;height:100%;font-family:system-ui,sans-serif}
+  #caja{display:flex;flex-direction:column;align-items:center;justify-content:center;
+        height:100%;text-align:center;padding:20px;box-sizing:border-box}
+  #estado{font-size:24px;font-weight:800;padding:18px 24px;border-radius:14px;
+          background:#dc2626;color:#fff;margin-bottom:18px;max-width:90%}
+  .ok{background:#16a34a !important}
+  #info{font-size:14px;color:#333;line-height:1.6;max-width:90%}
+  code{background:#eee;padding:2px 6px;border-radius:4px}
+</style>
+</head>
+<body>
+  <div id="caja">
+    <div id="estado">⏳ Cargando…</div>
+    <div id="info">Si ves este texto, el HTML carga.<br>Esperando a que se ejecute JavaScript…</div>
+  </div>
+
+<script>
+  // Test 1: ¿se ejecuta JS?
+  document.getElementById('estado').textContent = '✅ JavaScript FUNCIONA';
+  document.getElementById('estado').className = 'ok';
+
+  // Test 2: datos del entorno
+  var ancho = window.innerWidth;
+  var modo = ancho <= 768 ? 'MÓVIL (estrecho)' : 'ESCRITORIO (ancho)';
+  var sw = ('serviceWorker' in navigator) ? 'sí' : 'no';
+
+  document.getElementById('info').innerHTML =
+    'Ancho de pantalla: <code>' + ancho + 'px</code><br>' +
+    'Modo según tu app: <strong>' + modo + '</strong><br>' +
+    'Service Worker disponible: ' + sw + '<br><br>' +
+    'Si pone <strong>MÓVIL</strong>, tu app mostraría el mapa aquí.<br>' +
+    'Si pone <strong>ESCRITORIO</strong>, mostraría la página de presentación.';
+</script>
+</body>
+</html>
