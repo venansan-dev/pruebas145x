@@ -10160,22 +10160,26 @@ function activarNavegacionVoz() {
   if (typeof navigator!=='undefined' && navigator.onLine===false && (!_navPasosCache || _navPasosCache.length === 0)) {
     if (typeof dibujarLineaEstática==='function') dibujarLineaEstática();
     mostrarToast((T[idiomaActual]||T.es).navOfflineGuia||'Sin conexión: sigue la línea amarilla y las flechas hasta el punto violeta. Esa es tu guía offline.');
-    // Offline no hay turn-by-turn, pero sí podemos darte rumbo: activamos la
-    // brújula (triángulo azul sobre tu punto) lanzando el permiso de orientación
-    // DENTRO de este gesto del usuario (iOS lo exige). Solo si no estaba ya
-    // activa, para no apagarla con el propio toggle de pedirOrientacion().
+    // Activar triángulo azul directamente, sin pasar por el toggle de pedirOrientacion
+    // (evita el conflicto: pedirOrientacion desactivaría si no hay _modoSeguimiento).
     if (!window._orientacionActiva) {
+      function _doActivarOffline() {
+        window._orientacionActiva = true;
+        window.removeEventListener('deviceorientation', actualizarFlecha, true);
+        window.addEventListener('deviceorientation', actualizarFlecha, true);
+        var nb = document.getElementById('ruta-nav-orientacion');
+        if (nb) {
+          nb.style.background='#EFF6FF'; nb.style.border='2px solid #185FA5'; nb.style.color='#185FA5';
+          var ol = nb.querySelector('#nav-ori-offline'); if (ol) ol.style.display='none';
+          var lbl = nb.querySelector('#nav-ori-label'); if (lbl) lbl.textContent='Activada';
+        }
+      }
       if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        // iOS 13+: aprovechar este gesto de usuario para pedir permiso ahora
         DeviceOrientationEvent.requestPermission().then(function(s) {
-          if (s === 'granted') {
-            window._orientacionConcedida = true;
-            if (typeof pedirOrientacion === 'function') pedirOrientacion();
-          }
+          if (s === 'granted') { window._orientacionConcedida = true; _doActivarOffline(); }
         }).catch(function(){});
-      } else if (typeof pedirOrientacion === 'function') {
-        // Android y otros: activar directamente
-        pedirOrientacion();
+      } else if (typeof DeviceOrientationEvent !== 'undefined') {
+        _doActivarOffline();
       }
     }
     return;
