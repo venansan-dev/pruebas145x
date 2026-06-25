@@ -1716,7 +1716,6 @@
       <button onclick='cerrarBrujulaDrawer()' style='display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.2);border:1px solid #7a5010;border-radius:10px;padding:7px 14px;color:#fff8e8;font-size:13px;cursor:pointer;font-family:DM Sans,sans-serif;width:fit-content' id='brujula-panel-volver'>← Volver</button>
       <div style='font-size:11px;color:rgba(26,8,0,0.45);letter-spacing:3px;font-family:serif'>✦ ✦ ✦</div>
     </div>
-
     <!-- Dos brújulas -->
     <div style='display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;flex:1'>
       <div style='background:rgba(0,0,0,0.15);border:1.5px solid #7a5010;border-radius:16px;padding:0.75rem 0.5rem;display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-shadow:inset 0 1px 0 rgba(255,220,120,0.1)'>
@@ -8253,51 +8252,63 @@ function initMapa() {
   if (window.matchMedia('(min-width:769px)').matches) {
     statusEl.classList.remove('visible');
   } else if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      function(pos) {
-        userLat = pos.coords.latitude; userLng = pos.coords.longitude;
-        statusEl.classList.remove('visible');
+    // ── Posición guardada: mostrar punto azul inmediatamente al arrancar ──
+    // Si hay una posición guardada de sesiones anteriores, la usamos de
+    // arranque para que el marcador aparezca al instante, incluso offline.
+    // El GPS real la actualiza en cuanto puede (watchPosition más abajo).
+    (function() {
+      try {
+        var saved = localStorage.getItem('_gps_last');
+        if (saved) {
+          var p = JSON.parse(saved);
+          if (p && p.lat && p.lng) {
+            userLat = p.lat; userLng = p.lng;
+            _lastKnownLat = p.lat; _lastKnownLng = p.lng;
+            if (window._userMarker) { try{ mapa.removeLayer(window._userMarker); }catch(e){} window._userMarker = null; }
+            window._userMarker = L.marker([userLat,userLng],{icon:iconoUsuario,zIndexOffset:1000}).addTo(mapa).bindPopup('<strong>'+(T[idiomaActual]||T.es).tuUbicacion+'</strong>');
+            mapa.setView([userLat, userLng], 15, {animate:false});
+            statusEl.classList.remove('visible');
+            calcularDistancias();
+          }
+        }
+      } catch(e) {}
+    })();
+
+    // ── watchPosition único: fuente de verdad para la posición ──
+    // maximumAge:60000 → acepta posiciones de hasta 1 min del SO (funciona offline).
+    // Cada posición válida se persiste en localStorage para el próximo arranque.
+    var _watchId = navigator.geolocation.watchPosition(function(pos) {
+      var lat = pos.coords.latitude, lng = pos.coords.longitude;
+      var esNuevo = !userLat;
+      userLat = lat; userLng = lng;
+      _lastKnownLat = lat; _lastKnownLng = lng;
+      // Persistir para el próximo arranque (clave del mecanismo offline)
+      try { localStorage.setItem('_gps_last', JSON.stringify({lat:lat,lng:lng})); } catch(e) {}
+      statusEl.classList.remove('visible');
+      if (esNuevo) {
+        // Primera posición real: actualizar título y crear/mover marcador
         var mt=document.getElementById('map-title');if(mt){mt.style.opacity='0';setTimeout(function(){mt.innerHTML=(T[idiomaActual]||T.es).mapTitle+" <svg width='22' height='30' viewBox='0 0 22 30' fill='none' xmlns='http://www.w3.org/2000/svg' style='animation:bounceDownArrow 1.4s ease-in-out infinite;flex-shrink:0;display:inline-block;vertical-align:middle;'><path d='M11 2 L11 22 M3 15 L11 24 L19 15' stroke='#dc2626' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/></svg>";mt.style.opacity='1';},300);}
         var ms=document.getElementById('map-subtitle');if(ms)ms.textContent=(T[idiomaActual]||T.es).mapSubtitle;
-  if (window._userMarker) { try{ mapa.removeLayer(window._userMarker); }catch(e){} window._userMarker = null; }
-  window._userMarker = L.marker([userLat,userLng],{icon:iconoUsuario,zIndexOffset:1000}).addTo(mapa).bindPopup('<strong>'+(T[idiomaActual]||T.es).tuUbicacion+'</strong>');
-        calcularDistancias();
-        cargarTiempo(userLat, userLng);
-      },
-      function() {
-        statusEl.innerHTML = (T[idiomaActual]||T.es).ubicNoDisp;
-        setTimeout(function(){statusEl.classList.remove('visible');},3000);
-      },
-      { enableHighAccuracy:true, timeout:15000, maximumAge:30000 }
-    );
-    // Fallback: watchPosition por si getCurrentPosition tarda demasiado
-    var _watchId = navigator.geolocation.watchPosition(function(pos) {
-      if (!userLat) {
-        userLat = pos.coords.latitude; userLng = pos.coords.longitude;
-  if (window._userMarker) { try{ mapa.removeLayer(window._userMarker); }catch(e){} window._userMarker = null; }
-  window._userMarker = L.marker([userLat,userLng],{icon:iconoUsuario,zIndexOffset:1000}).addTo(mapa).bindPopup('<strong>'+(T[idiomaActual]||T.es).tuUbicacion+'</strong>');
+        if (window._userMarker) { try{ mapa.removeLayer(window._userMarker); }catch(e){} window._userMarker = null; }
+        window._userMarker = L.marker([lat,lng],{icon:iconoUsuario,zIndexOffset:1000}).addTo(mapa).bindPopup('<strong>'+(T[idiomaActual]||T.es).tuUbicacion+'</strong>');
         radioKm = 1; aplicarRadio(1);
         calcularDistancias();
-        cargarTiempo(userLat, userLng);
+        cargarTiempo(lat, lng);
       } else {
-        // Ya tenemos posición, actualizar marcador y círculo SIN cambiar vista
-        userLat = pos.coords.latitude; userLng = pos.coords.longitude;
-        _lastKnownLat = userLat; _lastKnownLng = userLng;
-        if (window._albumCheckProximidad) window._albumCheckProximidad(userLat, userLng, pos.coords.accuracy);
+        // Actualización continua: mover marcador y círculo sin cambiar vista
+        if (window._albumCheckProximidad) window._albumCheckProximidad(lat, lng, pos.coords.accuracy);
         if (window._userMarker) {
-          window._userMarker.setLatLng([userLat, userLng]);
-          // Mantener icono correcto según estado
+          window._userMarker.setLatLng([lat, lng]);
           if (!window._orientacionActiva) window._userMarker.setIcon(crearIconoUsuario(null));
         }
-        // Redibujar círculo sin fitBounds
         if (circuloRadio) mapa.removeLayer(circuloRadio);
-        circuloRadio = L.circle([userLat, userLng], {
+        circuloRadio = L.circle([lat, lng], {
           radius: radioKm*1000, color:'#1D9E75', fillColor:'#1D9E75',
           fillOpacity:0.07, weight:2, dashArray:'6 4'
         }).addTo(mapa);
         calcularDistancias();
       }
-    }, _gpsErrorHandler, { enableHighAccuracy:true, maximumAge:300000 });
+    }, _gpsErrorHandler, { enableHighAccuracy:true, maximumAge:60000, timeout:30000 });
 
     // Escuchar orientación para rotar la flecha
     // Android — activar orientación directamente
@@ -8320,19 +8331,7 @@ function _gpsErrorHandler() {
   var lat = _lastKnownLat || (typeof userLat !== 'undefined' && userLat ? userLat : null);
   var lng = _lastKnownLng || (typeof userLng !== 'undefined' && userLng ? userLng : null);
   if (lat && lng) {
-    // Actualizar variables globales para que el resto del código tenga posición
-    if (!userLat) { userLat = lat; userLng = lng; }
     mapa.setView([lat, lng], 15, {animate: true});
-    // Crear o actualizar marcador del usuario con la última posición conocida
-    var icon = (typeof crearIconoUsuario === 'function') ? crearIconoUsuario(window._orientacionActiva ? (window._userHeading || null) : null) : (typeof iconoUsuario !== 'undefined' ? iconoUsuario : null);
-    if (icon) {
-      if (window._userMarker) {
-        window._userMarker.setLatLng([lat, lng]);
-      } else {
-        window._userMarker = L.marker([lat, lng], {icon: icon, zIndexOffset:1000}).addTo(mapa);
-        try { window._userMarker.bindPopup('<strong>' + ((T[idiomaActual]||T.es).tuUbicacion || 'Tu ubicación') + '</strong>'); } catch(e) {}
-      }
-    }
   }
 }
 
@@ -10172,26 +10171,15 @@ function activarNavegacionVoz() {
   if (typeof navigator!=='undefined' && navigator.onLine===false && (!_navPasosCache || _navPasosCache.length === 0)) {
     if (typeof dibujarLineaEstática==='function') dibujarLineaEstática();
     mostrarToast((T[idiomaActual]||T.es).navOfflineGuia||'Sin conexión: sigue la línea amarilla y las flechas hasta el punto violeta. Esa es tu guía offline.');
-    // Activar triángulo azul directamente, sin pasar por el toggle de pedirOrientacion
-    // (evita el conflicto: pedirOrientacion desactivaría si no hay _modoSeguimiento).
-    if (!window._orientacionActiva) {
-      function _doActivarOffline() {
-        window._orientacionActiva = true;
-        window.removeEventListener('deviceorientation', actualizarFlecha, true);
-        window.addEventListener('deviceorientation', actualizarFlecha, true);
-        var nb = document.getElementById('ruta-nav-orientacion');
-        if (nb) {
-          nb.style.background='#EFF6FF'; nb.style.border='2px solid #185FA5'; nb.style.color='#185FA5';
-          var ol = nb.querySelector('#nav-ori-offline'); if (ol) ol.style.display='none';
-          var lbl = nb.querySelector('#nav-ori-label'); if (lbl) lbl.textContent='Activada';
-        }
-      }
-      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission().then(function(s) {
-          if (s === 'granted') { window._orientacionConcedida = true; _doActivarOffline(); }
-        }).catch(function(){});
-      } else if (typeof DeviceOrientationEvent !== 'undefined') {
-        _doActivarOffline();
+    // Offline no hay turn-by-turn, pero sí podemos darte rumbo: activamos la
+    // brújula (triángulo azul sobre tu punto) lanzando el permiso de orientación
+    // DENTRO de este gesto del usuario (iOS lo exige). Solo si no estaba ya
+    // activa, para no apagarla con el propio toggle de pedirOrientacion().
+    if (!window._orientacionActiva){
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function' && window._orientacionConcedida !== true){
+        mostrarToast((T[idiomaActual]||T.es).navBrujulaActivar||'Pulsa 🧭 una vez (con conexión) para activar la brújula');
+      } else if (typeof pedirOrientacion==='function'){
+        pedirOrientacion();
       }
     }
     return;
