@@ -15450,6 +15450,12 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
       }
     }, function(err){
       console.warn('RutaOficial GPS error (pintar):', err);
+      // Fallback: usar la última posición conocida (viene del localStorage)
+      var lat = (typeof userLat!=='undefined' && userLat) ? userLat : null;
+      var lng = (typeof userLng!=='undefined' && userLng) ? userLng : null;
+      if(lat && lng && window.Selector && window.Selector.forzarDeteccion){
+        window.Selector.forzarDeteccion(lat, lng).catch(function(){});
+      }
     }, {enableHighAccuracy:true, maximumAge:30000, timeout:20000});
   }
 
@@ -15491,38 +15497,29 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
       });
     }, function(err){
       console.warn('RutaOficial GPS error:', err);
-      // Si el GPS tardó (timeout) o no hay posición nueva, intentar una última
-      // vez aceptando una posición reciente cacheada (offline el fix tarda más).
-      if(err && (err.code===3 || err.code===2) && navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(function(pos){
+      // Fallback directo: usar la posición ya conocida (localStorage → userLat/userLng).
+      // Evita que offline el modal nunca aparezca por fallo de GPS.
+      var fbLat = (typeof userLat!=='undefined' && userLat) ? userLat : null;
+      var fbLng = (typeof userLng!=='undefined' && userLng) ? userLng : null;
+      if(fbLat && fbLng && window.Selector && window.Selector.detectar){
+        window.Selector.detectar(fbLat, fbLng).then(function(res){
           if(!activo) return;
-          var lat=pos.coords.latitude, lng=pos.coords.longitude, acc=pos.coords.accuracy;
-          if(window.Selector && window.Selector.detectar){
-            window.Selector.detectar(lat, lng).then(function(res){
-              if(!res || res.distancia > DIST_MAX_CAMINO){
-                if(window.Desvio && window.Desvio.resetModal) window.Desvio.resetModal();
-                if(window.Desvio && window.Desvio.avisoFueraRuta) window.Desvio.avisoFueraRuta(res ? res.distancia : null);
-                return;
-              }
-              if(window.Desvio){
-                if(window.Desvio.cerrarModal) window.Desvio.cerrarModal();
-                if(!window._desvioVigilando){ window.Desvio.iniciarExterno(); window._desvioVigilando = true; }
-                window.Desvio.alimentar(lat, lng, acc);
-              }
-            }).catch(function(){
-              if(window.Desvio && window.Desvio.resetModal) window.Desvio.resetModal();
-              if(window.Desvio && window.Desvio.avisoFueraRuta) window.Desvio.avisoFueraRuta(null);
-            });
+          if(!res || res.distancia > DIST_MAX_CAMINO){
+            if(window.Desvio && window.Desvio.resetModal) window.Desvio.resetModal();
+            if(window.Desvio && window.Desvio.avisoFueraRuta) window.Desvio.avisoFueraRuta(res ? res.distancia : null);
+            return;
           }
-        }, function(){
-          if(typeof mostrarToast==='function') mostrarToast('El GPS tarda en responder. Inténtalo en un sitio despejado');
-        }, {enableHighAccuracy:false, maximumAge:120000, timeout:30000});
-        return;
-      }
-      if(typeof mostrarToast==='function'){
-        var msg = (err && err.code===1) ? 'Activa el permiso de ubicación para el modo Ruta Oficial'
-                : 'No consigo tu ubicación GPS';
-        mostrarToast(msg);
+          if(window.Desvio){
+            if(window.Desvio.cerrarModal) window.Desvio.cerrarModal();
+            if(!window._desvioVigilando){ window.Desvio.iniciarExterno(); window._desvioVigilando = true; }
+            window.Desvio.alimentar(fbLat, fbLng, 50);
+          }
+        }).catch(function(){
+          if(window.Desvio && window.Desvio.resetModal) window.Desvio.resetModal();
+          if(window.Desvio && window.Desvio.avisoFueraRuta) window.Desvio.avisoFueraRuta(null);
+        });
+      } else if(err && err.code===1 && typeof mostrarToast==='function'){
+        mostrarToast('Activa el permiso de ubicación para el modo Ruta Oficial');
       }
     }, {enableHighAccuracy:true, maximumAge:15000, timeout:25000});
   }
