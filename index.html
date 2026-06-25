@@ -2626,6 +2626,26 @@
     }
   };
 
+  // Sincroniza la UI del botón con el estado real de la variable `activa`.
+  // Se llama cada vez que se abre el drawer para que el botón refleje siempre
+  // el estado correcto aunque cambiarIdioma lo hubiera reseteado a "Activar".
+  window._sincronizarUIBrujula = function() {
+    var btn    = document.getElementById('btn-brujula');
+    var btnRef = document.getElementById('btn-refrescar-brujula');
+    var msg    = document.getElementById('msg-brujula');
+    if (!btn) return;
+    if (activa) {
+      btn.querySelector('#brujula-drawer-label').textContent = 'Desactivar';
+      var ol = btn.querySelector('#brujula-drawer-offline'); if (ol) ol.style.display = 'none';
+      if (btnRef) btnRef.style.display = 'inline-block';
+      if (msg && !msg.textContent) msg.textContent = '✅ Brújula activa';
+    } else {
+      btn.querySelector('#brujula-drawer-label').textContent = 'Activar';
+      var ol2 = btn.querySelector('#brujula-drawer-offline'); if (ol2) ol2.style.display = 'inline';
+      if (btnRef) btnRef.style.display = 'none';
+    }
+  };
+
   window.refrescarBrujula = function() {
     _lastHeading = null;
     if (navigator.geolocation) {
@@ -3526,6 +3546,8 @@ function _brujulaCascoTypewriter() {
 function abrirBrujulaDrawer() {
   _abrirSlide('brujula-drawer');
   cambiarIdioma(idiomaActual);
+  // Restaurar el estado real del botón tras el reseteo de cambiarIdioma
+  if (typeof window._sincronizarUIBrujula === 'function') window._sincronizarUIBrujula();
   // Lanzar el efecto typewriter del casco tras abrir el panel
   setTimeout(_brujulaCascoTypewriter, 350);
 }
@@ -12366,7 +12388,7 @@ function cambiarIdioma(lang){
   el=document.getElementById('btn-ranking-coleccion');if(el)el.textContent='🐚 '+(t.btnColeccion||'Colección');
   el=document.getElementById('tablero-vacio-txt');if(el)el.textContent=t.tablerovacioTxt||t.coleccionVacio||'Visita lugares del Camino para obtener cromos';
   el=document.getElementById('brujula-sub');if(el)el.textContent=t.brujulaSub||'Norte magnético y rumbo a Santiago';
-  el=document.getElementById('brujula-drawer-label');if(el)el.textContent=t.brujulaActivar||'Activar';
+  el=document.getElementById('brujula-drawer-label');if(el&&el.textContent!=='Desactivar')el.textContent=t.brujulaActivar||'Activar';
   el=document.getElementById('btn-refrescar-brujula');if(el&&el.style.display!=='none')el.textContent=t.brujulaRecalibrar||'↺ Recalibrar';
   // Panel Meteo
   el=document.getElementById('meteo-resumen-dia-label');if(el)el.textContent=t.meteoResumenDia||'Resumen del día';
