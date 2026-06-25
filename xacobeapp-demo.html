@@ -15932,11 +15932,11 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
     startDelay: 3000,
 
     // Tiempos base (ms). Pausados a propósito: acelera en la edición.
-    tLeer: 2600,     // tiempo para "leer" algo (descripción, etiqueta)
-    tPanel: 2000,    // vistazo a un panel
-    tCorto: 1200,    // gesto rápido
-    entre: 600,      // pausa entre acciones
-    tModal: 3000,    // esperar a un modal (completado, etc.)
+    tLeer: 3200,     // tiempo para "leer" algo (descripción, etiqueta)
+    tPanel: 2600,    // vistazo a un panel
+    tCorto: 1600,    // gesto rápido
+    entre: 900,      // pausa entre acciones
+    tModal: 3400,    // esperar a un modal (completado, etc.)
 
     // Localizaciones reales
     sarria:    [42.7774, -7.4148],
@@ -16003,6 +16003,21 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
       var m=document.getElementById(id); if(m) m.remove();
     });
   }
+
+  // Limpiar ruta SIN que salga el modal de confirmación
+  function limpiarRutaSilenciosa(){
+    try{
+      if(typeof window._ejecutarLimpiarRuta==='function'){ window._ejecutarLimpiarRuta(); return; }
+    }catch(e){}
+    // Plan B: vaciar rutaPuntos a mano y refrescar, sin tocar limpiarRuta()
+    try{ if(window.rutaPuntos){ window.rutaPuntos.length=0; } }catch(e){}
+    try{ if(typeof window.actualizarRuta==='function') window.actualizarRuta(); }catch(e){}
+    // Cerrar cualquier modal de confirmación que pudiera salir
+    ['modal-confirm-limpiar-simple','modal-confirm-limpiar'].forEach(function(id){
+      var m=document.getElementById(id); if(m) m.remove();
+    });
+  }
+
   function filtrar(cat){ try{ window._filtrarMapaCat && window._filtrarMapaCat(null, cat); }catch(e){} }
   function abrirFichaPoiPorId(id, cb){
     var p=null; try{ p=(window.PUNTOS||[]).find(function(x){return x.id===id;}); }catch(e){}
@@ -16061,7 +16076,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
   });
   escenas.push(function(next){            // añadir ese POI lejano a la ruta
     tapMapa(0.45); try{ window.addToRoute && window.addToRoute(CFG.poiLejos); }catch(e){}
-    setTimeout(function(){ try{ window.limpiarRuta && window.limpiarRuta(); }catch(e){} setTimeout(next, CFG.entre); }, CFG.tLeer);
+    setTimeout(function(){ try{ limpiarRutaSilenciosa(); }catch(e){} setTimeout(next, CFG.entre); }, CFG.tLeer);
   });
 
   // ───────── FLASH: previsión + algo de su descripción ─────────
@@ -16137,7 +16152,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
         // en cuanto saldría "ruta grabada", saltamos: cerramos cualquier modal
         setTimeout(function(){ cerrarTodo();
           var dd=document.getElementById('donaciones-drawer'); if(dd) dd.classList.remove('slide-in');
-          try{ window.limpiarRuta && window.limpiarRuta(); }catch(e){}
+          try{ limpiarRutaSilenciosa(); }catch(e){}
           setTimeout(next, CFG.entre);
         }, 900);
         return; }
@@ -16194,7 +16209,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
 
   // ───────── CIERRE: vuelve a Sarria, mapa limpio, se queda quieto ─────────
   escenas.push(function(next){
-    try{ window.limpiarRuta && window.limpiarRuta(); }catch(e){}
+    try{ limpiarRutaSilenciosa(); }catch(e){}
     cerrarTodo();
     situar(CFG.sarria, 13, function(){ /* fin: se queda quieto */ });
   });
@@ -16206,11 +16221,32 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
     })();
   }
 
+
+  /* ---- BLINDAJE DEMO: nada de cromos ni modales colándose ---- */
+  function blindar(){
+    // a) Anular el desbloqueo de cromos por proximidad (no molesta durante el demo)
+    try{ window._albumCheckProximidad = function(){}; }catch(e){}
+    // b) Cerrador automático: si se cuela CUALQUIER modal/aviso, lo cierra solo.
+    var IDS = ['modal-confirm-limpiar-simple','modal-confirm-limpiar','modal-pergamino',
+               'modal-ruta-oficial','modal-desvio','modal-notif-opciones','lupa-busqueda-modal',
+               'modal-descarga-sim','modal-add-poi','album-desbloqueo','modal-cromo','cromo-modal'];
+    setInterval(function(){
+      IDS.forEach(function(id){ var m=document.getElementById(id); if(m){ try{m.remove();}catch(e){} } });
+      // Cualquier overlay con id que contenga 'cromo' o 'desbloque' o 'pergamino'
+      var todos=document.querySelectorAll('[id*="cromo"],[id*="desbloque"],[id*="pergamino"],[id*="confirm-limpiar"]');
+      todos.forEach(function(el){ try{ el.remove(); }catch(e){} });
+      // Toasts que se queden pegados
+      var t=document.querySelectorAll('.toast,[class*="toast"]');
+      // (los toasts desaparecen solos; no los tocamos para no romper estilos)
+    }, 700);
+  }
+
   /* ---- Arranque ---- */
   function listo(){ return window.mapa && window.mapa.setView && typeof window.abrirHistoriaDrawer==='function'; }
   function init(){ ui();
     var n=0, iv=setInterval(function(){ n++;
       if(listo()){ clearInterval(iv);
+        blindar();
         situar(CFG.sarria, 13);
         setTimeout(correr, CFG.startDelay);
       } else if(n>60){ clearInterval(iv); setTimeout(correr, CFG.startDelay); }
