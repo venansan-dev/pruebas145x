@@ -15929,6 +15929,8 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
   var CFG = {
     fakeLat: 42.2406, fakeLng: -8.7207, accuracy: 12,
     zoom: 15, startDelay: 3000, loop: true,
+    narrativa: true,        // muestra los carteles de texto (historia en pantalla)
+
 
     // Ritmo de Reel (ms). Más bajo = más rápido y nervioso.
     holdCorto: 1500,   // vistazo rápido a un panel
@@ -15996,6 +15998,36 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
   }
   function tapMapa(){ ripXY(window.innerWidth*0.5, window.innerHeight*0.42); }
 
+
+  /* ---- Carteles de texto narrativos (subtítulos de impacto) ---- */
+  function uiSubs(){
+    var s=document.createElement('style');
+    s.textContent =
+      '#dSub{position:fixed;left:0;right:0;bottom:11%;z-index:2147483647;display:flex;'+
+      'justify-content:center;pointer-events:none;padding:0 22px}'+
+      '#dSub .box{background:linear-gradient(135deg,rgba(13,30,58,.92),rgba(30,58,110,.92));'+
+      'color:#fff;font-family:"Playfair Display",DM Sans,serif;font-weight:700;'+
+      'font-size:20px;line-height:1.35;text-align:center;padding:14px 20px;border-radius:16px;'+
+      'border:1px solid rgba(255,255,255,.18);box-shadow:0 8px 30px rgba(0,0,0,.45);'+
+      'max-width:90%;opacity:0;transform:translateY(12px);transition:opacity .5s,transform .5s}'+
+      '#dSub .box.on{opacity:1;transform:translateY(0)}'+
+      '#dSub .sm{font-family:DM Sans,sans-serif;font-weight:500;font-size:14px;'+
+      'color:rgba(255,255,255,.8);display:block;margin-top:4px}';
+    document.head.appendChild(s);
+    var wrap=document.createElement('div'); wrap.id='dSub';
+    var box=document.createElement('div'); box.className='box';
+    wrap.appendChild(box); document.body.appendChild(wrap);
+    return box;
+  }
+  var _subBox=null;
+  function say(texto, sub){
+    if(!CFG.narrativa) return;
+    if(!_subBox) _subBox=uiSubs();
+    _subBox.innerHTML = texto + (sub?('<span class="sm">'+sub+'</span>'):'');
+    _subBox.classList.add('on');
+  }
+  function hideSay(){ if(_subBox) _subBox.classList.remove('on'); }
+
   /* ---- Utilidades ---- */
   function call(fn){ if(fn&&typeof window[fn]==='function'){ try{ return window[fn](); }catch(e){} } }
   function cerrarTodo(){ call('cerrarTodosLosPaneles'); call('cerrarMenu');
@@ -16009,7 +16041,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
      ==================================================================== */
   var escenas = [];
 
-  // Vistazo a un panel: onda, abrir, esperar, cerrar
+  // Helper: vistazo a un panel con onda y, opcional, cartel de texto
   function clip(openFn, closeFn, btn, hold){
     return function(next){
       cerrarTodo();
@@ -16022,126 +16054,133 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
     };
   }
 
-  // ── Escena: ASISTENTE / buscador (se abre, se ve un instante, se cierra) ──
+  // ░░ ACTO 1 — APERTURA: presentar la app con alma ░░
   escenas.push(function(next){
     cerrarTodo();
-    tap('btn-asistente-mapa');
+    say('Cada Camino empieza con un paso.', 'Y una buena compañera.');
+    setTimeout(function(){ hideSay(); setTimeout(next, 400); }, 2600);
+  });
+
+  // El punto azul aparece: "estás aquí"
+  escenas.push(function(next){
+    say('Tu posición, siempre contigo.', 'Incluso sin cobertura.');
+    setPos(CFG.fakeLat, CFG.fakeLng);
+    try{ if(window.mapa) window.mapa.setView([CFG.fakeLat,CFG.fakeLng],15,{animate:true}); }catch(e){}
+    tapMapa();
+    setTimeout(function(){ hideSay(); setTimeout(next, 400); }, 2600);
+  });
+
+  // ░░ ACTO 2 — UTILIDAD: demostrar que sirve de verdad ░░
+
+  // Buscar / asistente
+  escenas.push(function(next){
+    say('¿Qué hay cerca de mí?', 'Pregunta. La app responde.');
+    cerrarTodo(); tap('btn-asistente-mapa');
     setTimeout(function(){ call('abrirBuscadorAsistente');
-      setTimeout(function(){
-        var lb=document.getElementById('lupa-busqueda-modal'); if(lb) lb.remove();
-        setTimeout(next, CFG.entreCortes);
+      setTimeout(function(){ var lb=document.getElementById('lupa-busqueda-modal'); if(lb) lb.remove();
+        hideSay(); setTimeout(next, CFG.entreCortes);
       }, CFG.holdMedio);
     }, 400);
   });
 
-  // ── Escena: CREAR UNA RUTA (puntos añadidos rápido, uno tras otro) ──
+  // Ver la información de un punto
   escenas.push(function(next){
-    cerrarTodo();
-    var ids=CFG.rutaIds.slice(), i=0;
-    (function add(){
-      if(i>=ids.length){ setTimeout(next, CFG.holdCorto); return; }
-      tapMapa();
-      try{ window.addToRoute && window.addToRoute(ids[i]); }catch(e){}
-      i++; setTimeout(add, 700);
-    })();
-  });
-
-  // ── Escena: ETAPAS DE UN CAMINO en el mapa (Francés) ──
-  escenas.push(function(next){
-    cerrarTodo();
-    try{ window.limpiarRuta && window.limpiarRuta(); }catch(e){}
-    tapMapa();
-    try{ window._filtrarMapaCat && window._filtrarMapaCat(null, CFG.caminoEtapas); }catch(e){}
-    // Acercar un poco para que se vea la ristra de etapas
-    try{ if(window.mapa) window.mapa.setZoom(11); }catch(e){}
-    setTimeout(function(){
-      try{ window._filtrarMapaCat && window._filtrarMapaCat(null, ''); }catch(e){} // volver a todo
-      try{ if(window.mapa) window.mapa.setView([P.lat,P.lng],CFG.zoom); }catch(e){}
-      setTimeout(next, CFG.entreCortes);
-    }, CFG.holdMedio);
-  });
-
-  // ── Escena: VER INFORMACIÓN DE UN PUNTO (centra y abre su ficha) ──
-  escenas.push(function(next){
+    say('774 puntos con historia.', 'No solo dónde: por qué importa.');
     cerrarTodo();
     var p=CFG.puntoInfo;
     try{ if(window.mapa) window.mapa.setView([p.lat,p.lng],16,{animate:true}); }catch(e){}
-    setTimeout(function(){
-      tapMapa();
+    setTimeout(function(){ tapMapa();
       try{ if(window.mapa) window.mapa.eachLayer(function(layer){
         if(layer.getLatLng && layer._popup){ var ll=layer.getLatLng();
-          if(Math.abs(ll.lat-p.lat)<0.0004 && Math.abs(ll.lng-p.lng)<0.0004) layer.openPopup();
-        }
+          if(Math.abs(ll.lat-p.lat)<0.0004 && Math.abs(ll.lng-p.lng)<0.0004) layer.openPopup(); }
       }); }catch(e){}
-      setTimeout(function(){
-        try{ if(window.mapa) window.mapa.closePopup(); }catch(e){}
+      setTimeout(function(){ try{ if(window.mapa) window.mapa.closePopup(); }catch(e){}
         try{ if(window.mapa) window.mapa.setView([P.lat,P.lng],CFG.zoom); }catch(e){}
-        setTimeout(next, CFG.entreCortes);
+        hideSay(); setTimeout(next, CFG.entreCortes);
       }, CFG.holdMedio);
     }, 500);
   });
 
-  // ── Escena: BRÚJULA ──
-  escenas.push(clip('abrirBrujulaDrawer','cerrarBrujulaDrawer','btn-brujula-mapa', CFG.holdCorto));
-
-  // ── Escena: METEO ──
-  escenas.push(clip('abrirMeteoDrawer','cerrarMeteoDrawer','btn-meteo-mapa', CFG.holdCorto));
-
-  // ── Escena: HISTORIA (vistazo) ──
-  escenas.push(clip('abrirHistoriaDrawer','cerrarHistoriaDrawer', null, CFG.holdMedio));
-
-  // ── Escena: PUNTOS DE INTERÉS (drawer) ──
-  escenas.push(clip('abrirPoiDrawer','cerrarPoiDrawer','btn-poi-drawer-mapa', CFG.holdCorto));
-
-  // ── Escena: RANKING / ÁLBUM ──
+  // Crear una ruta
   escenas.push(function(next){
+    say('Diseña tu jornada.', 'Punto a punto, a tu ritmo.');
     cerrarTodo();
-    setTimeout(function(){ call('abrirAlbumPanel');
-      setTimeout(function(){ call('cerrarAlbumPanel'); cerrarTodo();
-        setTimeout(next, CFG.entreCortes);
-      }, CFG.holdCorto);
-    }, 350);
+    var ids=CFG.rutaIds.slice(), i=0;
+    (function add(){ if(i>=ids.length){ hideSay(); setTimeout(next, CFG.holdCorto); return; }
+      tapMapa(); try{ window.addToRoute && window.addToRoute(ids[i]); }catch(e){}
+      i++; setTimeout(add, 650);
+    })();
   });
 
-  // ── Escena: SOS ──
-  escenas.push(clip('abrirSOSDrawer','cerrarSOSDrawer','btn-sos-mapa', CFG.holdCorto));
-
-  // ── Escena: RUTA OFICIAL (activar, ver cartel, pintar, desactivar) ──
+  // Todas las etapas de un camino
   escenas.push(function(next){
+    say('Todos los Caminos. Todas las etapas.', 'Trazados oficiales del CNIG.');
     cerrarTodo();
-    tap('btn-ruta-oficial');
-    setTimeout(function(){
-      try{ if(window.RutaOficial&&window.RutaOficial.activar) window.RutaOficial.activar(); }catch(e){}
+    try{ window.limpiarRuta && window.limpiarRuta(); }catch(e){}
+    tapMapa();
+    try{ window._filtrarMapaCat && window._filtrarMapaCat(null, CFG.caminoEtapas); }catch(e){}
+    try{ if(window.mapa) window.mapa.setZoom(11); }catch(e){}
+    setTimeout(function(){ try{ window._filtrarMapaCat && window._filtrarMapaCat(null, ''); }catch(e){}
+      try{ if(window.mapa) window.mapa.setView([P.lat,P.lng],CFG.zoom); }catch(e){}
+      hideSay(); setTimeout(next, CFG.entreCortes);
+    }, CFG.holdMedio+400);
+  });
+
+  // Ruta Oficial — el corazón de la app
+  escenas.push(function(next){
+    say('Modo Ruta Oficial.', 'Si te desvías, te avisa.');
+    cerrarTodo(); tap('btn-ruta-oficial');
+    setTimeout(function(){ try{ if(window.RutaOficial&&window.RutaOficial.activar) window.RutaOficial.activar(); }catch(e){}
       setTimeout(function(){ var m=document.getElementById('modal-ruta-oficial'); if(m) m.remove(); }, CFG.holdMedio);
-      setTimeout(function(){
-        try{ if(window.RutaOficial&&window.RutaOficial.desactivar) window.RutaOficial.desactivar(); }catch(e){}
-        setTimeout(function(){
-          var m2=document.getElementById('modal-ruta-oficial'); if(m2) m2.remove();
-          var md=document.getElementById('modal-desvio'); if(md) md.remove();
-          next();
+      setTimeout(function(){ try{ if(window.RutaOficial&&window.RutaOficial.desactivar) window.RutaOficial.desactivar(); }catch(e){}
+        setTimeout(function(){ var m2=document.getElementById('modal-ruta-oficial'); if(m2) m2.remove();
+          var md=document.getElementById('modal-desvio'); if(md) md.remove(); hideSay(); next();
         }, 1200);
       }, CFG.holdMedio+2200);
     }, 400);
   });
 
-  // ── Escena: CAMINAR el punto azul ──
+  // Caminar el punto azul
   escenas.push(function(next){
+    say('Y tú, solo camina.', 'Ella se encarga del resto.');
     var pts=CFG.walkRoute, i=0;
-    (function st(){ if(i>=pts.length){ setTimeout(next, 700); return; }
+    (function st(){ if(i>=pts.length){ hideSay(); setTimeout(next, 700); return; }
       setPos(pts[i][0],pts[i][1]);
       try{ if(window.mapa&&window.mapa.panTo) window.mapa.panTo(pts[i]); }catch(e){}
       i++; setTimeout(st, CFG.walkStepMs);
     })();
   });
 
-  // ── Cierre: limpiar para repetir ──
+  // Pinceladas rápidas: brújula, meteo, historia (montaje veloz)
+  escenas.push(function(next){ say('Brújula.', null);
+    clip('abrirBrujulaDrawer','cerrarBrujulaDrawer','btn-brujula-mapa', CFG.holdCorto)(function(){ hideSay(); next(); }); });
+  escenas.push(function(next){ say('El tiempo, ahora.', null);
+    clip('abrirMeteoDrawer','cerrarMeteoDrawer','btn-meteo-mapa', CFG.holdCorto)(function(){ hideSay(); next(); }); });
+  escenas.push(function(next){ say('Historia Xacobea.', null);
+    clip('abrirHistoriaDrawer','cerrarHistoriaDrawer', null, CFG.holdMedio)(function(){ hideSay(); next(); }); });
+  escenas.push(function(next){ say('Tu colección de peregrino.', 'Cromos que se ganan caminando.');
+    cerrarTodo(); setTimeout(function(){ call('abrirAlbumPanel');
+      setTimeout(function(){ call('cerrarAlbumPanel'); cerrarTodo(); hideSay(); setTimeout(next, CFG.entreCortes); }, CFG.holdCorto);
+    }, 350); });
+  escenas.push(function(next){ say('Emergencias, a un toque.', null);
+    clip('abrirSOSDrawer','cerrarSOSDrawer','btn-sos-mapa', CFG.holdCorto)(function(){ hideSay(); next(); }); });
+
+  // ░░ ACTO 3 — CIERRE: el lema, la firma ░░
   escenas.push(function(next){
-    try{ window.limpiarRuta && window.limpiarRuta(); }catch(e){}
     cerrarTodo();
-    setPos(CFG.fakeLat, CFG.fakeLng);
-    try{ if(window.mapa) window.mapa.setView([CFG.fakeLat,CFG.fakeLng],CFG.zoom); }catch(e){}
-    setTimeout(next, 900);
+    say('No mejoramos tu Camino.', 'Pero lo haremos más seguro e inmersivo.');
+    setTimeout(function(){ hideSay(); setTimeout(next, 500); }, 3200);
   });
+  escenas.push(function(next){
+    say('Xacobeapp', 'Gratuita · Sin publicidad · Offline');
+    setTimeout(function(){ hideSay();
+      try{ window.limpiarRuta && window.limpiarRuta(); }catch(e){}
+      cerrarTodo(); setPos(CFG.fakeLat, CFG.fakeLng);
+      try{ if(window.mapa) window.mapa.setView([CFG.fakeLat,CFG.fakeLng],CFG.zoom); }catch(e){}
+      setTimeout(next, 600);
+    }, 3000);
+  });
+
 
   /* ---- Motor ---- */
   function correr(){ var k=0;
