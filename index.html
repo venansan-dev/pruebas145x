@@ -1678,8 +1678,8 @@
   <!-- Panel radio en mapa (columna derecha bajo +punto) -->
   <!-- Ruta oficial: arriba del todo (columna derecha) -->
   <button id='btn-ruta-oficial' onclick='if(window.RutaOficial)RutaOficial.toggle()' style='position:absolute;top:8px;right:10px;z-index:400;background:#C25FB0;border:1px solid #a84f98;border-radius:16px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.12);white-space:nowrap;transition:all 0.15s' title='Vigila que sigas el trazado oficial del Camino'>🗺️ Ruta oficial</button>
-  <!-- Panel radio (solo km) — bajo Ruta oficial -->
-  <div id='map-radio-control' style='display:flex;position:absolute;top:54px;right:10px;z-index:400;flex-direction:column;align-items:flex-end;gap:4px;font-family:DM Sans,sans-serif'>
+  <!-- Panel radio (solo km) — equilibrado entre Ruta oficial y el casco -->
+  <div id='map-radio-control' style='display:flex;position:absolute;top:86px;right:10px;z-index:400;flex-direction:column;align-items:flex-end;gap:4px;font-family:DM Sans,sans-serif'>
     <div class='map-radio-btn active' data-km='1' onclick='cambiarRadio(1,this)' style='background:#1a4a9e;color:#f5e6c8;border:1.5px solid #2a5aae;border-radius:8px;padding:4px 6px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;box-shadow:0 4px 14px rgba(26,74,158,0.4),0 1px 3px rgba(0,0,0,0.18);min-width:40px'>1 km</div>
     <div class='map-radio-btn' data-km='2' onclick='cambiarRadio(2,this)' style='background:rgba(255,245,210,0.9);color:#3d2000;border:1.5px solid #a07828;border-radius:8px;padding:4px 6px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.2),0 1px 3px rgba(0,0,0,0.12);min-width:40px'>2 km</div>
     <div class='map-radio-btn' data-km='3' onclick='cambiarRadio(3,this)' style='background:rgba(255,245,210,0.9);color:#3d2000;border:1.5px solid #a07828;border-radius:8px;padding:4px 6px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.2),0 1px 3px rgba(0,0,0,0.12);min-width:40px'>3 km</div>
@@ -9837,6 +9837,19 @@ function _sincMarcadoresRuta() {
   if (window._cluster && typeof window._cluster.refreshClusters === 'function') {
     try { window._cluster.refreshClusters(); } catch(e){}
   }
+  // Al repintar todos los POI, el filtro real pasa a ser "Todos": sincronizar
+  // el chip activo del carrusel para que el color no se quede en el filtro previo.
+  var _chipTodos = document.getElementById('chip-mapa-todos');
+  if (_chipTodos) {
+    document.querySelectorAll('#mapa-cat-bar .mapa-cat-chip').forEach(function(b){
+      var activo = b === _chipTodos;
+      b.style.background = activo ? 'linear-gradient(135deg,#2d4a1e,#1e3212)' : 'rgba(255,245,210,0.85)';
+      b.style.color = activo ? '#f5e6c8' : '#3d2000';
+      b.style.borderColor = activo ? '#1a2e0f' : '#a07828';
+      b.style.fontWeight = activo ? '600' : '500';
+      b.style.boxShadow = activo ? '0 1px 4px rgba(0,0,0,0.3)' : 'none';
+    });
+  }
 }
 
 function actualizarRuta() {
@@ -12912,14 +12925,14 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2011";
+var _APP_VERSION = "v2012";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
   // Limpiar cachés de versiones anteriores (solo las antiguas, nunca las activas)
-  var CACHES_ACTIVAS = ['guia-compostelana-v2011', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
+  var CACHES_ACTIVAS = ['guia-compostelana-v2012', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
   if (window.caches) {
     caches.keys().then(function(keys) {
       keys.forEach(function(key) {
