@@ -10170,14 +10170,14 @@ function activarNavegacionVoz() {
   // pausamos Ruta Oficial, así el estado queda limpio.
   if (typeof navigator!=='undefined' && navigator.onLine===false && (!_navPasosCache || _navPasosCache.length === 0)) {
     if (typeof dibujarLineaEstática==='function') dibujarLineaEstática();
-    mostrarToast((T[idiomaActual]||T.es).navOfflineGuia||'Sin conexión: sigue la línea amarilla y las flechas hasta el punto violeta. Esa es tu guía offline.');
+    mostrarToast((T[idiomaActual]||T.es).navOfflineGuia||'Modo sin conexión · sigue la línea para alcanzar el destino');
     // Offline no hay turn-by-turn, pero sí podemos darte rumbo: activamos la
     // brújula (triángulo azul sobre tu punto) lanzando el permiso de orientación
     // DENTRO de este gesto del usuario (iOS lo exige). Solo si no estaba ya
     // activa, para no apagarla con el propio toggle de pedirOrientacion().
     if (!window._orientacionActiva){
       if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function' && window._orientacionConcedida !== true){
-        mostrarToast((T[idiomaActual]||T.es).navBrujulaActivar||'Pulsa 🧭 una vez (con conexión) para activar la brújula');
+        mostrarToast((T[idiomaActual]||T.es).navBrujulaActivar||'Modo sin conexión · sigue la línea para alcanzar el destino');
       } else if (typeof pedirOrientacion==='function'){
         pedirOrientacion();
       }
@@ -10311,7 +10311,7 @@ function activarNavegacionVoz() {
         window._rutaOficialPausada = false;
         var _bcN = document.getElementById('btn-asistente-mapa'); if (_bcN) _bcN.style.display = 'flex';
         if (typeof dibujarLineaEstática==='function') dibujarLineaEstática();
-        mostrarToast((T[idiomaActual]||T.es).navOfflineGuia||'Sin conexión: sigue la línea amarilla y las flechas hasta el punto violeta. Esa es tu guía offline.');
+        mostrarToast((T[idiomaActual]||T.es).navOfflineGuia||'Modo sin conexión · sigue la línea para alcanzar el destino');
         return;
       }
       fetch(navEps[i]).then(function(r){ return r.json(); }).then(function(data) {
@@ -11071,8 +11071,8 @@ var T={
     navVozIniciada:'Navegación por voz activada.',
     navAnnadePunto:'Añade al menos 1 punto a la ruta',
     navCalcRuta:'🔄 Calculando ruta...',
-    navOfflineGuia:'Sin conexión: sigue la línea amarilla y las flechas hasta el punto violeta. Esa es tu guía offline.',
-    navBrujulaActivar:'Pulsa 🧭 una vez (con conexión) para activar la brújula',
+    navOfflineGuia:'Modo sin conexión · sigue la línea para alcanzar el destino',
+    navBrujulaActivar:'Modo sin conexión · sigue la línea para alcanzar el destino',
     navRecalcRuta:'🔄 Recalculando ruta...',
     navRecalculada:'Ruta recalculada.',
     navActiva:'🎙️ Navegación por voz activa',
@@ -11475,8 +11475,8 @@ var T={
     navVozIniciada:'Navegación por voz activada.',
     navAnnadePunto:'Engade polo menos 1 punto á ruta',
     navCalcRuta:'🔄 Calculando ruta...',
-    navOfflineGuia:'Sen conexión: segue a liña amarela e as frechas ata o punto violeta. Esa é a túa guía offline.',
-    navBrujulaActivar:'Preme 🧭 unha vez (con conexión) para activar a brúxula',
+    navOfflineGuia:'Modo sen conexión · segue a liña para alcanzar o destino',
+    navBrujulaActivar:'Modo sen conexión · segue a liña para alcanzar o destino',
     navRecalcRuta:'🔄 Recalculando ruta...',
     navRecalculada:'Ruta recalculada.',
     navActiva:'🎙️ Navegación por voz activa',
@@ -11769,8 +11769,8 @@ var T={
     navVozIniciada:'Voice navigation activated.',
     navAnnadePunto:'Add at least 1 point to the route',
     navCalcRuta:'🔄 Calculating route...',
-    navOfflineGuia:'Offline: follow the yellow line and the arrows to the violet pin. That is your offline guide.',
-    navBrujulaActivar:'Tap 🧭 once (while online) to enable the compass',
+    navOfflineGuia:'Offline mode · follow the line to reach your destination',
+    navBrujulaActivar:'Offline mode · follow the line to reach your destination',
     navRecalcRuta:'🔄 Recalculating route...',
     navRecalculada:'Route recalculated.',
     navActiva:'🎙️ Voice navigation active',
