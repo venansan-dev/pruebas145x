@@ -3507,6 +3507,29 @@ function _renderAlbumRecuerdos(grid, vacioCont) {
   });
 }
 
+// ── Cadencia compartida del dictado del casco ───────────────────────────
+// Micro-pausas tras la puntuación para que el texto "respire" y no corra.
+// La usan TODOS los typewriters del asistente (brújula, panel, pergamino),
+// de modo que el ritmo es idéntico en toda la app.
+function _cascoPausa(ch) {
+  if (ch === '\n') return 520;                                                 // párrafo: respiro
+  if (ch === '.' || ch === '!' || ch === '?' || ch === '\u2026') return 360;   // fin de frase
+  if (ch === ',' || ch === ';' || ch === ':') return 180;                      // inciso
+  return 0;
+}
+// Cabeceo del casco sincronizado letra a letra: una leve inclinación por
+// carácter escrito y reposo (recto) en las pausas de puntuación, espacios y
+// al terminar. Así el casco "habla" al ritmo exacto del texto.
+function _cascoBob(img, activo) {
+  if (!img) return;
+  if (activo) {
+    img._bobT = !img._bobT;
+    img.style.transform = img._bobT ? 'rotate(-4deg)' : 'rotate(3deg) translateY(-2px)';
+  } else {
+    img.style.transform = 'rotate(0deg)';
+  }
+}
+
 // Efecto typewriter para el casco asistente de la brújula: escribe el aviso
 // letra a letra, anima el casco y reproduce su sonido, igual que el asistente.
 function _brujulaCascoTypewriter() {
@@ -3525,8 +3548,8 @@ function _brujulaCascoTypewriter() {
     document.head.appendChild(stG);
   }
   // Cancelar cualquier typewriter previo de este casco
-  if (window._brujulaTwTimer) { clearInterval(window._brujulaTwTimer); window._brujulaTwTimer = null; }
-  var i = 0, speed = 34;
+  if (window._brujulaTwTimer) { clearTimeout(window._brujulaTwTimer); window._brujulaTwTimer = null; }
+  var i = 0, base = 46;
   function _render() {
     var vis  = text.slice(0, i);
     var hide = text.slice(i);
@@ -3534,21 +3557,32 @@ function _brujulaCascoTypewriter() {
                  + (hide ? '<span style="visibility:hidden">' + hide.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>' : '');
   }
   _render();
-  // Activar animación y sonido del casco mientras escribe
-  if (img) img.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
-  if (window._cascoSonido) { try{ window._cascoSonido(text.length * speed); }catch(e){} }
-  window._brujulaTwTimer = setInterval(function() {
-    if (i < text.length) {
-      i++;
-      _render();
-      if (text[i-1] !== ' ' && window._cascoTick) window._cascoTick();
-    } else {
-      clearInterval(window._brujulaTwTimer); window._brujulaTwTimer = null;
+  // Casco: cabeceo letra a letra en vez de pulso constante → sincronizado
+  if (img) { img.style.animation = 'none'; img.style.transition = 'transform 0.09s ease-out'; }
+  // Sonido armado para la duración real (pausas incluidas), para no desincronizar
+  if (window._cascoSonido) {
+    try {
+      var _dur = 0; for (var _c=0;_c<text.length;_c++){ _dur += base + _cascoPausa(text[_c]); }
+      window._cascoSonido(_dur/1000 + 0.2);
+    } catch(e){}
+  }
+  function _paso() {
+    if (i >= text.length) {
+      window._brujulaTwTimer = null;
       el.innerHTML = html; // restaurar con <strong> y formato
-      if (img) img.style.animation = 'none'; // el casco se detiene al acabar, como el asistente
+      _cascoBob(img, false); // el casco se detiene recto al acabar
       if (window._cascoSonidoStop) { try{ window._cascoSonidoStop(); }catch(e){} }
+      return;
     }
-  }, speed);
+    i++;
+    _render();
+    var ch = text[i-1];
+    if (ch !== ' ' && window._cascoTick) window._cascoTick();
+    var pausa = _cascoPausa(ch);
+    _cascoBob(img, pausa === 0 && ch !== ' ');
+    window._brujulaTwTimer = setTimeout(_paso, base + pausa);
+  }
+  window._brujulaTwTimer = setTimeout(_paso, base);
 }
 
 function abrirBrujulaDrawer() {
@@ -4752,8 +4786,10 @@ function abrirHeroModal() {
   // para que el sonido dure exactamente lo mismo y no se desincronice.
   function _cascoDur(texto, speed) {
     var plano = String(texto || '').replace(/<[^>]+>/g, '');
-    var ms = plano.length * (speed || 28);
-    return Math.max(0.3, ms / 1000 + 0.1); // pequeño margen de cola
+    var base = Math.max(speed || 34, 42);
+    var ms = 0;
+    for (var k = 0; k < plano.length; k++) { ms += base + _cascoPausa(plano[k]); }
+    return Math.max(0.3, ms / 1000 + 0.15); // pequeño margen de cola
   }
   window._cascoDur = _cascoDur;
 
@@ -4774,7 +4810,7 @@ function abrirHeroModal() {
       img.style.animation = 'none';
       _cascoSonidoStop();
       if (onDone) onDone(img);
-    });
+    }, img);
     return { img: img, txt: txt, wrap: wrap };
   }
 
@@ -5023,8 +5059,11 @@ function abrirHeroModal() {
   }
 
   // Typewriter helper
-  function _typewriter(el, html, speed, onDone) {
+  function _typewriter(el, html, speed, onDone, cascoImg) {
     var text = html.replace(/<[^>]+>/g, '');
+    // Suelo de velocidad: aunque pidan 28-35 ms/carácter, el dictado no baja
+    // de ~42 ms para que no "corra"; mismas micro-pausas que el resto del app.
+    var base = Math.max(speed || 34, 42);
     var i = 0;
     // Technique: render full text in-flow from start.
     // Visible chars = normal color, remaining = transparent.
@@ -5036,18 +5075,24 @@ function abrirHeroModal() {
                    + (hide ? '<span style="visibility:hidden">' + hide.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>' : '');
     }
     _render();
-    var cursor = setInterval(function() {
+    // Casco: cabeceo sincronizado letra a letra (sustituye al pulso constante)
+    if (cascoImg) { cascoImg.style.animation = 'none'; cascoImg.style.transition = 'transform 0.09s ease-out'; }
+    function _paso() {
       if (i < text.length) {
         i++;
         _render();
-        if (text[i-1] !== ' ' && window._cascoTick) window._cascoTick();
+        var ch = text[i-1];
+        if (ch !== ' ' && window._cascoTick) window._cascoTick();
+        var pausa = _cascoPausa(ch);
+        if (cascoImg) _cascoBob(cascoImg, pausa === 0 && ch !== ' ');
+        setTimeout(_paso, base + pausa);
       } else {
-        clearInterval(cursor);
         el.innerHTML = html;
+        if (cascoImg) _cascoBob(cascoImg, false);
         if (onDone) onDone();
       }
-    }, speed || 28);
-    return cursor;
+    }
+    setTimeout(_paso, base);
   }
 
   // Encadena typewriters activando/parando el casco en cada párrafo.
@@ -5066,16 +5111,15 @@ function abrirHeroModal() {
     var el = par[0], html = par[1], speed = par[2] || 32, cont = par[3];
     // Insertar el elemento justo antes de escribirlo
     if (cont && el.parentNode !== cont) cont.appendChild(el);
-    // Activar casco
-    if (cascoImg) cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
+    // Casco: cabeceo sincronizado letra a letra (lo gestiona _typewriter)
     _cascoSonido(_cascoDur(html, speed));
     _typewriter(el, html, speed, function() {
       // Parar casco al terminar este párrafo
       if (cascoImg) cascoImg.style.animation = 'none';
       _cascoSonidoStop();
       // Pequeña pausa antes del siguiente
-      setTimeout(function() { _twSeq(rest, cascoImg, onDone); }, 120);
-    });
+      setTimeout(function() { _twSeq(rest, cascoImg, onDone); }, 160);
+    }, cascoImg);
   }
 
   // ── PASO 1: Saludo + bifurcación según estado de ruta ───────────
@@ -5235,10 +5279,10 @@ function abrirHeroModal() {
               
             });
           } // fin else cercanos
-          }); // fin _typewriter subCtx
+          }, cascoImg); // fin _typewriter subCtx
         }, 120); // fin setTimeout
       }); // fin _subtituloContextual callback
-    }); // fin _typewriter saludo
+    }, cascoImg); // fin _typewriter saludo
   }
 
   // ── SUGERENCIAS: cuando el usuario dice "ahora no" ───────────────
@@ -9466,10 +9510,12 @@ function _modalPergamino(config) {
                    + (hide ? '<span style="visibility:hidden">' + hide.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>' : '');
     }
     _rg();
-    cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
+    // Casco: cabeceo sincronizado letra a letra (sustituye al pulso constante)
+    if (cascoImg) { cascoImg.style.animation = 'none'; cascoImg.style.transition = 'transform 0.09s ease-out'; }
     if (window._cascoSonido) _cascoSonido(_durCad(text, base));
     function _fin() {
       el.innerHTML = html;
+      if (cascoImg) _cascoBob(cascoImg, false);
       cascoImg.style.animation = 'none';
       if (window._cascoSonidoStop) _cascoSonidoStop();
       if (onDone) onDone();
@@ -9479,7 +9525,9 @@ function _modalPergamino(config) {
       i++; _rg();
       var ch = text[i-1];
       if (ch !== ' ' && ch !== '\n' && window._cascoTick) window._cascoTick();
-      setTimeout(_paso, base + _pausaCad(ch));
+      var _pz = _pausaCad(ch);
+      if (cascoImg) _cascoBob(cascoImg, _pz === 0 && ch !== ' ' && ch !== '\n');
+      setTimeout(_paso, base + _pz);
     }
     setTimeout(_paso, base);
   }
@@ -13001,7 +13049,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2031";
+var _APP_VERSION = "v2032";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
