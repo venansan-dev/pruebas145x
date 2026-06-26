@@ -3517,16 +3517,26 @@ function _cascoPausa(ch) {
   if (ch === ',' || ch === ';' || ch === ':') return 180;                      // inciso
   return 0;
 }
-// Cabeceo del casco sincronizado letra a letra: una leve inclinación por
-// carácter escrito y reposo (recto) en las pausas de puntuación, espacios y
-// al terminar. Así el casco "habla" al ritmo exacto del texto.
+// Cabeceo del casco sincronizado con el dictado. En vez de sacudir el casco
+// letra a letra (lo que producía un temblor de campana), corre UNA animación
+// de cabeceo suave y continua mientras se escribe, y la PAUSA en las pausas de
+// puntuación y al terminar. Así el casco "habla" con un balanceo natural y se
+// detiene en comas y puntos, sin vibrar.
 function _cascoBob(img, activo) {
   if (!img) return;
   if (activo) {
-    img._bobT = !img._bobT;
-    img.style.transform = img._bobT ? 'rotate(-4deg)' : 'rotate(3deg) translateY(-2px)';
+    if (!document.getElementById('_casc-nod-style')) {
+      var s = document.createElement('style');
+      s.id = '_casc-nod-style';
+      s.textContent = '@keyframes _casc-nod{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-2px) rotate(1.5deg)}}';
+      document.head.appendChild(s);
+    }
+    if (img.style.animationName !== '_casc-nod') {
+      img.style.animation = '_casc-nod 0.9s ease-in-out infinite';
+    }
+    img.style.animationPlayState = 'running';
   } else {
-    img.style.transform = 'rotate(0deg)';
+    img.style.animationPlayState = 'paused';
   }
 }
 
@@ -3570,7 +3580,8 @@ function _brujulaCascoTypewriter() {
     if (i >= text.length) {
       window._brujulaTwTimer = null;
       el.innerHTML = html; // restaurar con <strong> y formato
-      _cascoBob(img, false); // el casco se detiene recto al acabar
+      _cascoBob(img, false);
+      if (img) { img.style.animation = 'none'; img.style.transform = ''; } // casco recto al acabar
       if (window._cascoSonidoStop) { try{ window._cascoSonidoStop(); }catch(e){} }
       return;
     }
@@ -3579,7 +3590,7 @@ function _brujulaCascoTypewriter() {
     var ch = text[i-1];
     if (ch !== ' ' && window._cascoTick) window._cascoTick();
     var pausa = _cascoPausa(ch);
-    _cascoBob(img, pausa === 0 && ch !== ' ');
+    _cascoBob(img, pausa === 0);
     window._brujulaTwTimer = setTimeout(_paso, base + pausa);
   }
   window._brujulaTwTimer = setTimeout(_paso, base);
@@ -5084,11 +5095,11 @@ function abrirHeroModal() {
         var ch = text[i-1];
         if (ch !== ' ' && window._cascoTick) window._cascoTick();
         var pausa = _cascoPausa(ch);
-        if (cascoImg) _cascoBob(cascoImg, pausa === 0 && ch !== ' ');
+        if (cascoImg) _cascoBob(cascoImg, pausa === 0);
         setTimeout(_paso, base + pausa);
       } else {
         el.innerHTML = html;
-        if (cascoImg) _cascoBob(cascoImg, false);
+        if (cascoImg) { _cascoBob(cascoImg, false); cascoImg.style.animation = 'none'; cascoImg.style.transform = ''; }
         if (onDone) onDone();
       }
     }
@@ -9515,8 +9526,7 @@ function _modalPergamino(config) {
     if (window._cascoSonido) _cascoSonido(_durCad(text, base));
     function _fin() {
       el.innerHTML = html;
-      if (cascoImg) _cascoBob(cascoImg, false);
-      cascoImg.style.animation = 'none';
+      if (cascoImg) { _cascoBob(cascoImg, false); cascoImg.style.animation = 'none'; cascoImg.style.transform = ''; }
       if (window._cascoSonidoStop) _cascoSonidoStop();
       if (onDone) onDone();
     }
@@ -9526,7 +9536,7 @@ function _modalPergamino(config) {
       var ch = text[i-1];
       if (ch !== ' ' && ch !== '\n' && window._cascoTick) window._cascoTick();
       var _pz = _pausaCad(ch);
-      if (cascoImg) _cascoBob(cascoImg, _pz === 0 && ch !== ' ' && ch !== '\n');
+      if (cascoImg) _cascoBob(cascoImg, _pz === 0);
       setTimeout(_paso, base + _pz);
     }
     setTimeout(_paso, base);
@@ -13049,7 +13059,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2032";
+var _APP_VERSION = "v2033";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
