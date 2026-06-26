@@ -9377,7 +9377,7 @@ function _modalPergamino(config) {
   var subEl = null;
   if (tieneSub) {
     var subWrap = document.createElement('div');
-    subWrap.style.cssText = 'margin:0 0 14px;position:relative;z-index:1;overflow:hidden';
+    subWrap.style.cssText = 'margin:0 0 14px;position:relative;z-index:1;display:flow-root';
     // Caja flotante de 1 línea de alto; la imagen desborda hacia ARRIBA
     // (overflow visible) para verse a tamaño completo apoyada en esa línea.
     var cascoBox = document.createElement('span');
@@ -12992,7 +12992,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2029";
+var _APP_VERSION = "v2030";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
