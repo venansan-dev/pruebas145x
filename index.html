@@ -9358,7 +9358,7 @@ function _modalPergamino(config) {
   var titEl = document.createElement('div');
   if (tieneSub) {
     // Con subtítulo: título solo, sin casco y sin typewriter (texto inmediato).
-    titEl.style.cssText = 'font-family:DM Sans,sans-serif;font-size:15px;font-weight:500;color:#1a0800;line-height:1.4;margin-bottom:14px;position:relative;z-index:1';
+    titEl.style.cssText = 'font-family:DM Sans,sans-serif;font-size:15px;font-weight:500;color:#1a0800;line-height:1.4;margin-bottom:24px;position:relative;z-index:1';
     box.appendChild(titEl);
   } else {
     // Sin subtítulo: casco + título dictado (comportamiento clásico).
@@ -12992,7 +12992,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2028";
+var _APP_VERSION = "v2029";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
