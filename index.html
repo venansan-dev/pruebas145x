@@ -12862,23 +12862,39 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2036";
+var _APP_VERSION = "v2037";
 if ('serviceWorker' in navigator) {
+  // Recarga automática cuando entra en control un Service Worker NUEVO.
+  // Solo si ya había un controller previo (es decir, es una ACTUALIZACIÓN);
+  // en la primera instalación no recargamos. Así, al subir una versión nueva,
+  // la página se refresca sola y dejas de ver la versión vieja cacheada.
+  if (navigator.serviceWorker.controller) {
+    var _recargando = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      if (_recargando) return;
+      _recargando = true;
+      window.location.reload();
+    });
+  }
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
   // La limpieza de cachés antiguas la hace el propio Service Worker en su
   // evento 'activate' (conserva CACHE_NAME, TILE/IMG/LIB/TRACK y borra el resto).
-  // Antes había aquí una lista CACHES_ACTIVAS hardcodeada que se quedó
-  // desfasada (v2014/imgs-v6) y en cada carga borraba las cachés ACTIVAS,
-  // obligando a redescargar HTML, pois.js e imágenes → carga lenta y saltos.
   window.addEventListener('load', function() {
     // updateViaCache:'none' impide que el navegador sirva sw.js desde su caché HTTP
     navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(function(reg) {
     }).catch(function(err) {
       console.warn('SW error:', err);
     });
+    // Disparar la precarga pesada (imágenes/libs/tracks) en segundo plano,
+    // sin bloquear el arranque. El SW la hace en su evento 'message'.
+    navigator.serviceWorker.ready.then(function() {
+      if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage('precache');
+      }
+    }).catch(function(){});
   });
 }
 

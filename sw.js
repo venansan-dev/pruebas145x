@@ -1,4 +1,4 @@
-const CACHE_NAME = 'guia-compostelana-v2036';
+const CACHE_NAME = 'guia-compostelana-v2037';
 const TILE_CACHE = 'guia-tiles-v5';
 const IMG_CACHE  = 'guia-imgs-v10';
 const LIB_CACHE  = 'guia-libs-v1';
@@ -126,33 +126,48 @@ const TRACK_URLS = [
 ];
 
 self.addEventListener('install', function(e) {
+  // Activación INMEDIATA: no esperamos a precachear nada pesado.
+  self.skipWaiting();
+  // En el install solo bloqueamos por los 4 recursos críticos (HTML, pois.js,
+  // manifest). Antes el install esperaba a ~155 descargas (imágenes + libs +
+  // ~91 tracks) y por eso cada versión nueva "tardaba muchísimo en actualizar".
   e.waitUntil(
-    Promise.all([
-      caches.open(CACHE_NAME).then(function(c) {
-        // Cacheamos cada recurso por separado (no addAll atómico): si uno
-        // falla, los demás se guardan igual. Antes, si un solo recurso de
-        // STATIC_ASSETS fallaba, no se cacheaba NADA y la app no abría offline.
-        return Promise.allSettled(STATIC_ASSETS.map(function(url) {
-          return c.add(url).catch(function(){});
-        }));
-      }),
-      caches.open(IMG_CACHE).then(function(c) {
-        return Promise.allSettled(POI_IMAGES.map(function(url) {
-          return c.add(url).catch(function(){});
-        }));
-      }),
-      caches.open(LIB_CACHE).then(function(c) {
-        return Promise.allSettled(LIB_URLS.map(function(url) {
-          return c.add(url).catch(function(){});
-        }));
-      }),
-      caches.open(TRACK_CACHE).then(function(c) {
-        return Promise.allSettled(TRACK_URLS.map(function(url) {
-          return c.add(url).catch(function(){});
-        }));
-      })
-    ]).then(function() { return self.skipWaiting(); })
+    caches.open(CACHE_NAME).then(function(c) {
+      return Promise.allSettled(STATIC_ASSETS.map(function(url) {
+        return c.add(url).catch(function(){});
+      }));
+    })
   );
+});
+
+// Precarga pesada (imágenes, librerías y TODOS los tracks) en SEGUNDO PLANO.
+// La dispara la página con postMessage('precache') tras cargar, de modo que
+// la app sigue disponible offline desde la primera visita SIN bloquear la
+// activación ni la actualización del Service Worker.
+function _precargaSegundoPlano() {
+  return Promise.all([
+    caches.open(IMG_CACHE).then(function(c) {
+      return Promise.allSettled(POI_IMAGES.map(function(url) {
+        return c.add(url).catch(function(){});
+      }));
+    }),
+    caches.open(LIB_CACHE).then(function(c) {
+      return Promise.allSettled(LIB_URLS.map(function(url) {
+        return c.add(url).catch(function(){});
+      }));
+    }),
+    caches.open(TRACK_CACHE).then(function(c) {
+      return Promise.allSettled(TRACK_URLS.map(function(url) {
+        return c.add(url).catch(function(){});
+      }));
+    })
+  ]);
+}
+
+self.addEventListener('message', function(e) {
+  if (e.data === 'precache') {
+    e.waitUntil(_precargaSegundoPlano());
+  }
 });
 
 self.addEventListener('activate', function(e) {
