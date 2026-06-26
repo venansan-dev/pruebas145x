@@ -9358,7 +9358,7 @@ function _modalPergamino(config) {
   var titEl = document.createElement('div');
   if (tieneSub) {
     // Con subtítulo: título solo, sin casco y sin typewriter (texto inmediato).
-    titEl.style.cssText = 'font-family:DM Sans,sans-serif;font-size:15px;font-weight:500;color:#1a0800;line-height:1.4;margin-bottom:10px;position:relative;z-index:1';
+    titEl.style.cssText = 'font-family:DM Sans,sans-serif;font-size:15px;font-weight:500;color:#1a0800;line-height:1.4;margin-bottom:14px;position:relative;z-index:1';
     box.appendChild(titEl);
   } else {
     // Sin subtítulo: casco + título dictado (comportamiento clásico).
@@ -9370,17 +9370,23 @@ function _modalPergamino(config) {
     box.appendChild(cascoWrap);
   }
 
-  // Subtítulo (opcional): casco flotado al inicio; el párrafo nace junto a él
-  // y fluye por debajo (como el primer modal del asistente), sin que el casco
-  // quede atrapado en mitad del texto.
+  // Subtítulo (opcional): el casco se ancla al COMIENZO con su base en la
+  // primera línea (la línea nace de su base, como el saludo del asistente).
+  // El casco solo reserva el alto de UNA línea: el resto del párrafo fluye
+  // a ancho completo por debajo, sin que el casco abarque dos líneas.
   var subEl = null;
   if (tieneSub) {
     var subWrap = document.createElement('div');
     subWrap.style.cssText = 'margin:0 0 14px;position:relative;z-index:1;overflow:hidden';
-    cascoImg.style.cssText = 'width:34px;height:34px;object-fit:contain;float:left;margin:1px 10px 2px 0;animation:_casc-pulse 2.4s ease-in-out infinite';
+    // Caja flotante de 1 línea de alto; la imagen desborda hacia ARRIBA
+    // (overflow visible) para verse a tamaño completo apoyada en esa línea.
+    var cascoBox = document.createElement('span');
+    cascoBox.style.cssText = 'float:left;width:30px;height:21px;margin:0 10px 0 0;overflow:visible';
+    cascoImg.style.cssText = 'width:30px;height:30px;object-fit:contain;display:block;margin-top:-9px;animation:_casc-pulse 2.4s ease-in-out infinite';
+    cascoBox.appendChild(cascoImg);
     subEl = document.createElement('p');
     subEl.style.cssText = 'font-size:15px;font-weight:500;color:rgba(26,8,0,0.82);text-align:left;margin:0;line-height:1.4';
-    subWrap.appendChild(cascoImg);
+    subWrap.appendChild(cascoBox);
     subWrap.appendChild(subEl);
     box.appendChild(subWrap);
   }
@@ -12986,7 +12992,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2027";
+var _APP_VERSION = "v2028";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
