@@ -9370,13 +9370,16 @@ function _modalPergamino(config) {
     box.appendChild(cascoWrap);
   }
 
-  // Subtítulo (opcional): casco al comienzo y texto naciendo desde su base.
+  // Subtítulo (opcional): casco flotado al inicio; el párrafo nace junto a él
+  // y fluye por debajo (como el primer modal del asistente), sin que el casco
+  // quede atrapado en mitad del texto.
   var subEl = null;
   if (tieneSub) {
     var subWrap = document.createElement('div');
-    subWrap.style.cssText = 'display:flex;align-items:flex-end;gap:10px;margin:0 0 14px;position:relative;z-index:1';
+    subWrap.style.cssText = 'margin:0 0 14px;position:relative;z-index:1;overflow:hidden';
+    cascoImg.style.cssText = 'width:34px;height:34px;object-fit:contain;float:left;margin:1px 10px 2px 0;animation:_casc-pulse 2.4s ease-in-out infinite';
     subEl = document.createElement('p');
-    subEl.style.cssText = 'font-size:15px;font-weight:500;color:rgba(26,8,0,0.82);text-align:left;margin:0;flex:1;line-height:1';
+    subEl.style.cssText = 'font-size:15px;font-weight:500;color:rgba(26,8,0,0.82);text-align:left;margin:0;line-height:1.4';
     subWrap.appendChild(cascoImg);
     subWrap.appendChild(subEl);
     box.appendChild(subWrap);
@@ -12983,7 +12986,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2026";
+var _APP_VERSION = "v2027";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
