@@ -1057,47 +1057,6 @@
   </style>
 </head>
 <body>
-<!-- ===== MODO DEMO (solo con ?demo=1) — falsea la ubicación para grabar =====
-     Se activa únicamente si la URL lleva ?demo=1. Sustituye la geolocalización
-     por un punto del Camino (window._demoPos) para que el punto azul y todo lo
-     que depende de la posición funcione sin usar la ubicación real. -->
-<script>
-(function(){
-  try{
-    if((location.search+location.hash).indexOf('demo=1')<0) return;
-    window._DEMO = true;
-    window._DEMO_ZONAS = [
-      {n:'Vigo',       lat:42.2328, lng:-8.7226},
-      {n:'Redondela',  lat:42.2831, lng:-8.6096},
-      {n:'Pontevedra', lat:42.4316, lng:-8.6447},
-      {n:'Caldas',     lat:42.6049, lng:-8.6411},
-      {n:'Santiago',   lat:42.8806, lng:-8.5448}
-    ];
-    window._demoPos = { lat: window._DEMO_ZONAS[0].lat, lng: window._DEMO_ZONAS[0].lng };
-    function _pos(){
-      return { coords:{ latitude:window._demoPos.lat, longitude:window._demoPos.lng,
-        accuracy:8, altitude:null, altitudeAccuracy:null, heading:null, speed:null },
-        timestamp: Date.now() };
-    }
-    var geo = navigator.geolocation;
-    if(geo){
-      window._demoWatchTimers = {};
-      var _id = 7000;
-      geo.getCurrentPosition = function(ok){ try{ ok(_pos()); }catch(e){} };
-      geo.watchPosition = function(ok){
-        var id = _id++;
-        try{ ok(_pos()); }catch(e){}
-        window._demoWatchTimers[id] = setInterval(function(){ try{ ok(_pos()); }catch(e){} }, 1000);
-        return id;
-      };
-      geo.clearWatch = function(id){
-        var t = window._demoWatchTimers[id];
-        if(t){ clearInterval(t); delete window._demoWatchTimers[id]; }
-      };
-    }
-  }catch(e){}
-})();
-</script>
 
 <!-- ═══════════════════════════════════════════════════════
      DESKTOP LANDING — visible solo en ≥769px
@@ -1330,174 +1289,9 @@
         </div>
       </div>
       <div class="dl-qr-box">
-        <!-- QR real generado para https://xacobeapp.com (nivel de corrección M) -->
+        <!-- QR con logo — xacobeapp.com -->
         <a href="https://xacobeapp.com" style="display:block" aria-label="Abrir xacobeapp.com">
-        <svg viewBox="0 0 33 33" xmlns="http://www.w3.org/2000/svg" style="width:180px;height:180px;image-rendering:pixelated" role="img" aria-label="Código QR para xacobeapp.com">
-          <rect width="33" height="33" fill="#ffffff" rx="2"/>
-          <g fill="#1a2340">
-          <rect x="4" y="4" width="7" height="1"/>
-          <rect x="12" y="4" width="1" height="1"/>
-          <rect x="14" y="4" width="3" height="1"/>
-          <rect x="18" y="4" width="1" height="1"/>
-          <rect x="20" y="4" width="1" height="1"/>
-          <rect x="22" y="4" width="7" height="1"/>
-          <rect x="4" y="5" width="1" height="1"/>
-          <rect x="10" y="5" width="1" height="1"/>
-          <rect x="12" y="5" width="4" height="1"/>
-          <rect x="22" y="5" width="1" height="1"/>
-          <rect x="28" y="5" width="1" height="1"/>
-          <rect x="4" y="6" width="1" height="1"/>
-          <rect x="6" y="6" width="3" height="1"/>
-          <rect x="10" y="6" width="1" height="1"/>
-          <rect x="12" y="6" width="2" height="1"/>
-          <rect x="15" y="6" width="1" height="1"/>
-          <rect x="17" y="6" width="1" height="1"/>
-          <rect x="19" y="6" width="2" height="1"/>
-          <rect x="22" y="6" width="1" height="1"/>
-          <rect x="24" y="6" width="3" height="1"/>
-          <rect x="28" y="6" width="1" height="1"/>
-          <rect x="4" y="7" width="1" height="1"/>
-          <rect x="6" y="7" width="3" height="1"/>
-          <rect x="10" y="7" width="1" height="1"/>
-          <rect x="14" y="7" width="1" height="1"/>
-          <rect x="16" y="7" width="2" height="1"/>
-          <rect x="22" y="7" width="1" height="1"/>
-          <rect x="24" y="7" width="3" height="1"/>
-          <rect x="28" y="7" width="1" height="1"/>
-          <rect x="4" y="8" width="1" height="1"/>
-          <rect x="6" y="8" width="3" height="1"/>
-          <rect x="10" y="8" width="1" height="1"/>
-          <rect x="12" y="8" width="1" height="1"/>
-          <rect x="18" y="8" width="1" height="1"/>
-          <rect x="20" y="8" width="1" height="1"/>
-          <rect x="22" y="8" width="1" height="1"/>
-          <rect x="24" y="8" width="3" height="1"/>
-          <rect x="28" y="8" width="1" height="1"/>
-          <rect x="4" y="9" width="1" height="1"/>
-          <rect x="10" y="9" width="1" height="1"/>
-          <rect x="14" y="9" width="2" height="1"/>
-          <rect x="17" y="9" width="1" height="1"/>
-          <rect x="20" y="9" width="1" height="1"/>
-          <rect x="22" y="9" width="1" height="1"/>
-          <rect x="28" y="9" width="1" height="1"/>
-          <rect x="4" y="10" width="7" height="1"/>
-          <rect x="12" y="10" width="1" height="1"/>
-          <rect x="14" y="10" width="1" height="1"/>
-          <rect x="16" y="10" width="1" height="1"/>
-          <rect x="18" y="10" width="1" height="1"/>
-          <rect x="20" y="10" width="1" height="1"/>
-          <rect x="22" y="10" width="7" height="1"/>
-          <rect x="14" y="11" width="2" height="1"/>
-          <rect x="17" y="11" width="1" height="1"/>
-          <rect x="4" y="12" width="1" height="1"/>
-          <rect x="7" y="12" width="7" height="1"/>
-          <rect x="18" y="12" width="2" height="1"/>
-          <rect x="21" y="12" width="1" height="1"/>
-          <rect x="24" y="12" width="1" height="1"/>
-          <rect x="26" y="12" width="3" height="1"/>
-          <rect x="4" y="13" width="1" height="1"/>
-          <rect x="7" y="13" width="3" height="1"/>
-          <rect x="15" y="13" width="1" height="1"/>
-          <rect x="17" y="13" width="3" height="1"/>
-          <rect x="23" y="13" width="5" height="1"/>
-          <rect x="5" y="14" width="2" height="1"/>
-          <rect x="10" y="14" width="2" height="1"/>
-          <rect x="17" y="14" width="1" height="1"/>
-          <rect x="19" y="14" width="4" height="1"/>
-          <rect x="24" y="14" width="2" height="1"/>
-          <rect x="28" y="14" width="1" height="1"/>
-          <rect x="4" y="15" width="5" height="1"/>
-          <rect x="14" y="15" width="2" height="1"/>
-          <rect x="18" y="15" width="1" height="1"/>
-          <rect x="20" y="15" width="1" height="1"/>
-          <rect x="22" y="15" width="1" height="1"/>
-          <rect x="24" y="15" width="5" height="1"/>
-          <rect x="4" y="16" width="3" height="1"/>
-          <rect x="8" y="16" width="1" height="1"/>
-          <rect x="10" y="16" width="2" height="1"/>
-          <rect x="13" y="16" width="1" height="1"/>
-          <rect x="15" y="16" width="2" height="1"/>
-          <rect x="19" y="16" width="2" height="1"/>
-          <rect x="22" y="16" width="1" height="1"/>
-          <rect x="28" y="16" width="1" height="1"/>
-          <rect x="4" y="17" width="1" height="1"/>
-          <rect x="6" y="17" width="1" height="1"/>
-          <rect x="8" y="17" width="1" height="1"/>
-          <rect x="11" y="17" width="1" height="1"/>
-          <rect x="18" y="17" width="3" height="1"/>
-          <rect x="24" y="17" width="1" height="1"/>
-          <rect x="27" y="17" width="1" height="1"/>
-          <rect x="4" y="18" width="2" height="1"/>
-          <rect x="9" y="18" width="2" height="1"/>
-          <rect x="12" y="18" width="8" height="1"/>
-          <rect x="22" y="18" width="1" height="1"/>
-          <rect x="24" y="18" width="5" height="1"/>
-          <rect x="4" y="19" width="1" height="1"/>
-          <rect x="15" y="19" width="1" height="1"/>
-          <rect x="21" y="19" width="1" height="1"/>
-          <rect x="23" y="19" width="1" height="1"/>
-          <rect x="25" y="19" width="2" height="1"/>
-          <rect x="28" y="19" width="1" height="1"/>
-          <rect x="4" y="20" width="1" height="1"/>
-          <rect x="7" y="20" width="1" height="1"/>
-          <rect x="9" y="20" width="2" height="1"/>
-          <rect x="12" y="20" width="3" height="1"/>
-          <rect x="18" y="20" width="7" height="1"/>
-          <rect x="26" y="20" width="2" height="1"/>
-          <rect x="12" y="21" width="6" height="1"/>
-          <rect x="20" y="21" width="1" height="1"/>
-          <rect x="24" y="21" width="1" height="1"/>
-          <rect x="26" y="21" width="2" height="1"/>
-          <rect x="4" y="22" width="7" height="1"/>
-          <rect x="12" y="22" width="1" height="1"/>
-          <rect x="14" y="22" width="2" height="1"/>
-          <rect x="20" y="22" width="1" height="1"/>
-          <rect x="22" y="22" width="1" height="1"/>
-          <rect x="24" y="22" width="1" height="1"/>
-          <rect x="28" y="22" width="1" height="1"/>
-          <rect x="4" y="23" width="1" height="1"/>
-          <rect x="10" y="23" width="1" height="1"/>
-          <rect x="12" y="23" width="2" height="1"/>
-          <rect x="16" y="23" width="1" height="1"/>
-          <rect x="18" y="23" width="3" height="1"/>
-          <rect x="24" y="23" width="1" height="1"/>
-          <rect x="27" y="23" width="2" height="1"/>
-          <rect x="4" y="24" width="1" height="1"/>
-          <rect x="6" y="24" width="3" height="1"/>
-          <rect x="10" y="24" width="1" height="1"/>
-          <rect x="12" y="24" width="1" height="1"/>
-          <rect x="16" y="24" width="9" height="1"/>
-          <rect x="27" y="24" width="2" height="1"/>
-          <rect x="4" y="25" width="1" height="1"/>
-          <rect x="6" y="25" width="3" height="1"/>
-          <rect x="10" y="25" width="1" height="1"/>
-          <rect x="12" y="25" width="2" height="1"/>
-          <rect x="18" y="25" width="1" height="1"/>
-          <rect x="21" y="25" width="2" height="1"/>
-          <rect x="27" y="25" width="2" height="1"/>
-          <rect x="4" y="26" width="1" height="1"/>
-          <rect x="6" y="26" width="3" height="1"/>
-          <rect x="10" y="26" width="1" height="1"/>
-          <rect x="13" y="26" width="2" height="1"/>
-          <rect x="16" y="26" width="1" height="1"/>
-          <rect x="18" y="26" width="2" height="1"/>
-          <rect x="21" y="26" width="1" height="1"/>
-          <rect x="24" y="26" width="5" height="1"/>
-          <rect x="4" y="27" width="1" height="1"/>
-          <rect x="10" y="27" width="1" height="1"/>
-          <rect x="13" y="27" width="2" height="1"/>
-          <rect x="18" y="27" width="1" height="1"/>
-          <rect x="23" y="27" width="2" height="1"/>
-          <rect x="26" y="27" width="3" height="1"/>
-          <rect x="4" y="28" width="7" height="1"/>
-          <rect x="12" y="28" width="1" height="1"/>
-          <rect x="14" y="28" width="1" height="1"/>
-          <rect x="17" y="28" width="2" height="1"/>
-          <rect x="20" y="28" width="1" height="1"/>
-          <rect x="25" y="28" width="1" height="1"/>
-          <rect x="28" y="28" width="1" height="1"/>
-          </g>
-        </svg>
+        <img src="9.png" alt="Código QR para xacobeapp.com" style="width:200px;height:200px;display:block;image-rendering:crisp-edges"/>
         </a>
         <div class="dl-qr-url">xacobeapp.com</div>
       </div>
@@ -1752,7 +1546,7 @@
     style='display:flex;position:absolute;bottom:124px;right:10px;z-index:400;width:36px;height:36px;background:rgba(255,245,210,0.92);border:1.5px solid #a07828;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 14px rgba(0,0,0,0.28),0 1px 3px rgba(0,0,0,0.18);padding:0'>🏅</button>
   <!-- Botón descargar mapa offline — a la derecha de la base del panel de ruta/navegación -->
   <button id='btn-descargar-mapa' onclick='if(window.DescargaMapa)DescargaMapa.descargarActual()' title='Descargar mapa de esta etapa para usar sin conexión'
-    style='display:flex;position:absolute;bottom:36px;left:64px;z-index:400;width:36px;height:36px;background:rgba(255,245,210,0.92);border:1.5px solid #a07828;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,0.28),0 1px 3px rgba(0,0,0,0.18);padding:0'><svg width='19' height='19' viewBox='0 0 24 24' fill='none' stroke='#7a5010' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3v11'/><path d='M7 10l5 5 5-5'/><path d='M5 20h14'/></svg></button>
+    style='display:flex;position:absolute;bottom:36px;left:80px;z-index:400;width:36px;height:36px;background:rgba(255,245,210,0.92);border:1.5px solid #a07828;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,0.28),0 1px 3px rgba(0,0,0,0.18);padding:0'><svg width='19' height='19' viewBox='0 0 24 24' fill='none' stroke='#7a5010' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3v11'/><path d='M7 10l5 5 5-5'/><path d='M5 20h14'/></svg></button>
 
 </div>
 
@@ -3548,6 +3342,38 @@ function _renderAlbumRecuerdos(grid, vacioCont) {
   });
 }
 
+// ── Cadencia compartida del dictado del casco ───────────────────────────
+// Micro-pausas tras la puntuación para que el texto "respire" y no corra.
+// La usan TODOS los typewriters del asistente (brújula, panel, pergamino),
+// de modo que el ritmo es idéntico en toda la app.
+function _cascoPausa(ch) {
+  if (ch === '\n') return 520;                                                 // párrafo: respiro
+  if (ch === '.' || ch === '!' || ch === '?' || ch === '\u2026') return 360;   // fin de frase
+  if (ch === ',' || ch === ';' || ch === ':') return 180;                      // inciso
+  return 0;
+}
+// Movimiento del casco: recupera el pulso de respiración original
+// (_casc-pulse), que corre mientras el casco "habla", y como pincelada lo
+// PAUSA en las pausas de puntuación y al terminar. Así el movimiento de
+// siempre queda acompasado a la nueva cadencia, sin vibrar.
+function _cascoBob(img, activo) {
+  if (!img) return;
+  if (activo) {
+    if (!document.getElementById('_casc-pulse-style-global')) {
+      var s = document.createElement('style');
+      s.id = '_casc-pulse-style-global';
+      s.textContent = '@keyframes _casc-pulse{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.08) rotate(3deg)}}';
+      document.head.appendChild(s);
+    }
+    if (img.style.animationName !== '_casc-pulse') {
+      img.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
+    }
+    img.style.animationPlayState = 'running';
+  } else {
+    img.style.animationPlayState = 'paused';
+  }
+}
+
 // Efecto typewriter para el casco asistente de la brújula: escribe el aviso
 // letra a letra, anima el casco y reproduce su sonido, igual que el asistente.
 function _brujulaCascoTypewriter() {
@@ -3566,8 +3392,8 @@ function _brujulaCascoTypewriter() {
     document.head.appendChild(stG);
   }
   // Cancelar cualquier typewriter previo de este casco
-  if (window._brujulaTwTimer) { clearInterval(window._brujulaTwTimer); window._brujulaTwTimer = null; }
-  var i = 0, speed = 34;
+  if (window._brujulaTwTimer) { clearTimeout(window._brujulaTwTimer); window._brujulaTwTimer = null; }
+  var i = 0, base = 46;
   function _render() {
     var vis  = text.slice(0, i);
     var hide = text.slice(i);
@@ -3575,21 +3401,33 @@ function _brujulaCascoTypewriter() {
                  + (hide ? '<span style="visibility:hidden">' + hide.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>' : '');
   }
   _render();
-  // Activar animación y sonido del casco mientras escribe
-  if (img) img.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
-  if (window._cascoSonido) { try{ window._cascoSonido(text.length * speed); }catch(e){} }
-  window._brujulaTwTimer = setInterval(function() {
-    if (i < text.length) {
-      i++;
-      _render();
-      if (text[i-1] !== ' ' && window._cascoTick) window._cascoTick();
-    } else {
-      clearInterval(window._brujulaTwTimer); window._brujulaTwTimer = null;
+  // Casco: cabeceo letra a letra en vez de pulso constante → sincronizado
+  if (img) { img.style.animation = 'none'; img.style.transition = 'transform 0.09s ease-out'; }
+  // Sonido armado para la duración real (pausas incluidas), para no desincronizar
+  if (window._cascoSonido) {
+    try {
+      var _dur = 0; for (var _c=0;_c<text.length;_c++){ _dur += base + _cascoPausa(text[_c]); }
+      window._cascoSonido(_dur/1000 + 0.2);
+    } catch(e){}
+  }
+  function _paso() {
+    if (i >= text.length) {
+      window._brujulaTwTimer = null;
       el.innerHTML = html; // restaurar con <strong> y formato
-      if (img) img.style.animation = 'none'; // el casco se detiene al acabar, como el asistente
+      _cascoBob(img, false);
+      if (img) { img.style.animation = 'none'; img.style.transform = ''; } // casco recto al acabar
       if (window._cascoSonidoStop) { try{ window._cascoSonidoStop(); }catch(e){} }
+      return;
     }
-  }, speed);
+    i++;
+    _render();
+    var ch = text[i-1];
+    if (ch !== ' ' && window._cascoTick) window._cascoTick();
+    var pausa = _cascoPausa(ch);
+    _cascoBob(img, pausa === 0);
+    window._brujulaTwTimer = setTimeout(_paso, base + pausa);
+  }
+  window._brujulaTwTimer = setTimeout(_paso, base);
 }
 
 function abrirBrujulaDrawer() {
@@ -4793,8 +4631,10 @@ function abrirHeroModal() {
   // para que el sonido dure exactamente lo mismo y no se desincronice.
   function _cascoDur(texto, speed) {
     var plano = String(texto || '').replace(/<[^>]+>/g, '');
-    var ms = plano.length * (speed || 28);
-    return Math.max(0.3, ms / 1000 + 0.1); // pequeño margen de cola
+    var base = Math.max(speed || 34, 42);
+    var ms = 0;
+    for (var k = 0; k < plano.length; k++) { ms += base + _cascoPausa(plano[k]); }
+    return Math.max(0.3, ms / 1000 + 0.15); // pequeño margen de cola
   }
   window._cascoDur = _cascoDur;
 
@@ -4815,7 +4655,7 @@ function abrirHeroModal() {
       img.style.animation = 'none';
       _cascoSonidoStop();
       if (onDone) onDone(img);
-    });
+    }, img);
     return { img: img, txt: txt, wrap: wrap };
   }
 
@@ -5064,8 +4904,11 @@ function abrirHeroModal() {
   }
 
   // Typewriter helper
-  function _typewriter(el, html, speed, onDone) {
+  function _typewriter(el, html, speed, onDone, cascoImg) {
     var text = html.replace(/<[^>]+>/g, '');
+    // Suelo de velocidad: aunque pidan 28-35 ms/carácter, el dictado no baja
+    // de ~42 ms para que no "corra"; mismas micro-pausas que el resto del app.
+    var base = Math.max(speed || 34, 42);
     var i = 0;
     // Technique: render full text in-flow from start.
     // Visible chars = normal color, remaining = transparent.
@@ -5077,18 +4920,24 @@ function abrirHeroModal() {
                    + (hide ? '<span style="visibility:hidden">' + hide.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>' : '');
     }
     _render();
-    var cursor = setInterval(function() {
+    // Casco: cabeceo sincronizado letra a letra (sustituye al pulso constante)
+    if (cascoImg) { cascoImg.style.animation = 'none'; cascoImg.style.transition = 'transform 0.09s ease-out'; }
+    function _paso() {
       if (i < text.length) {
         i++;
         _render();
-        if (text[i-1] !== ' ' && window._cascoTick) window._cascoTick();
+        var ch = text[i-1];
+        if (ch !== ' ' && window._cascoTick) window._cascoTick();
+        var pausa = _cascoPausa(ch);
+        if (cascoImg) _cascoBob(cascoImg, pausa === 0);
+        setTimeout(_paso, base + pausa);
       } else {
-        clearInterval(cursor);
         el.innerHTML = html;
+        if (cascoImg) { _cascoBob(cascoImg, false); cascoImg.style.animation = 'none'; cascoImg.style.transform = ''; }
         if (onDone) onDone();
       }
-    }, speed || 28);
-    return cursor;
+    }
+    setTimeout(_paso, base);
   }
 
   // Encadena typewriters activando/parando el casco en cada párrafo.
@@ -5107,16 +4956,15 @@ function abrirHeroModal() {
     var el = par[0], html = par[1], speed = par[2] || 32, cont = par[3];
     // Insertar el elemento justo antes de escribirlo
     if (cont && el.parentNode !== cont) cont.appendChild(el);
-    // Activar casco
-    if (cascoImg) cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
+    // Casco: cabeceo sincronizado letra a letra (lo gestiona _typewriter)
     _cascoSonido(_cascoDur(html, speed));
     _typewriter(el, html, speed, function() {
       // Parar casco al terminar este párrafo
       if (cascoImg) cascoImg.style.animation = 'none';
       _cascoSonidoStop();
       // Pequeña pausa antes del siguiente
-      setTimeout(function() { _twSeq(rest, cascoImg, onDone); }, 120);
-    });
+      setTimeout(function() { _twSeq(rest, cascoImg, onDone); }, 160);
+    }, cascoImg);
   }
 
   // ── PASO 1: Saludo + bifurcación según estado de ruta ───────────
@@ -5276,10 +5124,10 @@ function abrirHeroModal() {
               
             });
           } // fin else cercanos
-          }); // fin _typewriter subCtx
+          }, cascoImg); // fin _typewriter subCtx
         }, 120); // fin setTimeout
       }); // fin _subtituloContextual callback
-    }); // fin _typewriter saludo
+    }, cascoImg); // fin _typewriter saludo
   }
 
   // ── SUGERENCIAS: cuando el usuario dice "ahora no" ───────────────
@@ -9388,24 +9236,48 @@ function _modalPergamino(config) {
   handle.style.cssText = 'width:36px;height:3px;background:rgba(139,105,20,0.4);border-radius:2px;margin:0 auto 16px';
   box.appendChild(handle);
 
-  // Casco + título dictado
-  var cascoWrap = document.createElement('div');
-  cascoWrap.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:10px;position:relative;z-index:1';
+  var tieneSub = !!config.subtitulo;
+
+  // Casco animado. Si hay subtítulo, acompaña a ESTE (el texto nace desde su
+  // base); si no, vuelve junto al título con su dictado clásico.
   var cascoImg = document.createElement('img');
   cascoImg.src = 'https://i.postimg.cc/hP2mT0LN/casc6.webp';
   cascoImg.style.cssText = 'width:34px;height:34px;object-fit:contain;flex-shrink:0;animation:_casc-pulse 2.4s ease-in-out infinite';
-  var titEl = document.createElement('div');
-  titEl.style.cssText = 'font-family:DM Sans,sans-serif;font-size:15px;font-weight:500;color:#1a0800;line-height:1.4;flex:1';
-  cascoWrap.appendChild(cascoImg);
-  cascoWrap.appendChild(titEl);
-  box.appendChild(cascoWrap);
 
-  // Subtítulo (opcional)
+  var titEl = document.createElement('div');
+  if (tieneSub) {
+    // Con subtítulo: título solo, sin casco y sin typewriter (texto inmediato).
+    titEl.style.cssText = 'font-family:DM Sans,sans-serif;font-size:15px;font-weight:500;color:#1a0800;line-height:1.4;margin-bottom:24px;position:relative;z-index:1';
+    box.appendChild(titEl);
+  } else {
+    // Sin subtítulo: casco + título dictado (comportamiento clásico).
+    var cascoWrap = document.createElement('div');
+    cascoWrap.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:10px;position:relative;z-index:1';
+    titEl.style.cssText = 'font-family:DM Sans,sans-serif;font-size:15px;font-weight:500;color:#1a0800;line-height:1.4;flex:1';
+    cascoWrap.appendChild(cascoImg);
+    cascoWrap.appendChild(titEl);
+    box.appendChild(cascoWrap);
+  }
+
+  // Subtítulo (opcional): el casco se ancla al COMIENZO con su base en la
+  // primera línea (la línea nace de su base, como el saludo del asistente).
+  // El casco solo reserva el alto de UNA línea: el resto del párrafo fluye
+  // a ancho completo por debajo, sin que el casco abarque dos líneas.
   var subEl = null;
-  if (config.subtitulo) {
+  if (tieneSub) {
+    var subWrap = document.createElement('div');
+    subWrap.style.cssText = 'margin:0 0 14px;position:relative;z-index:1;display:flow-root';
+    // Caja flotante de 1 línea de alto; la imagen desborda hacia ARRIBA
+    // (overflow visible) para verse a tamaño completo apoyada en esa línea.
+    var cascoBox = document.createElement('span');
+    cascoBox.style.cssText = 'float:left;width:30px;height:21px;margin:0 10px 0 0;overflow:visible';
+    cascoImg.style.cssText = 'width:30px;height:30px;object-fit:contain;display:block;margin-top:-9px;animation:_casc-pulse 2.4s ease-in-out infinite';
+    cascoBox.appendChild(cascoImg);
     subEl = document.createElement('p');
-    subEl.style.cssText = 'font-size:15px;font-weight:500;color:rgba(26,8,0,0.82);text-align:left;margin:0 0 14px;position:relative;z-index:1;line-height:1.4';
-    box.appendChild(subEl);
+    subEl.style.cssText = 'font-size:15px;font-weight:500;color:rgba(26,8,0,0.82);text-align:left;margin:0;line-height:1.4';
+    subWrap.appendChild(cascoBox);
+    subWrap.appendChild(subEl);
+    box.appendChild(subWrap);
   }
 
   // extraHtml opcional (bloque entre subtítulo y separador)
@@ -9483,11 +9355,12 @@ function _modalPergamino(config) {
                    + (hide ? '<span style="visibility:hidden">' + hide.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>' : '');
     }
     _rg();
-    cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
+    // Casco: cabeceo sincronizado letra a letra (sustituye al pulso constante)
+    if (cascoImg) { cascoImg.style.animation = 'none'; cascoImg.style.transition = 'transform 0.09s ease-out'; }
     if (window._cascoSonido) _cascoSonido(_durCad(text, base));
     function _fin() {
       el.innerHTML = html;
-      cascoImg.style.animation = 'none';
+      if (cascoImg) { _cascoBob(cascoImg, false); cascoImg.style.animation = 'none'; cascoImg.style.transform = ''; }
       if (window._cascoSonidoStop) _cascoSonidoStop();
       if (onDone) onDone();
     }
@@ -9496,24 +9369,25 @@ function _modalPergamino(config) {
       i++; _rg();
       var ch = text[i-1];
       if (ch !== ' ' && ch !== '\n' && window._cascoTick) window._cascoTick();
-      setTimeout(_paso, base + _pausaCad(ch));
+      var _pz = _pausaCad(ch);
+      if (cascoImg) _cascoBob(cascoImg, _pz === 0);
+      setTimeout(_paso, base + _pz);
     }
     setTimeout(_paso, base);
   }
 
   // Título y subtítulo con la misma cadencia pausada, y un respiro entre
   // ambos como si el casco tomara aire antes de seguir.
-  _twGlobal(titEl, config.titulo, 44, function() {
-    if (subEl && config.subtitulo) {
-      setTimeout(function() {
-        _twGlobal(subEl, config.subtitulo, 44, function() {
-          setTimeout(function() { box.appendChild(optsWrap); if (cancelBtn) box.appendChild(cancelBtn); }, 140);
-        });
-      }, 480);
-    } else {
-      setTimeout(function() { box.appendChild(optsWrap); if (cancelBtn) box.appendChild(cancelBtn); }, 140);
-    }
-  });
+  function _mostrarOpts() {
+    setTimeout(function() { box.appendChild(optsWrap); if (cancelBtn) box.appendChild(cancelBtn); }, 140);
+  }
+  if (tieneSub) {
+    // Título inmediato (sin typewriter); el casco dicta el subtítulo.
+    titEl.innerHTML = config.titulo;
+    _twGlobal(subEl, config.subtitulo, 44, _mostrarOpts);
+  } else {
+    _twGlobal(titEl, config.titulo, 44, _mostrarOpts);
+  }
 }
 
 function limpiarRuta() {
@@ -10300,6 +10174,15 @@ function activarNavegacionVoz() {
   // Ordenar puntos por cercanía al usuario
   var origen = (userLat && userLng) ? {lat:userLat, lng:userLng} : {lat:rutaPuntos[0].lat, lng:rutaPuntos[0].lng};
   var ordenados = ordenarRutaPorCercania(origen);
+
+  // Guard: si la ruta quedó vacía o el primer punto es nulo/corrupto
+  // (restauración incompleta, punto sin datos), abortamos limpiamente
+  // ANTES de tocar la UI o activar el GPS. Evita el crash
+  // "undefined is not an object (evaluating 'primerPunto.nombre')".
+  if (!ordenados.length || !ordenados[0] || !ordenados[0].nombre) {
+    mostrarToast((T[idiomaActual]||T.es).navAnnadePunto||'Añade al menos 1 punto a la ruta');
+    return;
+  }
 
   // Construir waypoints para OSRM
   var coords = [];
@@ -13010,7 +12893,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2025";
+var _APP_VERSION = "v2034";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -15941,102 +15824,6 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
 
 
 
-
-<!-- ===== MODO DEMO · orquestador de grabación (solo con ?demo=1) =====
-     Mueve el punto azul por varias zonas del Camino y reproduce las funciones
-     en orden (una sola toma), con un halo de toque en cada pulsación.
-     La geolocalización ya la falsea el bloque de arriba (window._demoPos). -->
-<script>
-(function(){
-  if(!window._DEMO) return;
-  var Z = window._DEMO_ZONAS || [];
-  var gap = 3000;     // ms entre pasos
-  var heading = 25;   // rumbo del "caminar"
-  var walkTimer = null, runTimer = null, i = 0;
-
-  // Control mínimo para repetir tomas (esquina; se oculta durante la grabación)
-  var btn = document.createElement('button');
-  btn.textContent = '\u21bb demo';
-  btn.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:2147483647;background:rgba(0,0,0,0.55);color:#F5C800;border:1px solid rgba(245,200,0,0.5);border-radius:14px;padding:5px 10px;font:600 11px DM Sans,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent';
-
-  function f(n){ return (typeof window[n]==='function') ? window[n] : function(){}; }
-  function cerrar(){ f('cerrarTodosLosPaneles')(); }
-
-  function irAZona(idx){
-    var z = Z[idx % Z.length]; if(!z) return;
-    window._demoPos = { lat:z.lat, lng:z.lng };
-    if(window.mapa){ try{ window.mapa.setView([z.lat,z.lng], 15); }catch(e){} }
-  }
-  function caminar(){
-    var p = window._demoPos; if(!p) return;
-    var d = 0.000025, r = heading*Math.PI/180;
-    p.lat += d*Math.cos(r);
-    p.lng += d*Math.sin(r)/Math.cos(p.lat*Math.PI/180);
-  }
-
-  // Halo de toque (también resuelve que iOS no muestre los toques al grabar)
-  function halo(sel){
-    var el = (typeof sel==='string') ? document.getElementById(sel) : sel;
-    if(!el) return;
-    var rc = el.getBoundingClientRect();
-    if(!rc.width && !rc.height) return;
-    var h = document.createElement('div');
-    h.style.cssText = 'position:fixed;left:'+(rc.left+rc.width/2-26)+'px;top:'+(rc.top+rc.height/2-26)+'px;width:52px;height:52px;border-radius:50%;border:3px solid rgba(245,200,0,0.95);background:rgba(245,200,0,0.22);z-index:2147483646;pointer-events:none';
-    document.body.appendChild(h);
-    if(h.animate){ h.animate([{transform:'scale(0.35)',opacity:1},{transform:'scale(1.3)',opacity:0}],{duration:680,easing:'ease-out'}); }
-    setTimeout(function(){ try{ h.remove(); }catch(e){} }, 720);
-  }
-
-  // Secuencia (una sola toma)
-  var pasos = [
-    function(){ irAZona(0); f('_irAlMapa')(); },
-    function(){ halo('btn-gl-m'); f('cambiarIdioma')('gl'); },
-    function(){ halo('btn-en-m'); f('cambiarIdioma')('en'); },
-    function(){ halo('btn-es-m'); f('cambiarIdioma')('es'); },
-    function(){ halo('btn-ruta-oficial'); if(window.RutaOficial && !RutaOficial.estaActivo()) RutaOficial.toggle(); },
-    function(){ halo('btn-brujula-mapa'); f('abrirBrujulaDrawer')(); },
-    function(){ cerrar(); },
-    function(){ irAZona(1); },
-    function(){ halo('btn-buscar-mapa'); f('abrirBuscadorAsistente')(); },
-    function(){ cerrar(); },
-    function(){ halo('btn-add-poi-map'); },
-    function(){ halo('btn-alertas-toggle'); },
-    function(){ irAZona(3); },
-    function(){ f('abrirAlbumPanel')(); },
-    function(){ cerrar(); },
-    function(){ f('abrirHistoriaDrawer')(); },
-    function(){ cerrar(); },
-    function(){ irAZona(4); halo('btn-ruta-oficial'); if(window.RutaOficial && RutaOficial.estaActivo()) RutaOficial.toggle(); }
-  ];
-
-  function step(){
-    if(i >= pasos.length){ fin(); return; }
-    try{ pasos[i](); }catch(e){}
-    i++;
-    runTimer = setTimeout(step, gap);
-  }
-  function start(){
-    if(runTimer){ clearTimeout(runTimer); }
-    i = 0;
-    btn.style.display = 'none';                 // fuera de la toma
-    if(!walkTimer) walkTimer = setInterval(caminar, 1000);
-    cerrar();
-    setTimeout(step, 400);
-  }
-  function fin(){
-    if(walkTimer){ clearInterval(walkTimer); walkTimer = null; }
-    btn.style.display = '';
-  }
-  function stop(){ if(runTimer) clearTimeout(runTimer); fin(); }
-
-  btn.addEventListener('click', start);
-  window._DEMO_PLAY = { start:start, stop:stop, irAZona:irAZona, setGap:function(g){ gap=g; } };
-
-  window.addEventListener('load', function(){
-    setTimeout(function(){ document.body.appendChild(btn); start(); }, 1800);
-  });
-})();
-</script>
 
 </body>
 </html>
