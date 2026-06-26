@@ -16,22 +16,61 @@
 </script>
 <script>
 /* Fallback WebP para navegadores sin soporte (Safari <14, Android antiguo).
-   Los navegadores modernos cargan el .webp nativo SIN cambios (igual que hoy).
-   Solo cuando una imagen .webp falla al decodificar se reintenta la MISMA
-   imagen vía un proxy que la transcodifica a JPG al vuelo. Cubre las <img>
-   estáticas y las generadas dinámicamente (tarjetas de POIs, galería, etc.).
-   El fondo CSS de la cabecera degrada a cabecera lisa en esos navegadores. */
+   Detecta UNA vez si el navegador decodifica WebP. Si NO, reescribe las
+   imágenes .webp (presentes, dinámicas de POIs y fondo de cabecera) a JPG
+   mediante un proxy que las transcodifica al vuelo. Los navegadores modernos
+   no ejecutan nada de esto: cargan el .webp nativo desde caché, como siempre. */
 (function(){
   function _jpg(u){
-    return 'https://wsrv.nl/?url=' + encodeURIComponent(u.replace(/^https?:\/\//,'')) + '&output=jpg';
+    // images.weserv.nl espera la URL SIN protocolo y SIN codificar las barras.
+    return 'https://images.weserv.nl/?url=' + u.replace(/^https?:\/\//,'') + '&output=jpg';
   }
-  document.addEventListener('error', function(e){
-    var img = e.target;
-    if (img && img.tagName === 'IMG' && img.getAttribute('data-webpfb') !== '1'
-        && /\.webp(\?|$)/i.test(img.currentSrc || img.src || '')) {
+  function _fix(img){
+    if(!img || img.getAttribute('data-webpfb')==='1') return;
+    var s = img.getAttribute('src') || img.src || '';
+    if(/\.webp(\?|$)/i.test(s)){
       img.setAttribute('data-webpfb','1');
-      img.src = _jpg(img.currentSrc || img.src);
+      img.src = _jpg(s);
     }
+  }
+  function _activarFallback(){
+    function sweep(){
+      var imgs=document.getElementsByTagName('img');
+      for(var i=0;i<imgs.length;i++) _fix(imgs[i]);
+    }
+    sweep();
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', sweep);
+    // Imágenes insertadas dinámicamente (tarjetas de POIs, galería rotatoria)
+    if(window.MutationObserver){
+      new MutationObserver(function(muts){
+        for(var m=0;m<muts.length;m++){
+          var nodes=muts[m].addedNodes;
+          for(var n=0;n<nodes.length;n++){
+            var el=nodes[n];
+            if(!el || el.nodeType!==1) continue;
+            if(el.tagName==='IMG') _fix(el);
+            else if(el.getElementsByTagName){
+              var inner=el.getElementsByTagName('img');
+              for(var k=0;k<inner.length;k++) _fix(inner[k]);
+            }
+          }
+        }
+      }).observe(document.documentElement,{childList:true,subtree:true});
+    }
+    // Fondo CSS de la cabecera (único .webp en CSS)
+    var st=document.createElement('style');
+    st.textContent=".header{background-image:url('"+_jpg('https://i.postimg.cc/Sx0rth1M/headr4.webp')+"')!important}";
+    (document.head||document.documentElement).appendChild(st);
+  }
+  // Detección de soporte WebP (imagen 1x1). onerror o ancho 0 → no soporta.
+  var t=new Image();
+  t.onload=function(){ if(!(t.width>0)) _activarFallback(); };
+  t.onerror=_activarFallback;
+  t.src='data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=';
+  // Red de seguridad: si pese a todo una .webp falla, reintento vía proxy.
+  document.addEventListener('error', function(e){
+    var img=e.target;
+    if(img && img.tagName==='IMG') _fix(img);
   }, true);
 })();
 </script>
@@ -12883,7 +12922,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-var _APP_VERSION = "v2034";
+var _APP_VERSION = "v2035";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
