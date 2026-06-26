@@ -6,7 +6,9 @@
 (function(){
   try{
     var p = new URLSearchParams(location.search);
-    if(!p.has('demo')) return;
+    // reel.html es exclusivo para la grabación: se autoactiva siempre.
+    // (puedes desactivarlo puntualmente abriendo con  ?demo=off )
+    if(p.get('demo') === 'off') return;
     var DEMO = (window.__DEMO__ = window.__DEMO__ || {});
     DEMO.pos = DEMO.pos || { lat: 42.777421, lng: -7.414834 };
     DEMO.heading = null;
@@ -15977,7 +15979,8 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
 
   // Solo arranca si la URL pide el demo.
   var params = new URLSearchParams(location.search);
-  if (!params.has('demo')) return;
+  // reel.html se autoactiva siempre; ?demo=off lo desactiva si hiciera falta.
+  if (params.get('demo') === 'off') return;
 
   // --------------------------------------------------------------------------
   // 0. ESTADO / UTILIDADES BÁSICAS
@@ -16271,26 +16274,19 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
   if (document.body) mountCaption(); else document.addEventListener('DOMContentLoaded', mountCaption);
 
   function say(text, holdMs) {
-    mountCaption();
-    caption.textContent = text;
-    caption.style.opacity = '1';
+    // Carteles desactivados: solo respetamos el tiempo de pausa.
     return sleep(holdMs || 1600);
   }
-  function captionPulse(label) {
-    if (label) { mountCaption(); caption.textContent = label; }
-    caption.style.opacity = caption.textContent ? '1' : '0';
-  }
+  function captionPulse(label) { /* etiquetas desactivadas */ }
   function hideCaption() { caption.style.opacity = '0'; }
 
   // FLASH grande (para los "flashes" entre secuencias)
   function flashTitle(text) {
+    // Sin texto: solo un breve fundido para separar secuencias.
     var f = document.createElement('div');
     f.style.cssText =
-      'position:fixed;inset:0;z-index:2147483640;display:flex;align-items:center;justify-content:center;' +
-      'background:radial-gradient(ellipse at center,rgba(13,45,30,0.96),rgba(8,28,18,0.99));' +
-      'color:#fff8e8;font-family:Playfair Display,serif;font-size:30px;font-weight:700;text-align:center;' +
-      'padding:0 8vw;opacity:0;transition:opacity .4s;letter-spacing:.5px';
-    f.textContent = text;
+      'position:fixed;inset:0;z-index:2147483640;' +
+      'background:rgba(8,28,18,0.92);opacity:0;transition:opacity .4s;pointer-events:none';
     document.body.appendChild(f);
     requestAnimationFrame(function () { f.style.opacity = '1'; });
     return { el: f, fade: function () { f.style.opacity = '0'; setTimeout(function () { f.remove(); }, 450); } };
@@ -16323,23 +16319,29 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
   }
 
   // Encontrar el punto (de window.PUNTOS) más cercano que cumpla un filtro
-  function nearestPunto(lat, lng, filterFn, maxKm) {
+  function nearestPunto(lat, lng, filterFn, maxKm, minKm) {
     if (typeof window.PUNTOS === 'undefined') return null;
+    minKm = minKm || 0;
     var best = null, bestD = Infinity;
     window.PUNTOS.forEach(function (p) {
       if (!p || typeof p.lat !== 'number') return;
       if (filterFn && !filterFn(p)) return;
       var d = Math.hypot((p.lat - lat) * 111, (p.lng - lng) * 85);
+      if (d < minKm) return;            // descarta los DEMASIADO cercanos
+      if (maxKm && d > maxKm) return;   // descarta los demasiado lejanos
       if (d < bestD) { bestD = d; best = p; }
     });
-    if (maxKm && bestD > maxKm) return null;
     return best;
+  }
+  // Atajo: POI para trazar ruta, siempre a >=500 m para que la línea se vea.
+  function poiParaRuta(lat, lng, filterFn, maxKm) {
+    return nearestPunto(lat, lng, filterFn, maxKm || 30, 0.5);
   }
 
   // Abrir el detalle (modal) de un punto concreto disparando su marcador
   function abrirDetallePunto(p, label) {
     if (!p) return sleep(150);
-    return zoom(p.lat, p.lng, 15).then(function () {
+    return zoom(p.lat, p.lng, 16).then(function () {
       // mover cursor sobre el marcador (si existe en pantalla) y abrir modal
       var marker = p.marker;
       if (marker && marker.getElement && marker.getElement()) {
@@ -16371,7 +16373,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
   // expone helpers a las secuencias
   DEMO.api = {
     sleep: sleep, say: say, tap: tap, chip: chip, zoom: zoom, setPos: setPos,
-    walkTo: walkTo, nearestPunto: nearestPunto, abrirDetallePunto: abrirDetallePunto,
+    walkTo: walkTo, nearestPunto: nearestPunto, poiParaRuta: poiParaRuta, abrirDetallePunto: abrirDetallePunto,
     addPuntoARuta: addPuntoARuta, irAlMapaYExpandir: irAlMapaYExpandir,
     flashTitle: flashTitle, hideCaption: hideCaption, waitUntil: waitUntil,
     modalRutaOficialVisible: modalRutaOficialVisible, cerrarRutaOficial: cerrarRutaOficial,
@@ -16445,7 +16447,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
   window.__DEMO_RUN__ = function (api) {
     var sleep = api.sleep, say = api.say, tap = api.tap, chip = api.chip,
         zoom = api.zoom, setPos = api.setPos, walkTo = api.walkTo,
-        nearestPunto = api.nearestPunto, abrirDetalle = api.abrirDetallePunto,
+        nearestPunto = api.nearestPunto, poiParaRuta = api.poiParaRuta, abrirDetalle = api.abrirDetallePunto,
         addRuta = api.addPuntoARuta, irAlMapa = api.irAlMapaYExpandir,
         flashTitle = api.flashTitle, hideCaption = api.hideCaption,
         waitUntil = api.waitUntil, byId = api.byId, $ = api.$;
@@ -16496,7 +16498,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
       return seq([
         function () { return say('Estás en el Camino Francés · Sarria', 1800); },
         function () { setPos(SARRIA.lat, SARRIA.lng); return irAlMapa(); },
-        function () { return zoom(SARRIA.lat, SARRIA.lng, 15); },
+        function () { return zoom(SARRIA.lat, SARRIA.lng, 16); },
         function () { return say('Filtramos las etapas del Camino Francés', 1500); },
         function () { return chip('chip-mapa-frances', 'Etapas del Francés'); },
         function () { return sleep(1200); },
@@ -16518,20 +16520,20 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
         function () { return chip('chip-mapa-todos', 'Todos'); },
         function () { return sleep(900); },
         // Escoger un POI cercano: detalle + traza ruta
-        function () { return zoom(SARRIA.lat, SARRIA.lng, 16); },
+        function () { return zoom(SARRIA.lat, SARRIA.lng, 17); },
         function () {
-          var poi = nearestPunto(SARRIA.lat, SARRIA.lng, poiDe('frances'), 4);
+          var poi = poiParaRuta(SARRIA.lat, SARRIA.lng, poiDe('frances'), 8);
           return say('Elegimos un punto de interés cercano', 1500).then(function () { return poiARuta(poi, poi ? poi.nombre : 'Punto cercano'); });
         },
         // Añadir otro POI más lejano (mismo método)
         function () {
-          var lejano = nearestPunto(42.79, -7.50, poiDe('frances'), 18);
+          var lejano = poiParaRuta(42.79, -7.50, poiDe('frances'), 25);
           return say('Añadimos otro punto un poco más lejano', 1600)
-            .then(function () { return zoom(lejano ? lejano.lat : 42.79, lejano ? lejano.lng : -7.5, 14); })
+            .then(function () { return zoom(lejano ? lejano.lat : 42.79, lejano ? lejano.lng : -7.5, 15); })
             .then(function () { return poiARuta(lejano, lejano ? lejano.nombre : 'Punto lejano'); });
         },
         function () { return say('Ruta trazada con varios puntos', 1600); },
-        function () { return zoom(42.79, -7.49, 13); },
+        function () { return zoom(42.79, -7.49, 14); },
         function () { return sleep(1200); },
         // Limpiar ruta para la siguiente localización
         function () { if (typeof _ejecutarLimpiarRuta === 'function') _ejecutarLimpiarRuta(); else if (typeof limpiarRuta === 'function') limpiarRuta(); return sleep(800); },
@@ -16546,16 +16548,16 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
       var PORTO = { lat: 42.804966, lng: -7.616855 };
       return seq([
         function () { return say('Otra localización: Portomarín', 1600); },
-        function () { setPos(PORTO.lat, PORTO.lng); return zoom(PORTO.lat, PORTO.lng, 14); },
+        function () { setPos(PORTO.lat, PORTO.lng); return zoom(PORTO.lat, PORTO.lng, 15); },
         function () { return chip('chip-mapa-frances', 'Etapas del Francés'); },
         function () {
           var etapa = nearestPunto(PORTO.lat, PORTO.lng, function (p) { return p.categoria === 'etapa' && p.variante === 'frances'; });
           return ojearDetalle(etapa, 'Etapa Portomarín → Palas de Rei', 2400);
         },
         function () { return chip('chip-mapa-todos', 'Todos'); },
-        function () { return zoom(PORTO.lat, PORTO.lng, 16); },
+        function () { return zoom(PORTO.lat, PORTO.lng, 17); },
         function () {
-          var poi = nearestPunto(PORTO.lat, PORTO.lng, poiDe('frances'), 5);
+          var poi = poiParaRuta(PORTO.lat, PORTO.lng, poiDe('frances'), 10);
           return say('Trazamos una ruta a un punto', 1400).then(function () { return poiARuta(poi, poi ? poi.nombre : 'Punto'); });
         },
         function () { return sleep(1200); },
@@ -16584,7 +16586,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
       return seq([
         function () { return say('Camino del Norte · ' + nombre, 1700); },
         function () { setPos(sobreLat, sobreLng); return irAlMapa(); },
-        function () { return zoom(sobreLat, sobreLng, 14); },
+        function () { return zoom(sobreLat, sobreLng, 15); },
         function () { return say('Activamos el modo Ruta Oficial', 1500); },
         function () { return tap('#btn-ruta-oficial', 'Ruta oficial'); },
         // Esperar el cartel de Ruta Oficial y cerrarlo solos
@@ -16594,7 +16596,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
         // Simular que nos salimos del trazado
         function () { return say('Nos desviamos del trazado…', 1500); },
         function () { return walkTo(fueraLat, fueraLng, 2600, 18); },
-        function () { return zoom(fueraLat, fueraLng, 15); },
+        function () { return zoom(fueraLat, fueraLng, 16); },
         function () { return sleep(900); },
         // Pulsar "volver a la ruta" → marca la chincheta
         function () { return say('Volvemos a la ruta oficial', 1500); },
@@ -16646,7 +16648,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
       return seq([
         function () { return say('Camino del Norte · ' + nombre, 1600); },
         function () { setPos(lat, lng); return irAlMapa(); },
-        function () { return zoom(lat, lng, 14); },
+        function () { return zoom(lat, lng, 15); },
         // Activar ruta oficial primero (la descarga necesita etapa detectada)
         function () { if (window.RutaOficial && !window.RutaOficial.estaActivo()) window.RutaOficial.activar(); return sleep(500); },
         function () { return waitUntil(api.modalRutaOficialVisible, 5000); },
@@ -16704,7 +16706,7 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
       return seq([
         function () { return say('Camino Inglés · Betanzos', 1700); },
         function () { setPos(BET.lat, BET.lng); return irAlMapa(); },
-        function () { return zoom(BET.lat, BET.lng, 14); },
+        function () { return zoom(BET.lat, BET.lng, 15); },
         function () { return chip('chip-mapa-ingles', 'Etapas del Inglés'); },
         function () {
           var etapa = nearestPunto(BET.lat, BET.lng, function (p) { return p.categoria === 'etapa' && p.variante === 'ingles'; });
@@ -16716,9 +16718,9 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
           return ojearDetalle(alb, alb ? alb.nombre : 'Albergue', 2200);
         },
         function () { return chip('chip-mapa-todos', 'Todos'); },
-        function () { return zoom(BET.lat, BET.lng, 16); },
+        function () { return zoom(BET.lat, BET.lng, 17); },
         function () {
-          var poi = nearestPunto(BET.lat, BET.lng, poiDe('ingles'), 10);
+          var poi = poiParaRuta(BET.lat, BET.lng, poiDe('ingles'), 14);
           return say('Trazamos una ruta', 1300).then(function () { return poiARuta(poi, poi ? poi.nombre : 'Punto'); });
         },
         function () { return sleep(1400); },
@@ -16736,23 +16738,74 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
     }
 
     // ========================================================================
+    // ========================================================================
+    // BARRERA ENTRE SECUENCIAS — garantiza que una función termina su ciclo
+    // completo (cierra modales/drawers, retira ayudantes) antes de empezar la
+    // siguiente. Evita que se pisen.
+    // ========================================================================
+    function cerrarTodoAbierto() {
+      try { api.cerrarModalPOI(); } catch (e) {}
+      try { api.cerrarRutaOficial(); } catch (e) {}
+      try { api.cerrarDescarga(); } catch (e) {}
+      try { api.cerrarHero(); } catch (e) {}
+      // Drawers de la app
+      ['meteo-drawer', 'brujula-drawer', 'historia-drawer'].forEach(function (id) {
+        var d = byId(id);
+        if (d && /slide-in|translateX\(0/.test(d.className + (d.style.transform || ''))) {
+          var fnMap = { 'meteo-drawer': 'cerrarMeteoDrawer', 'brujula-drawer': 'cerrarBrujulaDrawer', 'historia-drawer': 'cerrarHistoriaDrawer' };
+          if (typeof window[fnMap[id]] === 'function') { try { window[fnMap[id]](); } catch (e) {} }
+        }
+      });
+      // Modales sueltos por id
+      ['modal-poi-info', 'modal-ruta-oficial', 'descmapa-pergamino', 'descmapa-modal', 'modal-hero-mobile'].forEach(function (id) {
+        var m = byId(id); if (m) { try { m.remove(); } catch (e) {} }
+      });
+      // Ayudantes de "volver a la ruta"
+      try { if (typeof _limpiarVolverRuta === 'function') _limpiarVolverRuta(); } catch (e) {}
+      try { if (window.RutaOficial && window.RutaOficial.estaActivo()) window.RutaOficial.desactivar(); } catch (e) {}
+      var bcn = byId('btn-comenzar-nav'); if (bcn) bcn.style.display = 'none';
+      // Limpiar ruta del usuario para empezar la siguiente desde cero
+      try { if (typeof _ejecutarLimpiarRuta === 'function') _ejecutarLimpiarRuta(); } catch (e) {}
+    }
+
+    // Espera a que NO quede ningún modal/drawer abierto (hasta 4 s).
+    function esperarDomLimpio() {
+      return waitUntil(function () {
+        if (byId('modal-poi-info') || byId('modal-ruta-oficial') || byId('descmapa-pergamino') ||
+            byId('descmapa-modal') || byId('modal-hero-mobile')) return false;
+        var ro = byId('modal-ruta-oficial'); if (ro) return false;
+        return true;
+      }, 4000);
+    }
+
+    // Envuelve cada secuencia: la ejecuta, luego cierra todo y deja respirar.
+    function conBarrera(fn) {
+      return function () {
+        return Promise.resolve()
+          .then(fn)
+          .then(function () { cerrarTodoAbierto(); return esperarDomLimpio(); })
+          .then(function () { return sleep(1200); }); // pausa limpia entre bloques
+      };
+    }
+
+    // ========================================================================
     // ORQUESTACIÓN GENERAL (orden del guion)
     // ========================================================================
     return seq([
-      intro,
-      secuenciaFrances,
-      secuenciaFrances2,
-      flashPrevision,
+      conBarrera(intro),
+      conBarrera(secuenciaFrances),
+      conBarrera(secuenciaFrances2),
+      conBarrera(flashPrevision),
       // Modo ruta oficial en 2 puntos distintos del Norte
-      function () { return rutaOficialEn('Gernika', 43.31523, -2.678531, 43.322, -2.690); },
-      function () { return rutaOficialEn('Santander', 43.460718, -3.807836, 43.470, -3.820); },
-      flashBrujula,
-      function () { return descargaMapa('Bilbao', 43.256799, -2.923577); },
-      flashAsistente,
-      function () { return descargaMapa('Ribadeo', 43.470573, -7.299569); },
-      flashHistoria,
-      secuenciaIngles,
-      outro
+      conBarrera(function () { return rutaOficialEn('Gernika', 43.31523, -2.678531, 43.322, -2.690); }),
+      conBarrera(function () { return rutaOficialEn('Santander', 43.460718, -3.807836, 43.470, -3.820); }),
+      conBarrera(flashBrujula),
+      conBarrera(function () { return descargaMapa('Bilbao', 43.256799, -2.923577); }),
+      conBarrera(flashAsistente),
+      conBarrera(function () { return descargaMapa('Ribadeo', 43.470573, -7.299569); }),
+      conBarrera(flashHistoria),
+      conBarrera(secuenciaIngles),
+      conBarrera(outro)
     ]);
   };
 })();
