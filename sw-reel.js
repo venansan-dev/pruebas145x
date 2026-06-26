@@ -154,22 +154,14 @@ self.addEventListener('install', function(e) {
 });
 
 self.addEventListener('activate', function(e) {
-  // Limpieza quirúrgica: SOLO borramos versiones antiguas de las cachés del
-  // PROPIO reel (prefijo 'guia-reel-'). No tocamos las cachés de la app de
-  // producción ni las de otros Service Workers del mismo origen.
-  var MIAS = [CACHE_NAME, TILE_CACHE, IMG_CACHE, LIB_CACHE, TRACK_CACHE];
   e.waitUntil(
     caches.keys().then(function(keys) {
       return Promise.all(keys.map(function(key) {
-        if (key.indexOf('guia-reel-') === 0 && MIAS.indexOf(key) === -1) {
+        if (key.indexOf('guia-reel-') === 0 && [CACHE_NAME,TILE_CACHE,IMG_CACHE,LIB_CACHE,TRACK_CACHE].indexOf(key) === -1) {
           return caches.delete(key);
         }
       }));
-    }).then(function() {
-      // Tomar el control de TODOS los clientes del scope de inmediato → este
-      // SW pasa a ser el dominante para las páginas ya abiertas, sin recargar.
-      return self.clients.claim();
-    })
+    }).then(function() { return self.clients.claim(); })
   );
 });
 

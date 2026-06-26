@@ -2,21 +2,40 @@
 <html lang="es">
 <head>
 <script>
-/* DEMO REEL — mock TEMPRANO de geolocalización (debe ir antes que la app) */
+/* ============================================================================
+   DEMO REEL SIMPLE — solo mueve el PUNTO AZUL a una localización nueva cada
+   50 segundos, recorriendo 10 puntos de distintos Caminos.
+   Mock TEMPRANO de geolocalización (debe ir antes que la app).
+   reel.html se autoactiva siempre; ?demo=off lo desactiva.
+   ============================================================================ */
 (function(){
   try{
     var p = new URLSearchParams(location.search);
-    // reel.html es exclusivo para la grabación: se autoactiva siempre.
-    // (puedes desactivarlo puntualmente abriendo con  ?demo=off )
     if(p.get('demo') === 'off') return;
-    var DEMO = (window.__DEMO__ = window.__DEMO__ || {});
-    DEMO.pos = DEMO.pos || { lat: 42.777421, lng: -7.414834 };
-    DEMO.heading = null;
+
+    var DEMO = (window.__REEL__ = window.__REEL__ || {});
+    // 10 localizaciones (lat,lng). Todas a >=500 m del POI más cercano.
+    // 6 sobre el trazado oficial, 3 fuera del trazado (1-2 km), 1 en gran urbe.
+    DEMO.locs = [
+      {lat:42.42998,lng:-2.85539},  // 1 Francés · Nájera–Sto Domingo (rural, sobre trazado)
+      {lat:43.44211,lng:-4.91167},  // 2 Norte · Llanes–Ribadesella (rural, sobre trazado)
+      {lat:43.30147,lng:-2.57221},  // 3 Norte · Markina–Gernika (FUERA ~1.5 km)
+      {lat:43.24236,lng:-6.71632},  // 4 Primitivo · Pola de Allande–A Mesa (rural)
+      {lat:42.92082,lng:-8.49818},  // 5 Inglés · acceso a Santiago (GRAN URBE, excepción)
+      {lat:43.20945,lng:-8.29479},  // 6 Inglés · Betanzos–Hosp. de Bruma (rural)
+      {lat:42.33471,lng:-4.74909},  // 7 Francés · Carrión–Terradillos (FUERA ~1.7 km)
+      {lat:41.60489,lng:-8.80180},  // 8 Costa · Esposende–Viana (rural)
+      {lat:43.02617,lng:-7.36889},  // 9 Primitivo · O Cadavo–Lugo (FUERA ~1.3 km)
+      {lat:42.28670,lng:-4.19579}   // 10 Francés · Hontanas–Boadilla (rural)
+    ];
+    DEMO.i = 0;
+    DEMO.pos = { lat: DEMO.locs[0].lat, lng: DEMO.locs[0].lng };
+
+    // ---- mock de geolocalización: la app verá SIEMPRE DEMO.pos ----
     var watchers = (DEMO._watchers = []);
     function makePos(){
       return { coords:{ latitude:DEMO.pos.lat, longitude:DEMO.pos.lng, accuracy:8,
-        altitude:null, altitudeAccuracy:null, heading:DEMO.heading, speed:null },
-        timestamp: Date.now() };
+        altitude:null, altitudeAccuracy:null, heading:null, speed:null }, timestamp: Date.now() };
     }
     DEMO._makePos = makePos;
     var geo = {
@@ -85,7 +104,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
   <meta name="apple-mobile-web-app-title" content="Xacobeapp"/>
   <meta name="format-detection" content="telephone=no"/>
-  <!-- [DEMO] manifest de producción retirado para no relanzar la PWA original -->
+  <!-- [REEL] manifest retirado -->
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=5"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@400;500&family=Cinzel:wght@700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
@@ -13040,13 +13059,10 @@ if ('serviceWorker' in navigator) {
   });
   // Limpiar cachés de versiones anteriores (solo las antiguas, nunca las activas)
   var CACHES_ACTIVAS = ['guia-compostelana-v2014', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
-  // [REEL] No borramos cachés aquí: el sw-reel gestiona solo las suyas y así
-  // no interferimos con el Service Worker original de producción.
-  /* limpieza de cachés desactivada en el build de demo */
+  /* [REEL] limpieza de cachés ajenas desactivada */
   window.addEventListener('load', function() {
     // updateViaCache:'none' impide que el navegador sirva sw.js desde su caché HTTP
     navigator.serviceWorker.register('sw-reel.js', { scope: '/', updateViaCache: 'none' }).then(function(reg) {
-      try { reg.update(); } catch(e) {}
     }).catch(function(err) {
       console.warn('SW error:', err);
     });
@@ -15959,857 +15975,70 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
 
 
 
-
-<!-- ====== DEMO REEL (auto-play) — actívalo con ?demo=1 en la URL ====== -->
+<!-- ====== DEMO REEL SIMPLE — ciclo de localizaciones (autoplay) ====== -->
 <script>
-/* ============================================================================
-   DEMO REEL — Guía Compostelana
-   Reproduce automáticamente las funciones de la app de forma coreografiada.
-   - Mueve el "punto azul" por distintas localizaciones (geolocalización mock).
-   - Simula pulsaciones con efecto de onda sobre los botones reales.
-   - Resuelve solo los modales/notificaciones antes de seguir.
-   - Suprime las cartas de juego (cromos/pergamino-OCA) y avisos de
-     deslocalización para que no interrumpan la grabación.
-
-   Activar:  añadir  ?demo=1  a la URL  (o  ?demo=auto).
-   Controles flotantes abajo a la derecha: ⏸ pausa / ▶ reanuda / ⏭ salta paso.
-   ============================================================================ */
-(function () {
+(function(){
   'use strict';
+  var p = new URLSearchParams(location.search);
+  if(p.get('demo') === 'off') return;
 
-  // Solo arranca si la URL pide el demo.
-  var params = new URLSearchParams(location.search);
-  // reel.html se autoactiva siempre; ?demo=off lo desactiva si hiciera falta.
-  if (params.get('demo') === 'off') return;
+  var DEMO = window.__REEL__;
+  if(!DEMO){ return; }
 
-  // --------------------------------------------------------------------------
-  // 0. ESTADO / UTILIDADES BÁSICAS
-  // --------------------------------------------------------------------------
-  var DEMO = (window.__DEMO__ = window.__DEMO__ || {});
-  DEMO.pos = DEMO.pos || { lat: 42.777421, lng: -7.414834 };  // posición simulada
-  if (typeof DEMO.heading === 'undefined') DEMO.heading = null;
-  DEMO.paused = false;
-  DEMO.skip = false;
-  DEMO.speed = parseFloat(params.get('speed')) || 1;  // multiplicador de tiempos
-  DEMO.abort = false;
+  var INTERVALO = (parseFloat(p.get('cada')) || 50) * 1000; // ms entre saltos (def 50 s)
 
-  function now() { return Date.now(); }
-
-  // sleep que respeta pausa y "saltar paso"
-  function sleep(ms) {
-    ms = ms / DEMO.speed;
-    return new Promise(function (resolve) {
-      var start = now(), elapsed = 0, last = start;
-      (function tick() {
-        if (DEMO.abort) return resolve();
-        if (DEMO.skip) { DEMO.skip = false; return resolve(); }
-        var t = now();
-        if (!DEMO.paused) elapsed += (t - last);
-        last = t;
-        if (elapsed >= ms) return resolve();
-        requestAnimationFrame(tick);
-      })();
-    });
+  function ensureUserMarker(lat,lng){
+    if(typeof window.mapa==='undefined' || !window.mapa || !window.L) return;
+    try{
+      if(window._userMarker){ window._userMarker.setLatLng([lat,lng]); }
+      else if(typeof crearIconoUsuario==='function'){
+        window._userMarker = L.marker([lat,lng],{ icon:crearIconoUsuario(null), zIndexOffset:1000 }).addTo(window.mapa);
+      }
+    }catch(e){}
   }
 
-  function waitUntil(cond, timeout) {
-    timeout = timeout || 15000;
-    var start = now();
-    return new Promise(function (resolve) {
-      (function tick() {
-        if (DEMO.abort) return resolve(false);
-        var ok = false;
-        try { ok = cond(); } catch (e) { ok = false; }
-        if (ok) return resolve(true);
-        if (now() - start > timeout) return resolve(false);
-        setTimeout(tick, 120);
-      })();
-    });
-  }
-
-  function $(sel) { return document.querySelector(sel); }
-  function byId(id) { return document.getElementById(id); }
-
-  // --------------------------------------------------------------------------
-  // 1. GEOLOCALIZACIÓN SIMULADA (el "punto azul")
-  //    Interceptamos navigator.geolocation ANTES de que la app la use, de modo
-  //    que watchPosition/getCurrentPosition devuelvan SIEMPRE DEMO.pos. Así el
-  //    punto azul, la Ruta Oficial y la Descarga de mapa funcionan de verdad.
-  // --------------------------------------------------------------------------
-  (function mockGeo() {
-    // El mock temprano del <head> ya instaló navigator.geolocation y __DEMO__.
-    // Si por lo que sea no estuviera, lo instalamos aquí como respaldo.
-    if (DEMO._pushPos) return;
-    var watchers = (DEMO._watchers = DEMO._watchers || []);
-    function makePos() {
-      return { coords: { latitude: DEMO.pos.lat, longitude: DEMO.pos.lng, accuracy: 8,
-        altitude: null, altitudeAccuracy: null, heading: DEMO.heading, speed: null },
-        timestamp: now() };
-    }
-    var geo = {
-      getCurrentPosition: function (ok) { setTimeout(function () { try { ok(makePos()); } catch (e) {} }, 60); },
-      watchPosition: function (ok) { watchers.push(ok); setTimeout(function () { try { ok(makePos()); } catch (e) {} }, 60); return watchers.length; },
-      clearWatch: function () {}
-    };
-    try { Object.defineProperty(navigator, 'geolocation', { value: geo, configurable: true }); }
-    catch (e) { navigator.geolocation = geo; }
-    DEMO._pushPos = function () { var p = makePos(); watchers.forEach(function (cb) { try { cb(p); } catch (e) {} }); };
-    try { localStorage.setItem('_gps_last', JSON.stringify({ lat: DEMO.pos.lat, lng: DEMO.pos.lng })); } catch (e) {}
-  })();
-
-  // Mover el punto azul a una coordenada (y refrescar la app + marcador)
-  function setPos(lat, lng, heading) {
+  // Coloca el punto azul en una localización y centra el mapa con buen zoom.
+  function irA(lat,lng){
     DEMO.pos.lat = lat; DEMO.pos.lng = lng;
-    DEMO.heading = (typeof heading === 'number') ? heading : null;
-    try { localStorage.setItem('_gps_last', JSON.stringify({ lat: lat, lng: lng })); } catch (e) {}
-    // Variables globales que usa la app
-    try { window.userLat = lat; window.userLng = lng; } catch (e) {}
-    // Empujar a los watchPosition (la app moverá el marcador y el círculo)
-    if (DEMO._pushPos) DEMO._pushPos();
-    // Garantizar marcador aunque la app aún no lo haya creado
-    ensureUserMarker(lat, lng);
+    try{ window.userLat = lat; window.userLng = lng; }catch(e){}
+    try{ localStorage.setItem('_gps_last', JSON.stringify({lat:lat,lng:lng})); }catch(e){}
+    if(DEMO._pushPos) DEMO._pushPos();   // la app mueve marcador + círculo + recalcula
+    ensureUserMarker(lat,lng);
+    if(window.mapa){ try{ window.mapa.setView([lat,lng], 15, {animate:true}); }catch(e){} }
   }
 
-  function ensureUserMarker(lat, lng) {
-    if (typeof window.mapa === 'undefined' || !window.mapa || !window.L) return;
-    try {
-      if (window._userMarker) {
-        window._userMarker.setLatLng([lat, lng]);
-      } else if (typeof crearIconoUsuario === 'function') {
-        window._userMarker = L.marker([lat, lng], {
-          icon: crearIconoUsuario(null), zIndexOffset: 1000
-        }).addTo(window.mapa);
-      }
-    } catch (e) {}
+  function siguiente(){
+    DEMO.i = (DEMO.i + 1) % DEMO.locs.length;
+    var l = DEMO.locs[DEMO.i];
+    irA(l.lat, l.lng);
   }
 
-  // Animar el punto azul a lo largo de una recta (para "simular caminar")
-  function walkTo(lat2, lng2, durMs, steps) {
-    steps = steps || 24;
-    var lat1 = DEMO.pos.lat, lng1 = DEMO.pos.lng;
-    var heading = bearing(lat1, lng1, lat2, lng2);
-    var i = 0;
-    return new Promise(function (resolve) {
-      (function step() {
-        if (DEMO.abort) return resolve();
-        if (DEMO.paused) { setTimeout(step, 80); return; }
-        i++;
-        var f = i / steps;
-        var lat = lat1 + (lat2 - lat1) * f;
-        var lng = lng1 + (lng2 - lng1) * f;
-        setPos(lat, lng, heading);
-        if (i >= steps) return resolve();
-        setTimeout(step, (durMs / steps) / DEMO.speed);
-      })();
-    });
+  function arrancar(){
+    // Primera localización ya está en DEMO.pos; la fijamos y centramos.
+    irA(DEMO.locs[0].lat, DEMO.locs[0].lng);
+    // Saltar a la siguiente cada INTERVALO.
+    if(DEMO._timer) clearInterval(DEMO._timer);
+    DEMO._timer = setInterval(siguiente, INTERVALO);
   }
 
-  function bearing(la1, lo1, la2, lo2) {
-    var φ1 = la1 * Math.PI / 180, φ2 = la2 * Math.PI / 180, Δλ = (lo2 - lo1) * Math.PI / 180;
-    var y = Math.sin(Δλ) * Math.cos(φ2);
-    var x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
-    return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-  }
-
-  // --------------------------------------------------------------------------
-  // 2. SUPRESIÓN DE CARTAS DE JUEGO / DESLOCALIZACIÓN
-  //    El usuario pidió que NO se muestren los cromos ("cartas de juego") ni
-  //    el aviso de "fuera de ruta" (deslocalización). Neutralizamos sus
-  //    funciones de origen y, por si acaso, retiramos del DOM cualquier modal
-  //    de ese tipo que llegue a inyectarse.
-  // --------------------------------------------------------------------------
-  (function suppressGameCards() {
-    function neuter(name) {
-      try { if (typeof window[name] === 'function') window[name] = function () {}; } catch (e) {}
+  // Esperar a que el mapa esté listo antes de arrancar.
+  function esperarMapa(intentos){
+    intentos = intentos || 0;
+    if(window.mapa && window.L && typeof window.PUNTOS !== 'undefined'){
+      setTimeout(arrancar, 600);
+      return;
     }
-    // Cromos / celebraciones de localización desbloqueada
-    neuter('mostrarToastCromo');
-    neuter('_mostrarUnCromo');
-    neuter('_cromoSiguiente');
-    // Aviso de desvío / fuera de ruta (deslocalización)
-    var killDesvio = setInterval(function () {
-      if (window.Desvio) {
-        try {
-          window.Desvio.avisoFueraRuta = function () {};
-          if (window.Desvio.cerrarModal) { /* lo dejamos para poder cerrar */ }
-        } catch (e) {}
-        clearInterval(killDesvio);
-      }
-    }, 200);
-    setTimeout(function () { clearInterval(killDesvio); }, 8000);
-
-    // Vigilante del DOM: retira cualquier carta de juego / aviso de desvío
-    var BLOCK_IDS = ['cromo-celebracion'];
-    function sweep(node) {
-      try {
-        BLOCK_IDS.forEach(function (id) {
-          var el = node.id === id ? node : (node.querySelector && node.querySelector('#' + id));
-          if (el) el.remove();
-        });
-        // Pergaminos de OCA / cromos (no los de descarga ni ruta oficial)
-        if (node.id && /oca|cromo|deuda|casilla/i.test(node.id)) node.remove();
-      } catch (e) {}
-    }
-    var mo = new MutationObserver(function (muts) {
-      muts.forEach(function (m) {
-        m.addedNodes && m.addedNodes.forEach(function (n) {
-          if (n.nodeType === 1) sweep(n);
-        });
-      });
-    });
-    if (document.body) mo.observe(document.body, { childList: true, subtree: false });
-    else document.addEventListener('DOMContentLoaded', function () {
-      mo.observe(document.body, { childList: true, subtree: false });
-    });
-  })();
-
-  // --------------------------------------------------------------------------
-  // 3. AUTO-RESOLUCIÓN DE MODALES (los legítimos)
-  //    Esperan a que aparezca un modal concreto, lo dejan unos segundos en
-  //    pantalla para que se lea, y lo cierran solos antes de continuar.
-  // --------------------------------------------------------------------------
-  function modalRutaOficialVisible() { return !!byId('modal-ruta-oficial'); }
-  function cerrarRutaOficial() {
-    var m = byId('modal-ruta-oficial');
-    if (!m) return;
-    var ok = m.querySelector('button'); // el botón "Entendido" / la ✕
-    var btns = m.querySelectorAll('button');
-    var target = btns[btns.length - 1] || ok;
-    if (target) clickReal(target); else m.remove();
+    if(intentos > 200) { setTimeout(arrancar, 600); return; } // ~30 s tope
+    setTimeout(function(){ esperarMapa(intentos+1); }, 150);
   }
 
-  function modalDescargaVisible() {
-    return !!(byId('descmapa-pergamino') || byId('descmapa-modal'));
-  }
-  function cerrarDescarga() {
-    var p = byId('descmapa-pergamino');
-    if (p) { var b = p.querySelector('button'); if (b) clickReal(b); else p.remove(); return; }
-    var m = byId('descmapa-modal');
-    if (m) { var b2 = byId('descmapa-modal-btn'); if (b2) clickReal(b2); else m.style.display = 'none'; }
-  }
-
-  function cerrarModalPOI() {
-    var m = byId('modal-poi-info');
-    if (m) m.remove();
-  }
-  function cerrarHero() {
-    var m = byId('modal-hero-mobile');
-    if (m) { var x = m.querySelector('button'); if (x) clickReal(x); else m.remove(); }
-  }
-
-  // --------------------------------------------------------------------------
-  // 4. EFECTO DE ONDA (pulsación simulada) + CLICK REAL
-  // --------------------------------------------------------------------------
-  var rippleCSS = document.createElement('style');
-  rippleCSS.textContent =
-    '@keyframes demoRipple{0%{transform:translate(-50%,-50%) scale(0.2);opacity:0.55}' +
-    '100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}}' +
-    '.demo-ripple{position:fixed;width:70px;height:70px;border-radius:50%;' +
-    'background:radial-gradient(circle,rgba(245,200,0,0.55),rgba(245,200,0,0.05));' +
-    'border:2px solid rgba(245,200,0,0.7);pointer-events:none;z-index:2147483646;' +
-    'animation:demoRipple 0.62s ease-out forwards}' +
-    '.demo-cursor{position:fixed;width:26px;height:26px;border-radius:50%;' +
-    'background:rgba(255,255,255,0.25);border:2px solid #F5C800;pointer-events:none;' +
-    'z-index:2147483647;transform:translate(-50%,-50%);transition:left .35s ease,top .35s ease;' +
-    'box-shadow:0 2px 10px rgba(0,0,0,0.4)}';
-  (document.head || document.documentElement).appendChild(rippleCSS);
-
-  var cursor = document.createElement('div');
-  cursor.className = 'demo-cursor';
-  cursor.style.left = '-50px'; cursor.style.top = '-50px';
-  function mountCursor() { if (document.body && !cursor.parentNode) document.body.appendChild(cursor); }
-  if (document.body) mountCursor(); else document.addEventListener('DOMContentLoaded', mountCursor);
-
-  function ripple(x, y) {
-    var r = document.createElement('div');
-    r.className = 'demo-ripple';
-    r.style.left = x + 'px'; r.style.top = y + 'px';
-    document.body.appendChild(r);
-    setTimeout(function () { r.remove(); }, 650);
-  }
-
-  // Mueve el cursor virtual sobre el elemento y lanza la onda (sin click)
-  function pointAt(el) {
-    if (!el) return Promise.resolve();
-    var r = el.getBoundingClientRect();
-    if (r.width === 0 && r.height === 0) return Promise.resolve();
-    var x = r.left + r.width / 2, y = r.top + r.height / 2;
-    cursor.style.left = x + 'px'; cursor.style.top = y + 'px';
-    return sleep(360).then(function () { ripple(x, y); });
-  }
-
-  // click "de verdad" pero con la onda y un pequeño hundimiento visual
-  function clickReal(el) {
-    if (!el) return;
-    var r = el.getBoundingClientRect();
-    var x = r.left + r.width / 2, y = r.top + r.height / 2;
-    if (r.width || r.height) { ripple(x, y); cursor.style.left = x + 'px'; cursor.style.top = y + 'px'; }
-    try {
-      ['mousedown', 'mouseup', 'click'].forEach(function (type) {
-        el.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y }));
-      });
-    } catch (e) { try { el.click(); } catch (e2) {} }
-  }
-
-  // Gesto completo: apuntar (onda) -> esperar -> click
-  function tap(elOrSel, label) {
-    var el = (typeof elOrSel === 'string') ? $(elOrSel) : elOrSel;
-    if (!el) { return sleep(200); }
-    captionPulse(label);
-    return pointAt(el).then(function () { return sleep(180); }).then(function () { clickReal(el); }).then(function () { return sleep(450); });
-  }
-
-  // --------------------------------------------------------------------------
-  // 5. RÓTULO / SUBTÍTULOS DEL DEMO
-  // --------------------------------------------------------------------------
-  var caption = document.createElement('div');
-  caption.id = 'demo-caption';
-  caption.style.cssText =
-    'position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:2147483645;' +
-    'background:rgba(13,45,30,0.92);color:#fff;font-family:DM Sans,sans-serif;font-size:15px;' +
-    'font-weight:600;padding:10px 20px;border-radius:22px;max-width:86vw;text-align:center;' +
-    'box-shadow:0 6px 24px rgba(0,0,0,0.4);backdrop-filter:blur(4px);opacity:0;transition:opacity .35s;' +
-    'pointer-events:none;border:1px solid rgba(245,200,0,0.35)';
-  function mountCaption() { if (document.body && !caption.parentNode) document.body.appendChild(caption); }
-  if (document.body) mountCaption(); else document.addEventListener('DOMContentLoaded', mountCaption);
-
-  function say(text, holdMs) {
-    // Carteles desactivados: solo respetamos el tiempo de pausa.
-    return sleep(holdMs || 1600);
-  }
-  function captionPulse(label) { /* etiquetas desactivadas */ }
-  function hideCaption() { caption.style.opacity = '0'; }
-
-  // FLASH grande (para los "flashes" entre secuencias)
-  function flashTitle(text) {
-    // Sin texto: solo un breve fundido para separar secuencias.
-    var f = document.createElement('div');
-    f.style.cssText =
-      'position:fixed;inset:0;z-index:2147483640;' +
-      'background:rgba(8,28,18,0.92);opacity:0;transition:opacity .4s;pointer-events:none';
-    document.body.appendChild(f);
-    requestAnimationFrame(function () { f.style.opacity = '1'; });
-    return { el: f, fade: function () { f.style.opacity = '0'; setTimeout(function () { f.remove(); }, 450); } };
-  }
-
-  // --------------------------------------------------------------------------
-  // 6. HELPERS DE ALTO NIVEL SOBRE LA APP
-  // --------------------------------------------------------------------------
-  function irAlMapaYExpandir() {
-    // Llevar el scroll al mapa
-    var mapBlock = $('.map-block') || byId('map') || byId('map-block');
-    if (mapBlock) mapBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return sleep(700);
-  }
-
-  function zoom(lat, lng, z, animate) {
-    if (window.mapa) {
-      try { window.mapa.setView([lat, lng], z, { animate: animate !== false }); } catch (e) {}
-    }
-    return sleep(900);
-  }
-
-  // Pulsar un chip de filtro de la barra del mapa (por id)
-  function chip(id, label) {
-    var c = byId(id);
-    if (!c) return sleep(150);
-    // asegurar visible dentro de la barra scrollable
-    try { c.scrollIntoView({ inline: 'center', block: 'nearest' }); } catch (e) {}
-    return sleep(250).then(function () { return tap(c, label); });
-  }
-
-  // Encontrar el punto (de window.PUNTOS) más cercano que cumpla un filtro
-  function nearestPunto(lat, lng, filterFn, maxKm, minKm) {
-    if (typeof window.PUNTOS === 'undefined') return null;
-    minKm = minKm || 0;
-    var best = null, bestD = Infinity;
-    window.PUNTOS.forEach(function (p) {
-      if (!p || typeof p.lat !== 'number') return;
-      if (filterFn && !filterFn(p)) return;
-      var d = Math.hypot((p.lat - lat) * 111, (p.lng - lng) * 85);
-      if (d < minKm) return;            // descarta los DEMASIADO cercanos
-      if (maxKm && d > maxKm) return;   // descarta los demasiado lejanos
-      if (d < bestD) { bestD = d; best = p; }
-    });
-    return best;
-  }
-  // Atajo: POI para trazar ruta, siempre a >=500 m para que la línea se vea.
-  function poiParaRuta(lat, lng, filterFn, maxKm) {
-    return nearestPunto(lat, lng, filterFn, maxKm || 30, 0.5);
-  }
-
-  // Abrir el detalle (modal) de un punto concreto disparando su marcador
-  function abrirDetallePunto(p, label) {
-    if (!p) return sleep(150);
-    return zoom(p.lat, p.lng, 16).then(function () {
-      // mover cursor sobre el marcador (si existe en pantalla) y abrir modal
-      var marker = p.marker;
-      if (marker && marker.getElement && marker.getElement()) {
-        return tap(marker.getElement(), label).then(function () {
-          // por si el cluster lo ocultó, forzar el modal
-          if (!byId('modal-poi-info') && typeof _abrirModalPOI === 'function') _abrirModalPOI(p);
-        });
-      }
-      captionPulse(label);
-      if (typeof _abrirModalPOI === 'function') { _abrirModalPOI(p); }
-      return sleep(500);
-    });
-  }
-
-  // Añadir un punto a la ruta (botón real dentro del modal POI, si está)
-  function addPuntoARuta(p) {
-    if (!p) return sleep(150);
-    if (typeof addToRoute === 'function') {
-      // animar onda sobre el botón "añadir a ruta" del modal si existe
-      var modal = byId('modal-poi-info');
-      var btn = modal && Array.prototype.slice.call(modal.querySelectorAll('button'))
-        .filter(function (b) { return /ruta|añadir|add/i.test(b.textContent + (b.getAttribute('onclick') || '')); })[0];
-      if (btn) { clickReal(btn); return sleep(500); }
-      addToRoute(p.id);
-    }
-    return sleep(500);
-  }
-
-  // expone helpers a las secuencias
-  DEMO.api = {
-    sleep: sleep, say: say, tap: tap, chip: chip, zoom: zoom, setPos: setPos,
-    walkTo: walkTo, nearestPunto: nearestPunto, poiParaRuta: poiParaRuta, abrirDetallePunto: abrirDetallePunto,
-    addPuntoARuta: addPuntoARuta, irAlMapaYExpandir: irAlMapaYExpandir,
-    flashTitle: flashTitle, hideCaption: hideCaption, waitUntil: waitUntil,
-    modalRutaOficialVisible: modalRutaOficialVisible, cerrarRutaOficial: cerrarRutaOficial,
-    modalDescargaVisible: modalDescargaVisible, cerrarDescarga: cerrarDescarga,
-    cerrarModalPOI: cerrarModalPOI, cerrarHero: cerrarHero, byId: byId, $: $
-  };
-
-  // --------------------------------------------------------------------------
-  // 7. CONTROLES FLOTANTES (pausa / reanudar / saltar)
-  // --------------------------------------------------------------------------
-  function buildControls() {
-    var bar = document.createElement('div');
-    bar.style.cssText =
-      'position:fixed;right:12px;bottom:84px;z-index:2147483647;display:flex;gap:6px;' +
-      'font-family:DM Sans,sans-serif';
-    function mk(txt, fn) {
-      var b = document.createElement('button');
-      b.textContent = txt;
-      b.style.cssText =
-        'width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;font-size:16px;' +
-        'background:rgba(13,45,30,0.9);color:#fff;box-shadow:0 3px 12px rgba(0,0,0,0.35)';
-      b.onclick = fn;
-      bar.appendChild(b);
-      return b;
-    }
-    var pb = mk('⏸', function () {
-      DEMO.paused = !DEMO.paused;
-      pb.textContent = DEMO.paused ? '▶' : '⏸';
-    });
-    mk('⏭', function () { DEMO.skip = true; });
-    document.body.appendChild(bar);
-  }
-  if (document.body) buildControls(); else document.addEventListener('DOMContentLoaded', buildControls);
-
-  // --------------------------------------------------------------------------
-  // 8. ARRANQUE → carga la coreografía (definida en demo-sequences.js inline)
-  // --------------------------------------------------------------------------
-  function boot() {
-    // Esperar a que el mapa y los puntos estén listos
-    waitUntil(function () {
-      return window.mapa && window.L && typeof window.PUNTOS !== 'undefined' && window.PUNTOS.length;
-    }, 25000).then(function (ready) {
-      // Punto azul inicial visible cuanto antes
-      setPos(DEMO.pos.lat, DEMO.pos.lng);
-      return sleep(1200);
-    }).then(function () {
-      if (typeof window.__DEMO_RUN__ === 'function') return window.__DEMO_RUN__(DEMO.api);
-    });
-  }
-
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    setTimeout(boot, 800);
+  if(document.readyState === 'complete' || document.readyState === 'interactive'){
+    esperarMapa();
   } else {
-    window.addEventListener('load', function () { setTimeout(boot, 800); });
+    window.addEventListener('load', function(){ esperarMapa(); });
   }
 })();
-
 </script>
-<script>
-/* ============================================================================
-   DEMO REEL — COREOGRAFÍA (guion)
-   Define window.__DEMO_RUN__(api): la secuencia de acciones que graba el reel.
-   Cada bloque sigue el guion solicitado: punto azul en un Camino, zoom, filtro
-   de etapas, abrir etiqueta/detalle, albergues, POIs, trazar rutas, modo Ruta
-   Oficial con "volver", descarga de mapa offline, y los "flashes" intermedios
-   (previsión, brújula, asistente, historia).
-   ============================================================================ */
-(function () {
-  'use strict';
 
-  window.__DEMO_RUN__ = function (api) {
-    var sleep = api.sleep, say = api.say, tap = api.tap, chip = api.chip,
-        zoom = api.zoom, setPos = api.setPos, walkTo = api.walkTo,
-        nearestPunto = api.nearestPunto, poiParaRuta = api.poiParaRuta, abrirDetalle = api.abrirDetallePunto,
-        addRuta = api.addPuntoARuta, irAlMapa = api.irAlMapaYExpandir,
-        flashTitle = api.flashTitle, hideCaption = api.hideCaption,
-        waitUntil = api.waitUntil, byId = api.byId, $ = api.$;
-
-    // Filtros reutilizables sobre PUNTOS
-    var esAlbergue = function (p) { return p.categoria === 'albergue'; };
-    var noEtapa = function (p) { return p.categoria !== 'etapa' && p.categoria !== 'albergue'; };
-    function variante(v) { return function (p) { return p.variante === v; }; }
-    function albergueDe(v) { return function (p) { return p.categoria === 'albergue' && p.variante === v; }; }
-    function poiDe(v) { return function (p) { return p.variante === v && noEtapa(p); }; }
-
-    // Helper: abrir detalle de POI, leer, y cerrar
-    function ojearDetalle(p, label, holdMs) {
-      return abrirDetalle(p, label).then(function () { return sleep(holdMs || 2200); }).then(api.cerrarModalPOI).then(function () { return sleep(500); });
-    }
-
-    // Helper: añadir POI a la ruta siguiendo el método (detalle -> añadir)
-    function poiARuta(p, label) {
-      return abrirDetalle(p, label)
-        .then(function () { return sleep(1700); })
-        .then(function () { return addRuta(p); })
-        .then(function () { return sleep(700); })
-        .then(api.cerrarModalPOI)
-        .then(function () { return sleep(500); });
-    }
-
-    // Helper: encadena promesas en serie
-    function seq(steps) {
-      return steps.reduce(function (pr, fn) { return pr.then(fn); }, Promise.resolve());
-    }
-
-    // ========================================================================
-    // INTRO
-    // ========================================================================
-    function intro() {
-      var f = flashTitle('Guía Compostelana');
-      return sleep(1600).then(function () { f.fade(); return sleep(400); });
-    }
-
-    // ========================================================================
-    // SECUENCIA 1 — CAMINO FRANCÉS (Sarria → Portomarín)
-    //   Filtra etapas francés, abre etiqueta de una etapa, ve detalle,
-    //   mira albergues, descripción de uno, vuelve a "todos", escoge un POI
-    //   cercano, traza ruta, añade otro POI más lejano. Varios zooms.
-    // ========================================================================
-    function secuenciaFrances() {
-      var SARRIA = { lat: 42.777421, lng: -7.414834 };
-      return seq([
-        function () { return say('Estás en el Camino Francés · Sarria', 1800); },
-        function () { setPos(SARRIA.lat, SARRIA.lng); return irAlMapa(); },
-        function () { return zoom(SARRIA.lat, SARRIA.lng, 16); },
-        function () { return say('Filtramos las etapas del Camino Francés', 1500); },
-        function () { return chip('chip-mapa-frances', 'Etapas del Francés'); },
-        function () { return sleep(1200); },
-        // Abrir la etiqueta/detalle de una etapa
-        function () {
-          var etapa = nearestPunto(SARRIA.lat, SARRIA.lng, function (p) { return p.categoria === 'etapa' && p.variante === 'frances'; });
-          return say('Abrimos una etapa y vemos sus detalles', 1500).then(function () { return ojearDetalle(etapa, 'Etapa Sarria → Portomarín', 2600); });
-        },
-        // Albergues
-        function () { return say('Ahora los albergues de la zona', 1500); },
-        function () { return chip('chip-mapa-albergue', 'Albergues'); },
-        function () { return sleep(1000); },
-        function () {
-          var alb = nearestPunto(SARRIA.lat, SARRIA.lng, albergueDe('frances'), 6);
-          return say('Descripción de un albergue', 1400).then(function () { return ojearDetalle(alb, alb ? alb.nombre : 'Albergue', 2400); });
-        },
-        // Volver a "Todos"
-        function () { return say('Volvemos a ver todos los puntos', 1400); },
-        function () { return chip('chip-mapa-todos', 'Todos'); },
-        function () { return sleep(900); },
-        // Escoger un POI cercano: detalle + traza ruta
-        function () { return zoom(SARRIA.lat, SARRIA.lng, 17); },
-        function () {
-          var poi = poiParaRuta(SARRIA.lat, SARRIA.lng, poiDe('frances'), 8);
-          return say('Elegimos un punto de interés cercano', 1500).then(function () { return poiARuta(poi, poi ? poi.nombre : 'Punto cercano'); });
-        },
-        // Añadir otro POI más lejano (mismo método)
-        function () {
-          var lejano = poiParaRuta(42.79, -7.50, poiDe('frances'), 25);
-          return say('Añadimos otro punto un poco más lejano', 1600)
-            .then(function () { return zoom(lejano ? lejano.lat : 42.79, lejano ? lejano.lng : -7.5, 15); })
-            .then(function () { return poiARuta(lejano, lejano ? lejano.nombre : 'Punto lejano'); });
-        },
-        function () { return say('Ruta trazada con varios puntos', 1600); },
-        function () { return zoom(42.79, -7.49, 14); },
-        function () { return sleep(1200); },
-        // Limpiar ruta para la siguiente localización
-        function () { if (typeof _ejecutarLimpiarRuta === 'function') _ejecutarLimpiarRuta(); else if (typeof limpiarRuta === 'function') limpiarRuta(); return sleep(800); },
-        function () { var m = byId('modal-poi-info'); if (m) m.remove(); return sleep(300); }
-      ]);
-    }
-
-    // ========================================================================
-    // SECUENCIA 1B — Otra localización del Francés (Portomarín) ruta corta
-    // ========================================================================
-    function secuenciaFrances2() {
-      var PORTO = { lat: 42.804966, lng: -7.616855 };
-      return seq([
-        function () { return say('Otra localización: Portomarín', 1600); },
-        function () { setPos(PORTO.lat, PORTO.lng); return zoom(PORTO.lat, PORTO.lng, 15); },
-        function () { return chip('chip-mapa-frances', 'Etapas del Francés'); },
-        function () {
-          var etapa = nearestPunto(PORTO.lat, PORTO.lng, function (p) { return p.categoria === 'etapa' && p.variante === 'frances'; });
-          return ojearDetalle(etapa, 'Etapa Portomarín → Palas de Rei', 2400);
-        },
-        function () { return chip('chip-mapa-todos', 'Todos'); },
-        function () { return zoom(PORTO.lat, PORTO.lng, 17); },
-        function () {
-          var poi = poiParaRuta(PORTO.lat, PORTO.lng, poiDe('frances'), 10);
-          return say('Trazamos una ruta a un punto', 1400).then(function () { return poiARuta(poi, poi ? poi.nombre : 'Punto'); });
-        },
-        function () { return sleep(1200); },
-        function () { if (typeof _ejecutarLimpiarRuta === 'function') _ejecutarLimpiarRuta(); else if (typeof limpiarRuta === 'function') limpiarRuta(); return sleep(700); }
-      ]);
-    }
-
-    // ========================================================================
-    // FLASH — PREVISIÓN (meteo) con algo de descripción del casco
-    // ========================================================================
-    function flashPrevision() {
-      return seq([
-        function () { var f = (window.__demoFlash = flashTitle('Previsión meteorológica')); return sleep(1200).then(function () { f.fade(); return sleep(300); }); },
-        function () { if (typeof abrirMeteoDrawer === 'function') abrirMeteoDrawer(); return sleep(2600); },
-        function () { return sleep(1400); }, // dejar leer el casco/descripción
-        function () { if (typeof cerrarMeteoDrawer === 'function') cerrarMeteoDrawer(); return sleep(700); }
-      ]);
-    }
-
-    // ========================================================================
-    // SECUENCIA 2 — CAMINO DEL NORTE · Modo Ruta Oficial + "Volver"
-    //   Punto azul en el Norte, abre Ruta Oficial, espera el cartel, simula
-    //   alejarse y volver hasta que se marca la chincheta. Repetir en 2 puntos.
-    // ========================================================================
-    function rutaOficialEn(nombre, sobreLat, sobreLng, fueraLat, fueraLng) {
-      return seq([
-        function () { return say('Camino del Norte · ' + nombre, 1700); },
-        function () { setPos(sobreLat, sobreLng); return irAlMapa(); },
-        function () { return zoom(sobreLat, sobreLng, 15); },
-        function () { return say('Activamos el modo Ruta Oficial', 1500); },
-        function () { return tap('#btn-ruta-oficial', 'Ruta oficial'); },
-        // Esperar el cartel de Ruta Oficial y cerrarlo solos
-        function () { return waitUntil(api.modalRutaOficialVisible, 6000); },
-        function () { return sleep(2600); },                 // leer el cartel
-        function () { api.cerrarRutaOficial(); return sleep(900); },
-        // Simular que nos salimos del trazado
-        function () { return say('Nos desviamos del trazado…', 1500); },
-        function () { return walkTo(fueraLat, fueraLng, 2600, 18); },
-        function () { return zoom(fueraLat, fueraLng, 16); },
-        function () { return sleep(900); },
-        // Pulsar "volver a la ruta" → marca la chincheta
-        function () { return say('Volvemos a la ruta oficial', 1500); },
-        function () { if (typeof volverARuta === 'function') volverARuta(); return sleep(400); },
-        // Esperar a que aparezca la chincheta de retorno
-        function () { return waitUntil(function () { return !!window._volverMarker; }, 8000); },
-        function () { return sleep(800); },
-        function () {
-          // centrar en la chincheta para que se vea bien
-          if (window._volverMarker && window.mapa) {
-            try { var ll = window._volverMarker.getLatLng(); window.mapa.setView([ll.lat, ll.lng], 15, { animate: true }); } catch (e) {}
-          }
-          return say('Chincheta de retorno marcada ✓', 2000);
-        },
-        // Simular caminar de vuelta hacia la chincheta
-        function () {
-          if (window._volverMarker) {
-            try { var ll = window._volverMarker.getLatLng(); return walkTo(ll.lat, ll.lng, 2400, 18); } catch (e) {}
-          }
-          return sleep(400);
-        },
-        function () { return sleep(1000); },
-        // Desactivar ruta oficial y limpiar ayudantes
-        function () { if (window.RutaOficial && window.RutaOficial.estaActivo()) window.RutaOficial.desactivar(); return sleep(700); },
-        function () { if (typeof _limpiarVolverRuta === 'function') _limpiarVolverRuta(); return sleep(500); },
-        // cerrar el cartel "Navegación libre" si saliera como toast/modal
-        function () { api.cerrarRutaOficial(); var b = byId('btn-comenzar-nav'); if (b) b.style.display = 'none'; return sleep(600); }
-      ]);
-    }
-
-    // ========================================================================
-    // FLASH — BRÚJULA (typewriter del casco)
-    // ========================================================================
-    function flashBrujula() {
-      return seq([
-        function () { var f = flashTitle('Brújula'); return sleep(1100).then(function () { f.fade(); return sleep(300); }); },
-        function () { if (typeof abrirBrujulaDrawer === 'function') abrirBrujulaDrawer(); return sleep(3200); }, // typewriter del casco
-        function () { return sleep(1200); },
-        function () { if (typeof cerrarBrujulaDrawer === 'function') cerrarBrujulaDrawer(); return sleep(700); }
-      ]);
-    }
-
-    // ========================================================================
-    // SECUENCIA 3 — DESCARGA DEL MAPA (offline) en el Norte
-    //   Punto azul en el Norte, se descarga el mapa en caché, se espera el
-    //   modal de completado y se cierra solo.
-    // ========================================================================
-    function descargaMapa(nombre, lat, lng) {
-      return seq([
-        function () { return say('Camino del Norte · ' + nombre, 1600); },
-        function () { setPos(lat, lng); return irAlMapa(); },
-        function () { return zoom(lat, lng, 15); },
-        // Activar ruta oficial primero (la descarga necesita etapa detectada)
-        function () { if (window.RutaOficial && !window.RutaOficial.estaActivo()) window.RutaOficial.activar(); return sleep(500); },
-        function () { return waitUntil(api.modalRutaOficialVisible, 5000); },
-        function () { api.cerrarRutaOficial(); return sleep(800); },
-        function () { return say('Descargamos el mapa de la etapa', 1600); },
-        function () { return tap('#btn-descargar-mapa', 'Descargar mapa offline'); },
-        // Esperar el modal de "completado" y cerrarlo solo
-        function () { return waitUntil(api.modalDescargaVisible, 20000); },
-        function () { return say('Mapa descargado para usar sin conexión ✓', 2400); },
-        function () { api.cerrarDescarga(); return sleep(900); },
-        function () { if (window.RutaOficial && window.RutaOficial.estaActivo()) window.RutaOficial.desactivar(); return sleep(400); },
-        function () { api.cerrarRutaOficial(); return sleep(500); }
-      ]);
-    }
-
-    // ========================================================================
-    // FLASH — ASISTENTE (primer modal / primeros párrafos)
-    // ========================================================================
-    function flashAsistente() {
-      return seq([
-        function () { var f = flashTitle('Asistente'); return sleep(1100).then(function () { f.fade(); return sleep(300); }); },
-        function () { if (typeof abrirHeroModal === 'function') abrirHeroModal(); return sleep(3200); }, // leer primeros párrafos
-        function () { return sleep(1400); },
-        function () { api.cerrarHero(); return sleep(700); }
-      ]);
-    }
-
-    // ========================================================================
-    // FLASH — HISTORIA COMPOSTELANA (scroll)
-    // ========================================================================
-    function flashHistoria() {
-      return seq([
-        function () { var f = flashTitle('Historia Compostelana'); return sleep(1100).then(function () { f.fade(); return sleep(300); }); },
-        function () { if (typeof abrirHistoriaDrawer === 'function') abrirHistoriaDrawer(); return sleep(1600); },
-        function () {
-          var d = byId('historia-drawer');
-          if (d) { try { d.scrollTo({ top: 420, behavior: 'smooth' }); } catch (e) { d.scrollTop = 420; } }
-          return sleep(1800);
-        },
-        function () {
-          var d = byId('historia-drawer');
-          if (d) { try { d.scrollTo({ top: 980, behavior: 'smooth' }); } catch (e) { d.scrollTop = 980; } }
-          return sleep(1800);
-        },
-        function () { if (typeof cerrarHistoriaDrawer === 'function') cerrarHistoriaDrawer(); return sleep(700); }
-      ]);
-    }
-
-    // ========================================================================
-    // SECUENCIA FINAL — otra zona (NO Vigo): Camino Inglés (Betanzos)
-    //   Filtra etapas inglés, abre etiqueta, mira albergue, traza una ruta.
-    // ========================================================================
-    function secuenciaIngles() {
-      var BET = { lat: 43.28034, lng: -8.210285 };
-      return seq([
-        function () { return say('Camino Inglés · Betanzos', 1700); },
-        function () { setPos(BET.lat, BET.lng); return irAlMapa(); },
-        function () { return zoom(BET.lat, BET.lng, 15); },
-        function () { return chip('chip-mapa-ingles', 'Etapas del Inglés'); },
-        function () {
-          var etapa = nearestPunto(BET.lat, BET.lng, function (p) { return p.categoria === 'etapa' && p.variante === 'ingles'; });
-          return say('Abrimos la etapa', 1400).then(function () { return ojearDetalle(etapa, 'Etapa del Inglés', 2400); });
-        },
-        function () { return chip('chip-mapa-albergue', 'Albergues'); },
-        function () {
-          var alb = nearestPunto(BET.lat, BET.lng, albergueDe('ingles'), 12);
-          return ojearDetalle(alb, alb ? alb.nombre : 'Albergue', 2200);
-        },
-        function () { return chip('chip-mapa-todos', 'Todos'); },
-        function () { return zoom(BET.lat, BET.lng, 17); },
-        function () {
-          var poi = poiParaRuta(BET.lat, BET.lng, poiDe('ingles'), 14);
-          return say('Trazamos una ruta', 1300).then(function () { return poiARuta(poi, poi ? poi.nombre : 'Punto'); });
-        },
-        function () { return sleep(1400); },
-        function () { if (typeof _ejecutarLimpiarRuta === 'function') _ejecutarLimpiarRuta(); else if (typeof limpiarRuta === 'function') limpiarRuta(); return sleep(700); }
-      ]);
-    }
-
-    // ========================================================================
-    // OUTRO
-    // ========================================================================
-    function outro() {
-      return seq([
-        function () { hideCaption(); var f = flashTitle('Guía Compostelana · Buen Camino'); return sleep(2400).then(function () { f.fade(); }); }
-      ]);
-    }
-
-    // ========================================================================
-    // ========================================================================
-    // BARRERA ENTRE SECUENCIAS — garantiza que una función termina su ciclo
-    // completo (cierra modales/drawers, retira ayudantes) antes de empezar la
-    // siguiente. Evita que se pisen.
-    // ========================================================================
-    function cerrarTodoAbierto() {
-      try { api.cerrarModalPOI(); } catch (e) {}
-      try { api.cerrarRutaOficial(); } catch (e) {}
-      try { api.cerrarDescarga(); } catch (e) {}
-      try { api.cerrarHero(); } catch (e) {}
-      // Drawers de la app
-      ['meteo-drawer', 'brujula-drawer', 'historia-drawer'].forEach(function (id) {
-        var d = byId(id);
-        if (d && /slide-in|translateX\(0/.test(d.className + (d.style.transform || ''))) {
-          var fnMap = { 'meteo-drawer': 'cerrarMeteoDrawer', 'brujula-drawer': 'cerrarBrujulaDrawer', 'historia-drawer': 'cerrarHistoriaDrawer' };
-          if (typeof window[fnMap[id]] === 'function') { try { window[fnMap[id]](); } catch (e) {} }
-        }
-      });
-      // Modales sueltos por id
-      ['modal-poi-info', 'modal-ruta-oficial', 'descmapa-pergamino', 'descmapa-modal', 'modal-hero-mobile'].forEach(function (id) {
-        var m = byId(id); if (m) { try { m.remove(); } catch (e) {} }
-      });
-      // Ayudantes de "volver a la ruta"
-      try { if (typeof _limpiarVolverRuta === 'function') _limpiarVolverRuta(); } catch (e) {}
-      try { if (window.RutaOficial && window.RutaOficial.estaActivo()) window.RutaOficial.desactivar(); } catch (e) {}
-      var bcn = byId('btn-comenzar-nav'); if (bcn) bcn.style.display = 'none';
-      // Limpiar ruta del usuario para empezar la siguiente desde cero
-      try { if (typeof _ejecutarLimpiarRuta === 'function') _ejecutarLimpiarRuta(); } catch (e) {}
-    }
-
-    // Espera a que NO quede ningún modal/drawer abierto (hasta 4 s).
-    function esperarDomLimpio() {
-      return waitUntil(function () {
-        if (byId('modal-poi-info') || byId('modal-ruta-oficial') || byId('descmapa-pergamino') ||
-            byId('descmapa-modal') || byId('modal-hero-mobile')) return false;
-        var ro = byId('modal-ruta-oficial'); if (ro) return false;
-        return true;
-      }, 4000);
-    }
-
-    // Envuelve cada secuencia: la ejecuta, luego cierra todo y deja respirar.
-    function conBarrera(fn) {
-      return function () {
-        return Promise.resolve()
-          .then(fn)
-          .then(function () { cerrarTodoAbierto(); return esperarDomLimpio(); })
-          .then(function () { return sleep(1200); }); // pausa limpia entre bloques
-      };
-    }
-
-    // ========================================================================
-    // ORQUESTACIÓN GENERAL (orden del guion)
-    // ========================================================================
-    return seq([
-      conBarrera(intro),
-      conBarrera(secuenciaFrances),
-      conBarrera(secuenciaFrances2),
-      conBarrera(flashPrevision),
-      // Modo ruta oficial en 2 puntos distintos del Norte
-      conBarrera(function () { return rutaOficialEn('Gernika', 43.31523, -2.678531, 43.322, -2.690); }),
-      conBarrera(function () { return rutaOficialEn('Santander', 43.460718, -3.807836, 43.470, -3.820); }),
-      conBarrera(flashBrujula),
-      conBarrera(function () { return descargaMapa('Bilbao', 43.256799, -2.923577); }),
-      conBarrera(flashAsistente),
-      conBarrera(function () { return descargaMapa('Ribadeo', 43.470573, -7.299569); }),
-      conBarrera(flashHistoria),
-      conBarrera(secuenciaIngles),
-      conBarrera(outro)
-    ]);
-  };
-})();
-
-</script>
 </body>
 </html>
