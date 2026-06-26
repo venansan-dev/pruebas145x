@@ -14,6 +14,27 @@
     document.head.appendChild(s);
   });
 </script>
+<script>
+/* Fallback WebP para navegadores sin soporte (Safari <14, Android antiguo).
+   Los navegadores modernos cargan el .webp nativo SIN cambios (igual que hoy).
+   Solo cuando una imagen .webp falla al decodificar se reintenta la MISMA
+   imagen vía un proxy que la transcodifica a JPG al vuelo. Cubre las <img>
+   estáticas y las generadas dinámicamente (tarjetas de POIs, galería, etc.).
+   El fondo CSS de la cabecera degrada a cabecera lisa en esos navegadores. */
+(function(){
+  function _jpg(u){
+    return 'https://wsrv.nl/?url=' + encodeURIComponent(u.replace(/^https?:\/\//,'')) + '&output=jpg';
+  }
+  document.addEventListener('error', function(e){
+    var img = e.target;
+    if (img && img.tagName === 'IMG' && img.getAttribute('data-webpfb') !== '1'
+        && /\.webp(\?|$)/i.test(img.currentSrc || img.src || '')) {
+      img.setAttribute('data-webpfb','1');
+      img.src = _jpg(img.currentSrc || img.src);
+    }
+  }, true);
+})();
+</script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 
@@ -57,8 +78,14 @@
   <link rel="manifest" href="/manifest.json"/>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=5"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@400;500&family=Cinzel:wght@700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
+  <!-- Fuentes críticas del hero: carga síncrona para evitar FOUT en el título -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <!-- Fuentes secundarias: diferidas, no bloquean render -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
   <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@400;500&family=Cinzel:wght@700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet"/></noscript>
+  <!-- Preload imágenes críticas del hero desktop (evitan layout shift) -->
+  <link rel="preload" as="image" href="https://i.postimg.cc/vTFNbs2Z/logohead.webp"/>
+  <link rel="preload" as="image" href="https://i.postimg.cc/9fmZ7NSx/vieira8.webp"/>
   <link rel="preconnect" href="https://unpkg.com" crossorigin/>
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin/>
   <link rel="preconnect" href="https://i.postimg.cc" crossorigin/>
@@ -341,8 +368,8 @@
   /* ─── HEADER ─── */
   .dl-header {
     background:linear-gradient(135deg,#0a1628 0%,#1a3a6e 50%,#0d2149 100%);
-    backdrop-filter:saturate(180%) blur(20px);
-    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
     border-bottom:1px solid rgba(255,255,255,0.1);
     position:sticky; top:0; z-index:100;
     padding:0 2rem;
@@ -618,8 +645,8 @@
     background:linear-gradient(145deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));
     border-radius:18px;
     padding:2rem;
-    border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);
-    transition:box-shadow .25s, transform .25s;
+    border:1px solid rgba(255,255,255,0.08);
+    transition:transform .25s ease, box-shadow .25s ease;
     flex:0 0 260px;
     scroll-snap-align:start;
   }
@@ -826,12 +853,17 @@
      EFECTOS PREMIUM — brillos, animaciones, cristal
   ══════════════════════════════════════════ */
 
-  /* Fondo animado con orbes de luz */
+  /* Orbes de luz decorativos (estáticos).
+     Antes: position:fixed + filter:blur(45px) → el compositor re-mezclaba
+     3 capas borrosas grandes en cada frame de scroll = jank. Los gradientes
+     radiales ya se desvanecen a transparente, así que el blur era casi
+     redundante. Ahora absolute + sin blur + sin will-change: se pintan una
+     vez y el scroll es fluido. */
   #desktop-landing { position:relative; overflow:hidden; }
   .dl-orb {
-    position:fixed; border-radius:50%;
+    position:absolute; border-radius:50%;
     pointer-events:none; z-index:0;
-    filter:blur(45px); opacity:0.18;
+    opacity:0.18; contain:strict;
   }
   .dl-orb-1 {
     width:600px; height:600px;
@@ -938,10 +970,9 @@
 
   /* Feature cards: glassmorphism premium */
   .dl-feature {
-    background:linear-gradient(145deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02)) !important;
+    background:rgba(255,255,255,0.05) !important;
     border:1px solid rgba(255,255,255,0.08) !important;
-    backdrop-filter:blur(16px) !important;
-    transition:all .3s cubic-bezier(0.4,0,0.2,1) !important;
+    transition:transform .25s ease, box-shadow .25s ease !important;
     position:relative; overflow:hidden;
   }
   .dl-feature::before {
@@ -951,10 +982,10 @@
     opacity:0; transition:opacity .3s;
   }
   .dl-feature:hover {
-    background:linear-gradient(145deg,rgba(99,179,237,0.1),rgba(167,139,250,0.06)) !important;
+    background:rgba(99,179,237,0.07) !important;
     border-color:rgba(99,179,237,0.25) !important;
-    box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(99,179,237,0.15),0 0 40px rgba(99,179,237,0.08) !important;
-    transform:translateY(-4px) !important;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35) !important;
+    transform:translateY(-3px) !important;
   }
   .dl-feature:hover::before { opacity:1; }
 
@@ -966,7 +997,7 @@
   .dl-gallery-item {
     border:1px solid rgba(255,255,255,0.08) !important;
     box-shadow:0 8px 32px rgba(0,0,0,0.3) !important;
-    transition:all .35s cubic-bezier(0.4,0,0.2,1) !important;
+    transition:transform .25s ease, box-shadow .25s ease !important;
     position:relative;
   }
   .dl-gallery-item::after {
@@ -977,8 +1008,8 @@
     opacity:0; transition:opacity .35s; pointer-events:none;
   }
   .dl-gallery-item:hover {
-    transform:scale(1.05) translateY(-6px) !important;
-    box-shadow:0 24px 60px rgba(0,0,0,0.5),0 0 0 1px rgba(99,179,237,0.3),0 0 40px rgba(99,179,237,0.12) !important;
+    transform:translateY(-4px) !important;
+    box-shadow:0 16px 40px rgba(0,0,0,0.45),0 0 0 1px rgba(99,179,237,0.25) !important;
   }
   .dl-gallery-item:hover::after { opacity:1; }
 
@@ -999,10 +1030,9 @@
 
   /* QR box premium */
   .dl-qr-box {
-    background:linear-gradient(145deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02)) !important;
+    background:rgba(255,255,255,0.04) !important;
     border:1px solid rgba(99,179,237,0.2) !important;
-    box-shadow:0 0 0 1px rgba(99,179,237,0.1),0 24px 60px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08) !important;
-    backdrop-filter:blur(20px) !important;
+    box-shadow:0 8px 32px rgba(0,0,0,0.35) !important;
   }
 
   /* QR step numbers con glow */
@@ -1032,24 +1062,24 @@
       0 0 60px rgba(37,99,235,0.15) !important;
   }
 
-  /* Animación entrada suave al cargar */
+  /* Animación entrada suave al cargar — desplazamiento mínimo para evitar CLS */
   @keyframes fadeUp {
-    from { opacity:0; transform:translateY(24px); }
+    from { opacity:0; transform:translateY(10px); }
     to   { opacity:1; transform:translateY(0); }
   }
-  .dl-hero-text > * { animation:fadeUp .7s ease both; }
-  .dl-hero-text > *:nth-child(1){animation-delay:.1s}
-  .dl-hero-text > *:nth-child(2){animation-delay:.2s}
-  .dl-hero-text > *:nth-child(3){animation-delay:.3s}
-  .dl-hero-text > *:nth-child(4){animation-delay:.4s}
-  .dl-hero-text > *:nth-child(5){animation-delay:.5s}
-  .dl-hero-text > *:nth-child(6){animation-delay:.6s}
-  .dl-phone-wrap { animation:fadeUp .9s ease .3s both; }
+  .dl-hero-text > * { animation:fadeUp .45s ease both; }
+  .dl-hero-text > *:nth-child(1){animation-delay:.05s}
+  .dl-hero-text > *:nth-child(2){animation-delay:.1s}
+  .dl-hero-text > *:nth-child(3){animation-delay:.15s}
+  .dl-hero-text > *:nth-child(4){animation-delay:.2s}
+  .dl-hero-text > *:nth-child(5){animation-delay:.25s}
+  .dl-hero-text > *:nth-child(6){animation-delay:.3s}
+  .dl-phone-wrap { animation:fadeUp .5s ease .15s both; }
 
   /* Noise texture overlay sutil sobre toda la landing */
   #desktop-landing::after {
     content:'';
-    position:fixed; inset:0; z-index:0; pointer-events:none;
+    position:absolute; inset:0; z-index:0; pointer-events:none;
     opacity:0.025;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
   }
@@ -1091,9 +1121,9 @@
     <div class="dl-hero">
       <div class="dl-hero-text">
         <p class="dl-hero-eyebrow" id="dl-eyebrow"><span class="ey-emoji">🐚</span><span class="ey-text">Guía Xacobea Interactiva</span></p>
-        <img src="https://i.postimg.cc/vTFNbs2Z/logohead.webp" alt="Xacobeapp" style="height:48px;width:auto;display:block;object-fit:contain;margin-bottom:1.25rem;opacity:0.92"/>
+        <img src="https://i.postimg.cc/vTFNbs2Z/logohead.webp" alt="Xacobeapp" style="height:48px;width:auto;display:block;object-fit:contain;margin-bottom:1.25rem;opacity:0.92" fetchpriority="high"/>
         <h1 class="dl-hero-title" id="dl-hero-title">Tu compañera en el <em>Camino</em></h1>
-        <img src="https://i.postimg.cc/9fmZ7NSx/vieira8.webp" alt="Vieira del Camino" style="height:64px;width:auto;display:block;object-fit:contain;margin-bottom:1.25rem"/>
+        <img src="https://i.postimg.cc/9fmZ7NSx/vieira8.webp" alt="Vieira del Camino" style="height:64px;width:auto;display:block;object-fit:contain;margin-bottom:1.25rem" fetchpriority="high"/>
         <p class="dl-hero-desc" id="dl-hero-desc">
           Xacobeapp es una guía completamente gratuita para el Camino de Santiago, intuitiva y de muy fácil manejo, que te mostrará todo el patrimonio xacobeo a tu alrededor. Mapas interactivos con navegación GPS incluso sin cobertura, creador de rutas, etapas diarias, avisos de emergencia en tiempo real, POIs exclusivos con descripciones especializadas, brújula… y otras muchas utilidades pensadas para el peregrino, pero también para todos los que disfrutan conociendo y explorando nuevos espacios. Toda una navaja suiza del peregrino en tu bolsillo, a tu servicio. Xacobeapp no mejora el Camino, pero sí lo hará más seguro, completo e inmersivo.
         </p>
@@ -1293,7 +1323,7 @@
         <a href="https://xacobeapp.com" style="display:block" aria-label="Abrir xacobeapp.com">
         <img src="9.png" alt="Código QR para xacobeapp.com" style="width:200px;height:200px;display:block;image-rendering:crisp-edges"/>
         </a>
-        <div class="dl-qr-url">xacobeapp.com</div>
+                <div class="dl-qr-url">xacobeapp.com</div>
       </div>
     </div>
   </section>
@@ -3342,38 +3372,6 @@ function _renderAlbumRecuerdos(grid, vacioCont) {
   });
 }
 
-// ── Cadencia compartida del dictado del casco ───────────────────────────
-// Micro-pausas tras la puntuación para que el texto "respire" y no corra.
-// La usan TODOS los typewriters del asistente (brújula, panel, pergamino),
-// de modo que el ritmo es idéntico en toda la app.
-function _cascoPausa(ch) {
-  if (ch === '\n') return 520;                                                 // párrafo: respiro
-  if (ch === '.' || ch === '!' || ch === '?' || ch === '\u2026') return 360;   // fin de frase
-  if (ch === ',' || ch === ';' || ch === ':') return 180;                      // inciso
-  return 0;
-}
-// Movimiento del casco: recupera el pulso de respiración original
-// (_casc-pulse), que corre mientras el casco "habla", y como pincelada lo
-// PAUSA en las pausas de puntuación y al terminar. Así el movimiento de
-// siempre queda acompasado a la nueva cadencia, sin vibrar.
-function _cascoBob(img, activo) {
-  if (!img) return;
-  if (activo) {
-    if (!document.getElementById('_casc-pulse-style-global')) {
-      var s = document.createElement('style');
-      s.id = '_casc-pulse-style-global';
-      s.textContent = '@keyframes _casc-pulse{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.08) rotate(3deg)}}';
-      document.head.appendChild(s);
-    }
-    if (img.style.animationName !== '_casc-pulse') {
-      img.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
-    }
-    img.style.animationPlayState = 'running';
-  } else {
-    img.style.animationPlayState = 'paused';
-  }
-}
-
 // Efecto typewriter para el casco asistente de la brújula: escribe el aviso
 // letra a letra, anima el casco y reproduce su sonido, igual que el asistente.
 function _brujulaCascoTypewriter() {
@@ -3392,8 +3390,8 @@ function _brujulaCascoTypewriter() {
     document.head.appendChild(stG);
   }
   // Cancelar cualquier typewriter previo de este casco
-  if (window._brujulaTwTimer) { clearTimeout(window._brujulaTwTimer); window._brujulaTwTimer = null; }
-  var i = 0, base = 46;
+  if (window._brujulaTwTimer) { clearInterval(window._brujulaTwTimer); window._brujulaTwTimer = null; }
+  var i = 0, speed = 34;
   function _render() {
     var vis  = text.slice(0, i);
     var hide = text.slice(i);
@@ -3401,33 +3399,21 @@ function _brujulaCascoTypewriter() {
                  + (hide ? '<span style="visibility:hidden">' + hide.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>' : '');
   }
   _render();
-  // Casco: cabeceo letra a letra en vez de pulso constante → sincronizado
-  if (img) { img.style.animation = 'none'; img.style.transition = 'transform 0.09s ease-out'; }
-  // Sonido armado para la duración real (pausas incluidas), para no desincronizar
-  if (window._cascoSonido) {
-    try {
-      var _dur = 0; for (var _c=0;_c<text.length;_c++){ _dur += base + _cascoPausa(text[_c]); }
-      window._cascoSonido(_dur/1000 + 0.2);
-    } catch(e){}
-  }
-  function _paso() {
-    if (i >= text.length) {
-      window._brujulaTwTimer = null;
+  // Activar animación y sonido del casco mientras escribe
+  if (img) img.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
+  if (window._cascoSonido) { try{ window._cascoSonido(text.length * speed); }catch(e){} }
+  window._brujulaTwTimer = setInterval(function() {
+    if (i < text.length) {
+      i++;
+      _render();
+      if (text[i-1] !== ' ' && window._cascoTick) window._cascoTick();
+    } else {
+      clearInterval(window._brujulaTwTimer); window._brujulaTwTimer = null;
       el.innerHTML = html; // restaurar con <strong> y formato
-      _cascoBob(img, false);
-      if (img) { img.style.animation = 'none'; img.style.transform = ''; } // casco recto al acabar
+      if (img) img.style.animation = 'none'; // el casco se detiene al acabar, como el asistente
       if (window._cascoSonidoStop) { try{ window._cascoSonidoStop(); }catch(e){} }
-      return;
     }
-    i++;
-    _render();
-    var ch = text[i-1];
-    if (ch !== ' ' && window._cascoTick) window._cascoTick();
-    var pausa = _cascoPausa(ch);
-    _cascoBob(img, pausa === 0);
-    window._brujulaTwTimer = setTimeout(_paso, base + pausa);
-  }
-  window._brujulaTwTimer = setTimeout(_paso, base);
+  }, speed);
 }
 
 function abrirBrujulaDrawer() {
@@ -4631,10 +4617,8 @@ function abrirHeroModal() {
   // para que el sonido dure exactamente lo mismo y no se desincronice.
   function _cascoDur(texto, speed) {
     var plano = String(texto || '').replace(/<[^>]+>/g, '');
-    var base = Math.max(speed || 34, 42);
-    var ms = 0;
-    for (var k = 0; k < plano.length; k++) { ms += base + _cascoPausa(plano[k]); }
-    return Math.max(0.3, ms / 1000 + 0.15); // pequeño margen de cola
+    var ms = plano.length * (speed || 28);
+    return Math.max(0.3, ms / 1000 + 0.1); // pequeño margen de cola
   }
   window._cascoDur = _cascoDur;
 
@@ -4655,7 +4639,7 @@ function abrirHeroModal() {
       img.style.animation = 'none';
       _cascoSonidoStop();
       if (onDone) onDone(img);
-    }, img);
+    });
     return { img: img, txt: txt, wrap: wrap };
   }
 
@@ -4904,11 +4888,8 @@ function abrirHeroModal() {
   }
 
   // Typewriter helper
-  function _typewriter(el, html, speed, onDone, cascoImg) {
+  function _typewriter(el, html, speed, onDone) {
     var text = html.replace(/<[^>]+>/g, '');
-    // Suelo de velocidad: aunque pidan 28-35 ms/carácter, el dictado no baja
-    // de ~42 ms para que no "corra"; mismas micro-pausas que el resto del app.
-    var base = Math.max(speed || 34, 42);
     var i = 0;
     // Technique: render full text in-flow from start.
     // Visible chars = normal color, remaining = transparent.
@@ -4920,24 +4901,18 @@ function abrirHeroModal() {
                    + (hide ? '<span style="visibility:hidden">' + hide.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>' : '');
     }
     _render();
-    // Casco: cabeceo sincronizado letra a letra (sustituye al pulso constante)
-    if (cascoImg) { cascoImg.style.animation = 'none'; cascoImg.style.transition = 'transform 0.09s ease-out'; }
-    function _paso() {
+    var cursor = setInterval(function() {
       if (i < text.length) {
         i++;
         _render();
-        var ch = text[i-1];
-        if (ch !== ' ' && window._cascoTick) window._cascoTick();
-        var pausa = _cascoPausa(ch);
-        if (cascoImg) _cascoBob(cascoImg, pausa === 0);
-        setTimeout(_paso, base + pausa);
+        if (text[i-1] !== ' ' && window._cascoTick) window._cascoTick();
       } else {
+        clearInterval(cursor);
         el.innerHTML = html;
-        if (cascoImg) { _cascoBob(cascoImg, false); cascoImg.style.animation = 'none'; cascoImg.style.transform = ''; }
         if (onDone) onDone();
       }
-    }
-    setTimeout(_paso, base);
+    }, speed || 28);
+    return cursor;
   }
 
   // Encadena typewriters activando/parando el casco en cada párrafo.
@@ -4956,15 +4931,16 @@ function abrirHeroModal() {
     var el = par[0], html = par[1], speed = par[2] || 32, cont = par[3];
     // Insertar el elemento justo antes de escribirlo
     if (cont && el.parentNode !== cont) cont.appendChild(el);
-    // Casco: cabeceo sincronizado letra a letra (lo gestiona _typewriter)
+    // Activar casco
+    if (cascoImg) cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
     _cascoSonido(_cascoDur(html, speed));
     _typewriter(el, html, speed, function() {
       // Parar casco al terminar este párrafo
       if (cascoImg) cascoImg.style.animation = 'none';
       _cascoSonidoStop();
       // Pequeña pausa antes del siguiente
-      setTimeout(function() { _twSeq(rest, cascoImg, onDone); }, 160);
-    }, cascoImg);
+      setTimeout(function() { _twSeq(rest, cascoImg, onDone); }, 120);
+    });
   }
 
   // ── PASO 1: Saludo + bifurcación según estado de ruta ───────────
@@ -5124,10 +5100,10 @@ function abrirHeroModal() {
               
             });
           } // fin else cercanos
-          }, cascoImg); // fin _typewriter subCtx
+          }); // fin _typewriter subCtx
         }, 120); // fin setTimeout
       }); // fin _subtituloContextual callback
-    }, cascoImg); // fin _typewriter saludo
+    }); // fin _typewriter saludo
   }
 
   // ── SUGERENCIAS: cuando el usuario dice "ahora no" ───────────────
@@ -9355,12 +9331,11 @@ function _modalPergamino(config) {
                    + (hide ? '<span style="visibility:hidden">' + hide.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>' : '');
     }
     _rg();
-    // Casco: cabeceo sincronizado letra a letra (sustituye al pulso constante)
-    if (cascoImg) { cascoImg.style.animation = 'none'; cascoImg.style.transition = 'transform 0.09s ease-out'; }
+    cascoImg.style.animation = '_casc-pulse 2.4s ease-in-out infinite';
     if (window._cascoSonido) _cascoSonido(_durCad(text, base));
     function _fin() {
       el.innerHTML = html;
-      if (cascoImg) { _cascoBob(cascoImg, false); cascoImg.style.animation = 'none'; cascoImg.style.transform = ''; }
+      cascoImg.style.animation = 'none';
       if (window._cascoSonidoStop) _cascoSonidoStop();
       if (onDone) onDone();
     }
@@ -9369,9 +9344,7 @@ function _modalPergamino(config) {
       i++; _rg();
       var ch = text[i-1];
       if (ch !== ' ' && ch !== '\n' && window._cascoTick) window._cascoTick();
-      var _pz = _pausaCad(ch);
-      if (cascoImg) _cascoBob(cascoImg, _pz === 0);
-      setTimeout(_paso, base + _pz);
+      setTimeout(_paso, base + _pausaCad(ch));
     }
     setTimeout(_paso, base);
   }
@@ -12726,12 +12699,29 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
-  renderCarrusel('todos');
-  initMapa();
-  cargarDatosFirebase();
-  cargarPOIsUsuario();
-  cargarPOIsFirebase();
-  iniciarTiempo();
+  // Inicialización pesada de la app móvil (mapa Leaflet + cluster + ~300
+  // marcadores, Firebase, POIs, tiempo). En la landing de escritorio la app
+  // está oculta por CSS, pero este trabajo bloqueaba igualmente el hilo
+  // principal durante el primer pintado → secciones lentas y reflows que
+  // hacían saltar el scroll al hero. En escritorio lo diferimos a tiempo de
+  // inactividad; en móvil se ejecuta inmediatamente, como siempre.
+  function _initAppPesada() {
+    renderCarrusel('todos');
+    initMapa();
+    cargarDatosFirebase();
+    cargarPOIsUsuario();
+    cargarPOIsFirebase();
+    iniciarTiempo();
+  }
+  if (window.innerWidth >= 769) {
+    if (window.requestIdleCallback) {
+      requestIdleCallback(_initAppPesada, { timeout: 2500 });
+    } else {
+      setTimeout(_initAppPesada, 1200);
+    }
+  } else {
+    _initAppPesada();
+  }
   iniciarGaleria();
   iniciarPhoneCarrusel();
 
@@ -12899,17 +12889,11 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
-  // Limpiar cachés de versiones anteriores (solo las antiguas, nunca las activas)
-  var CACHES_ACTIVAS = ['guia-compostelana-v2014', 'guia-tiles-v5', 'guia-imgs-v6', 'guia-libs-v1', 'guia-tracks-v4'];
-  if (window.caches) {
-    caches.keys().then(function(keys) {
-      keys.forEach(function(key) {
-        if (CACHES_ACTIVAS.indexOf(key) === -1) {
-          caches.delete(key);
-        }
-      });
-    });
-  }
+  // La limpieza de cachés antiguas la hace el propio Service Worker en su
+  // evento 'activate' (conserva CACHE_NAME, TILE/IMG/LIB/TRACK y borra el resto).
+  // Antes había aquí una lista CACHES_ACTIVAS hardcodeada que se quedó
+  // desfasada (v2014/imgs-v6) y en cada carga borraba las cachés ACTIVAS,
+  // obligando a redescargar HTML, pois.js e imágenes → carga lenta y saltos.
   window.addEventListener('load', function() {
     // updateViaCache:'none' impide que el navegador sirva sw.js desde su caché HTTP
     navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(function(reg) {
