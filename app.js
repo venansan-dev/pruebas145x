@@ -5674,7 +5674,10 @@ function initMapa() {
       if (acc <= 80) {
         try { localStorage.setItem('_gps_last', JSON.stringify({lat:lat,lng:lng})); } catch(e) {}
       }
-      statusEl.classList.remove('visible');
+      // NOTA: antes aquí había un statusEl.classList.remove('visible') que
+      // ocultaba el indicador ± en el mismo ciclo en que se acababa de mostrar
+      // (unas líneas arriba), haciéndolo invisible. Se ha quitado: ahora el
+      // indicador lo gestiona su propio setTimeout de 4 s.
       if (esNuevo) {
         // Primera posición real: actualizar título y crear/mover marcador
         var mt=document.getElementById('map-title');if(mt){mt.style.opacity='0';setTimeout(function(){mt.innerHTML=(T[idiomaActual]||T.es).mapTitle+" <svg width='22' height='30' viewBox='0 0 22 30' fill='none' xmlns='http://www.w3.org/2000/svg' style='animation:bounceDownArrow 1.4s ease-in-out infinite;flex-shrink:0;display:inline-block;vertical-align:middle;'><path d='M11 2 L11 22 M3 15 L11 24 L19 15' stroke='#dc2626' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/></svg>";mt.style.opacity='1';},300);}

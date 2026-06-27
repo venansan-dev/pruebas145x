@@ -1,4 +1,4 @@
-const CACHE_NAME = 'guia-compostelana-v2047';
+const CACHE_NAME = 'guia-compostelana-v2048';
 const TILE_CACHE = 'guia-tiles-v5';
 
 // Permite que la página fuerce la activación inmediata del SW nuevo enviando
