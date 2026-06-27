@@ -3352,12 +3352,12 @@ if ('serviceWorker' in navigator) {
   // ---- Detección de proximidad durante el seguimiento GPS ----
   // Se engancha al watchPosition existente comprobando cada posición
   var _albumYaNotificado = {};
-  var RADIO_VISITA_M = 2000; // metros para registrar visita (PRUEBAS)
+  var RADIO_VISITA_M = 25; // metros para registrar visita
 
   window._albumCheckProximidad = function(lat, lng, accuracy) {
     if (typeof PUNTOS === 'undefined') return;
-    // Ignorar posiciones con GPS poco fiable (>2000 m de error — PRUEBAS)
-    if (accuracy && accuracy > 2000) return;
+    // Ignorar posiciones con GPS poco fiable (>50 m de error)
+    if (accuracy && accuracy > 50) return;
     PUNTOS.forEach(function(poi) {
       if (_albumYaNotificado[poi.id]) return;
       // Puntos de usuario, alertas y búsquedas no entran en el juego
