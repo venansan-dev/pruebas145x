@@ -2653,31 +2653,20 @@
      Se extrajo de app.js para corregir 'Can't find variable: T' en Safari. -->
 <script src="i18n.js"></script>
 <script>
-var _APP_VERSION = "v2035";
+var _APP_VERSION = "v2045";
 if ('serviceWorker' in navigator) {
-  // ── Actualización del Service Worker SIN recargar la página ──
-  // Comprobamos si hay versión nueva y dejamos que el SW nuevo tome el control
-  // (vía skipWaiting + clients.claim del propio sw.js). El código nuevo entra
-  // en la siguiente navegación natural del usuario. NO forzamos reload: un
-  // reload automático aquí provocaba reinicios en cadena en producción.
+  // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
     regs.forEach(function(reg) { reg.update(); });
   });
+  // La limpieza de cachés antiguas la hace el propio Service Worker en su
+  // evento 'activate' (conserva CACHE_NAME, TILE/IMG/LIB/TRACK y borra el resto).
+  // Antes había aquí una lista CACHES_ACTIVAS hardcodeada que se quedó
+  // desfasada (v2014/imgs-v6) y en cada carga borraba las cachés ACTIVAS,
+  // obligando a redescargar HTML, pois.js e imágenes → carga lenta y saltos.
   window.addEventListener('load', function() {
     // updateViaCache:'none' impide que el navegador sirva sw.js desde su caché HTTP
     navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(function(reg) {
-      // Si hay un SW nuevo esperando, pídele que active ya (tomará control en
-      // segundo plano; la página actual sigue intacta, sin recargas).
-      if (reg.waiting) { try { reg.waiting.postMessage({ type: 'SKIP_WAITING' }); } catch(e){} }
-      reg.addEventListener('updatefound', function() {
-        var nuevo = reg.installing;
-        if (!nuevo) return;
-        nuevo.addEventListener('statechange', function() {
-          if (nuevo.state === 'installed' && navigator.serviceWorker.controller) {
-            try { nuevo.postMessage({ type: 'SKIP_WAITING' }); } catch(e){}
-          }
-        });
-      });
     }).catch(function(err) {
       console.warn('SW error:', err);
     });

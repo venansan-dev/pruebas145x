@@ -534,7 +534,7 @@ window.PUNTOS = [
 
   { id:'etapa-costa-8', orden:8, nombre:'Etapa 8 · Llegada a Santiago de Compostela', nombre_gl:'Etapa 8 · Chegada a Santiago de Compostela', nombre_en:'Stage 8 · Arrival in Santiago de Compostela',
     categoria:'etapa', variante:'costa', km:0, desnivel_pos:0, desnivel_neg:0, dificultad:'Fácil',
-    lat:42.880688, lng:-8.544395,
+    lat:42.880609, lng:-8.544591,
     subtitulo:'El final de la ruta que nunca se aleja del mar', subtitulo_gl:'O final da ruta que nunca se afasta do mar', subtitulo_en:'The end of the route that never strays from the sea',
     descripcion:'El Camino Portugués de la Costa, que nace en la Sé do Porto y no se separa del Atlántico durante días, alcanza su meta en la Praza do Obradoiro. Desde Iria Flavia, donde el obispo Teodomiro descubrió el sepulcro apostólico, los últimos pasos conducen hasta la fachada barroca de la catedral. Ultreia et Suseia.',
     descripcion_gl:'O Camiño Portugués da Costa, que nace na Sé do Porto e non se separa do Atlántico durante días, alcanza a súa meta na Praza do Obradoiro. Desde Iria Flavia, onde o bispo Teodomiro descubriu o sepulcro apostólico, os últimos pasos conducen até a fachada barroca da catedral. Ultreia et Suseia.',
@@ -596,7 +596,7 @@ window.PUNTOS = [
 
   { id:'etapa-tui-7', orden:7, nombre:'Etapa 7 · Llegada a Santiago de Compostela', nombre_gl:'Etapa 7 · Chegada a Santiago de Compostela', nombre_en:'Stage 7 · Arrival in Santiago de Compostela',
     categoria:'etapa', variante:'interior', km:0, desnivel_pos:0, desnivel_neg:0, dificultad:'Fácil',
-    lat:42.880599, lng:-8.543658,
+    lat:42.880771, lng:-8.544591,
     subtitulo:'El final del camino interior gallego', subtitulo_gl:'O final do camiño interior galego', subtitulo_en:'The end of the inland Galician way',
     descripcion:'El Camino Portugués Interior culmina, como todas las rutas jacobeas, en la Praza do Obradoiro. Desde la catedral-fortaleza de Tui hasta la fachada barroca compostelana, el peregrino completa un itinerario que atraviesa el interior de Galicia lejos del bullicio de la costa.',
     descripcion_gl:'O Camiño Portugués Interior culmina, como todas as rutas xacobeas, na Praza do Obradoiro. Desde a catedral-fortaleza de Tui até a fachada barroca compostelá, o peregrino completa un itinerario que atravesa o interior de Galicia lonxe do bulicio da costa.',
@@ -866,7 +866,7 @@ window.PUNTOS = [
 
   { id:'etapa-frances-33', orden:33, nombre:'Etapa 33 · Llegada a Santiago de Compostela', nombre_gl:'Etapa 33 · Chegada a Santiago de Compostela', nombre_en:'Stage 33 · Arrival in Santiago de Compostela',
     categoria:'etapa', variante:'frances', km:0, desnivel_pos:0, desnivel_neg:0, dificultad:'Fácil',
-    lat:42.880659, lng:-8.54451,
+    lat:42.880852, lng:-8.544400,
     subtitulo:'El abrazo final, tras casi 800 kilómetros', subtitulo_gl:'O abrazo final, tras case 800 quilómetros', subtitulo_en:'The final embrace, after almost 800 kilometres',
     descripcion:'Tras casi 800 kilómetros desde Saint-Jean-Pied-de-Port, el Camino Francés culmina en la Praza do Obradoiro, ante la fachada barroca de la catedral. El abrazo al Apóstol, la visita a la cripta donde reposan sus restos y, si hay suerte, el vuelo del Botafumeiro en la misa del peregrino cierran un viaje que durante un milenio ha cambiado la vida de quienes lo recorren.',
     descripcion_gl:'Tras case 800 quilómetros desde Saint-Jean-Pied-de-Port, o Camiño Francés culmina na Praza do Obradoiro, perante a fachada barroca da catedral. O abrazo ao Apóstolo, a visita á cripta onde repousan os seus restos e, se hai sorte, o voo do Botafumeiro na misa do peregrino pechan unha viaxe que durante un milenio cambiou a vida de quen o percorre.',
@@ -1336,7 +1336,7 @@ window.PUNTOS = [
 
   { id:'etapa-norte-38', orden:38, nombre:'Etapa 38 · Llegada a Santiago de Compostela', nombre_gl:'Etapa 38 · Chegada a Santiago de Compostela', nombre_en:'Stage 38 · Arrival in Santiago de Compostela',
     categoria:'etapa', variante:'norte', km:0, desnivel_pos:0, desnivel_neg:0, dificultad:'Fácil',
-    lat:42.880688, lng:-8.544395,
+    lat:42.880771, lng:-8.544209,
     subtitulo:'El final de la ruta más larga del Cantábrico', subtitulo_gl:'O final da ruta máis longa do Cantábrico', subtitulo_en:'The end of the longest route on the Cantabrian coast',
     descripcion:'El Camino del Norte, el más largo y exigente de cuantos llegan a Compostela, termina igual que todos: en la Praza do Obradoiro, frente a la fachada barroca que oculta el viejo Pórtico de la Gloria románico. Semanas de costa cantábrica, acantilados y montaña quedan atrás en el instante de cruzar el umbral de la catedral.',
     descripcion_gl:'O Camiño do Norte, o máis longo e esixente de cantos chegan a Compostela, remata igual que todos: na Praza do Obradoiro, fronte á fachada barroca que oculta o vello Pórtico da Gloria románico. Semanas de costa cantábrica, cantís e montaña quedan atrás no instante de cruzar o limiar da catedral.',
@@ -1462,7 +1462,7 @@ window.PUNTOS = [
 
   { id:'etapa-primitivo-15', orden:15, nombre:'Etapa 15 · Llegada a Santiago de Compostela', nombre_gl:'Etapa 15 · Chegada a Santiago de Compostela', nombre_en:'Stage 15 · Arrival in Santiago de Compostela',
     categoria:'etapa', variante:'primitivo', km:0, desnivel_pos:0, desnivel_neg:0, dificultad:'Fácil',
-    lat:42.880688, lng:-8.544395,
+    lat:42.880609, lng:-8.544209,
     subtitulo:'Doce siglos después del primer peregrino', subtitulo_gl:'Doce séculos despois do primeiro peregrino', subtitulo_en:'Twelve centuries after the first pilgrim',
     descripcion:'El Camino Primitivo, el más antiguo de todos -el que inauguró el rey Alfonso II el Casto en el siglo IX-, se cierra en la Praza do Obradoiro. Doce siglos después de aquel primer peregrinaje real, el caminante repite el mismo gesto: alzar la vista hacia las torres de la catedral que guarda la tumba del Apóstol.',
     descripcion_gl:'O Camiño Primitivo, o máis antigo de todos -o que inaugurou o rei Alfonso II o Casto no século IX-, pechase na Praza do Obradoiro. Doce séculos despois daquela primeira peregrinaxe real, o camiñante repite o mesmo xesto: erguer a vista cara ás torres da catedral que garda a tumba do Apóstolo.',
@@ -1524,7 +1524,7 @@ window.PUNTOS = [
 
   { id:'etapa-ingles-7', orden:7, nombre:'Etapa 7 · Llegada a Santiago de Compostela', nombre_gl:'Etapa 7 · Chegada a Santiago de Compostela', nombre_en:'Stage 7 · Arrival in Santiago de Compostela',
     categoria:'etapa', variante:'ingles', km:0, desnivel_pos:0, desnivel_neg:0, dificultad:'Fácil',
-    lat:42.880918, lng:-8.544459,
+    lat:42.880528, lng:-8.544400,
     subtitulo:'El final de la ruta de los peregrinos del mar', subtitulo_gl:'O final da ruta dos peregrinos do mar', subtitulo_en:'The end of the sea pilgrims\' route',
     descripcion:'El Camino Inglés, la ruta más corta y la que siguieron durante siglos los peregrinos llegados por mar desde las Islas Británicas e Irlanda, desemboca en la Praza do Obradoiro. Pocos días de camino bastan para sentir la misma emoción que peregrinos de toda Europa han compartido durante un milenio ante la fachada de la catedral.',
     descripcion_gl:'O Camiño Inglés, a ruta máis curta e a que seguiron durante séculos os peregrinos chegados por mar desde as Illas Británicas e Irlanda, desemboca na Praza do Obradoiro. Poucos días de camiño abondan para sentir a mesma emoción que peregrinos de toda Europa compartiron durante un milenio perante a fachada da catedral.',
