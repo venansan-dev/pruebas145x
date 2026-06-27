@@ -1,20 +1,21 @@
 // webp-fallback.js — Safari ≤13 (Catalina) no soporta WebP.
-// Este script se ejecuta (defer) justo después de pois.js y antes de app.js.
-// Detecta soporte WebP con canvas; si falla, reescribe las URLs en PUNTOS
-// y en la tabla interna de imágenes de app.js antes de que se rendericen.
-// En navegadores con soporte WebP el bloque completo se salta en <1 ms.
+// Detecta Safari antiguo por User-Agent (más fiable que canvas en Safari 13)
+// y reescribe las URLs .webp a sus equivalentes .jpg/.png antes de que
+// app.js las use. En el resto de navegadores sale inmediatamente sin hacer nada.
 
 (function () {
-  // Detección síncrona vía canvas (la más fiable, sin petición de red)
-  function soportaWebP() {
-    try {
-      var c = document.createElement('canvas');
-      c.width = 1; c.height = 1;
-      return c.toDataURL('image/webp').indexOf('data:image/webp') === 0;
-    } catch (e) { return false; }
+  function esSafariSinWebP() {
+    var ua = navigator.userAgent;
+    // Safari pero no Chrome/Edge/Firefox/Opera (todos incluyen "Safari" en su UA)
+    var esSafari = /Safari/.test(ua) && !/Chrome|CriOS|FxiOS|EdgA|OPR/.test(ua);
+    if (!esSafari) return false;
+    // Extraer versión: "Version/13.1.2 Safari/..."
+    var m = ua.match(/Version\/(\d+)/);
+    if (!m) return false;
+    return parseInt(m[1], 10) < 14;
   }
 
-  if (soportaWebP()) return; // La mayoría de usuarios: salir inmediatamente
+  if (!esSafariSinWebP()) return; // La mayoría de usuarios: salir inmediatamente
 
   // Mapa webp → fallback jpg/png para todas las imágenes sustituidas
   var FALLBACK = {
@@ -58,15 +59,13 @@
   // Parchear PUNTOS (pois.js ya ejecutado, app.js aún no)
   if (window.PUNTOS && Array.isArray(window.PUNTOS)) {
     window.PUNTOS.forEach(function (p) {
-      if (p.imagen) p.imagen = aplicarFallback(p.imagen);
+      if (p.imagen)  p.imagen  = aplicarFallback(p.imagen);
       if (p.imagen2) p.imagen2 = aplicarFallback(p.imagen2);
-      if (p.icon) p.icon = aplicarFallback(p.icon);
+      if (p.icon)    p.icon    = aplicarFallback(p.icon);
     });
   }
 
-  // Parchear GALERIA_IMGS (galería hero de escritorio, definida en app.js).
-  // app.js es defer y se ejecuta después de este script, así que esperamos
-  // a DOMContentLoaded para que ambos hayan corrido ya.
+  // Parchear GALERIA_IMGS después de que app.js la haya declarado
   document.addEventListener('DOMContentLoaded', function () {
     if (window.GALERIA_IMGS && Array.isArray(window.GALERIA_IMGS)) {
       window.GALERIA_IMGS.forEach(function (item) {
@@ -75,6 +74,6 @@
     }
   });
 
-  // Exponer el helper por si app.js lo necesita para URLs puntuales
+  // Exponer helper por si app.js lo necesita puntualmente
   window._webpFallback = aplicarFallback;
 })();
