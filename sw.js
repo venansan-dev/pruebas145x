@@ -1,4 +1,4 @@
-const CACHE_NAME = 'guia-compostelana-v2039';
+const CACHE_NAME = 'guia-compostelana-v2040';
 const TILE_CACHE = 'guia-tiles-v5';
 const IMG_CACHE  = 'guia-imgs-v10';
 const LIB_CACHE  = 'guia-libs-v1';
@@ -8,6 +8,7 @@ const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/app.js',
+  '/i18n.js',
   '/pois.js',
   '/manifest.json'
 ];
@@ -288,7 +289,7 @@ self.addEventListener('fetch', function(e) {
   // pois.js y app.js (datos + lógica de la app) → cache first con
   // actualización en segundo plano. Carga instantánea desde caché; si hay
   // red, refresca para la próxima vez.
-  if (url.endsWith('/pois.js') || url.endsWith('/app.js')) {
+  if (url.endsWith('/pois.js') || url.endsWith('/app.js') || url.endsWith('/i18n.js')) {
     e.respondWith(
       caches.open(CACHE_NAME).then(function(c) {
         return c.match(e.request).then(function(cached) {

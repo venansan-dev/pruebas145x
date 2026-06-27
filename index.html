@@ -3,31 +3,6 @@
 <head>
 <!-- Google tag (gtag.js) — cargado tras 'load' para no bloquear el render -->
 <script>
-  // ── CAPTURA GLOBAL DE ERRORES (diagnóstico temporal) ──
-  // Muestra en pantalla cualquier error JS, esté donde esté. Si la ruta
-  // violeta no aparece por una excepción que rompe la cadena de arranque,
-  // aquí saldrá el mensaje y la línea, incluso en Safari privado.
-  (function(){
-    function _showErr(txt){
-      try{
-        var d=document.getElementById('_diag-err');
-        if(!d){
-          d=document.createElement('div');
-          d.id='_diag-err';
-          d.style.cssText='position:fixed;left:4px;top:4px;right:4px;z-index:2147483647;background:rgba(180,0,0,0.95);color:#fff;font:11px/1.4 monospace;padding:8px 10px;border-radius:8px;white-space:pre-wrap;word-break:break-word;max-height:40vh;overflow:auto;box-shadow:0 2px 12px rgba(0,0,0,0.5)';
-          (document.body||document.documentElement).appendChild(d);
-        }
-        d.textContent += txt+'\n';
-      }catch(_){}
-    }
-    window.addEventListener('error', function(e){
-      _showErr('❌ '+(e.message||'error')+'  @'+(e.filename||'').split('/').pop()+':'+(e.lineno||'?'));
-    });
-    window.addEventListener('unhandledrejection', function(e){
-      _showErr('❌ promesa: '+((e.reason&&e.reason.message)||e.reason||'?'));
-    });
-    window._showErr=_showErr;
-  })();
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -2673,6 +2648,10 @@
   </div>
 </div>
 
+<!-- i18n.js (T e idiomaActual) SIN defer: debe ejecutarse antes que los
+     bloques inline siguientes, que usan T/idiomaActual en parse-time.
+     Se extrajo de app.js para corregir 'Can't find variable: T' en Safari. -->
+<script src="i18n.js"></script>
 <script>
 var _APP_VERSION = "v2035";
 if ('serviceWorker' in navigator) {
@@ -4420,8 +4399,6 @@ function abrirSobreNosotros() {
    ============================================================ */
 (function(){
   'use strict';
-  // Marca incondicional: si esto corre, el módulo se está ejecutando.
-  try{ if(window._showErr) window._showErr('✅ módulo ruta violeta ALCANZADO'); }catch(_){}
   // ── DIAGNÓSTICO TEMPORAL (quitar tras depurar la ruta violeta) ──
   // Muestra mensajes en un cartelito fijo abajo a la izquierda para saber,
   // en el móvil real, por qué no se dibuja el trazado. Sin DevTools.
