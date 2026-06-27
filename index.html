@@ -4399,22 +4399,6 @@ function abrirSobreNosotros() {
    ============================================================ */
 (function(){
   'use strict';
-  // ── DIAGNÓSTICO TEMPORAL (quitar tras depurar la ruta violeta) ──
-  // Muestra mensajes en un cartelito fijo abajo a la izquierda para saber,
-  // en el móvil real, por qué no se dibuja el trazado. Sin DevTools.
-  function _diag(msg){
-    try{
-      var d = document.getElementById('_diag-ruta');
-      if(!d){
-        d = document.createElement('div');
-        d.id = '_diag-ruta';
-        d.style.cssText = 'position:fixed;left:6px;bottom:6px;z-index:999999;background:rgba(168,79,152,0.95);color:#fff;font:11px/1.4 monospace;padding:6px 9px;border-radius:8px;max-width:80vw;pointer-events:none;box-shadow:0 2px 10px rgba(0,0,0,0.4)';
-        document.body.appendChild(d);
-      }
-      d.textContent = '🗺️ ' + msg;
-    }catch(_){}
-  }
-  window._diagRuta = _diag;
   var COLOR = '#C25FB0';          // violeta rosáceo
   var BASE = 'tracks/';
   var capa = null;                // L.layerGroup con todas las polilíneas
@@ -4443,22 +4427,20 @@ function abrirSobreNosotros() {
 
   // Dibuja (o re-muestra) el trazado de TODAS las rutas del índice.
   function mostrarTodo(){
-    _diag('mostrarTodo llamada');
-    if(typeof mapa==='undefined' || !mapa || !window.L){ _diag('SIN mapa/L todavía'); return; }
+    if(typeof mapa==='undefined' || !mapa || !window.L) return;
     visible = true;
     // Si ya está pintado, solo reañadir la capa al mapa.
     if(pintado && capa){
       if(!mapa.hasLayer(capa)) capa.addTo(mapa);
       return;
     }
-    if(!window._INDICE_CAMINOS){ _diag('SIN _INDICE_CAMINOS'); return; }
+    if(!window._INDICE_CAMINOS) return;
     pintado = true;
     capa = L.layerGroup().addTo(mapa);
-    var _ok = 0, _fail = 0, _total = window._INDICE_CAMINOS.length;
     // Cargar cada etapa de cada ruta y dibujarla en cuanto llega.
     window._INDICE_CAMINOS.forEach(function(meta){
       cargar(meta).then(function(coords){
-        if(!capa || !coords || coords.length<2){ _fail++; _diag('tracks: '+_ok+' ok / '+_fail+' fallan de '+_total); return; }
+        if(!capa || !coords || coords.length<2) return;
         L.polyline(coords, {
           color: COLOR,
           weight: 4,
@@ -4466,8 +4448,6 @@ function abrirSobreNosotros() {
           lineJoin: 'round',
           lineCap: 'round'
         }).addTo(capa);
-        _ok++;
-        _diag('tracks: '+_ok+' ok / '+_fail+' fallan de '+_total);
       });
     });
   }
@@ -4509,9 +4489,12 @@ function abrirSobreNosotros() {
   // script registre su DOMContentLoaded. Para no depender del sondeo de
   // autoInit, escuchamos el evento que emite initMapa al terminar. Si el
   // mapa ya estaba listo cuando se carga este módulo, pintamos de inmediato.
-  _diag('módulo cargado, esperando mapa');
-  window.addEventListener('mapa-listo', function(){ _diag('evento mapa-listo recibido'); mostrarTodo(); });
-  if(window._mapaListo){ _diag('mapa ya estaba listo'); mostrarTodo(); }
+  // app.js (externalizado y diferido) crea el mapa después de que este
+  // script registre su DOMContentLoaded. Para no depender del sondeo de
+  // autoInit, escuchamos el evento que emite initMapa al terminar. Si el
+  // mapa ya estaba listo cuando se carga este módulo, pintamos de inmediato.
+  window.addEventListener('mapa-listo', function(){ mostrarTodo(); });
+  if(window._mapaListo) mostrarTodo();
 })();
 
 </script>
