@@ -4711,7 +4711,7 @@ function iniciarProximidad() {
       PUNTOS.forEach(function(p) {
         if (notifEnviadas[p.id]) return;
         var d = calcDistancia(lat, lng, p.lat, p.lng);
-        if (d < 0.025) { // 25 metros
+        if (d < 2) { // 2000 metros (PRUEBAS)
           notifEnviadas[p.id] = true;
           var t = (T[idiomaActual]||T.es);
           new Notification('📍 ' + (idiomaActual==='gl'&&p.nombre_gl?p.nombre_gl:idiomaActual==='en'&&p.nombre_en?p.nombre_en:p.nombre), {
