@@ -1,6 +1,6 @@
-const CACHE_NAME = 'guia-compostelana-v2037';
+const CACHE_NAME = 'guia-compostelana-v2035';
 const TILE_CACHE = 'guia-tiles-v5';
-const IMG_CACHE  = 'guia-imgs-v10';
+const IMG_CACHE  = 'guia-imgs-v9';
 const LIB_CACHE  = 'guia-libs-v1';
 const TRACK_CACHE = 'guia-tracks-v4';
 
@@ -12,7 +12,7 @@ const STATIC_ASSETS = [
 ];
 
 // Imágenes POIs (sincronizado con las imágenes referenciadas en index.html)
-const POI_IMAGES = ['https://i.postimg.cc/0NmcSJk6/descrip.png', '/img/historia2.jpg', 'https://i.postimg.cc/1XdXBwx5/IMG-0229.jpg', '/img/historia3.png', '/img/brujula2.jpg', 'https://i.postimg.cc/6p1S2PqR/losaestrelladavid.jpg', '/img/brujula3-2.png', 'https://i.postimg.cc/7ZQcGRh2/freixo.jpg', 'https://i.postimg.cc/85qh3dYg/IMG-0859.jpg', '/img/etapas3.png', 'https://i.postimg.cc/C1gNNsDK/IMG-0213.jpg', '/img/asis3.png', 'https://i.postimg.cc/D00S3F1Q/graffiticoia.jpg', '/img/etapas2.jpg', 'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png', '/img/asistente2.jpg', '/img/headr4.png', 'https://i.postimg.cc/Hnnjb3Nk/IMG-1179.jpg', 'https://i.postimg.cc/Hnnr1HbB/fortalezacastro.jpg', 'https://i.postimg.cc/J0VkKrsg/santamariadeguizan.jpg', 'https://i.postimg.cc/JhxGVc20/IMG-4705.png', 'https://i.postimg.cc/L5HDVXtt/IMG-1026.jpg', '/img/principal2.png', 'https://i.postimg.cc/MHCNTPDJ/balaidos.jpg', '/img/mipunto3.png', '/img/mipunto2.jpg', 'https://i.postimg.cc/QCGTS8Fv/santacristinalavadores.jpg', 'https://i.postimg.cc/QMTbR3vh/Captura-de-pantalla-2026-05-31-a-las-13-52-42.png', 'https://i.postimg.cc/RVZ22Wdx/IMG-1120.jpg', '/img/alertas2.jpg', 'https://i.postimg.cc/Ssz9W2Kq/torrelavandeira.jpg', 'https://i.postimg.cc/VvhdYTFW/casaceta.jpg', 'https://i.postimg.cc/W3NGwNdL/concatedral.jpg', 'https://i.postimg.cc/Xq5nND5x/IMG-2940.jpg', 'https://i.postimg.cc/ZnG2R7cm/iglesiacastrelos.jpg', 'https://i.postimg.cc/gJzVHzxW/laxe.jpg', 'https://i.postimg.cc/j22DYKyM/iglesiabembrive.jpg', '/img/logohead.png', '/img/casc6.png', 'https://i.postimg.cc/nzQmvjhN/torrepadin.jpg', 'https://i.postimg.cc/qqFzkYGD/IMG-E1212.jpg', 'https://i.postimg.cc/rm387xgK/IMG-0201.jpg', 'https://i.postimg.cc/rmV1NVKY/bembrive.jpg', '/img/alertas3.png', 'https://i.postimg.cc/sfSQF2nR/Captura-de-pantalla-2026-05-31-a-las-13-32-32.png', '/img/vieira8.png', 'https://i.postimg.cc/wB9NkRLk/Captura-de-pantalla-2026-05-31-a-las-14-14-50.png', 'https://i.postimg.cc/wTzh0rXs/Captura-de-pantalla-2026-05-31-a-las-14-09-56.png', 'https://i.postimg.cc/x88XVYL3/iglesiateis.jpg', 'https://i.postimg.cc/xThPVV4d/olivo.jpg', 'https://i.postimg.cc/yxxDCB0Z/escudoamorcortes.jpg', 'https://i.postimg.cc/zBRhnbGj/santiagodeparada.jpg'];
+const POI_IMAGES = ['https://i.postimg.cc/0NmcSJk6/descrip.png', 'https://i.postimg.cc/mkf5BspB/historia2.webp', 'https://i.postimg.cc/1XdXBwx5/IMG-0229.jpg', 'https://i.postimg.cc/0jRBPsX9/historia3.webp', 'https://i.postimg.cc/Fz5BN4W2/brujula2.webp', 'https://i.postimg.cc/6p1S2PqR/losaestrelladavid.jpg', 'https://i.postimg.cc/Bb9V407s/brujula3-2.webp', 'https://i.postimg.cc/7ZQcGRh2/freixo.jpg', 'https://i.postimg.cc/85qh3dYg/IMG-0859.jpg', 'https://i.postimg.cc/Bb9V407S/etapas3.webp', 'https://i.postimg.cc/C1gNNsDK/IMG-0213.jpg', 'https://i.postimg.cc/Fz5BN4C5/asis3.webp', 'https://i.postimg.cc/D00S3F1Q/graffiticoia.jpg', 'https://i.postimg.cc/ZntM4SsR/etapas2.webp', 'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png', 'https://i.postimg.cc/4ykSsgLD/asistente2.webp', 'https://i.postimg.cc/Sx0rth1M/headr4.webp', 'https://i.postimg.cc/Hnnjb3Nk/IMG-1179.jpg', 'https://i.postimg.cc/Hnnr1HbB/fortalezacastro.jpg', 'https://i.postimg.cc/J0VkKrsg/santamariadeguizan.jpg', 'https://i.postimg.cc/JhxGVc20/IMG-4705.png', 'https://i.postimg.cc/L5HDVXtt/IMG-1026.jpg', 'https://i.postimg.cc/Y06ySsT2/principal2.webp', 'https://i.postimg.cc/MHCNTPDJ/balaidos.jpg', 'https://i.postimg.cc/mkY6r5Kb/mipunto3.webp', 'https://i.postimg.cc/J0Ndh2SM/mipunto2.webp', 'https://i.postimg.cc/QCGTS8Fv/santacristinalavadores.jpg', 'https://i.postimg.cc/QMTbR3vh/Captura-de-pantalla-2026-05-31-a-las-13-52-42.png', 'https://i.postimg.cc/RVZ22Wdx/IMG-1120.jpg', 'https://i.postimg.cc/XJpbp4gp/alertas2.webp', 'https://i.postimg.cc/Ssz9W2Kq/torrelavandeira.jpg', 'https://i.postimg.cc/VvhdYTFW/casaceta.jpg', 'https://i.postimg.cc/W3NGwNdL/concatedral.jpg', 'https://i.postimg.cc/Xq5nND5x/IMG-2940.jpg', 'https://i.postimg.cc/ZnG2R7cm/iglesiacastrelos.jpg', 'https://i.postimg.cc/gJzVHzxW/laxe.jpg', 'https://i.postimg.cc/j22DYKyM/iglesiabembrive.jpg', 'https://i.postimg.cc/vTFNbs2Z/logohead.webp', 'https://i.postimg.cc/hP2mT0LN/casc6.webp', 'https://i.postimg.cc/nzQmvjhN/torrepadin.jpg', 'https://i.postimg.cc/qqFzkYGD/IMG-E1212.jpg', 'https://i.postimg.cc/rm387xgK/IMG-0201.jpg', 'https://i.postimg.cc/rmV1NVKY/bembrive.jpg', 'https://i.postimg.cc/j20Ftb3V/alertas3.webp', 'https://i.postimg.cc/sfSQF2nR/Captura-de-pantalla-2026-05-31-a-las-13-32-32.png', 'https://i.postimg.cc/9fmZ7NSx/vieira8.webp', 'https://i.postimg.cc/wB9NkRLk/Captura-de-pantalla-2026-05-31-a-las-14-14-50.png', 'https://i.postimg.cc/wTzh0rXs/Captura-de-pantalla-2026-05-31-a-las-14-09-56.png', 'https://i.postimg.cc/x88XVYL3/iglesiateis.jpg', 'https://i.postimg.cc/xThPVV4d/olivo.jpg', 'https://i.postimg.cc/yxxDCB0Z/escudoamorcortes.jpg', 'https://i.postimg.cc/zBRhnbGj/santiagodeparada.jpg'];
 
 // Librerías externas (Leaflet, markercluster, Firebase) necesarias para que
 // el mapa y la app funcionen sin conexión tras la primera carga.
@@ -126,48 +126,33 @@ const TRACK_URLS = [
 ];
 
 self.addEventListener('install', function(e) {
-  // Activación INMEDIATA: no esperamos a precachear nada pesado.
-  self.skipWaiting();
-  // En el install solo bloqueamos por los 4 recursos críticos (HTML, pois.js,
-  // manifest). Antes el install esperaba a ~155 descargas (imágenes + libs +
-  // ~91 tracks) y por eso cada versión nueva "tardaba muchísimo en actualizar".
   e.waitUntil(
-    caches.open(CACHE_NAME).then(function(c) {
-      return Promise.allSettled(STATIC_ASSETS.map(function(url) {
-        return c.add(url).catch(function(){});
-      }));
-    })
+    Promise.all([
+      caches.open(CACHE_NAME).then(function(c) {
+        // Cacheamos cada recurso por separado (no addAll atómico): si uno
+        // falla, los demás se guardan igual. Antes, si un solo recurso de
+        // STATIC_ASSETS fallaba, no se cacheaba NADA y la app no abría offline.
+        return Promise.allSettled(STATIC_ASSETS.map(function(url) {
+          return c.add(url).catch(function(){});
+        }));
+      }),
+      caches.open(IMG_CACHE).then(function(c) {
+        return Promise.allSettled(POI_IMAGES.map(function(url) {
+          return c.add(url).catch(function(){});
+        }));
+      }),
+      caches.open(LIB_CACHE).then(function(c) {
+        return Promise.allSettled(LIB_URLS.map(function(url) {
+          return c.add(url).catch(function(){});
+        }));
+      }),
+      caches.open(TRACK_CACHE).then(function(c) {
+        return Promise.allSettled(TRACK_URLS.map(function(url) {
+          return c.add(url).catch(function(){});
+        }));
+      })
+    ]).then(function() { return self.skipWaiting(); })
   );
-});
-
-// Precarga pesada (imágenes, librerías y TODOS los tracks) en SEGUNDO PLANO.
-// La dispara la página con postMessage('precache') tras cargar, de modo que
-// la app sigue disponible offline desde la primera visita SIN bloquear la
-// activación ni la actualización del Service Worker.
-function _precargaSegundoPlano() {
-  return Promise.all([
-    caches.open(IMG_CACHE).then(function(c) {
-      return Promise.allSettled(POI_IMAGES.map(function(url) {
-        return c.add(url).catch(function(){});
-      }));
-    }),
-    caches.open(LIB_CACHE).then(function(c) {
-      return Promise.allSettled(LIB_URLS.map(function(url) {
-        return c.add(url).catch(function(){});
-      }));
-    }),
-    caches.open(TRACK_CACHE).then(function(c) {
-      return Promise.allSettled(TRACK_URLS.map(function(url) {
-        return c.add(url).catch(function(){});
-      }));
-    })
-  ]);
-}
-
-self.addEventListener('message', function(e) {
-  if (e.data === 'precache') {
-    e.waitUntil(_precargaSegundoPlano());
-  }
 });
 
 self.addEventListener('activate', function(e) {
@@ -202,7 +187,7 @@ self.addEventListener('fetch', function(e) {
   }
 
   // Imágenes postimg → cache first
-  if (url.includes('postimg.cc') || url.includes('postimg.io') || url.includes('/img/')) {
+  if (url.includes('postimg.cc') || url.includes('postimg.io')) {
     e.respondWith(
       caches.open(IMG_CACHE).then(function(c) {
         return c.match(e.request).then(function(cached) {
