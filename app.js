@@ -704,7 +704,7 @@ function _renderAlbumRecuerdos(grid, vacioCont) {
   if (!window._albumGetVisitas || !window._albumGetFoto) {
     vacioCont.style.display = 'block'; return;
   }
-  var GENERIC = 'https://i.postimg.cc/Fsy3DmWJ/Captura-de-pantalla-2026-06-02-a-las-0-05-57.png';
+  var GENERIC = '';
   window._albumGetVisitas(function(visitas) {
     var poiVisitas = visitas.filter(function(v){ return v.poiId && !(v.poiId||'').startsWith('u_'); });
     var contador = document.getElementById('album-rec-contador');
