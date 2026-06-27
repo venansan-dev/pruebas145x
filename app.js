@@ -8454,7 +8454,7 @@ function cambiarIdioma(lang){
   var hasGeo = typeof userLat !== 'undefined' && userLat;
   el=document.getElementById('map-title');if(el)el.innerHTML=(hasGeo?t.mapTitle:t.mapTitleNoGeo)+" <svg width='22' height='30' viewBox='0 0 22 30' fill='none' xmlns='http://www.w3.org/2000/svg' style='animation:bounceDownArrow 1.4s ease-in-out infinite;flex-shrink:0;display:inline-block;vertical-align:middle;'><path d='M11 2 L11 22 M3 15 L11 24 L19 15' stroke='#dc2626' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/></svg>";
   el=document.getElementById('map-subtitle');if(el)el.textContent=hasGeo?t.mapSubtitle:t.mapSubtitleNoGeo;
-  el=document.getElementById('map-status-text');if(el&&el.textContent)el.textContent=t.mapStatus;
+  el=document.getElementById('map-status-text');if(el&&el.textContent&&el.textContent.indexOf('±')===-1)el.textContent=t.mapStatus;
   // Share buttons
   el=document.getElementById('share-label-m');if(el)el.textContent=t.shareLabel;
   el=document.getElementById('share-label-hero');if(el)el.textContent=t.shareLabel;
