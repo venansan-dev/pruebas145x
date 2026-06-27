@@ -5634,29 +5634,46 @@ function initMapa() {
     // guarda la última posición para centrar el mapa en el próximo arranque.
     var _watchId = navigator.geolocation.watchPosition(function(pos) {
       var lat = pos.coords.latitude, lng = pos.coords.longitude;
-      var acc = pos.coords.accuracy; // metros de incertidumbre (95% confianza)
-      // ── Filtro de precisión ──
-      // La geolocalización por WiFi/torre puede dar lecturas con accuracy de
-      // cientos de metros: son las que dejaban el punto azul desviado ~200m.
-      // Descartamos lecturas peores de 100 m SIEMPRE QUE ya tengamos una
-      // posición de fix real previa. Si aún no hay ninguna (solo la provisional
-      // o nada), aceptamos la primera aunque sea imprecisa para no quedarnos sin
-      // punto, pero el watch seguirá afinando en cuanto llegue señal GPS buena.
-      if (typeof acc === 'number' && acc > 100 && window._fixRealObtenido) {
-        return; // ignorar lectura imprecisa
+      var acc = (typeof pos.coords.accuracy === 'number') ? pos.coords.accuracy : 9999;
+
+      // ── Estrategia "la MEJOR lectura gana" ──
+      // Antes nos quedábamos con la PRIMERA lectura y bloqueábamos el resto con
+      // un filtro fijo de 100 m. Problema: en interior/arranque en frío la
+      // primera lectura suele venir por WiFi (~100 m); el GPS satelital bueno
+      // (~10-20 m) llega segundos después, pero el filtro ya lo rechazaba y el
+      // punto se quedaba clavado en la posición mala. Ahora comparamos la
+      // precisión: una lectura se acepta si es la primera, si mejora la mejor
+      // precisión vista, o si el último buen fix ya ha caducado (>15 s) por si
+      // el usuario se mueve y no queremos quedarnos pegados a un fix viejo.
+      var mejorPrev = (typeof window._mejorAcc === 'number') ? window._mejorAcc : Infinity;
+      var fixCaducado = window._ultimoFixTs && (Date.now() - window._ultimoFixTs > 15000);
+      var aceptar = !window._fixRealObtenido || acc <= mejorPrev || fixCaducado;
+
+      // Mostrar la precisión actual en el indicador de estado (diagnóstico:
+      // en interior verás 50-150 m; al aire libre, 5-20 m).
+      var stTxt = document.getElementById('map-status-text');
+      if (stTxt) {
+        stTxt.textContent = '📍 ±' + Math.round(acc) + ' m';
+        statusEl.classList.add('visible');
+        clearTimeout(window._accHideTimer);
+        window._accHideTimer = setTimeout(function(){ statusEl.classList.remove('visible'); }, 4000);
       }
-      // ¿Es la primera posición REAL? Lo es si no había fix real previo, ya
-      // sea porque arrancamos sin nada o porque solo teníamos la provisional
-      // de localStorage. (Antes esNuevo = !userLat fallaba: la provisional ya
-      // había rellenado userLat, así que la primera lectura buena entraba por
-      // la rama 'else' y el punto se quedaba en la posición vieja.)
+
+      if (!aceptar) return; // hay un fix mejor y reciente; ignoramos este peor
+
+      window._mejorAcc = acc;
+      window._ultimoFixTs = Date.now();
+
       var esNuevo = !window._fixRealObtenido;
       window._fixRealObtenido = true;
       window._posProvisional = false;
       userLat = lat; userLng = lng;
       _lastKnownLat = lat; _lastKnownLng = lng;
-      // Persistir para el próximo arranque (clave del mecanismo offline)
-      try { localStorage.setItem('_gps_last', JSON.stringify({lat:lat,lng:lng})); } catch(e) {}
+      // Persistir SOLO fixes razonables (≤80 m): así una lectura mala no se
+      // convierte en la posición provisional del próximo arranque.
+      if (acc <= 80) {
+        try { localStorage.setItem('_gps_last', JSON.stringify({lat:lat,lng:lng})); } catch(e) {}
+      }
       statusEl.classList.remove('visible');
       if (esNuevo) {
         // Primera posición real: actualizar título y crear/mover marcador
@@ -5683,7 +5700,7 @@ function initMapa() {
         }).addTo(mapa);
         calcularDistancias();
       }
-    }, _gpsErrorHandler, { enableHighAccuracy:true, maximumAge:5000, timeout:30000 });
+    }, _gpsErrorHandler, { enableHighAccuracy:true, maximumAge:0, timeout:30000 });
 
     // Escuchar orientación para rotar la flecha
     // Android — activar orientación directamente
