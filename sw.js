@@ -1,4 +1,4 @@
-const CACHE_NAME = 'guia-compostelana-v2044';
+const CACHE_NAME = 'guia-compostelana-v2045';
 const TILE_CACHE = 'guia-tiles-v5';
 const IMG_CACHE  = 'guia-imgs-v10';
 const LIB_CACHE  = 'guia-libs-v1';
@@ -10,6 +10,7 @@ const STATIC_ASSETS = [
   '/app.js',
   '/i18n.js',
   '/pois.js',
+  '/webp-fallback.js',
   '/manifest.json'
 ];
 
