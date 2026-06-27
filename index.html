@@ -4480,6 +4480,13 @@ function abrirSobreNosotros() {
 
   if(document.readyState!=='loading') autoInit();
   else document.addEventListener('DOMContentLoaded', function(){ autoInit(); });
+
+  // app.js (externalizado y diferido) crea el mapa después de que este
+  // script registre su DOMContentLoaded. Para no depender del sondeo de
+  // autoInit, escuchamos el evento que emite initMapa al terminar. Si el
+  // mapa ya estaba listo cuando se carga este módulo, pintamos de inmediato.
+  window.addEventListener('mapa-listo', function(){ mostrarTodo(); });
+  if(window._mapaListo) mostrarTodo();
 })();
 
 </script>

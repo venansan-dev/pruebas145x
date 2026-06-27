@@ -5640,6 +5640,15 @@ function initMapa() {
     statusEl.innerHTML = (T[idiomaActual]||T.es).noGeolocal;
     setTimeout(function(){statusEl.classList.remove('visible');},3000);
   }
+
+  // El mapa ya está creado e inicializado. Avisamos a los módulos que
+  // dependen de él (p. ej. el trazado violeta de las rutas oficiales, que
+  // vive en un script aparte). Antes esos módulos sondeaban la variable
+  // global 'mapa' con setTimeout; al externalizar app.js con defer, su
+  // DOMContentLoaded corría ANTES de que el mapa existiera y el trazado
+  // podía no llegar a pintarse. Con este evento el dibujo es determinista.
+  window._mapaListo = true;
+  try { window.dispatchEvent(new CustomEvent('mapa-listo')); } catch(_) {}
 }
 
 
