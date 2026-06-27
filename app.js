@@ -5415,6 +5415,8 @@ function fiestaActivaHoy(f) {
 }
 
 function initMapa() {
+  if (window._mapaInicializado) return;  // evita doble init (observer + fallback)
+  window._mapaInicializado = true;
   var radioCtrl = document.getElementById('map-radio-control');
   if (radioCtrl) radioCtrl.style.display = 'flex';
   // Forzar radio 1km al iniciar
@@ -5548,21 +5550,39 @@ function initMapa() {
     });
   });
 
+  // Creación de marcadores TROCEADA. Construir 774 marcadores de golpe
+  // bloqueaba el hilo principal cientos de ms en gama baja. Los creamos en
+  // lotes, cediendo el hilo entre cada uno, y los insertamos en el cluster
+  // por tandas. chunkedLoading del cluster trocea su cálculo interno; esto
+  // trocea además la construcción de los objetos L.marker.
   var _marcadoresCluster = [];
-  PUNTOS.forEach(function(p) {
-    var m = L.marker([p.lat,p.lng], { icon:crearIcono(p.emoji, p.categoria==='etapa' ? p.color : null) });
-    m.on('click', (function(punto) {
-      return function() {
-        if (window._navBloqPopups) return;
-        _abrirModalPOI(punto);
-      };
-    })(p));
-    p.marker = m;
-    _marcadoresCluster.push(m);
-  });
-  // Añadir todos los marcadores de golpe (bulk). Con addLayers el cluster
-  // se calcula y dibuja en el primer render, sin necesidad de mover el mapa.
-  window._cluster.addLayers(_marcadoresCluster);
+  (function _construirMarcadores() {
+    var LOTE = 120;
+    var idx = 0;
+    function _tanda() {
+      var fin = Math.min(idx + LOTE, PUNTOS.length);
+      var nuevos = [];
+      for (; idx < fin; idx++) {
+        var p = PUNTOS[idx];
+        var m = L.marker([p.lat,p.lng], { icon:crearIcono(p.emoji, p.categoria==='etapa' ? p.color : null) });
+        m.on('click', (function(punto) {
+          return function() {
+            if (window._navBloqPopups) return;
+            _abrirModalPOI(punto);
+          };
+        })(p));
+        p.marker = m;
+        _marcadoresCluster.push(m);
+        nuevos.push(m);
+      }
+      // Insertar la tanda en el cluster en cuanto está lista (render progresivo).
+      window._cluster.addLayers(nuevos);
+      if (idx < PUNTOS.length) {
+        (window.requestAnimationFrame || function(f){ setTimeout(f, 16); })(_tanda);
+      }
+    }
+    _tanda();
+  })();
 
   var statusEl = document.getElementById('map-status');
   statusEl.classList.add('visible');
@@ -10155,29 +10175,53 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
-  // Inicialización pesada de la app móvil (mapa Leaflet + cluster + ~300
-  // marcadores, Firebase, POIs, tiempo). En la landing de escritorio la app
-  // está oculta por CSS, pero este trabajo bloqueaba igualmente el hilo
-  // principal durante el primer pintado → secciones lentas y reflows que
-  // hacían saltar el scroll al hero. En escritorio lo diferimos a tiempo de
-  // inactividad; en móvil se ejecuta inmediatamente, como siempre.
-  function _initAppPesada() {
-    renderCarrusel('todos');
+  // Trabajo pesado del MAPA (Leaflet + cluster + 774 marcadores + Firebase).
+  // Esto es lo que disparaba un Total Blocking Time enorme en móvil: antes se
+  // ejecutaba de golpe y síncrono durante la carga, aunque el mapa ni siquiera
+  // estuviera a la vista. Ahora lo diferimos hasta que el contenedor del mapa
+  // se acerca al viewport (IntersectionObserver). Así el hilo principal queda
+  // libre durante el primer pintado y la métrica de interactividad mejora.
+  function _initMapaPesada() {
+    if (window._mapaPesadaArrancada) return;
+    window._mapaPesadaArrancada = true;
     initMapa();
     cargarDatosFirebase();
     cargarPOIsUsuario();
     cargarPOIsFirebase();
     iniciarTiempo();
   }
-  if (window.innerWidth >= 769) {
-    if (window.requestIdleCallback) {
-      requestIdleCallback(_initAppPesada, { timeout: 2500 });
-    } else {
-      setTimeout(_initAppPesada, 1200);
+
+  // Trabajo ligero y visible de inmediato: el carrusel de POIs de la portada.
+  renderCarrusel('todos');
+
+  (function _programarMapa() {
+    var cont = document.getElementById('map-block') || document.getElementById('map');
+    // Si no hay contenedor o no hay IntersectionObserver, caemos a un diferido
+    // por tiempo de inactividad para no bloquear el arranque.
+    if (!cont || !('IntersectionObserver' in window)) {
+      if (window.requestIdleCallback) requestIdleCallback(_initMapaPesada, { timeout: 3000 });
+      else setTimeout(_initMapaPesada, 1500);
+      return;
     }
-  } else {
-    _initAppPesada();
-  }
+    var obs = new IntersectionObserver(function(entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          obs.disconnect();
+          _initMapaPesada();
+          break;
+        }
+      }
+    }, { rootMargin: '600px' });  // arranca un poco antes de que entre en pantalla
+    obs.observe(cont);
+    // Red de seguridad: si el usuario nunca llega al mapa, lo arrancamos en
+    // segundo plano tras unos segundos de inactividad para que esté listo si
+    // navega por anclas o usa el buscador.
+    if (window.requestIdleCallback) {
+      requestIdleCallback(function(){ _initMapaPesada(); }, { timeout: 8000 });
+    } else {
+      setTimeout(_initMapaPesada, 6000);
+    }
+  })();
   iniciarGaleria();
   iniciarPhoneCarrusel();
 
