@@ -2543,11 +2543,7 @@
 <script defer src='https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js'></script>
 <script defer src='https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js'></script>
 <script defer src='https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js'></script>
-<!-- pois.js (1,1 MB: 774 POIs en 3 idiomas) YA NO se carga aquí de forma
-     bloqueante. Parsearlo de golpe en el arranque era el grueso del Total
-     Blocking Time. Ahora app.js lo carga dinámicamente con requestIdleCallback
-     tras el primer render y re-pinta el carrusel/mapa cuando llega. El Service
-     Worker lo sigue cacheando, así que el modo offline no cambia. -->
+<script defer src='pois.js'></script>
 <script defer src='app.js'></script>
 
 <!-- PANEL MODERACIÓN (oculto) -->

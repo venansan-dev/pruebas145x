@@ -5274,19 +5274,10 @@ var userLat = null, userLng = null;
 var categoriaActiva = 'todos';
 var radioKm = 1;
 var valoraciones = {}, opiniones = {};
-// Inicializa los registros de valoraciones/opiniones para los POIs ya cargados.
-// Antes esto corría suelto en el arranque asumiendo que pois.js ya estaba
-// ejecutado. Ahora pois.js se carga de forma diferida, así que PUNTOS puede
-// estar vacío aquí; lo hacemos idempotente y lo re-llamamos al llegar los datos.
-// (El resto del código ya crea estos registros bajo demanda, así que esto es
-// solo un precalentado opcional y seguro.)
-function _initValoraciones() {
-  (window.PUNTOS || []).forEach(function(p) {
-    if (!valoraciones[p.id]) valoraciones[p.id] = { total:0, votos:0, miVoto:0 };
-    if (!opiniones[p.id]) opiniones[p.id] = [];
-  });
-}
-_initValoraciones();
+PUNTOS.forEach(function(p) {
+  valoraciones[p.id] = { total:0, votos:0, miVoto:0 };
+  opiniones[p.id] = [];
+});
 var rutaPuntos = [];
 
 // MENU MOVIL
@@ -5619,10 +5610,16 @@ function initMapa() {
         if (saved) {
           var p = JSON.parse(saved);
           if (p && p.lat && p.lng) {
+            // Posición PROVISIONAL de sesiones anteriores: pinta el punto al
+            // instante (también offline), pero NO la tratamos como buena. La
+            // primera lectura GPS real la reemplaza siempre. La marca
+            // _posProvisional evita que esNuevo quede en false y, además, hace
+            // que el punto se muestre semitransparente hasta tener fix real.
+            window._posProvisional = true;
             userLat = p.lat; userLng = p.lng;
             _lastKnownLat = p.lat; _lastKnownLng = p.lng;
             if (window._userMarker) { try{ mapa.removeLayer(window._userMarker); }catch(e){} window._userMarker = null; }
-            window._userMarker = L.marker([userLat,userLng],{icon:iconoUsuario,zIndexOffset:1000}).addTo(mapa).bindPopup('<strong>'+(T[idiomaActual]||T.es).tuUbicacion+'</strong>');
+            window._userMarker = L.marker([userLat,userLng],{icon:iconoUsuario,zIndexOffset:1000,opacity:0.45}).addTo(mapa).bindPopup('<strong>'+(T[idiomaActual]||T.es).tuUbicacion+'</strong>');
             mapa.setView([userLat, userLng], 15, {animate:false});
             statusEl.classList.remove('visible');
             calcularDistancias();
@@ -5637,7 +5634,25 @@ function initMapa() {
     // guarda la última posición para centrar el mapa en el próximo arranque.
     var _watchId = navigator.geolocation.watchPosition(function(pos) {
       var lat = pos.coords.latitude, lng = pos.coords.longitude;
-      var esNuevo = !userLat;
+      var acc = pos.coords.accuracy; // metros de incertidumbre (95% confianza)
+      // ── Filtro de precisión ──
+      // La geolocalización por WiFi/torre puede dar lecturas con accuracy de
+      // cientos de metros: son las que dejaban el punto azul desviado ~200m.
+      // Descartamos lecturas peores de 100 m SIEMPRE QUE ya tengamos una
+      // posición de fix real previa. Si aún no hay ninguna (solo la provisional
+      // o nada), aceptamos la primera aunque sea imprecisa para no quedarnos sin
+      // punto, pero el watch seguirá afinando en cuanto llegue señal GPS buena.
+      if (typeof acc === 'number' && acc > 100 && window._fixRealObtenido) {
+        return; // ignorar lectura imprecisa
+      }
+      // ¿Es la primera posición REAL? Lo es si no había fix real previo, ya
+      // sea porque arrancamos sin nada o porque solo teníamos la provisional
+      // de localStorage. (Antes esNuevo = !userLat fallaba: la provisional ya
+      // había rellenado userLat, así que la primera lectura buena entraba por
+      // la rama 'else' y el punto se quedaba en la posición vieja.)
+      var esNuevo = !window._fixRealObtenido;
+      window._fixRealObtenido = true;
+      window._posProvisional = false;
       userLat = lat; userLng = lng;
       _lastKnownLat = lat; _lastKnownLng = lng;
       // Persistir para el próximo arranque (clave del mecanismo offline)
@@ -5649,6 +5664,7 @@ function initMapa() {
         var ms=document.getElementById('map-subtitle');if(ms)ms.textContent=(T[idiomaActual]||T.es).mapSubtitle;
         if (window._userMarker) { try{ mapa.removeLayer(window._userMarker); }catch(e){} window._userMarker = null; }
         window._userMarker = L.marker([lat,lng],{icon:iconoUsuario,zIndexOffset:1000}).addTo(mapa).bindPopup('<strong>'+(T[idiomaActual]||T.es).tuUbicacion+'</strong>');
+        mapa.setView([lat, lng], 16, {animate:true}); // recentrar en la posición REAL
         radioKm = 1; aplicarRadio(1);
         calcularDistancias();
         cargarTiempo(lat, lng);
@@ -5656,6 +5672,7 @@ function initMapa() {
         // Actualización continua: mover marcador y círculo sin cambiar vista
         if (window._albumCheckProximidad) window._albumCheckProximidad(lat, lng, pos.coords.accuracy);
         if (window._userMarker) {
+          window._userMarker.setOpacity(1); // por si venía provisional semitransparente
           window._userMarker.setLatLng([lat, lng]);
           if (!window._orientacionActiva) window._userMarker.setIcon(crearIconoUsuario(null));
         }
@@ -5751,6 +5768,10 @@ function toggleSeguimiento() {
     if (!window._seguimientoId && navigator.geolocation) {
       window._seguimientoId = navigator.geolocation.watchPosition(function(pos) {
         if (!_modoSeguimiento) return;
+        // Mismo filtro de precisión que el watch principal: en seguimiento ya
+        // hay fix previo, así que descartamos lecturas WiFi/torre imprecisas
+        // que harían saltar el punto y el paneo del mapa.
+        if (typeof pos.coords.accuracy === 'number' && pos.coords.accuracy > 100) return;
         userLat = pos.coords.latitude;
         userLng = pos.coords.longitude;
         _lastKnownLat = userLat; _lastKnownLng = userLng;
@@ -8938,20 +8959,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // libre durante el primer pintado y la métrica de interactividad mejora.
   function _initMapaPesada() {
     if (window._mapaPesadaArrancada) return;
-    // Los 774 marcadores se construyen sobre PUNTOS. Si el usuario llega al
-    // mapa antes de que pois.js (diferido) haya cargado, esperamos al evento
-    // 'pois-listos' para no construir el mapa sobre un array vacío. Forzamos
-    // además que la carga de POIs arranque ya, sin esperar al idle.
-    if (!(window.PUNTOS && window.PUNTOS.length)) {
-      window.addEventListener('pois-listos', function _once(){
-        window.removeEventListener('pois-listos', _once);
-        _initMapaPesada();
-      }, { once:true });
-      if (typeof _cargarPoisDiferido === 'function') {
-        try { _cargarPoisDiferido(); } catch(e){}
-      }
-      return;
-    }
     window._mapaPesadaArrancada = true;
     initMapa();
     cargarDatosFirebase();
@@ -8961,52 +8968,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Trabajo ligero y visible de inmediato: el carrusel de POIs de la portada.
-  // Se pinta YA (vacío si los datos aún no han llegado) para no bloquear.
   renderCarrusel('todos');
-
-  // Carga DIFERIDA de pois.js (1,1 MB). Se saca del camino crítico: en lugar
-  // de parsearse en el arranque, se descarga/ejecuta cuando el hilo está libre
-  // (requestIdleCallback) o, como muy tarde, tras un breve timeout. Al terminar,
-  // se reinicializan los registros y se repinta lo que depende de los datos.
-  // Es una función nombrada (no IIFE) para poder forzar su arranque desde el
-  // mapa si el usuario llega a él antes de que se dispare el idle.
-  function _cargarPoisDiferido() {
-    // Si ya está cargado (p.ej. vuelta de bfcache o un cambio futuro), nada que hacer.
-    if (window.PUNTOS && window.PUNTOS.length) { return; }
-    if (window._poisCargando) return;
-    window._poisCargando = true;
-
-    function _alLlegarPois() {
-      // window.PUNTOS ya está poblado por pois.js. Reapuntamos la variable local
-      // (PUNTOS es la misma referencia global) y refrescamos lo dependiente.
-      _initValoraciones();
-      try { renderCarrusel(categoriaActiva || 'todos'); } catch(e){}
-      try { window.dispatchEvent(new CustomEvent('pois-listos')); } catch(_){}
-    }
-
-    function _inyectar() {
-      var s = document.createElement('script');
-      s.src = 'pois.js';
-      s.async = true;
-      s.onload = _alLlegarPois;
-      s.onerror = function(){
-        // Si falla la red, el Service Worker debería servir la copia cacheada;
-        // reintentamos una vez por si fue un fallo transitorio.
-        window._poisCargando = false;
-        setTimeout(function(){
-          if (!(window.PUNTOS && window.PUNTOS.length)) _cargarPoisDiferido();
-        }, 2000);
-      };
-      document.body.appendChild(s);
-    }
-
-    if (window.requestIdleCallback) {
-      requestIdleCallback(_inyectar, { timeout: 2000 });
-    } else {
-      setTimeout(_inyectar, 200);
-    }
-  }
-  _cargarPoisDiferido();
 
   (function _programarMapa() {
     var cont = document.getElementById('map-block') || document.getElementById('map');
