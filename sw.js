@@ -1,4 +1,4 @@
-const CACHE_NAME = 'guia-compostelana-v2035';
+const CACHE_NAME = 'guia-compostelana-v2036';
 const TILE_CACHE = 'guia-tiles-v5';
 const IMG_CACHE  = 'guia-imgs-v9';
 const LIB_CACHE  = 'guia-libs-v1';
@@ -7,6 +7,7 @@ const TRACK_CACHE = 'guia-tracks-v4';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
+  '/app.js',
   '/pois.js',
   '/manifest.json'
 ];
@@ -126,6 +127,8 @@ const TRACK_URLS = [
 ];
 
 self.addEventListener('install', function(e) {
+  // Precache CRÍTICO (bloqueante): estáticos + librerías. Es lo mínimo para
+  // que la app arranque y funcione offline tras la primera carga.
   e.waitUntil(
     Promise.all([
       caches.open(CACHE_NAME).then(function(c) {
@@ -136,23 +139,25 @@ self.addEventListener('install', function(e) {
           return c.add(url).catch(function(){});
         }));
       }),
-      caches.open(IMG_CACHE).then(function(c) {
-        return Promise.allSettled(POI_IMAGES.map(function(url) {
-          return c.add(url).catch(function(){});
-        }));
-      }),
       caches.open(LIB_CACHE).then(function(c) {
         return Promise.allSettled(LIB_URLS.map(function(url) {
-          return c.add(url).catch(function(){});
-        }));
-      }),
-      caches.open(TRACK_CACHE).then(function(c) {
-        return Promise.allSettled(TRACK_URLS.map(function(url) {
           return c.add(url).catch(function(){});
         }));
       })
     ]).then(function() { return self.skipWaiting(); })
   );
+
+  // Precache DIFERIDO (no bloqueante): imágenes de POIs y tracks de etapas.
+  // Antes iban dentro del waitUntil y disparaban ~140 peticiones de golpe que
+  // competían con la carga inicial de la página en la PRIMERA visita en móvil.
+  // Ahora se cachean en segundo plano; además el handler 'fetch' ya las cachea
+  // bajo demanda, así que el modo offline no depende de que esto termine.
+  caches.open(IMG_CACHE).then(function(c) {
+    POI_IMAGES.forEach(function(url) { c.add(url).catch(function(){}); });
+  });
+  caches.open(TRACK_CACHE).then(function(c) {
+    TRACK_URLS.forEach(function(url) { c.add(url).catch(function(){}); });
+  });
 });
 
 self.addEventListener('activate', function(e) {
@@ -268,9 +273,10 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // pois.js (datos de POIs) → cache first con actualización en segundo plano.
-  // Carga instantánea desde caché; si hay red, refresca para la próxima vez.
-  if (url.endsWith('/pois.js')) {
+  // pois.js y app.js (datos + lógica de la app) → cache first con
+  // actualización en segundo plano. Carga instantánea desde caché; si hay
+  // red, refresca para la próxima vez.
+  if (url.endsWith('/pois.js') || url.endsWith('/app.js')) {
     e.respondWith(
       caches.open(CACHE_NAME).then(function(c) {
         return c.match(e.request).then(function(cached) {
