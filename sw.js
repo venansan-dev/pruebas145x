@@ -1,6 +1,6 @@
 const CACHE_NAME = 'guia-compostelana-v2036';
 const TILE_CACHE = 'guia-tiles-v5';
-const IMG_CACHE  = 'guia-imgs-v9';
+const IMG_CACHE  = 'guia-imgs-v10';
 const LIB_CACHE  = 'guia-libs-v1';
 const TRACK_CACHE = 'guia-tracks-v4';
 
@@ -191,16 +191,28 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // Imágenes postimg → cache first
+  // Imágenes postimg → cache first.
+  // postimg.cc sirve desde una CDN que puede responder con redirecciones o
+  // respuestas opacas (type:'opaque', status 0) en peticiones cross-origin.
+  // Antes solo cacheábamos status===200, así que esas respuestas válidas no
+  // se guardaban y, sin red, la imagen salía rota. Ahora cacheamos cualquier
+  // respuesta utilizable y, si todo falla, devolvemos un error de red (no un
+  // 404 fijo) para que el navegador pueda reintentar al recuperar conexión.
   if (url.includes('postimg.cc') || url.includes('postimg.io')) {
     e.respondWith(
       caches.open(IMG_CACHE).then(function(c) {
         return c.match(e.request).then(function(cached) {
           if (cached) return cached;
           return fetch(e.request).then(function(res) {
-            if (res && res.status === 200) c.put(e.request, res.clone());
+            if (res && (res.status === 200 || res.type === 'opaque' || res.status === 0)) {
+              c.put(e.request, res.clone()).catch(function(){});
+            }
             return res;
-          }).catch(function() { return new Response('', {status: 404}); });
+          }).catch(function() {
+            // Sin red y sin caché: reintentar una vez por si fue un fallo
+            // transitorio; si vuelve a fallar, devolver error de red.
+            return fetch(e.request).catch(function(){ return Response.error(); });
+          });
         });
       })
     );

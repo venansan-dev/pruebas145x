@@ -5649,6 +5649,19 @@ function initMapa() {
   // podía no llegar a pintarse. Con este evento el dibujo es determinista.
   window._mapaListo = true;
   try { window.dispatchEvent(new CustomEvent('mapa-listo')); } catch(_) {}
+
+  // Enganche directo y a prueba de timing: además del evento, pedimos
+  // explícitamente al módulo del trazado oficial que se dibuje. Si su script
+  // aún no se ha evaluado (orden de carga con defer), reintentamos unas pocas
+  // veces. mostrarTodo() es idempotente, así que llamarlo de más no duplica.
+  (function _pintarTrazadoOficial(intentos){
+    intentos = intentos || 0;
+    if (window.TrazadoRuta && typeof window.TrazadoRuta.mostrar === 'function') {
+      try { window.TrazadoRuta.mostrar(); } catch(_) {}
+    } else if (intentos < 40) {
+      setTimeout(function(){ _pintarTrazadoOficial(intentos+1); }, 250);
+    }
+  })(0);
 }
 
 
