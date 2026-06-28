@@ -2381,6 +2381,11 @@ function abrirHeroModal() {
     inner.style.cssText = 'position:relative;z-index:1;flex:1;min-height:0;display:flex;flex-direction:column;padding:0 20px 40px;box-sizing:border-box';
     inner.innerHTML = '';
 
+    // A más de 200 km del Camino oficial no tiene sentido el flujo de etapa /
+    // lugares cercanos (daría distancias absurdas). Mostramos una vista propia
+    // con solo acciones que NO dependen de la ruta.
+    if (typeof _lejosDelCamino === 'function' && _lejosDelCamino()) { _renderLejos(); return; }
+
     // Casco solo, centrado, con pulso suave
     var cascoWrap = document.createElement('div');
     cascoWrap.style.cssText = 'display:flex;align-items:flex-end;gap:10px;margin-bottom:10px';
@@ -2880,6 +2885,73 @@ function abrirHeroModal() {
     inner.appendChild(btnAtras);
   }
 
+  // ── VISTA "LEJOS DEL CAMINO" ───────────────────────────────────
+  // Se muestra cuando el usuario está a >200 km del Camino oficial. En vez
+  // del flujo de etapa/cercanos (distancias absurdas), ofrece solo acciones
+  // que no dependen de la ruta: brújula, historia, añadir punto, emergencias.
+  function _renderLejos() {
+    if (panel._sugerenciasWrap) { panel._sugerenciasWrap.remove(); panel._sugerenciasWrap = null; }
+    inner.style.cssText = 'position:relative;z-index:1;flex:1;min-height:0;display:flex;flex-direction:column;padding:0 20px 40px;box-sizing:border-box';
+    inner.innerHTML = '';
+
+    var header = document.createElement('div');
+    header.style.cssText = 'flex-shrink:0';
+    _cascoTypewriter(header, _t.asistLejosTit || 'Estás lejos del Camino');
+
+    var msg = document.createElement('p');
+    msg.style.cssText = 'font-size:14px;color:#3d1f00;line-height:1.5;margin:8px 0 14px;opacity:0.9';
+    msg.textContent = _t.asistLejosMsg || 'Esta guía cubre las rutas de Galicia y el norte de Portugal. Aún puedes usar estas funciones:';
+    header.appendChild(msg);
+    inner.appendChild(header);
+
+    var lista = document.createElement('div');
+    lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:14px;flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 2px;overscroll-behavior:contain';
+
+    var opciones = [
+      { emoji:'🧭', tit:_t.asistBtnBrujula||'Usar la brújula',        desc:_t.asistBtnBrujulaDesc||'Oriéntate con la brújula digital del Camino', accion:function(){ _renderBrujulaModal(); } },
+      { emoji:'🐚', tit:_t.asistOp2Tit||'Historia Compostelana',       desc:_t.asistOp2Desc||'El Camino, los templarios, las rutas históricas…', accion:function(){ cerrar(); setTimeout(function(){ _irAlMapa(); setTimeout(abrirHistoriaDrawer, 400); }, 340); } },
+      { emoji:'📍', tit:_t.asistBtnAnadirPunto||'Añadir punto o alerta', desc:_t.asistBtnAnadirDesc||'Recomienda un lugar, añade una alerta o un punto de interés', accion:function(){ cerrar(); setTimeout(function(){ _irAlMapa(); setTimeout(abrirFormPOI, 400); }, 340); } },
+      { emoji:'🆘', tit:_t.asistOp5Tit||'Emergencias y seguridad',     desc:_t.asistOp5Desc||'Teléfonos útiles y recursos para el Camino.', accion:function(){ cerrar(); setTimeout(function(){ _irAlMapa(); setTimeout(abrirSOSDrawer, 400); }, 340); } }
+    ];
+
+    opciones.forEach(function(op) {
+      var fila = document.createElement('button');
+      fila.style.cssText = 'display:flex;align-items:center;gap:12px;background:rgba(0,0,0,0.2);border:1.5px solid #7a5010;border-radius:10px;padding:13px 14px;cursor:pointer;transition:background 0.15s;width:100%;box-sizing:border-box;text-align:left;flex-shrink:0';
+      fila.addEventListener('click', op.accion);
+
+      var em = document.createElement('div');
+      em.style.cssText = 'font-size:26px;flex-shrink:0;width:34px;text-align:center';
+      em.textContent = op.emoji;
+      fila.appendChild(em);
+
+      var info = document.createElement('div');
+      info.style.cssText = 'flex:1;min-width:0';
+      var titEl = document.createElement('div');
+      titEl.style.cssText = 'font-family:DM Sans,sans-serif;font-size:15px;color:#1a0800;margin-bottom:2px;line-height:1.3';
+      titEl.textContent = op.tit.replace(/^[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}\uFE0F\s]+/u, '').trim();
+      var descEl = document.createElement('div');
+      descEl.style.cssText = 'font-size:13px;color:#3d1f00;line-height:1.3;opacity:0.85';
+      descEl.textContent = op.desc;
+      info.appendChild(titEl);
+      info.appendChild(descEl);
+      fila.appendChild(info);
+
+      var arr = document.createElement('div');
+      arr.style.cssText = 'color:#7a5010;font-size:20px;flex-shrink:0';
+      arr.textContent = '›';
+      fila.appendChild(arr);
+
+      lista.appendChild(fila);
+    });
+    inner.appendChild(lista);
+
+    var btnCerrar = document.createElement('button');
+    btnCerrar.textContent = _t.asistCerrar||'Cerrar';
+    btnCerrar.style.cssText = 'width:100%;background:rgba(0,0,0,0.2);color:#fff8e8;border:1px solid #7a5010;border-radius:8px;padding:11px;font-size:15px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;flex-shrink:0';
+    btnCerrar.addEventListener('click', function(){ _renderDespedida(); });
+    inner.appendChild(btnCerrar);
+  }
+
   function _renderMenuPrincipal() {
     inner.innerHTML = '';
 
@@ -3256,6 +3328,7 @@ function abrirHeroModal() {
             if (typeof rutaPuntos === 'undefined') return;
             var yaEsta = rutaPuntos.some(function(x){ return x.id === poi.id; });
             if (!yaEsta) {
+              if(_bloquearSiLejos())return;
               rutaPuntos.push({id: poi.id, nombre: poi.nombre, lat: poi.lat, lng: poi.lng});
               try { actualizarRuta(); } catch(e){}
               // Marcar el check en la fila de la lista de selección
@@ -4129,6 +4202,7 @@ function volverARuta(){
     if (typeof mostrarToast==='function') mostrarToast('Necesito tu ubicación GPS para guiarte');
     return;
   }
+  if(_bloquearSiLejos())return;
   if (!window.Desvio || !window.Desvio.puntoMasCercano){
     if (typeof mostrarToast==='function') mostrarToast('No hay trazado oficial cargado todavía');
     return;
@@ -6488,6 +6562,7 @@ function _toggleBusquedaRuta(btn, nombreEnc, lat, lng) {
     if (btn) { btn.textContent = '➕ Añadir a ruta'; btn.style.background = '#E1F5EE'; btn.style.color = '#0F6E56'; btn.style.borderColor = 'rgba(29,158,117,0.4)'; }
   } else {
     // Añadir a la ruta
+    if(_bloquearSiLejos())return;
     PUNTOS = PUNTOS.filter(function(p){ return p.id !== tmpId; });
     PUNTOS.push({ id:tmpId, nombre:nombre, lat:lat, lng:lng, categoria:'busqueda', emoji:'📍' });
     addToRoute(tmpId);
@@ -6556,6 +6631,7 @@ function _mostrarEnMapaConRuta(lat, lng, nombre) {
 }
 
 function irACoordenadasNav(lat,lng) {
+  if(_bloquearSiLejos())return;
   mapa.closePopup();
   var tmpId = '_busqueda_tmp';
   PUNTOS = PUNTOS.filter(function(p){ return p.id !== tmpId; });
@@ -6619,12 +6695,87 @@ function copiarCripto(el){
 }
 
 // GENERADOR DE RUTA
+// ── GEOFENCE DE RUTA ──────────────────────────────────────────────
+// Si el usuario está a más de UMBRAL_LEJOS_KM del punto oficial del Camino
+// más cercano, cualquier acción de ruta (añadir, navegar, modo oficial) se
+// bloquea con un aviso flotante, para no dibujar trazados intercontinentales
+// absurdos cuando se abre la app lejos de Galicia (p. ej. desde Australia).
+var UMBRAL_LEJOS_KM = 200;
+
+// true si hay posición GPS conocida y el Camino oficial más cercano queda a
+// más de UMBRAL_LEJOS_KM. Sin GPS devuelve false (no podemos medir → no
+// bloqueamos). Mide solo contra POIs del Camino real: excluye búsquedas OSM,
+// el destino temporal y el punto sintético "volver a la ruta".
+function _lejosDelCamino() {
+  if (typeof userLat === 'undefined' || !userLat || typeof userLng === 'undefined' || !userLng) return false;
+  if (typeof PUNTOS === 'undefined' || !PUNTOS.length) return false;
+  var min = Infinity;
+  for (var i = 0; i < PUNTOS.length; i++) {
+    var p = PUNTOS[i];
+    if (!p || p.lat == null || p.lng == null) continue;
+    if (p.categoria === 'busqueda' || p.categoria === 'volver') continue;
+    if (p.esUsuario) continue; // puntos del usuario: no cuentan como Camino oficial
+    if (p.id === '_busqueda_tmp' || p.id === '_volver_ruta') continue;
+    if (typeof p.id === 'string' && (p.id.indexOf('_busq_') === 0 || p.id.indexOf('u_') === 0)) continue;
+    var d = haversine(userLat, userLng, p.lat, p.lng);
+    if (d < min) min = d;
+    if (min <= UMBRAL_LEJOS_KM) return false; // Camino cerca: salida rápida
+  }
+  return min > UMBRAL_LEJOS_KM;
+}
+
+// Modal flotante de aviso. Idempotente: nunca se apila.
+function _avisoLejosCamino() {
+  if (document.getElementById('aviso-lejos-camino')) return;
+  var t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : (typeof T !== 'undefined' ? T.es : {});
+  var titulo = t.lejosTitulo || 'Estás muy lejos del Camino';
+  var msg    = t.lejosMsg    || 'Estás demasiado lejos del Camino para trazar la ruta.';
+  var btnTxt = t.lejosBtn    || 'Entendido';
+
+  if (!document.getElementById('_lejosKeyframes')) {
+    var st = document.createElement('style');
+    st.id = '_lejosKeyframes';
+    st.textContent = '@keyframes _lejosPop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}';
+    document.head.appendChild(st);
+  }
+
+  var ov = document.createElement('div');
+  ov.id = 'aviso-lejos-camino';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:1000000;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1.2rem;box-sizing:border-box;font-family:DM Sans,sans-serif;-webkit-tap-highlight-color:transparent';
+
+  var card = document.createElement('div');
+  card.style.cssText = 'background:#fff;border-radius:18px;max-width:340px;width:100%;padding:26px 22px 20px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,0.35);animation:_lejosPop .22s ease-out';
+  card.innerHTML =
+    '<div style="font-size:44px;line-height:1;margin-bottom:12px">🧭</div>' +
+    '<div style="font-size:18px;font-weight:700;color:#0F6E56;margin-bottom:8px">' + titulo + '</div>' +
+    '<div style="font-size:14px;line-height:1.5;color:#555;margin-bottom:20px">' + msg + '</div>';
+
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = btnTxt;
+  btn.style.cssText = 'width:100%;background:#1D9E75;color:#fff;border:none;border-radius:12px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;-webkit-appearance:none';
+  function _cerrarAviso(){ try { document.body.removeChild(ov); } catch(e){} }
+  btn.addEventListener('click', _cerrarAviso);
+  ov.addEventListener('click', function(e){ if (e.target === ov) _cerrarAviso(); });
+
+  card.appendChild(btn);
+  ov.appendChild(card);
+  document.body.appendChild(ov);
+}
+
+// Devuelve true (y muestra el aviso) si hay que BLOQUEAR la acción de ruta.
+function _bloquearSiLejos() {
+  if (_lejosDelCamino()) { _avisoLejosCamino(); return true; }
+  return false;
+}
+
 function addToRoute(id) {
   var todos = PUNTOS.concat(typeof PUNTOS_USUARIO !== 'undefined' ? PUNTOS_USUARIO : []);
   var p = todos.find(function(x){return x.id===id;});
   if(!p) return;
   var yaEsta=rutaPuntos.find(function(x){return x.id===id;});
   if(yaEsta){quitarDeRuta(id);return;}
+  if(_bloquearSiLejos())return;
   rutaPuntos.push({id:p.id,nombre:p.nombre,lat:p.lat,lng:p.lng});
   actualizarRuta();
   actualizarBtnMapa(id, true);
@@ -7614,6 +7765,7 @@ function distanciaTexto(m) {
 }
 
 function activarNavegacionVoz() {
+  if(_bloquearSiLejos())return;
   if (typeof _ocultarBtnComenzarNav==='function') _ocultarBtnComenzarNav();
   if (rutaPuntos.length < 1) { mostrarToast((T[idiomaActual]||T.es).navAnnadePunto||'Añade al menos 1 punto a la ruta'); return; }
   // --- Sin motor de routing offline ---
