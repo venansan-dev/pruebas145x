@@ -5476,6 +5476,10 @@ function _salirSimulacion() {
   _simQuitarBanner();
   if (window._simMarker) { try { mapa.removeLayer(window._simMarker); } catch(e){} window._simMarker = null; }
   if (circuloRadio) { try { mapa.removeLayer(circuloRadio); } catch(e){} circuloRadio = null; }
+  // Al salir de la simulación, borrar de la ruta los POIs seleccionados
+  // (vacía rutaPuntos, línea, flechas y resetea botones, sin tocar la ruta
+  // guardada en memoria). Silencioso para no mostrar un toast extra.
+  try { if (typeof _ejecutarLimpiarRutaSoloMapa === 'function') _ejecutarLimpiarRutaSoloMapa(true); } catch(e){}
   // Volver a la realidad: restaurar la última posición REAL conocida. Como los
   // guards impidieron que el GPS real tocara _lastKnownLat durante la sim, aquí
   // recuperamos la posición física previa (reactivando el geofence si procede).
