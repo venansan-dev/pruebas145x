@@ -5451,7 +5451,14 @@ function _simColocar(lat, lng, silencioso) {
     userLat = ll.lat; userLng = ll.lng;
     if (circuloRadio) { try{ mapa.removeLayer(circuloRadio); }catch(_){} circuloRadio = L.circle([userLat,userLng],{radius:radioKm*1000,color:'#DC2626',fillColor:'#DC2626',fillOpacity:0.07,weight:2,dashArray:'6 4'}).addTo(mapa); }
   });
-  window._simMarker.on('dragend', function(){ if (typeof calcularDistancias==='function') calcularDistancias(); if (typeof actualizarLineaRuta==='function') actualizarLineaRuta(); });
+  window._simMarker.on('dragend', function(){
+    if (typeof calcularDistancias === 'function') calcularDistancias();
+    if (typeof actualizarRuta === 'function') actualizarRuta();
+    // Si el trazado de flechas está visible, lo redibujamos desde la nueva
+    // posición del punto rojo (mismo trazado que el botón "ver ruta"). Solo en
+    // dragend, no durante el arrastre, para no spamear OSRM.
+    if (typeof _verRutaMapa !== 'undefined' && _verRutaMapa && typeof dibujarLineaEstática === 'function') dibujarLineaEstática();
+  });
   radioKm = 1;
   if (typeof aplicarRadio === 'function') aplicarRadio(1);
   if (circuloRadio) { try { mapa.removeLayer(circuloRadio); } catch(_){} }

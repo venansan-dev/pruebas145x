@@ -1,21 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<!-- ════════════════════════════════════════════════════════════════
-     BUILD DE PRUEBA — GPS FALSO (Sídney, Australia)
-     Intercepta navigator.geolocation ANTES de i18n.js / app.js y devuelve
-     siempre coordenadas de Sídney, para probar el geofence de +200 km, el
-     modo simulación y guardar/restaurar ruta simulada sin moverse de Vigo.
-     NO subir a producción.
-     ════════════════════════════════════════════════════════════════ -->
+<!-- BUILD DE PRUEBA — GPS FALSO (Sídney, Australia). NO subir a producción. -->
 <script>
 (function(){
-  var FAKE = { latitude: -33.8688, longitude: 151.2093, accuracy: 20 }; // Sídney
+  var FAKE = { latitude: -33.8688, longitude: 151.2093, accuracy: 20 };
   try { localStorage.setItem('_gps_last', JSON.stringify({ lat:FAKE.latitude, lng:FAKE.longitude })); } catch(e){}
-  function _pos(){
-    return { coords: { latitude:FAKE.latitude, longitude:FAKE.longitude, accuracy:FAKE.accuracy,
-      altitude:null, altitudeAccuracy:null, heading:null, speed:null }, timestamp: Date.now() };
-  }
+  function _pos(){ return { coords: { latitude:FAKE.latitude, longitude:FAKE.longitude, accuracy:FAKE.accuracy, altitude:null, altitudeAccuracy:null, heading:null, speed:null }, timestamp: Date.now() }; }
   if (navigator.geolocation) {
     var _wid = 1;
     navigator.geolocation.getCurrentPosition = function(ok){ if(ok) setTimeout(function(){ ok(_pos()); }, 250); };
@@ -26,17 +17,12 @@
   if (_mm) {
     window.matchMedia = function(q){
       if (q && q.indexOf('min-width:769px') !== -1) {
-        return { matches:false, media:q, onchange:null,
-          addEventListener:function(){}, removeEventListener:function(){},
-          addListener:function(){}, removeListener:function(){},
-          dispatchEvent:function(){ return false; } };
+        return { matches:false, media:q, onchange:null, addEventListener:function(){}, removeEventListener:function(){}, addListener:function(){}, removeListener:function(){}, dispatchEvent:function(){ return false; } };
       }
       return _mm(q);
     };
   }
-  if (navigator.serviceWorker) {
-    try { navigator.serviceWorker.register = function(){ return Promise.resolve(); }; } catch(e){}
-  }
+  if (navigator.serviceWorker) { try { navigator.serviceWorker.register = function(){ return Promise.resolve(); }; } catch(e){} }
   window.addEventListener('DOMContentLoaded', function(){
     var b = document.createElement('div');
     b.textContent = '🧪 BUILD DE PRUEBA · GPS falso: Sídney, Australia';
@@ -2716,7 +2702,7 @@
      Se extrajo de app.js para corregir 'Can't find variable: T' en Safari. -->
 <script src="i18n.js"></script>
 <script>
-var _APP_VERSION = "v2056";
+var _APP_VERSION = "v2058";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -5594,6 +5580,10 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
   // --- API del botón ---
   window.RutaOficial = {
     activar: function(){
+      // Geofence: a más de 200 km del Camino oficial no tiene sentido activar
+      // la vigilancia de ruta. Avisamos con el modal y no activamos. En
+      // simulación userLat está sobre el Camino, así que ahí sí se activa.
+      if (typeof _bloquearSiLejos === 'function' && _bloquearSiLejos()) return false;
       initSelector();
       if(!navigator.geolocation){
         if(typeof mostrarToast==='function') mostrarToast('Tu dispositivo no tiene GPS');
