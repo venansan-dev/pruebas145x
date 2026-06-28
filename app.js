@@ -2975,6 +2975,7 @@ function abrirHeroModal() {
 
     var opciones = [
       { emoji:'🔍', tit:_t.asistBtnBuscar||'🔍 Buscar algo próximo',          desc:_t.asistBuscarSub||'Busca cualquier lugar o servicio en un radio de 1 km.',       accion:function(){ _abrirBusquedaProxima(); } },
+      { emoji:'🧪', tit:_t.asistSimTit||'Simular recorrido',                   desc:_t.asistSimDesc||'Coloca una posición ficticia sobre el Camino y pruébalo todo.', accion:function(){ cerrar(); setTimeout(function(){ _irAlMapa(); setTimeout(function(){ if (typeof _iniciarSimulacion==='function') _iniciarSimulacion(); }, 400); }, 340); } },
       { emoji:'🐚', tit:_t.asistOp2Tit||'Historia Compostelana',               desc:_t.asistOp2Desc||'El Camino, los templarios, las rutas históricas…',              accion:function(){ cerrar(); setTimeout(function(){ _irAlMapa(); setTimeout(abrirHistoriaDrawer, 400); }, 340); } },
       { emoji:'🗺️', tit:_t.rofTutBtn||'Mapa de trazados oficiales',             desc:_t.rofTutSub||'Cómo ver los Caminos y usar el modo Ruta Oficial',          accion:function(){ cerrar(); setTimeout(function(){ _irAlMapa(); setTimeout(function(){ if(window.abrirTutorialRutaOficial) window.abrirTutorialRutaOficial(); }, 400); }, 340); } },
       { emoji:'📍', tit:_t.asistBtnAnadirPunto||'📍 Añadir punto o alerta',    desc:_t.asistBtnAnadirDesc||'Recomienda un lugar, añade una alerta o un punto de interés', accion:function(){ cerrar(); setTimeout(function(){ _irAlMapa(); setTimeout(abrirFormPOI, 400); }, 340); } },
