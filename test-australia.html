@@ -3,25 +3,17 @@
 <head>
 <!-- ════════════════════════════════════════════════════════════════
      BUILD DE PRUEBA — GPS FALSO (Sídney, Australia)
-     Este script intercepta navigator.geolocation ANTES de que cargue
-     i18n.js / app.js y devuelve siempre coordenadas de Sídney, para
-     probar el geofence de +200 km (modal de ruta + vista "lejos" del
-     asistente) sin moverse de Vigo. NO subir este fichero a producción.
+     Intercepta navigator.geolocation ANTES de i18n.js / app.js y devuelve
+     siempre coordenadas de Sídney, para probar el geofence de +200 km y el
+     modo simulación sin moverse de Vigo. NO subir a producción.
      ════════════════════════════════════════════════════════════════ -->
 <script>
 (function(){
   var FAKE = { latitude: -33.8688, longitude: 151.2093, accuracy: 20 }; // Sídney
-
-  // 1) Borrar/forzar la última posición guardada → arranca ya en Australia,
-  //    sin parpadeo previo a Galicia.
   try { localStorage.setItem('_gps_last', JSON.stringify({ lat:FAKE.latitude, lng:FAKE.longitude })); } catch(e){}
-
-  // 2) Interceptar geolocalización.
   function _pos(){
-    return { coords: {
-      latitude:FAKE.latitude, longitude:FAKE.longitude, accuracy:FAKE.accuracy,
-      altitude:null, altitudeAccuracy:null, heading:null, speed:null
-    }, timestamp: Date.now() };
+    return { coords: { latitude:FAKE.latitude, longitude:FAKE.longitude, accuracy:FAKE.accuracy,
+      altitude:null, altitudeAccuracy:null, heading:null, speed:null }, timestamp: Date.now() };
   }
   if (navigator.geolocation) {
     var _wid = 1;
@@ -29,10 +21,6 @@
     navigator.geolocation.watchPosition     = function(ok){ if(ok) setTimeout(function(){ ok(_pos()); }, 250); return _wid++; };
     navigator.geolocation.clearWatch        = function(){};
   }
-
-  // 3) Forzar la rama "móvil" aunque se abra en escritorio: la app salta la
-  //    geolocalización si (min-width:769px) coincide. Devolvemos matches:false
-  //    SOLO para esa consulta; el resto de matchMedia sigue normal.
   var _mm = window.matchMedia ? window.matchMedia.bind(window) : null;
   if (_mm) {
     window.matchMedia = function(q){
@@ -45,18 +33,13 @@
       return _mm(q);
     };
   }
-
-  // 4) No (re)registrar el Service Worker en la build de prueba: test siempre
-  //    fresco, sin cachés intermediando.
   if (navigator.serviceWorker) {
     try { navigator.serviceWorker.register = function(){ return Promise.resolve(); }; } catch(e){}
   }
-
-  // 5) Banner visible para no confundir esta build con producción.
   window.addEventListener('DOMContentLoaded', function(){
     var b = document.createElement('div');
     b.textContent = '🧪 BUILD DE PRUEBA · GPS falso: Sídney, Australia';
-    b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:2000000;background:#b91c1c;color:#fff;font:600 12px/1.4 DM Sans,sans-serif;text-align:center;padding:5px 8px;letter-spacing:.3px;pointer-events:none';
+    b.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:2000000;background:#b91c1c;color:#fff;font:600 12px/1.4 DM Sans,sans-serif;text-align:center;padding:5px 8px;letter-spacing:.3px;pointer-events:none';
     document.body.appendChild(b);
   });
 })();
@@ -2732,7 +2715,7 @@
      Se extrajo de app.js para corregir 'Can't find variable: T' en Safari. -->
 <script src="i18n.js"></script>
 <script>
-var _APP_VERSION = "v2054";
+var _APP_VERSION = "v2055";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {

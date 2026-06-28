@@ -2908,6 +2908,7 @@ function abrirHeroModal() {
     lista.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:14px;flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 2px;overscroll-behavior:contain';
 
     var opciones = [
+      { emoji:'🧪', tit:_t.asistSimTit||'Simular recorrido',        desc:_t.asistSimDesc||'Coloca una posición ficticia sobre el Camino y pruébalo todo.', accion:function(){ cerrar(); setTimeout(function(){ _irAlMapa(); setTimeout(function(){ if (typeof _iniciarSimulacion==='function') _iniciarSimulacion(); }, 400); }, 340); } },
       { emoji:'🧭', tit:_t.asistBtnBrujula||'Usar la brújula',        desc:_t.asistBtnBrujulaDesc||'Oriéntate con la brújula digital del Camino', accion:function(){ _renderBrujulaModal(); } },
       { emoji:'🐚', tit:_t.asistOp2Tit||'Historia Compostelana',       desc:_t.asistOp2Desc||'El Camino, los templarios, las rutas históricas…', accion:function(){ cerrar(); setTimeout(function(){ _irAlMapa(); setTimeout(abrirHistoriaDrawer, 400); }, 340); } },
       { emoji:'📍', tit:_t.asistBtnAnadirPunto||'Añadir punto o alerta', desc:_t.asistBtnAnadirDesc||'Recomienda un lugar, añade una alerta o un punto de interés', accion:function(){ cerrar(); setTimeout(function(){ _irAlMapa(); setTimeout(abrirFormPOI, 400); }, 340); } },
@@ -5386,6 +5387,127 @@ function crearIconoUsuario(heading) {
 
 var iconoUsuario = crearIconoUsuario(null);
 
+// ── MODO SIMULACIÓN ───────────────────────────────────────────────
+// Coloca una posición ficticia (marcador rojo arrastrable) que sustituye al
+// punto azul del GPS. Con userLat/userLng apuntando ahí, TODA la app funciona
+// (distancias, ruta, navegación, asistente). El GPS real queda suspendido vía
+// window._simulacion (guards en los dos watchPosition). Pensado para planificar
+// o demostrar el Camino sin estar físicamente sobre él.
+var _simClickHandler = null;
+
+function crearIconoSimulado(heading) {
+  var rot = (heading !== null && heading !== undefined) ? heading : 0;
+  var hasHeading = (heading !== null && heading !== undefined);
+  return L.divIcon({
+    className: '',
+    html: hasHeading
+      ? '<div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;transform:rotate('+rot+'deg);transition:transform 0.3s ease">' +
+        '<svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">' +
+        '<circle cx="18" cy="18" r="17" fill="rgba(220,38,38,0.2)" stroke="rgba(220,38,38,0.4)" stroke-width="1"/>' +
+        '<polygon points="18,4 24,28 18,23 12,28" fill="#DC2626" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>' +
+        '</svg></div>'
+      : '<div style="width:18px;height:18px;background:#DC2626;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 5px rgba(220,38,38,0.3)"></div>',
+    iconSize: hasHeading ? [36,36] : [18,18],
+    iconAnchor: hasHeading ? [18,18] : [9,9]
+  });
+}
+
+function _iniciarSimulacion() {
+  if (typeof mapa === 'undefined' || !mapa) return;
+  window._simulacion = true;
+  // Quitar el marcador azul real si lo hubiera
+  if (window._userMarker) { try { mapa.removeLayer(window._userMarker); } catch(e){} window._userMarker = null; }
+  // Volar al Camino: encuadrar los POIs oficiales para que el usuario coloque
+  // su posición sobre una ruta.
+  try {
+    var pts = [];
+    (typeof PUNTOS !== 'undefined' ? PUNTOS : []).forEach(function(p){
+      if (!p || p.lat == null || p.lng == null) return;
+      if (p.categoria === 'busqueda' || p.categoria === 'volver' || p.esUsuario) return;
+      if (typeof p.id === 'string' && (p.id.indexOf('_busq_') === 0 || p.id.indexOf('u_') === 0)) return;
+      pts.push([p.lat, p.lng]);
+    });
+    if (pts.length) mapa.fitBounds(L.latLngBounds(pts), { padding:[40,40] });
+  } catch(e){}
+  var _t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : (typeof T !== 'undefined' ? T.es : {});
+  _simMostrarHint(_t.simHint || 'Toca el mapa para colocar tu posición simulada');
+  _simClickHandler = function(ev) { _simColocar(ev.latlng.lat, ev.latlng.lng); };
+  mapa.on('click', _simClickHandler);
+}
+
+function _simColocar(lat, lng) {
+  if (_simClickHandler) { try { mapa.off('click', _simClickHandler); } catch(e){} _simClickHandler = null; }
+  _simQuitarHint();
+  userLat = lat; userLng = lng;
+  if (window._simMarker) { try { mapa.removeLayer(window._simMarker); } catch(e){} window._simMarker = null; }
+  var _t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : (typeof T !== 'undefined' ? T.es : {});
+  window._simMarker = L.marker([lat,lng], { icon: crearIconoSimulado(null), draggable:true, zIndexOffset:1100 })
+    .addTo(mapa)
+    .bindPopup('<strong>🧪 '+(_t.simBanner||'Simulación activa')+'</strong>');
+  window._simMarker.on('drag', function(e){
+    var ll = e.target.getLatLng();
+    userLat = ll.lat; userLng = ll.lng;
+    if (circuloRadio) { try{ mapa.removeLayer(circuloRadio); }catch(_){} circuloRadio = L.circle([userLat,userLng],{radius:radioKm*1000,color:'#DC2626',fillColor:'#DC2626',fillOpacity:0.07,weight:2,dashArray:'6 4'}).addTo(mapa); }
+  });
+  window._simMarker.on('dragend', function(){ if (typeof calcularDistancias==='function') calcularDistancias(); if (typeof actualizarLineaRuta==='function') actualizarLineaRuta(); });
+  radioKm = 1;
+  if (typeof aplicarRadio === 'function') aplicarRadio(1);
+  if (circuloRadio) { try { mapa.removeLayer(circuloRadio); } catch(_){} }
+  circuloRadio = L.circle([lat,lng],{radius:radioKm*1000,color:'#DC2626',fillColor:'#DC2626',fillOpacity:0.07,weight:2,dashArray:'6 4'}).addTo(mapa);
+  mapa.setView([lat,lng], 14, {animate:true});
+  if (typeof calcularDistancias === 'function') calcularDistancias();
+  _simMostrarBanner();
+  if (typeof mostrarToast === 'function') mostrarToast('🧪 '+(_t.simListo||'Posición simulada colocada. Arrástrala para moverte.'));
+}
+
+function _salirSimulacion() {
+  window._simulacion = false;
+  if (_simClickHandler) { try { mapa.off('click', _simClickHandler); } catch(e){} _simClickHandler = null; }
+  _simQuitarHint();
+  _simQuitarBanner();
+  if (window._simMarker) { try { mapa.removeLayer(window._simMarker); } catch(e){} window._simMarker = null; }
+  if (circuloRadio) { try { mapa.removeLayer(circuloRadio); } catch(e){} circuloRadio = null; }
+  // Volver a la realidad: restaurar la última posición REAL conocida. Como los
+  // guards impidieron que el GPS real tocara _lastKnownLat durante la sim, aquí
+  // recuperamos la posición física previa (reactivando el geofence si procede).
+  userLat = _lastKnownLat || null;
+  userLng = _lastKnownLng || null;
+  if (userLat && userLng && typeof mapa !== 'undefined' && mapa) {
+    if (window._userMarker) { try{ mapa.removeLayer(window._userMarker); }catch(e){} window._userMarker = null; }
+    var _t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : (typeof T !== 'undefined' ? T.es : {});
+    window._userMarker = L.marker([userLat,userLng],{icon:crearIconoUsuario(null),zIndexOffset:1000}).addTo(mapa).bindPopup('<strong>'+(_t.tuUbicacion||'Tu ubicación')+'</strong>');
+    mapa.setView([userLat,userLng], 13, {animate:true});
+    if (typeof calcularDistancias === 'function') calcularDistancias();
+  }
+}
+
+function _simMostrarHint(txt) {
+  _simQuitarHint();
+  var h = document.createElement('div');
+  h.id = 'sim-hint';
+  h.textContent = txt;
+  h.style.cssText = 'position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:1000001;background:rgba(0,0,0,0.82);color:#fff;font:600 13px/1.4 DM Sans,sans-serif;padding:9px 16px;border-radius:20px;box-shadow:0 4px 16px rgba(0,0,0,0.3);text-align:center;max-width:88vw;pointer-events:none';
+  document.body.appendChild(h);
+}
+function _simQuitarHint(){ var h=document.getElementById('sim-hint'); if(h) h.remove(); }
+
+function _simMostrarBanner() {
+  _simQuitarBanner();
+  var _t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : (typeof T !== 'undefined' ? T.es : {});
+  var b = document.createElement('div');
+  b.id = 'sim-banner';
+  b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:1000001;background:#DC2626;color:#fff;font:600 13px/1.4 DM Sans,sans-serif;display:flex;align-items:center;justify-content:center;gap:14px;padding:7px 12px';
+  var txt = document.createElement('span');
+  txt.textContent = '🧪 ' + (_t.simBanner || 'Simulación activa');
+  var btn = document.createElement('button');
+  btn.textContent = _t.simSalir || 'Salir';
+  btn.style.cssText = 'background:#fff;color:#DC2626;border:none;border-radius:14px;padding:4px 14px;font:700 13px DM Sans,sans-serif;cursor:pointer;-webkit-appearance:none';
+  btn.addEventListener('click', _salirSimulacion);
+  b.appendChild(txt); b.appendChild(btn);
+  document.body.appendChild(b);
+}
+function _simQuitarBanner(){ var b=document.getElementById('sim-banner'); if(b) b.remove(); }
+
 var _COLOR_MAP = {
   'verde':  '#1D9E75',
   'azul':   '#2563EB',
@@ -5710,6 +5832,7 @@ function initMapa() {
     // al peregrino sin desfase. El GPS funciona sin conexión; localStorage
     // guarda la última posición para centrar el mapa en el próximo arranque.
     var _watchId = navigator.geolocation.watchPosition(function(pos) {
+      if (window._simulacion) return; // en simulación, el GPS real no manda
       var lat = pos.coords.latitude, lng = pos.coords.longitude;
       var esNuevo = !userLat;
       userLat = lat; userLng = lng;
@@ -5824,6 +5947,7 @@ function toggleSeguimiento() {
     // watchPosition seguimiento
     if (!window._seguimientoId && navigator.geolocation) {
       window._seguimientoId = navigator.geolocation.watchPosition(function(pos) {
+        if (window._simulacion) return; // en simulación, el GPS real no manda
         if (!_modoSeguimiento) return;
         userLat = pos.coords.latitude;
         userLng = pos.coords.longitude;
@@ -6730,7 +6854,9 @@ function _avisoLejosCamino() {
   var t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : (typeof T !== 'undefined' ? T.es : {});
   var titulo = t.lejosTitulo || 'Estás muy lejos del Camino';
   var msg    = t.lejosMsg    || 'Estás demasiado lejos del Camino para trazar la ruta.';
-  var btnTxt = t.lejosBtn    || 'Entendido';
+  var preg   = t.lejosSimPregunta || '¿Quieres explorar el Camino en modo simulación?';
+  var siTxt  = t.lejosSimSi  || 'Sí, simular';
+  var noTxt  = t.lejosSimNo  || 'No, gracias';
 
   if (!document.getElementById('_lejosKeyframes')) {
     var st = document.createElement('style');
@@ -6748,17 +6874,27 @@ function _avisoLejosCamino() {
   card.innerHTML =
     '<div style="font-size:44px;line-height:1;margin-bottom:12px">🧭</div>' +
     '<div style="font-size:18px;font-weight:700;color:#0F6E56;margin-bottom:8px">' + titulo + '</div>' +
-    '<div style="font-size:14px;line-height:1.5;color:#555;margin-bottom:20px">' + msg + '</div>';
+    '<div style="font-size:14px;line-height:1.5;color:#555;margin-bottom:6px">' + msg + '</div>' +
+    '<div style="font-size:14px;line-height:1.5;color:#1a1a1a;font-weight:600;margin-bottom:20px">' + preg + '</div>';
 
-  var btn = document.createElement('button');
-  btn.type = 'button';
-  btn.textContent = btnTxt;
-  btn.style.cssText = 'width:100%;background:#1D9E75;color:#fff;border:none;border-radius:12px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;-webkit-appearance:none';
   function _cerrarAviso(){ try { document.body.removeChild(ov); } catch(e){} }
-  btn.addEventListener('click', _cerrarAviso);
+
+  var btnSim = document.createElement('button');
+  btnSim.type = 'button';
+  btnSim.textContent = '🧪 ' + siTxt;
+  btnSim.style.cssText = 'width:100%;background:#DC2626;color:#fff;border:none;border-radius:12px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;-webkit-appearance:none;margin-bottom:8px';
+  btnSim.addEventListener('click', function(){ _cerrarAviso(); if (typeof _iniciarSimulacion === 'function') _iniciarSimulacion(); });
+
+  var btnNo = document.createElement('button');
+  btnNo.type = 'button';
+  btnNo.textContent = noTxt;
+  btnNo.style.cssText = 'width:100%;background:#f0f0f0;color:#555;border:none;border-radius:12px;padding:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;-webkit-appearance:none';
+  btnNo.addEventListener('click', _cerrarAviso);
+
   ov.addEventListener('click', function(e){ if (e.target === ov) _cerrarAviso(); });
 
-  card.appendChild(btn);
+  card.appendChild(btnSim);
+  card.appendChild(btnNo);
   ov.appendChild(card);
   document.body.appendChild(ov);
 }
