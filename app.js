@@ -5435,9 +5435,11 @@ function _iniciarSimulacion() {
   mapa.on('click', _simClickHandler);
 }
 
-function _simColocar(lat, lng) {
+function _simColocar(lat, lng, silencioso) {
+  window._simulacion = true;
   if (_simClickHandler) { try { mapa.off('click', _simClickHandler); } catch(e){} _simClickHandler = null; }
   _simQuitarHint();
+  if (window._userMarker) { try { mapa.removeLayer(window._userMarker); } catch(e){} window._userMarker = null; }
   userLat = lat; userLng = lng;
   if (window._simMarker) { try { mapa.removeLayer(window._simMarker); } catch(e){} window._simMarker = null; }
   var _t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : (typeof T !== 'undefined' ? T.es : {});
@@ -5457,7 +5459,7 @@ function _simColocar(lat, lng) {
   mapa.setView([lat,lng], 14, {animate:true});
   if (typeof calcularDistancias === 'function') calcularDistancias();
   _simMostrarBanner();
-  if (typeof mostrarToast === 'function') mostrarToast('🧪 '+(_t.simListo||'Posición simulada colocada. Arrástrala para moverte.'));
+  if (!silencioso && typeof mostrarToast === 'function') mostrarToast('🧪 '+(_t.simListo||'Posición simulada colocada. Arrástrala para moverte.'));
 }
 
 function _salirSimulacion() {
@@ -7715,7 +7717,14 @@ function irAlMapaConRuta() {
 function guardarRuta() {
   if (rutaPuntos.length === 0) return;
   try {
-    localStorage.setItem('rutaGuardadaV2', JSON.stringify(rutaPuntos));
+    // Formato nuevo: { puntos, sim }. Si la ruta se está creando en modo
+    // simulación, guardamos también el punto rojo de origen, para poder
+    // regenerarla luego desde el mismo lugar.
+    var payload = { puntos: rutaPuntos, sim: null };
+    if (window._simulacion && typeof userLat !== 'undefined' && userLat && typeof userLng !== 'undefined' && userLng) {
+      payload.sim = { lat: userLat, lng: userLng };
+    }
+    localStorage.setItem('rutaGuardadaV2', JSON.stringify(payload));
     _actualizarBtnRestauraRuta();
     var btn = document.getElementById('btn-guardar-restaurar');
     if (btn) { btn.style.background='#4f46e5'; btn.textContent='✅'; }
@@ -7736,12 +7745,25 @@ function guardarRuta() {
   } catch(e) { mostrarToast('\u26a0\ufe0f No se pudo guardar'); }
 }
 
-function cargarRutaGuardada() {
+function cargarRutaGuardada(restaurarSim) {
   try {
     var saved = localStorage.getItem('rutaGuardadaV2');
     if (!saved) return;
-    var puntos = JSON.parse(saved);
+    var parsed = JSON.parse(saved);
+    // Compatibilidad: formato antiguo = array suelto; nuevo = { puntos, sim }
+    var puntos, simOrigen = null;
+    if (Array.isArray(parsed)) { puntos = parsed; }
+    else { puntos = parsed.puntos || []; simOrigen = parsed.sim || null; }
     if (!puntos || puntos.length === 0) return;
+    // Si la ruta se guardó en simulación y se pide restaurar su contexto
+    // (restauración explícita con el botón ↩), recolocamos el punto rojo de
+    // origen ANTES de dibujar la ruta, para que se regenere desde el mismo
+    // lugar donde se creó. En el arranque normal (restaurarSim falsy) NO se
+    // entra en simulación: solo se cargan los puntos.
+    if (restaurarSim && simOrigen && simOrigen.lat != null && simOrigen.lng != null
+        && typeof _simColocar === 'function' && typeof mapa !== 'undefined' && mapa) {
+      _simColocar(simOrigen.lat, simOrigen.lng, true);
+    }
     // Enriquecer con datos actuales del array PUNTOS si están disponibles
     rutaPuntos = puntos.map(function(p) {
       var full = PUNTOS.find(function(x){ return x.id === p.id; });
@@ -7811,7 +7833,7 @@ function _restaurarRutaGuardada() {
   if (typeof rutaPuntos !== 'undefined' && rutaPuntos.length > 0) {
     _ejecutarLimpiarRutaSoloMapa();
   }
-  cargarRutaGuardada();
+  cargarRutaGuardada(true); // true → si la ruta era simulada, recoloca el punto rojo
   _actualizarBtnRestauraRuta();
 }
 function _ejecutarLimpiarRutaSoloMapa(silencioso) {

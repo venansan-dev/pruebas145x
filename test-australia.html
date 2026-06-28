@@ -4,8 +4,9 @@
 <!-- ════════════════════════════════════════════════════════════════
      BUILD DE PRUEBA — GPS FALSO (Sídney, Australia)
      Intercepta navigator.geolocation ANTES de i18n.js / app.js y devuelve
-     siempre coordenadas de Sídney, para probar el geofence de +200 km y el
-     modo simulación sin moverse de Vigo. NO subir a producción.
+     siempre coordenadas de Sídney, para probar el geofence de +200 km, el
+     modo simulación y guardar/restaurar ruta simulada sin moverse de Vigo.
+     NO subir a producción.
      ════════════════════════════════════════════════════════════════ -->
 <script>
 (function(){
@@ -2715,7 +2716,7 @@
      Se extrajo de app.js para corregir 'Can't find variable: T' en Safari. -->
 <script src="i18n.js"></script>
 <script>
-var _APP_VERSION = "v2055";
+var _APP_VERSION = "v2056";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
