@@ -5430,6 +5430,8 @@ function _iniciarSimulacion() {
     if (pts.length) mapa.fitBounds(L.latLngBounds(pts), { padding:[40,40] });
   } catch(e){}
   var _t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : (typeof T !== 'undefined' ? T.es : {});
+  // Fase de espera: hasta colocar el punto rojo no se permiten abrir popups.
+  window._simEsperandoUbicacion = true;
   _simMostrarHint(_t.simHint || 'Toca el mapa para colocar tu posición simulada');
   _simClickHandler = function(ev) { _simColocar(ev.latlng.lat, ev.latlng.lng); };
   mapa.on('click', _simClickHandler);
@@ -5437,6 +5439,8 @@ function _iniciarSimulacion() {
 
 function _simColocar(lat, lng, silencioso) {
   window._simulacion = true;
+  // Ya hay ubicación elegida: se vuelven a permitir los popups de POI.
+  window._simEsperandoUbicacion = false;
   if (_simClickHandler) { try { mapa.off('click', _simClickHandler); } catch(e){} _simClickHandler = null; }
   _simQuitarHint();
   if (window._userMarker) { try { mapa.removeLayer(window._userMarker); } catch(e){} window._userMarker = null; }
@@ -5471,6 +5475,7 @@ function _simColocar(lat, lng, silencioso) {
 
 function _salirSimulacion() {
   window._simulacion = false;
+  window._simEsperandoUbicacion = false;
   if (_simClickHandler) { try { mapa.off('click', _simClickHandler); } catch(e){} _simClickHandler = null; }
   _simQuitarHint();
   _simQuitarBanner();
@@ -5665,6 +5670,16 @@ function initMapa() {
   var _popupAbierto = false;
 
   var _mapBtns = ['btn-add-poi-map','btn-poi-drawer-mapa','btn-alertas-toggle','btn-brujula-mapa','btn-sos-mapa','btn-buscar-mapa','btn-ruta-oficial','btn-descargar-mapa','btn-simular-mapa','map-ruta-panel','map-radio-control'];
+  // Durante la fase de simulación en la que el usuario aún no ha colocado el
+  // punto rojo (window._simEsperandoUbicacion), no se debe poder abrir ningún
+  // popup de POI: cerrarlos al instante evita que se añadan lugares a la ruta
+  // antes de haber elegido la ubicación. El click en el mapa sigue funcionando
+  // para colocar la posición simulada.
+  mapa.on('popupopen', function(e) {
+    if (window._simEsperandoUbicacion) {
+      try { mapa.closePopup(e.popup); } catch(_) {}
+    }
+  });
   // Actualizar botón añadir/quitar en popups de resultados de búsqueda al abrirlos
   mapa.on('popupopen', function(e) {
     var container = e.popup.getElement();
