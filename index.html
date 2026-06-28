@@ -2672,7 +2672,7 @@
      Se extrajo de app.js para corregir 'Can't find variable: T' en Safari. -->
 <script src="i18n.js"></script>
 <script>
-var _APP_VERSION = "v2052";
+var _APP_VERSION = "v2058";
 if ('serviceWorker' in navigator) {
   // Forzar comprobación del SW en cada visita (evita que el navegador cachee sw.js)
   navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -5550,6 +5550,10 @@ window._INDICE_CAMINOS = [{"id":"es01c_01a","ruta":"Camino Francés","slug":"fra
   // --- API del botón ---
   window.RutaOficial = {
     activar: function(){
+      // Geofence: a más de 200 km del Camino oficial no tiene sentido activar
+      // la vigilancia de ruta. Avisamos con el modal y no activamos. En
+      // simulación userLat está sobre el Camino, así que ahí sí se activa.
+      if (typeof _bloquearSiLejos === 'function' && _bloquearSiLejos()) return false;
       initSelector();
       if(!navigator.geolocation){
         if(typeof mostrarToast==='function') mostrarToast('Tu dispositivo no tiene GPS');
