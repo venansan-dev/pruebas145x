@@ -5660,7 +5660,7 @@ function initMapa() {
   // Ocultar botón ➕ cuando se abre un popup, restaurar al cerrar
   var _popupAbierto = false;
 
-  var _mapBtns = ['btn-add-poi-map','btn-poi-drawer-mapa','btn-alertas-toggle','btn-brujula-mapa','btn-sos-mapa','btn-buscar-mapa','btn-ruta-oficial','btn-descargar-mapa','map-ruta-panel','map-radio-control'];
+  var _mapBtns = ['btn-add-poi-map','btn-poi-drawer-mapa','btn-alertas-toggle','btn-brujula-mapa','btn-sos-mapa','btn-buscar-mapa','btn-ruta-oficial','btn-descargar-mapa','btn-simular-mapa','map-ruta-panel','map-radio-control'];
   // Actualizar botón añadir/quitar en popups de resultados de búsqueda al abrirlos
   mapa.on('popupopen', function(e) {
     var container = e.popup.getElement();
@@ -5705,6 +5705,7 @@ function initMapa() {
     b=document.getElementById('btn-poi-drawer-mapa'); if(b) b.style.display='flex';
     b=document.getElementById('btn-ruta-oficial'); if(b) b.style.display='';
     b=document.getElementById('btn-descargar-mapa'); if(b) b.style.display='flex';
+    b=document.getElementById('btn-simular-mapa'); if(b) b.style.display='flex';
     b=document.getElementById('btn-asistente-mapa'); if(b&&!_navActiva) b.style.display='flex';
     // Restaurar panel ruta siempre visible
     b=document.getElementById('map-ruta-panel'); if(b){b.style.display='flex';b.style.flexDirection='column';}
@@ -8023,7 +8024,7 @@ function activarNavegacionVoz() {
     if (btnOrMap) btnOrMap.style.display = 'none';
     var btnOrPanel = document.getElementById('ruta-nav-orientacion');
     if (btnOrPanel) btnOrPanel.style.display = 'block';
-    ['btn-add-poi-map','map-radio-control','btn-alertas-toggle','btn-sos-mapa','btn-meteo-mapa','btn-buscar-mapa','btn-poi-drawer-mapa','btn-expandir-mapa','btn-ruta-oficial','btn-descargar-mapa'].forEach(function(id){
+    ['btn-add-poi-map','map-radio-control','btn-alertas-toggle','btn-sos-mapa','btn-meteo-mapa','btn-buscar-mapa','btn-poi-drawer-mapa','btn-expandir-mapa','btn-ruta-oficial','btn-descargar-mapa','btn-simular-mapa'].forEach(function(id){
       var el=document.getElementById(id); if(el) el.style.display='none';
     });
 
@@ -8301,7 +8302,7 @@ function detenerNavegacionVoz() {
   if (searchUnder && searchUnder._origDisplay !== undefined) searchUnder.style.display = searchUnder._origDisplay;
 
   // Restaurar botones del mapa
-  ['btn-add-poi-map','map-radio-control','btn-alertas-toggle','btn-descargar-mapa'].forEach(function(id){
+  ['btn-add-poi-map','map-radio-control','btn-alertas-toggle','btn-descargar-mapa','btn-simular-mapa'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.style.display='flex';
   });
   var _btnRofRst=document.getElementById('btn-ruta-oficial'); if(_btnRofRst) _btnRofRst.style.display='';
