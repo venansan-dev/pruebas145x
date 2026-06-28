@@ -3962,7 +3962,7 @@ function añadirMarcadorAlerta(a) {
   a._marker = m;
   m.on('click', (function(alerta) {
     return function() {
-      if (window._navBloqPopups) return;
+      if (window._navBloqPopups || window._simEsperandoUbicacion) return;
       mapa.openPopup(L.popup({ className:'poi-popup', maxWidth:260 })
         .setLatLng([alerta.lat, alerta.lng])
         .setContent(buildAlertaPopup(alerta)));
@@ -4164,7 +4164,7 @@ function añadirMarcadorUsuario(p) {
   p._marker = m;
   m.on('click', (function(punto) {
     return function() {
-      if (window._navBloqPopups) return;
+      if (window._navBloqPopups || window._simEsperandoUbicacion) return;
       var popupId = 'popup-del-' + punto.id;
       var esMiPunto = punto.deviceId === DEVICE_ID ||
         PUNTOS_USUARIO.find(function(x){ return x.id === punto.id; });
@@ -5430,7 +5430,9 @@ function _iniciarSimulacion() {
     if (pts.length) mapa.fitBounds(L.latLngBounds(pts), { padding:[40,40] });
   } catch(e){}
   var _t = (typeof T !== 'undefined' && T[idiomaActual]) ? T[idiomaActual] : (typeof T !== 'undefined' ? T.es : {});
-  // Fase de espera: hasta colocar el punto rojo no se permiten abrir popups.
+  // Fase de espera: hasta colocar el punto rojo, los handlers de click de los
+  // marcadores (que comprueban esta bandera, igual que _navBloqPopups) no
+  // abren ningún popup, de modo que no se puede añadir un POI a la ruta.
   window._simEsperandoUbicacion = true;
   _simMostrarHint(_t.simHint || 'Toca el mapa para colocar tu posición simulada');
   _simClickHandler = function(ev) { _simColocar(ev.latlng.lat, ev.latlng.lng); };
@@ -5439,7 +5441,7 @@ function _iniciarSimulacion() {
 
 function _simColocar(lat, lng, silencioso) {
   window._simulacion = true;
-  // Ya hay ubicación elegida: se vuelven a permitir los popups de POI.
+  // Ya hay ubicación: se vuelven a permitir los popups de los POI.
   window._simEsperandoUbicacion = false;
   if (_simClickHandler) { try { mapa.off('click', _simClickHandler); } catch(e){} _simClickHandler = null; }
   _simQuitarHint();
@@ -5670,15 +5672,10 @@ function initMapa() {
   var _popupAbierto = false;
 
   var _mapBtns = ['btn-add-poi-map','btn-poi-drawer-mapa','btn-alertas-toggle','btn-brujula-mapa','btn-sos-mapa','btn-buscar-mapa','btn-ruta-oficial','btn-descargar-mapa','btn-simular-mapa','map-ruta-panel','map-radio-control'];
-  // Durante la fase de simulación en la que el usuario aún no ha colocado el
-  // punto rojo (window._simEsperandoUbicacion), no se debe poder abrir ningún
-  // popup de POI: cerrarlos al instante evita que se añadan lugares a la ruta
-  // antes de haber elegido la ubicación. El click en el mapa sigue funcionando
-  // para colocar la posición simulada.
+  // Red de seguridad: si por cualquier vía se abriera un popup durante la fase
+  // de simulación en la que aún no se ha colocado el punto rojo, lo cerramos.
   mapa.on('popupopen', function(e) {
-    if (window._simEsperandoUbicacion) {
-      try { mapa.closePopup(e.popup); } catch(_) {}
-    }
+    if (window._simEsperandoUbicacion) { try { mapa.closePopup(e.popup); } catch(_) {} }
   });
   // Actualizar botón añadir/quitar en popups de resultados de búsqueda al abrirlos
   mapa.on('popupopen', function(e) {
@@ -5763,7 +5760,7 @@ function initMapa() {
     });
     var mf = L.marker([p.lat, p.lng], { icon: iconFiesta, zIndexOffset: 500 }).addTo(mapa);
     mf.on('click', function() {
-      if (window._navBloqPopups) return;
+      if (window._navBloqPopups || window._simEsperandoUbicacion) return;
       var content = '<div style="font-family:DM Sans,sans-serif;min-width:190px;max-width:260px">' +
         '<strong style="font-size:16px;color:#1D9E75">' + p.nombre + '</strong><br>' +
         '<small style="color:#6b7280;text-transform:uppercase;letter-spacing:1px">FIESTA HOY 🎉</small>' +
@@ -5806,7 +5803,7 @@ function initMapa() {
         var m = L.marker([p.lat,p.lng], { icon:crearIcono(p.emoji, p.categoria==='etapa' ? p.color : null) });
         m.on('click', (function(punto) {
           return function() {
-            if (window._navBloqPopups) return;
+            if (window._navBloqPopups || window._simEsperandoUbicacion) return;
             _abrirModalPOI(punto);
           };
         })(p));
