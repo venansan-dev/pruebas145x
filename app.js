@@ -298,12 +298,12 @@ function mostrarGuiaIOS() {
   // Título
   var h3 = document.createElement('h3');
   h3.style.cssText = 'font-size:18px;margin:0 0 8px;font-family:Playfair Display,serif;padding-right:40px';
-  h3.textContent = '📲 Instalar la app';
+  h3.textContent = (T[idiomaActual]||T.es).pwaInstalarTit||'📲 Instalar la app';
 
   // Subtítulo
   var p = document.createElement('p');
   p.style.cssText = 'font-size:13px;color:#666;margin:0 0 16px;line-height:1.5';
-  p.textContent = 'Para instalar y recibir notificaciones en iPhone/iPad:';
+  p.textContent = (T[idiomaActual]||T.es).pwaInstalarIosSub||'Para instalar y recibir notificaciones en iPhone/iPad:';
 
   // Pasos
   var pasos = [
@@ -425,7 +425,7 @@ function mostrarToastNotif(tipo) {
     // Botón Android si hay prompt
     if (typeof deferredInstallPrompt !== 'undefined' && deferredInstallPrompt) {
       var btnA = document.createElement('button');
-      btnA.textContent = '📲 Añadir a pantalla de inicio';
+      btnA.textContent = (T[idiomaActual]||T.es).pwaAnadirInicio||'📲 Añadir a pantalla de inicio';
       btnA.style.cssText = 'width:100%;margin-top:14px;background:#1D9E75;color:#fff;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
       btnA.addEventListener('click', function() {
         deferredInstallPrompt.prompt();
@@ -710,7 +710,7 @@ function _renderAlbumRecuerdos(grid, vacioCont) {
     var contador = document.getElementById('album-rec-contador');
     if (poiVisitas.length === 0) {
       vacioCont.style.display = 'block';
-      if (contador) contador.textContent = 'Sin lugares visitados';
+      if (contador) contador.textContent = (T[idiomaActual]||T.es).albumSinVisitas||'Sin lugares visitados';
       return;
     }
     vacioCont.style.display = 'none';
@@ -780,7 +780,7 @@ function _renderAlbumRecuerdos(grid, vacioCont) {
               var btnCam = document.createElement('button');
               btnCam.style.cssText = 'position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.3);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#fff;backdrop-filter:blur(3px);z-index:2;padding:0';
               btnCam.textContent = '📷';
-              btnCam.title = 'Añadir foto';
+              btnCam.title = (T[idiomaActual]||T.es).tituloAnadirFoto||'Añadir foto';
               btnCam.addEventListener('click', function(e){
                 e.stopPropagation();
                 window._albumPedirFotoCard ? window._albumPedirFotoCard(pid) : _albumPedirFoto(pid, crd);
@@ -1105,7 +1105,7 @@ function _renderPoiDrawerCarrusel() {
         if (!blob) return;
         var url = URL.createObjectURL(blob);
         var el = document.getElementById('cromo-img-'+pid); if (el) el.src = url;
-        var btn = document.getElementById('foto-btn-'+pid); if (btn) btn.innerHTML = '✏️ cambiar';
+        var btn = document.getElementById('foto-btn-'+pid); if (btn) btn.innerHTML = (T[idiomaActual]||T.es).btnCambiarFoto||'✏️ cambiar';
         // Eliminar overlay 'Añade foto' ya que el usuario tiene foto propia
         var wrap = document.querySelector('[data-cromo-id="'+pid+'"]');
         if (wrap) { var ov = wrap.querySelector('div[style*="pointer-events:none"]'); if (ov) ov.remove(); }
@@ -1603,10 +1603,10 @@ function ejecutarBusquedaMapa() {
             if (searchMarkers.length > 0) searchMarkers[0].openPopup();
             var clearBtn2n = document.getElementById('buscar-clear'); if (clearBtn2n) clearBtn2n.style.display = 'flex';
             document.activeElement && document.activeElement.blur();
-            mostrarToast('📍 '+searchMarkers.length+' resultado'+(searchMarkers.length!==1?'s':'')+' cerca');
-          } else { mostrarToast('🔍 Sin resultados para "' + termino + '" cerca'); }
-        } catch(e) { mostrarToast('⚠️ Error al buscar. Inténtalo de nuevo.'); }
-      } else { mostrarToast('⚠️ Error de red.'); }
+            mostrarToast('📍 '+searchMarkers.length+' '+(searchMarkers.length!==1?((T[idiomaActual]||T.es).toastResultadoPluralCerca||'resultados cerca'):((T[idiomaActual]||T.es).toastResultadoSingCerca||'resultado cerca')));
+          } else { mostrarToast(((T[idiomaActual]||T.es).toastSinResultadosCerca||'🔍 Sin resultados para "{q}" cerca').replace('{q}', termino)); }
+        } catch(e) { mostrarToast((T[idiomaActual]||T.es).toastErrorBuscar||'⚠️ Error al buscar. Inténtalo de nuevo.'); }
+      } else { mostrarToast((T[idiomaActual]||T.es).toastErrorRed||'⚠️ Error de red.'); }
     };
     xhr2n.send();
   }
@@ -1616,7 +1616,7 @@ function ejecutarBusquedaMapa() {
     var r = 3000;
     var query = '[out:json][timeout:10];(node'+osmTag+'(around:'+r+','+refLat+','+refLng+');way'+osmTag+'(around:'+r+','+refLat+','+refLng+'););out center 20;';
     var url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
-    mostrarToast('🔍 Buscando ' + q + ' cerca...');
+    mostrarToast(((T[idiomaActual]||T.es).toastBuscandoCerca||'🔍 Buscando {q} cerca...').replace('{q}', q));
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.timeout = 12000;
@@ -1649,10 +1649,10 @@ function ejecutarBusquedaMapa() {
             var clearBtn = document.getElementById('buscar-clear');
             if (clearBtn) clearBtn.style.display = 'flex';
             document.activeElement && document.activeElement.blur();
-            mostrarToast('📍 '+searchMarkers.length+' '+q+' encontrado'+(searchMarkers.length!==1?'s':'')+' cerca');
+            mostrarToast('📍 '+searchMarkers.length+' '+q+' '+(searchMarkers.length!==1?((T[idiomaActual]||T.es).toastEncontradoPluralCerca||'encontrados cerca'):((T[idiomaActual]||T.es).toastEncontradoSingCerca||'encontrado cerca')));
           } else {
             // Overpass sin resultados → fallback Nominatim
-            mostrarToast('🔍 Sin resultados Overpass, buscando en Nominatim…');
+            mostrarToast((T[idiomaActual]||T.es).toastSinResultadosOverpassNominatim||'🔍 Sin resultados Overpass, buscando en Nominatim…');
             _buscarNominatimMapa(q);
           }
         } catch(e) {
@@ -1661,11 +1661,11 @@ function ejecutarBusquedaMapa() {
         }
       } else {
         // Error HTTP o timeout → fallback Nominatim
-        mostrarToast('⚠️ Overpass no disponible, intentando alternativa…');
+        mostrarToast((T[idiomaActual]||T.es).toastOverpassNoDisponible||'⚠️ Overpass no disponible, intentando alternativa…');
         _buscarNominatimMapa(q);
       }
     };
-    xhr.ontimeout = function() { mostrarToast('⚠️ Overpass tardó demasiado, intentando alternativa…'); _buscarNominatimMapa(q); };
+    xhr.ontimeout = function() { mostrarToast((T[idiomaActual]||T.es).toastOverpassLento||'⚠️ Overpass tardó demasiado, intentando alternativa…'); _buscarNominatimMapa(q); };
     xhr.send();
 
   } else {
@@ -1697,9 +1697,9 @@ function ejecutarBusquedaMapa() {
             // sin zoom automático
             document.activeElement && document.activeElement.blur();
           } else {
-            mostrarToast('🔍 Sin resultados para "' + q + '" cerca');
+            mostrarToast(((T[idiomaActual]||T.es).toastSinResultadosCerca||'🔍 Sin resultados para "{q}" cerca').replace('{q}', q));
           }
-        } catch(e) { mostrarToast('⚠️ Error al buscar. Inténtalo de nuevo.'); }
+        } catch(e) { mostrarToast((T[idiomaActual]||T.es).toastErrorBuscar||'⚠️ Error al buscar. Inténtalo de nuevo.'); }
       }
     };
     xhr2.send();
@@ -1879,13 +1879,13 @@ function _actualizarBtnAlertas() {
   var alguOff=!_alertasFirebaseOn||!_cromosNotifOn||!notifActivadas;
   if(todasOff){
     btn.style.background='#fecaca';btn.style.border='1.5px solid #ef4444';
-    btn.textContent='🔕';btn.title='Alertas y notificaciones desactivadas';
+    btn.textContent='🔕';btn.title=((T[idiomaActual]||T.es).tituloNotifTodasOff||'Alertas y notificaciones desactivadas');
   } else if(alguOff){
     btn.style.background='rgba(249,115,22,0.55)';btn.style.border='1.5px solid rgba(234,96,0,0.7)';btn.style.backdropFilter='blur(4px)';btn.style.webkitBackdropFilter='blur(4px)';
-    btn.innerHTML='<span style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px"><span style="font-size:18px;line-height:1">🔔</span><svg style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none" viewBox="0 0 20 20"><line x1="3" y1="17" x2="17" y2="3" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/></svg></span>';btn.title='Algunas notificaciones desactivadas';
+    btn.innerHTML='<span style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px"><span style="font-size:18px;line-height:1">🔔</span><svg style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none" viewBox="0 0 20 20"><line x1="3" y1="17" x2="17" y2="3" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/></svg></span>';btn.title=((T[idiomaActual]||T.es).tituloNotifAlgunaOff||'Algunas notificaciones desactivadas');
   } else {
     btn.style.background='rgba(255,245,210,0.92)';btn.style.border='1.5px solid #a07828';
-    btn.textContent='🔔';btn.title='Notificaciones activas';
+    btn.textContent='🔔';btn.title=((T[idiomaActual]||T.es).tituloNotifOn||'Notificaciones activas');
   }
 }
 
@@ -2760,11 +2760,11 @@ function abrirHeroModal() {
           var btnDiv = document.createElement('div');
           btnDiv.style.cssText = 'display:flex;gap:6px;margin-top:8px;flex-wrap:wrap';
           var btnAdd = document.createElement('button');
-          btnAdd.textContent = '➕ Añadir a ruta';
+          btnAdd.textContent = (T[idiomaActual]||T.es).añadirRuta.replace('+','➕');
           btnAdd.style.cssText = 'background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
           (function(la,lo,no,b){ b.addEventListener('click', function(){ _toggleBusquedaRuta(b,encodeURIComponent(no),la,lo); }); })(lat,lng,nombre,btnAdd);
           var btnNav = document.createElement('button');
-          btnNav.textContent = '🗺️ Cómo llegar';
+          btnNav.textContent = '🗺️ ' + (T[idiomaActual]||T.es).comoLlegar.replace(' →','');
           btnNav.style.cssText = 'background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif';
           (function(la,lo){ btnNav.addEventListener('click', function(){ irACoordenadasNav(la,lo); }); })(lat,lng);
           btnDiv.appendChild(btnAdd); btnDiv.appendChild(btnNav);
@@ -2806,8 +2806,8 @@ function abrirHeroModal() {
                 }).filter(function(x){ return x.dist<=radio; });
                 items2.sort(function(a,b){ return a.dist-b.dist; });
                 _mostrarResultados(items2.slice(0,12));
-              } catch(e){ estado.style.display='block'; estado.textContent='⚠️ Error al buscar. Inténtalo de nuevo.'; }
-            } else { estado.style.display='block'; estado.textContent='⚠️ Error de red.'; }
+              } catch(e){ estado.style.display='block'; estado.textContent=(typeof _t!=='undefined'&&_t.toastErrorBuscar)||(T[idiomaActual]||T.es).toastErrorBuscar||'⚠️ Error al buscar. Inténtalo de nuevo.'; }
+            } else { estado.style.display='block'; estado.textContent=(typeof _t!=='undefined'&&_t.toastErrorRed)||(T[idiomaActual]||T.es).toastErrorRed||'⚠️ Error de red.'; }
           };
           xhr2.send();
         }
@@ -2847,8 +2847,8 @@ function abrirHeroModal() {
               }).filter(function(x){ return x.dist<=radio; });
               items2.sort(function(a,b){ return a.dist-b.dist; });
               _mostrarResultados(items2.slice(0,12));
-            } catch(e){ estado.style.display='block'; estado.textContent='⚠️ Error al buscar. Inténtalo de nuevo.'; }
-          } else { estado.style.display='block'; estado.textContent='⚠️ Error de red.'; }
+            } catch(e){ estado.style.display='block'; estado.textContent=(typeof _t!=='undefined'&&_t.toastErrorBuscar)||(T[idiomaActual]||T.es).toastErrorBuscar||'⚠️ Error al buscar. Inténtalo de nuevo.'; }
+          } else { estado.style.display='block'; estado.textContent=(typeof _t!=='undefined'&&_t.toastErrorRed)||(T[idiomaActual]||T.es).toastErrorRed||'⚠️ Error de red.'; }
         };
         xhr2.send();
       }
@@ -3269,7 +3269,7 @@ function abrirHeroModal() {
       (function(poi) {
         var btnInfo = document.createElement('button');
         btnInfo.textContent = 'ⓘ';
-        btnInfo.title = 'Más información';
+        btnInfo.title = (T[idiomaActual]||T.es).tituloMasInfo||'Más información';
         btnInfo.style.cssText = 'width:28px;height:28px;border-radius:50%;background:rgba(29,78,216,0.15);border:1.5px solid #3b82f6;color:#1d4ed8;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;font-family:DM Sans,sans-serif;line-height:1';
         btnInfo.addEventListener('click', function(e) {
           e.stopPropagation();
@@ -3330,13 +3330,13 @@ function abrirHeroModal() {
           var mBtnRow = document.createElement('div');
           mBtnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px';
           var mBtnClose = document.createElement('button');
-          mBtnClose.textContent = '← Volver';
+          mBtnClose.textContent = (T[idiomaActual]||T.es).volverMapa||'← Volver';
           mBtnClose.style.cssText = 'flex:1;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:12px;padding:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
           mBtnClose.addEventListener('click', cerrarModal);
           mBtnRow.appendChild(mBtnClose);
           var mBtnAdd = document.createElement('button');
           var _yaEnRuta = (typeof rutaPuntos !== 'undefined') && rutaPuntos.some(function(x){ return x.id === poi.id; });
-          mBtnAdd.textContent = _yaEnRuta ? '✓ En ruta' : '+ Añadir a ruta';
+          mBtnAdd.textContent = _yaEnRuta ? ((T[idiomaActual]||T.es).enRuta||'✓ En ruta') : ((T[idiomaActual]||T.es).añadirRuta||'+ Añadir a ruta');
           mBtnAdd.style.cssText = 'flex:1;background:' + (_yaEnRuta ? 'rgba(29,158,117,0.6)' : '#fff') + ';color:' + (_yaEnRuta ? '#fff' : '#0F6E56') + ';border:none;border-radius:12px;padding:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;transition:all 0.15s';
           mBtnAdd.addEventListener('click', function() {
             if (typeof rutaPuntos === 'undefined') return;
@@ -3729,11 +3729,11 @@ function abrirBuscadorAsistente() {
         var btnDiv = document.createElement('div');
         btnDiv.style.cssText = 'display:flex;gap:6px;margin-top:8px;flex-wrap:wrap';
         var btnAdd = document.createElement('button');
-        btnAdd.textContent = '➕ Añadir a ruta';
+        btnAdd.textContent = (T[idiomaActual]||T.es).añadirRuta.replace('+','➕');
         btnAdd.style.cssText = 'background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif';
         (function(la,lo,no,b){ b.addEventListener('click', function(){ _toggleBusquedaRuta(b,encodeURIComponent(no),la,lo); }); })(lat,lng,nombre,btnAdd);
         var btnNav = document.createElement('button');
-        btnNav.textContent = '🗺️ Cómo llegar';
+        btnNav.textContent = '🗺️ ' + (T[idiomaActual]||T.es).comoLlegar.replace(' →','');
         btnNav.style.cssText = 'background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif';
         (function(la,lo){ btnNav.addEventListener('click', function(){ irACoordenadasNav(la,lo); }); })(lat,lng);
         btnDiv.appendChild(btnAdd); btnDiv.appendChild(btnNav);
@@ -3780,8 +3780,8 @@ function abrirBuscadorAsistente() {
               }).filter(function(x){ return x.dist<=radio; });
               items2.sort(function(a,b){ return a.dist-b.dist; });
               _mostrarResultados(items2.slice(0,12));
-            } catch(e){ estado.style.display='block'; estado.textContent='⚠️ Error al buscar. Inténtalo de nuevo.'; }
-          } else { estado.style.display='block'; estado.textContent='⚠️ Error de red.'; }
+            } catch(e){ estado.style.display='block'; estado.textContent=(typeof _t!=='undefined'&&_t.toastErrorBuscar)||(T[idiomaActual]||T.es).toastErrorBuscar||'⚠️ Error al buscar. Inténtalo de nuevo.'; }
+          } else { estado.style.display='block'; estado.textContent=(typeof _t!=='undefined'&&_t.toastErrorRed)||(T[idiomaActual]||T.es).toastErrorRed||'⚠️ Error de red.'; }
         };
         xhr2.send();
       }
@@ -3820,8 +3820,8 @@ function abrirBuscadorAsistente() {
             }).filter(function(x){ return x.dist<=radio; });
             items2.sort(function(a,b){ return a.dist-b.dist; });
             _mostrarResultados(items2.slice(0,12));
-          } catch(e){ estado.style.display='block'; estado.textContent='⚠️ Error al buscar. Inténtalo de nuevo.'; }
-        } else { estado.style.display='block'; estado.textContent='⚠️ Error de red.'; }
+          } catch(e){ estado.style.display='block'; estado.textContent=(typeof _t!=='undefined'&&_t.toastErrorBuscar)||(T[idiomaActual]||T.es).toastErrorBuscar||'⚠️ Error al buscar. Inténtalo de nuevo.'; }
+        } else { estado.style.display='block'; estado.textContent=(typeof _t!=='undefined'&&_t.toastErrorRed)||(T[idiomaActual]||T.es).toastErrorRed||'⚠️ Error de red.'; }
       };
       xhr2.send();
     }
@@ -3929,7 +3929,7 @@ function refrescarUbicacion() {
   var btn = document.getElementById('btn-alertas-toggle');
   var statusTxt = document.getElementById('map-status-text');
   if (btn) { btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none'; }
-  if (statusTxt) statusTxt.textContent = '📍 Actualizando ubicación...';
+  if (statusTxt) statusTxt.textContent = (T[idiomaActual]||T.es).statusActualizandoUbicacion||'📍 Actualizando ubicación...';
   navigator.geolocation.getCurrentPosition(function(pos) {
     userLat = pos.coords.latitude;
     userLng = pos.coords.longitude;
@@ -3949,13 +3949,13 @@ function refrescarUbicacion() {
     PUNTOS.forEach(function(p){ p.distancia = haversine(userLat,userLng,p.lat,p.lng); });
     PUNTOS.sort(function(a,b){ return a.distancia - b.distancia; });
     renderCarrusel(categoriaActiva);
-    if (statusTxt) statusTxt.textContent = '📍 Ubicación actualizada';
+    if (statusTxt) statusTxt.textContent = (T[idiomaActual]||T.es).statusUbicacionActualizada||'📍 Ubicación actualizada';
     setTimeout(function() {
       if (statusTxt) statusTxt.textContent = '';
       if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = ''; }
     }, 2000);
   }, function() {
-    if (statusTxt) statusTxt.textContent = '⚠️ No se pudo obtener la ubicación';
+    if (statusTxt) statusTxt.textContent = (T[idiomaActual]||T.es).statusNoSePudoUbicacion||'⚠️ No se pudo obtener la ubicación';
     if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = ''; }
     setTimeout(function() { if (statusTxt) statusTxt.textContent = ''; }, 3000);
   }, { enableHighAccuracy:true, timeout:8000 });
@@ -4028,7 +4028,7 @@ function eliminarAlerta(id) {
     mapa.closePopup();
     var card = document.querySelector('[data-poi-id="'+id+'"]');
     if (card) card.remove();
-    mostrarToast('🗑️ Alerta eliminada para todos');
+    mostrarToast((T[idiomaActual]||T.es).toastAlertaEliminada||'🗑️ Alerta eliminada para todos');
     _irAlMapa();
   };
   var overlay = document.createElement('div');
@@ -4059,7 +4059,7 @@ function ocultarAlerta(id) {
   var hayVisibles = PUNTOS.some(function(p){ return p.esAlerta && !alertasOcultas[p.id]; });
   var chipAlerta = document.getElementById('chip-alertas');
   if (chipAlerta) chipAlerta.style.animation = hayVisibles ? 'chipAlertaPulse 1.2s ease-in-out infinite' : '';
-  mostrarToast('👁 Alerta ocultada del mapa');
+  mostrarToast((T[idiomaActual]||T.es).toastAlertaOcultada||'👁 Alerta ocultada del mapa');
   _sincronizarChipAlertasPOI();
   _irAlMapa();
 }
@@ -4075,7 +4075,7 @@ function mostrarAlerta(id) {
   if (chipAlerta && !chipAlerta.classList.contains('active')) {
     chipAlerta.style.animation = 'chipAlertaPulse 1.2s ease-in-out infinite';
   }
-  mostrarToast('👁 Alerta visible en el mapa');
+  mostrarToast((T[idiomaActual]||T.es).toastAlertaVisible||'👁 Alerta visible en el mapa');
   _sincronizarChipAlertasPOI();
   _irAlMapa();
 }
@@ -4105,13 +4105,13 @@ function _actualizarBtnOcultarAlerta(id, oculta) {
   var btn = card.querySelector('[data-alerta-toggle]');
   if (!btn) return;
   if (oculta) {
-    btn.textContent = '👁 Mostrar en el mapa';
+    btn.textContent = (T[idiomaActual]||T.es).btnMostrarMapa||'👁 Mostrar en el mapa';
     btn.style.background = '#f0fdf4';
     btn.style.color = '#15803d';
     btn.style.border = '1px solid #86efac';
     btn.setAttribute('onclick', "mostrarAlerta('"+id+"')");
   } else {
-    btn.textContent = '👁 Ocultar del mapa';
+    btn.textContent = (T[idiomaActual]||T.es).btnOcultarMapa||'👁 Ocultar del mapa';
     btn.style.background = '#f3f4f6';
     btn.style.color = '#6b7280';
     btn.style.border = '1px solid #d1d5db';
@@ -4135,7 +4135,7 @@ function reportarAlerta(id) {
   var hoyKey = new Date().toISOString().slice(0,10);
   if (_alertasHoy.fecha !== hoyKey) { _alertasHoy = { fecha: hoyKey, count: 0 }; } // nuevo día
   if (_alertasHoy.count >= LIMITE_REPORTES_DIA) {
-    mostrarToast('⚠️ Límite diario de confirmaciones alcanzado (30/día)');
+    mostrarToast((T[idiomaActual]||T.es).toastLimiteConfirmaciones||'⚠️ Límite diario de confirmaciones alcanzado (30/día)');
     return;
   }
   var alerta = PUNTOS.find(function(p){ return p.id === id; });
@@ -4153,7 +4153,7 @@ function reportarAlerta(id) {
     localStorage.setItem('alertasHoy', JSON.stringify(_alertasHoy));
   } catch(e) {}
   mapa.closePopup();
-  mostrarToast('🚨 Alerta confirmada · se extiende 24h más');
+  mostrarToast((T[idiomaActual]||T.es).toastAlertaConfirmada||'🚨 Alerta confirmada · se extiende 24h más');
 }
 
 // CSS animación pulso para alertas
@@ -4213,12 +4213,12 @@ function volverARuta(){
   var lat = (typeof userLat!=='undefined' && userLat) ? userLat : null;
   var lng = (typeof userLng!=='undefined' && userLng) ? userLng : null;
   if (lat==null || lng==null){
-    if (typeof mostrarToast==='function') mostrarToast('Necesito tu ubicación GPS para guiarte');
+    if (typeof mostrarToast==='function') mostrarToast((T[idiomaActual]||T.es).toastNecesitoGPS||'Necesito tu ubicación GPS para guiarte');
     return;
   }
   if(_bloquearSiLejos())return;
   if (!window.Desvio || !window.Desvio.puntoMasCercano){
-    if (typeof mostrarToast==='function') mostrarToast('No hay trazado oficial cargado todavía');
+    if (typeof mostrarToast==='function') mostrarToast((T[idiomaActual]||T.es).toastNoHayTrazado||'No hay trazado oficial cargado todavía');
     return;
   }
   var pc = window.Desvio.puntoMasCercano(lat, lng);
@@ -4230,19 +4230,19 @@ function volverARuta(){
   // Caso "muy lejos": no hay track cargado en el motor. Buscar en TODO el índice
   // la etapa más cercana sin límite de distancia, cargarla y guiar hasta ella.
   if (window.Selector && window.Selector.forzarDeteccion){
-    if (typeof mostrarToast==='function') mostrarToast('Buscando el Camino más cercano…');
+    if (typeof mostrarToast==='function') mostrarToast((T[idiomaActual]||T.es).toastBuscandoCaminoCercano||'Buscando el Camino más cercano…');
     window.Selector.forzarDeteccion(lat, lng).then(function(res){
       if (!res || res.lat==null){
-        if (typeof mostrarToast==='function') mostrarToast('No detecto ningún Camino cercano');
+        if (typeof mostrarToast==='function') mostrarToast((T[idiomaActual]||T.es).toastNoDetectoCamino||'No detecto ningún Camino cercano');
         return;
       }
       _volverARutaCon({ lat:res.lat, lng:res.lng, distancia:res.distancia });
     }).catch(function(){
-      if (typeof mostrarToast==='function') mostrarToast('No detecto ningún Camino cercano');
+      if (typeof mostrarToast==='function') mostrarToast((T[idiomaActual]||T.es).toastNoDetectoCamino||'No detecto ningún Camino cercano');
     });
     return;
   }
-  if (typeof mostrarToast==='function') mostrarToast('No detecto un trazado oficial cercano');
+  if (typeof mostrarToast==='function') mostrarToast((T[idiomaActual]||T.es).toastNoDetectoTrazado||'No detecto un trazado oficial cercano');
 }
 
 // Inserta el punto de retorno como destino y arranca el ayudante de navegación.
@@ -4541,7 +4541,7 @@ function usarMiUbicacion() {
     txt.textContent = orig;
     btn.disabled = false;
   }, function() {
-    document.getElementById('poi-coords-display').textContent = '❌ No se pudo obtener la ubicación';
+    document.getElementById('poi-coords-display').textContent = (T[idiomaActual]||T.es).errNoSePudoUbicacion2||'❌ No se pudo obtener la ubicación';
     txt.textContent = orig;
     btn.disabled = false;
   }, { enableHighAccuracy: true, timeout: 8000 });
@@ -4550,7 +4550,7 @@ function usarMiUbicacion() {
 // Marcar punto en el mapa tocando/haciendo click
 function activarMarcarEnMapa() {
   if (typeof mapa === 'undefined' || !mapa) {
-    document.getElementById('poi-coords-display').textContent = '❌ El mapa no está disponible';
+    document.getElementById('poi-coords-display').textContent = (T[idiomaActual]||T.es).errMapaNoDisponible||'❌ El mapa no está disponible';
     return;
   }
 
@@ -4575,7 +4575,7 @@ function activarMarcarEnMapa() {
 
     var texto = document.createElement('span');
     texto.style.cssText = 'font-size:15px;font-weight:600';
-    texto.textContent = '📍 Toca en el mapa para marcar el punto, o usa el buscador del mapa y toca la ubicación adecuada';
+    texto.textContent = (T[idiomaActual]||T.es).instrTocaMarcarPunto||'📍 Toca en el mapa para marcar el punto, o usa el buscador del mapa y toca la ubicación adecuada';
 
     var btnCancelar = document.createElement('button');
     btnCancelar.textContent = '✕';
@@ -4764,21 +4764,21 @@ function guardarPOIUsuario() {
     };
     if (esAlerta) {
       db.ref('alertas/' + id).set(poiFirebase).then(function() {
-        mostrarToast('🚨 Alerta publicada para todos');
+        mostrarToast((T[idiomaActual]||T.es).toastAlertaPublicada||'🚨 Alerta publicada para todos');
       }, function(err) {
         console.warn('Firebase alerta error:', err.message);
-        mostrarToast('⚠️ Error al publicar alerta: ' + err.message);
+        mostrarToast(((T[idiomaActual]||T.es).toastErrorPublicarAlerta||'⚠️ Error al publicar alerta: ') + err.message);
       });
     } else {
       db.ref('poi_usuarios/' + id).set(poiFirebase).then(function() {
       }, function(err) {
         console.warn('Firebase rechazó el POI:', err.message);
-        mostrarToast('⚠️ Error Firebase: ' + err.message);
+        mostrarToast(((T[idiomaActual]||T.es).toastErrorFirebase||'⚠️ Error Firebase: ') + err.message);
       });
     }
   } catch(e) {
     console.warn('Error Firebase:', e);
-    mostrarToast('⚠️ Error Firebase: ' + e.message);
+    mostrarToast(((T[idiomaActual]||T.es).toastErrorFirebase||'⚠️ Error Firebase: ') + e.message);
   }
 }
 
@@ -5081,7 +5081,7 @@ function eliminarPOIUsuario(poiId) {
       var chipUM = document.getElementById('chip-usuario-mapa');
       if (chipUM) chipUM.style.display = 'none';
     }
-    mostrarToast('🗑️ Punto eliminado');
+    mostrarToast((T[idiomaActual]||T.es).toastPuntoEliminado||'🗑️ Punto eliminado');
   };
   var msgElim = (t2.confirmarEliminar)||'¿Eliminar este punto?';
   var overlay = document.createElement('div');
@@ -5705,10 +5705,10 @@ function initMapa() {
       var tmpId = '_busq_' + lat.toString().replace('.','') + '_' + lng.toString().replace('.','');
       var enR = rutaPuntos.some(function(p){ return p.id === tmpId; });
       if (enR) {
-        btn.textContent = '✓ En ruta';
+        btn.textContent = (T[idiomaActual]||T.es).enRuta;
         btn.style.cssText = btn.style.cssText.replace(/background:[^;]+/, 'background:#1D9E75').replace(/color:[^;]+/, 'color:#fff').replace(/border:[^;]+/, 'border:none');
       } else {
-        btn.textContent = '➕ Añadir a ruta';
+        btn.textContent = (T[idiomaActual]||T.es).añadirRuta.replace('+','➕');
         btn.style.cssText = btn.style.cssText.replace(/background:[^;]+/, 'background:#E1F5EE').replace(/color:[^;]+/, 'color:#0F6E56').replace(/border:[^;]+/, 'border:1px solid rgba(29,158,117,0.4)');
       }
     } catch(e2) {}
@@ -5981,7 +5981,7 @@ function toggleSeguimiento() {
     mapa.closePopup();
     // Zoom máximo y centrar en posición del usuario
     if (userLat) mapa.setView([userLat, userLng], 19, {animate:true});
-    mostrarToast('📡 Seguimiento activado');
+    mostrarToast((T[idiomaActual]||T.es).toastSeguimientoActivado||'📡 Seguimiento activado');
     actualizarLineaRuta();
     // watchPosition seguimiento
     if (!window._seguimientoId && navigator.geolocation) {
@@ -6024,7 +6024,7 @@ function toggleSeguimiento() {
     aplicarRadio(1);
     radioKm = 1;
     _aplicarEstadoRadioBtns(1);
-    mostrarToast('📡 Seguimiento desactivado');
+    mostrarToast((T[idiomaActual]||T.es).toastSeguimientoDesactivado||'📡 Seguimiento desactivado');
   }
 }
 
@@ -6090,7 +6090,7 @@ function _mostrarUnCromo(item, onClose) {
 // Selector de cromos para perder N
 function _ocaMostrarSelectorPerder(n) {
   window._ocaGetCromos(function(cromos){
-    if (cromos.length === 0) { mostrarToast('No tienes cromos que perder'); return; }
+    if (cromos.length === 0) { mostrarToast((T[idiomaActual]||T.es).toastSinCromosPerder||'No tienes cromos que perder'); return; }
     var overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;font-family:DM Sans,sans-serif;padding:1rem;box-sizing:border-box';
     var tablero = window._OCA_TABLERO || {};
@@ -6106,7 +6106,7 @@ function _ocaMostrarSelectorPerder(n) {
     var nums = Object.keys(conteo).map(Number).sort(function(a,b){return b-a;});
     var seleccionados = [];
     var html = '<div style="background:linear-gradient(160deg,#1a0e2e,#3b1f6a);border-radius:20px;padding:1.25rem;max-width:90vw;width:320px;border:1px solid rgba(255,255,255,0.2)">'
-      + '<div style="font-size:14px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Elige '+n+' cromo'+(n>1?'s':'')+' para perder</div>'
+      + '<div style="font-size:14px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">'+((T[idiomaActual]||T.es).ocaSelectorEncabezado||'Elige {n} cromo(s) para perder').replace('{n}',n)+'</div>'
       + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:50vh;overflow-y:auto;margin-bottom:12px" id="sel-cromos-grid">';
     nums.forEach(function(num){
       var cas = tablero[num]||{emoji:'🐚',label:'Casilla '+num};
@@ -6117,7 +6117,7 @@ function _ocaMostrarSelectorPerder(n) {
         + '<div style="font-size:13px;font-weight:600;color:#fff">'+cas.label+'</div></div>'
         + rep+'</div>';
     });
-    html += '</div><button id="sel-confirmar" disabled style="width:100%;background:#6b7280;color:#fff;border:none;border-radius:24px;padding:10px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">Confirmar</button></div>';
+    html += '</div><button id="sel-confirmar" disabled style="width:100%;background:#6b7280;color:#fff;border:none;border-radius:24px;padding:10px;font-size:16px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">'+((T[idiomaActual]||T.es).ocaConfirmar||'Confirmar')+'</button></div>';
     overlay.innerHTML = html;
     document.body.appendChild(overlay);
     var confirmBtn = overlay.querySelector('#sel-confirmar');
@@ -6141,7 +6141,7 @@ function _ocaMostrarSelectorPerder(n) {
     confirmBtn.addEventListener('click', function(){
       var pendiente = seleccionados.slice();
       function _eliminarSiguiente(){
-        if (pendiente.length === 0){ overlay.remove(); mostrarToast('🗑️ '+n+' cromo'+(n>1?'s':'')+' perdido'+(n>1?'s':'')); return; }
+        if (pendiente.length === 0){ overlay.remove(); mostrarToast(((T[idiomaActual]||T.es).toastCromosPerdidosSelector||'🗑️ {n} cromo(s) perdido(s)').replace('{n}', n)); return; }
         var numDel = pendiente.shift();
         // Eliminar una instancia de ese número
         _abrirDB(function(db){
@@ -6226,7 +6226,7 @@ function pedirOrientacion() {
     window.removeEventListener('deviceorientation', actualizarFlecha, true);
     if (btn) { btn.style.background='#fff'; btn.style.border='2px solid rgba(0,0,0,0.2)'; btn.style.color=''; }
     if (window._userMarker) window._userMarker.setIcon(crearIconoUsuario(null));
-    mostrarToast('🧭 Brújula desactivada');
+    mostrarToast((T[idiomaActual]||T.es).toastBrujulaDesactivada||'🧭 Brújula desactivada');
     var nb = document.getElementById('ruta-nav-orientacion');
     if(nb){ nb.style.background='#fff'; nb.style.border='2px solid rgba(0,0,0,0.15)'; nb.style.color='#333';
       var ol = nb.querySelector('#nav-ori-offline'); if(ol) ol.style.display='inline';
@@ -6243,7 +6243,7 @@ function pedirOrientacion() {
     window.removeEventListener('deviceorientation', actualizarFlecha, true);
     window.addEventListener('deviceorientation', actualizarFlecha, true);
     if (btn) { btn.style.background='#1D9E75'; btn.style.border='2px solid #1D9E75'; btn.style.color='#fff'; }
-    mostrarToast('🧭 Brújula activada');
+    mostrarToast((T[idiomaActual]||T.es).toastBrujulaActivada||'🧭 Brújula activada');
     var nb = document.getElementById('ruta-nav-orientacion');
     if(nb){ nb.style.background='#EFF6FF'; nb.style.border='2px solid #185FA5'; nb.style.color='#185FA5';
       var ol = nb.querySelector('#nav-ori-offline'); if(ol) ol.style.display='none';
@@ -6385,9 +6385,9 @@ function ejecutarBusqueda() {
           else{mapa.setView(bounds[0],17);}
           document.activeElement && document.activeElement.blur(); setTimeout(function(){ var el=document.getElementById('map'); if(el){ var rect=el.getBoundingClientRect(); var center=window.pageYOffset+rect.top-(window.innerHeight/2)+(rect.height/2); window.scrollTo({top:Math.max(0,center),behavior:'smooth'}); } },600);
         } else {
-          mostrarToast('🔍 Sin resultados para "'+q+'"');
+          mostrarToast(((T[idiomaActual]||T.es).toastSinResultadosQ||'🔍 Sin resultados para "{q}"').replace('{q}', q));
         }
-      } catch(e) { mostrarToast('⚠️ Error al buscar. Inténtalo de nuevo.'); }
+      } catch(e) { mostrarToast((T[idiomaActual]||T.es).toastErrorBuscar||'⚠️ Error al buscar. Inténtalo de nuevo.'); }
     }
   };
   xhr.send();
@@ -6581,7 +6581,7 @@ function renderCarrusel(categoria) {
         if (!blob) return;
         var url = URL.createObjectURL(blob);
         var el = document.getElementById('cromo-img-'+pid); if (el) el.src = url;
-        var btn = document.getElementById('foto-btn-'+pid); if (btn) btn.innerHTML = '✏️ cambiar';
+        var btn = document.getElementById('foto-btn-'+pid); if (btn) btn.innerHTML = (T[idiomaActual]||T.es).btnCambiarFoto||'✏️ cambiar';
         // Eliminar overlay 'Añade foto' ya que el usuario tiene foto propia
         var wrap = document.querySelector('[data-cromo-id="'+pid+'"]');
         if (wrap) { var ov = wrap.querySelector('div[style*="pointer-events:none"]'); if (ov) ov.remove(); }
@@ -6721,16 +6721,16 @@ function _toggleBusquedaRuta(btn, nombreEnc, lat, lng) {
     // Quitar de la ruta (mantener en PUNTOS para que el marcador siga visible)
     rutaPuntos = rutaPuntos.filter(function(p){ return p.id !== tmpId; });
     actualizarRuta();
-    mostrarToast('🗑️ ' + nombre + ' eliminado de la ruta');
-    if (btn) { btn.textContent = '➕ Añadir a ruta'; btn.style.background = '#E1F5EE'; btn.style.color = '#0F6E56'; btn.style.borderColor = 'rgba(29,158,117,0.4)'; }
+    mostrarToast('🗑️ ' + nombre + ((T[idiomaActual]||T.es).toastEliminadoDeRutaSuf||' eliminado de la ruta'));
+    if (btn) { btn.textContent = (T[idiomaActual]||T.es).añadirRuta.replace('+','➕'); btn.style.background = '#E1F5EE'; btn.style.color = '#0F6E56'; btn.style.borderColor = 'rgba(29,158,117,0.4)'; }
   } else {
     // Añadir a la ruta
     if(_bloquearSiLejos())return;
     PUNTOS = PUNTOS.filter(function(p){ return p.id !== tmpId; });
     PUNTOS.push({ id:tmpId, nombre:nombre, lat:lat, lng:lng, categoria:'busqueda', emoji:'📍' });
     addToRoute(tmpId);
-    mostrarToast('📍 ' + nombre + ' añadido a la ruta');
-    if (btn) { btn.textContent = '✓ En ruta'; btn.style.background = '#1D9E75'; btn.style.color = '#fff'; btn.style.borderColor = 'transparent'; }
+    mostrarToast('📍 ' + nombre + ((T[idiomaActual]||T.es).toastAnadidoARutaSuf||' añadido a la ruta'));
+    if (btn) { btn.textContent = (T[idiomaActual]||T.es).enRuta; btn.style.background = '#1D9E75'; btn.style.color = '#fff'; btn.style.borderColor = 'transparent'; }
     setTimeout(function(){
       var ids = ['btn-add-poi-map','btn-alertas-toggle','btn-brujula-mapa','btn-sos-mapa',
                  'btn-buscar-mapa','btn-meteo-mapa','btn-poi-drawer-mapa','btn-asistente-mapa'];
@@ -6746,7 +6746,7 @@ function _addBusquedaRuta(nombreEnc, lat, lng) {
   PUNTOS = PUNTOS.filter(function(p){ return p.id !== tmpId; });
   PUNTOS.push({ id:tmpId, nombre:nombre, lat:lat, lng:lng, categoria:'busqueda', emoji:'📍' });
   addToRoute(tmpId);
-  mostrarToast('📍 ' + nombre + ' añadido a la ruta');
+  mostrarToast('📍 ' + nombre + ((T[idiomaActual]||T.es).toastAnadidoARutaSuf||' añadido a la ruta'));
   // Restaurar botones del mapa siempre, independientemente del estado del popup
   setTimeout(function(){
     var ids = ['btn-add-poi-map','btn-alertas-toggle','btn-brujula-mapa','btn-sos-mapa',
@@ -6848,7 +6848,7 @@ function copiarBizum(){
   var el=document.getElementById('bizum-num');
   var num=el.getAttribute('data-real')||el.textContent.trim();
   if(navigator.clipboard)navigator.clipboard.writeText(num);
-  var m=document.getElementById('bizum-copied');m.textContent='Numero copiado';
+  var m=document.getElementById('bizum-copied');m.textContent=((T[idiomaActual]||T.es).bizumNumCopiado||'Número copiado');
   setTimeout(function(){m.textContent='';},2000);
 }
 function copiarCripto(el){
@@ -7198,7 +7198,7 @@ function limpiarRuta() {
     window._wizSearchMarkers = [];
     try { PUNTOS = PUNTOS.filter(function(p){ return p.categoria !== 'busqueda'; }); } catch(e) {}
     _actualizarBtnLimpiar();
-    mostrarToast('🗑️ Resultados de búsqueda borrados');
+    mostrarToast((T[idiomaActual]||T.es).toastResultadosBusquedaBorrados||'🗑️ Resultados de búsqueda borrados');
     return;
   }
   if (!hayActiva && !hayGuardada) return;
@@ -7258,7 +7258,7 @@ function _actualizarBtnLimpiar() {
 function _borrarSoloMemoria() {
   try { localStorage.removeItem('rutaGuardadaV2'); } catch(e) {}
   _actualizarBtnGuardarRestaurar();
-  mostrarToast('🧹 Memoria borrada — ruta activa conservada');
+  mostrarToast((T[idiomaActual]||T.es).toastMemoriaBorrada||'🧹 Memoria borrada — ruta activa conservada');
 }
 function _ejecutarLimpiarRuta() {
   _verRutaMapa = false;
@@ -7338,11 +7338,11 @@ function toggleVerRutaMapa() {
   if (_verRutaMapa) {
     if (btn) { btn.style.background = '#0a3d6b'; }
     dibujarLineaEstática();
-    mostrarToast('🗺️ Ruta trazada');
+    mostrarToast((T[idiomaActual]||T.es).toastRutaTrazada||'🗺️ Ruta trazada');
   } else {
     if (btn) { btn.style.background = '#185FA5'; }
     if (_rutaLinea) { mapa.removeLayer(_rutaLinea); _rutaLinea = null; }
-    mostrarToast('🗺️ Ruta ocultada');
+    mostrarToast((T[idiomaActual]||T.es).toastRutaOculta||'🗺️ Ruta ocultada');
   }
 }
 
@@ -7779,7 +7779,7 @@ function guardarRuta() {
           accion: function(){ abrirDonacionesDrawer(); } }
       ]
     });
-  } catch(e) { mostrarToast('\u26a0\ufe0f No se pudo guardar'); }
+  } catch(e) { mostrarToast((T[idiomaActual]||T.es).toastNoSePudoGuardar||'⚠️ No se pudo guardar'); }
 }
 
 function cargarRutaGuardada(restaurarSim) {
@@ -7823,7 +7823,7 @@ function cargarRutaGuardada(restaurarSim) {
       mk.bindPopup('<div style="font-family:DM Sans,sans-serif;min-width:160px"><strong>' + esc(p.nombre) + '</strong><br><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button onclick="_toggleBusquedaRuta(this,encodeURIComponent(\'' + escAttr(p.nombre).replace(/'/g,"\\'") + '\'),' + p.lat + ',' + p.lng + ');" style="background:#E1F5EE;color:#0F6E56;border:1px solid rgba(29,158,117,0.4);padding:5px 12px;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif">➕ Añadir a ruta</button><button onclick="irACoordenadasNav(' + p.lat + ',' + p.lng + ')" style="background:#1D9E75;color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif">🗺️ Cómo llegar</button></div></div>');
       window._wizSearchMarkers.push(mk);
     });
-    mostrarToast('📍 Ruta restaurada (' + rutaPuntos.length + ' puntos)');
+    mostrarToast(((T[idiomaActual]||T.es).toastRutaRestaurada||'📍 Ruta restaurada ({n} puntos)').replace('{n}', rutaPuntos.length));
     _actualizarBtnRestauraRuta();
   } catch(e) { console.warn('Error cargando ruta:', e); }
 }
@@ -7844,7 +7844,7 @@ function _actualizarBtnGuardarRestaurar() {
     btn.style.background = '#059669';
     btn.style.border = '2px solid rgba(255,255,255,0.3)';
     btn.textContent = '↩';
-    btn.title = 'Restaurar última ruta guardada';
+    btn.title = (T[idiomaActual]||T.es).tituloRestaurarRuta||'Restaurar última ruta guardada';
     btn._modo = 'restaurar';
   } else if (hayActiva) {
     // Modo guardar: visible solo si hay puntos
@@ -7852,7 +7852,7 @@ function _actualizarBtnGuardarRestaurar() {
     btn.style.background = '#6366f1';
     btn.style.border = '2px solid rgba(255,255,255,0.3)';
     btn.textContent = '💾';
-    btn.title = 'Guardar ruta';
+    btn.title = (T[idiomaActual]||T.es).tituloGuardarRuta||'Guardar ruta';
     btn._modo = 'guardar';
   } else {
     btn.style.display = 'none';
@@ -7895,7 +7895,7 @@ function _ejecutarLimpiarRutaSoloMapa(silencioso) {
   try { actualizarRuta(); } catch(e) {}
   try { actualizarBotonesRuta(); } catch(e) {}
   _actualizarBtnRestauraRuta();
-  if (!silencioso) mostrarToast('🗺️ Mapa limpiado — ruta guardada disponible');
+  if (!silencioso) mostrarToast((T[idiomaActual]||T.es).toastMapaLimpiado||'🗺️ Mapa limpiado — ruta guardada disponible');
 }
 // ═══════════════════════════════════════════════
 //  NAVEGACIÓN POR VOZ CON OSRM
@@ -8033,7 +8033,7 @@ function activarNavegacionVoz() {
   var coords = [];
   if (userLat && userLng) coords.push(userLng + ',' + userLat);
   ordenados.forEach(function(p){ coords.push(p.lng + ',' + p.lat); });
-  mostrarToast('🗺️ Iniciando navegación...');
+  mostrarToast((T[idiomaActual]||T.es).toastIniciandoNavegacion||'🗺️ Iniciando navegación...');
   if (window._navRestoreTimeout) { clearTimeout(window._navRestoreTimeout); window._navRestoreTimeout = null; }
   _navActiva = true; // bloquear dibujarLineaEstática desde ya
   var _btnCascoNav = document.getElementById('btn-asistente-mapa'); if (_btnCascoNav) _btnCascoNav.style.display = 'none';
@@ -8112,7 +8112,7 @@ function activarNavegacionVoz() {
       {enableHighAccuracy:true, maximumAge:1500, timeout:10000}
     );
 
-    mostrarToast('🔇 Navegación activa · voz desactivada');
+    mostrarToast((T[idiomaActual]||T.es).toastNavVozDesactivada||'🔇 Navegación activa · voz desactivada');
     // (La vigilancia de desvío vive SOLO en el Modo Ruta Oficial)
   }  // fin _iniciarConPasos
 
@@ -8394,7 +8394,7 @@ function detenerNavegacionVoz() {
     aplicarRadio(1);
     mapa.setView([userLat, userLng], 15, {animate: true});
   }
-  mostrarToast('⏹ Navegación detenida');
+  mostrarToast((T[idiomaActual]||T.es).toastNavDetenida||'⏹ Navegación detenida');
 }
 // ═══════════════════════════════════════════════
 function iniciarRuta() {
@@ -9106,7 +9106,7 @@ function cargarTiempo(lat, lng) {
           '</div>';
       }
       widget.innerHTML = html;
-      widget.title = 'Previsión en ' + (lat === 42.2328 ? 'Vigo' : 'tu ubicación');
+      widget.title = ((T[idiomaActual]||T.es).previsionEn||'Previsión en ') + (lat === 42.2328 ? 'Vigo' : ((T[idiomaActual]||T.es).tuUbicacion||'tu ubicación'));
       var rowM = document.getElementById('weather-row-mobile');
       if (rowM) {
         var htmlM = '';
