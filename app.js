@@ -9315,10 +9315,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window._mapaPesadaArrancada) return;
     window._mapaPesadaArrancada = true;
     initMapa();
-    cargarDatosFirebase();
-    cargarPOIsUsuario();
-    cargarPOIsFirebase();
-    iniciarTiempo();
+    // Firebase (datos+POIs) y el tiempo se retrasan un poco: si se piden a la
+    // vez que initMapa() arranca la capa de tiles, compiten por las mismas
+    // conexiones de red justo cuando más falta hacen los tiles. Cediendo
+    // ~350ms primero a los tiles, el mapa se pinta visualmente antes.
+    setTimeout(function() {
+      cargarDatosFirebase();
+      cargarPOIsUsuario();
+      cargarPOIsFirebase();
+      iniciarTiempo();
+    }, 350);
   }
 
   // Trabajo ligero y visible de inmediato: el carrusel de POIs de la portada.
