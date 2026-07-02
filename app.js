@@ -5631,8 +5631,13 @@ var FIESTAS_PUNTOS = [
     lat:42.4306, lng:-8.6435, mesIni:9, diaIni:3, mesFin:9, diaFin:6 },
 ];
 
+// ── INTERRUPTOR GLOBAL DE FIESTAS ───────────────────────────────────────────
+// Ponlo a true para volver a activar los marcadores de fiestas por fechas.
+var FIESTAS_ACTIVAS = false;
+
 // Comprobar si una fiesta es visible hoy (incluyendo día previo)
 function fiestaActivaHoy(f) {
+  if (!FIESTAS_ACTIVAS) return false; // fiestas anuladas globalmente
   var ahora = new Date();
   var mes = ahora.getMonth() + 1; // 1-12
   var dia  = ahora.getDate();
@@ -5880,8 +5885,6 @@ function initMapa() {
       _lastKnownLat = lat; _lastKnownLng = lng;
       // Persistir para el próximo arranque (clave del mecanismo offline)
       try { localStorage.setItem('_gps_last', JSON.stringify({lat:lat,lng:lng})); } catch(e) {}
-      // Sistema de Cash: chequeo de tramos autosuficientes (throttle interno)
-      if (window._cashCheckProximidad) window._cashCheckProximidad(lat, lng);
       statusEl.classList.remove('visible');
       if (esNuevo) {
         // Primera posición real: actualizar título y crear/mover marcador
@@ -9410,176 +9413,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
-/* ═══════════════════════════════════════════════════════════════════════
-   SISTEMA DE CASH — avisos de tramos autosuficientes (PILOTO v1)
-   ───────────────────────────────────────────────────────────────────────
-   Autónomo: NO modifica PUNTOS ni la lógica existente. Se engancha desde el
-   watchPosition mediante window._cashCheckProximidad (mismo patrón que el
-   álbum). Los tramos se indexan por el id de etapa (categoria:'etapa') que
-   ya existe en pois.js, así que basta con reutilizar el motor de "etapa
-   próxima". Datos de campo (cobertura) editables a mano; km y cajero son
-   datos duros verificables.
-   ═══════════════════════════════════════════════════════════════════════ */
-(function(){
-  'use strict';
-
-  // ── Tramos negros conocidos, por id de etapa ──
-  // cobertura: 'ok' | 'baja' | 'nula'   (dato de campo — ajústalo tú)
-  // km_sin_cajero, ultimo_cajero: datos duros
-  // solo_efectivo: bares/albergues del tramo sin datáfono fiable
-  var TRAMOS_CASH = {
-    'etapa-ingles-4': {      // Betanzos → Hospital de Bruma (24 km, interior)
-      km_sin_cajero: 24,
-      cobertura: 'baja',
-      ultimo_cajero: 'Betanzos',
-      solo_efectivo: true
-    },
-    'etapa-primitivo-5': {   // Pola de Allande → La Mesa (Ruta de los Hospitales)
-      km_sin_cajero: 23,
-      cobertura: 'nula',
-      ultimo_cajero: 'Pola de Allande',
-      solo_efectivo: true
-    }
-  };
-
-  // ── Estado ──
-  var _cashActivo = false;
-  var _avisados = {};        // ids de tramo ya avisados esta sesión
-  var _ultimoChequeo = 0;    // throttle (ms)
-
-  function _lang(){ return (typeof idiomaActual!=='undefined' && idiomaActual) ? idiomaActual : 'es'; }
-
-  // Nombre corto del destino de una etapa ("Etapa 4 · Betanzos → Bruma" → "Bruma")
-  function _destino(p){
-    var L=_lang();
-    var n=(L==='gl'&&p.nombre_gl)?p.nombre_gl:(L==='en'&&p.nombre_en)?p.nombre_en:p.nombre;
-    var parts=String(n).split('·');
-    var tail=parts.length>1?parts[1]:n;
-    var arrow=tail.split('→');
-    return (arrow.length>1?arrow[1]:tail).trim();
-  }
-
-  // Etapa próxima (misma lógica que _subtituloEtapaCercana, autónoma)
-  function _etapaProxima(){
-    if (typeof PUNTOS==='undefined' || typeof userLat==='undefined' || !userLat) return null;
-    var SCQ_LAT=42.8805, SCQ_LNG=-8.5457;
-    var etapas=PUNTOS.filter(function(p){return p.categoria==='etapa'&&p.lat&&p.lng;});
-    if(!etapas.length) return null;
-    var distUserSCQ=haversine(userLat,userLng,SCQ_LAT,SCQ_LNG);
-    var conDist=etapas.map(function(p){return {p:p,distUser:haversine(userLat,userLng,p.lat,p.lng),distSCQ:haversine(p.lat,p.lng,SCQ_LAT,SCQ_LNG)};});
-    var porDelante=conDist.filter(function(x){return x.distSCQ<distUserSCQ;});
-    var mejor;
-    if(porDelante.length){ porDelante.sort(function(a,b){return b.distSCQ-a.distSCQ;}); mejor=porDelante[0]; }
-    else { conDist.sort(function(a,b){return a.distUser-b.distUser;}); mejor=conDist[0]; }
-    return mejor?mejor.p:null;
-  }
-
-  // Textos del aviso, trilingües, a partir de los datos del tramo
-  function _texto(etapa, tramo){
-    var L=_lang(), dest=_destino(etapa), km=tramo.km_sin_cajero, cajero=tramo.ultimo_cajero;
-    var cobMap={
-      es:{baja:'cobertura baja',nula:'sin cobertura fiable',ok:''},
-      gl:{baja:'cobertura baixa',nula:'sen cobertura fiable',ok:''},
-      en:{baja:'weak coverage',nula:'no reliable coverage',ok:''}
-    };
-    var cob=(cobMap[L]||cobMap.es)[tramo.cobertura]||'';
-    if(L==='gl') return {
-      titulo:'Tramo autosuficiente',
-      cuerpo:'Entras nun tramo de ~'+km+' km sen caixeiro'+(cob?' e '+cob:'')+' ata '+dest+'.',
-      cajero:'Último caixeiro fiable: '+cajero+'.',
-      extra:(tramo.solo_efectivo?'Moitos bares e albergues do tramo poden ser só en efectivo. ':'')+'Leva efectivo e ten a app cargada — funciona sen conexión.',
-      ok:'Entendido'
-    };
-    if(L==='en') return {
-      titulo:'Self-sufficient stretch',
-      cuerpo:'You are entering a ~'+km+' km stretch with no ATM'+(cob?' and '+cob:'')+' until '+dest+'.',
-      cajero:'Last reliable ATM: '+cajero+'.',
-      extra:(tramo.solo_efectivo?'Many bars and hostels here may be cash-only. ':'')+'Carry cash and keep the app loaded — it works offline.',
-      ok:'Got it'
-    };
-    return {
-      titulo:'Tramo autosuficiente',
-      cuerpo:'Entras en un tramo de ~'+km+' km sin cajero'+(cob?' y '+cob:'')+' hasta '+dest+'.',
-      cajero:'Último cajero fiable: '+cajero+'.',
-      extra:(tramo.solo_efectivo?'Muchos bares y albergues del tramo pueden ser solo efectivo. ':'')+'Lleva efectivo y ten la app cargada — funciona sin conexión.',
-      ok:'Entendido'
-    };
-  }
-
-  // Modal (estilo tomado de _avisoLejosCamino). Idempotente.
-  function _modal(etapa, tramo){
-    if(document.getElementById('aviso-cash')) return;
-    var tx=_texto(etapa,tramo);
-    if(!document.getElementById('_cashKeyframes')){
-      var st=document.createElement('style'); st.id='_cashKeyframes';
-      st.textContent='@keyframes _cashPop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}';
-      document.head.appendChild(st);
-    }
-    var ov=document.createElement('div'); ov.id='aviso-cash';
-    ov.style.cssText='position:fixed;inset:0;z-index:1000000;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1.2rem;box-sizing:border-box;font-family:DM Sans,sans-serif;-webkit-tap-highlight-color:transparent';
-    var card=document.createElement('div');
-    card.style.cssText='background:#fff;border-radius:18px;max-width:340px;width:100%;padding:26px 22px 20px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,0.35);animation:_cashPop .22s ease-out';
-    card.innerHTML=
-      '<div style="font-size:44px;line-height:1;margin-bottom:12px">🪙</div>'+
-      '<div style="font-size:18px;font-weight:700;color:#8a5a00;margin-bottom:8px">'+tx.titulo+'</div>'+
-      '<div style="font-size:14px;line-height:1.5;color:#333;margin-bottom:8px">'+tx.cuerpo+'</div>'+
-      '<div style="font-size:14px;line-height:1.5;color:#1a1a1a;font-weight:700;margin-bottom:8px">'+tx.cajero+'</div>'+
-      '<div style="font-size:13px;line-height:1.5;color:#666;margin-bottom:18px">'+tx.extra+'</div>';
-    var btn=document.createElement('button'); btn.type='button'; btn.textContent=tx.ok;
-    btn.style.cssText='width:100%;background:#c8860d;color:#fff;border:none;border-radius:12px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;-webkit-appearance:none';
-    function cerrar(){ try{document.body.removeChild(ov);}catch(e){} }
-    btn.addEventListener('click',cerrar);
-    ov.addEventListener('click',function(e){ if(e.target===ov) cerrar(); });
-    card.appendChild(btn); ov.appendChild(card); document.body.appendChild(ov);
-  }
-
-  // ── Hook desde watchPosition ──
-  window._cashCheckProximidad=function(lat,lng){
-    if(!_cashActivo) return;
-    var ahora=Date.now();
-    if(ahora-_ultimoChequeo<20000) return;   // throttle 20 s
-    _ultimoChequeo=ahora;
-    var etapa=_etapaProxima();
-    if(!etapa) return;
-    var tramo=TRAMOS_CASH[etapa.id];
-    if(!tramo) return;
-    if(_avisados[etapa.id]) return;
-    var d=haversine(lat,lng,etapa.lat,etapa.lng);
-    if(d>15) return;                          // aún lejos del inicio: no molestar
-    _avisados[etapa.id]=true;
-    _modal(etapa,tramo);
-  };
-
-  // ── Toggle + botón moneda ──
-  function _toast(msg){ if(typeof mostrarToast==='function') mostrarToast(msg); }
-  function _cashToggle(){
-    _cashActivo=!_cashActivo;
-    var b=document.getElementById('btn-cash-mapa');
-    if(b){
-      b.style.background=_cashActivo?'#c8860d':'rgba(0,0,0,0.55)';
-      b.style.boxShadow=_cashActivo?'0 0 0 3px rgba(200,134,13,0.35)':'none';
-    }
-    var L=_lang();
-    if(_cashActivo){
-      _toast('🪙 '+(L==='gl'?'Sistema de Cash activado':L==='en'?'Cash system on':'Sistema de Cash activado'));
-      _ultimoChequeo=0;
-      if(typeof userLat!=='undefined'&&userLat) window._cashCheckProximidad(userLat,userLng);
-    } else {
-      _toast('🪙 '+(L==='gl'?'Sistema de Cash desactivado':L==='en'?'Cash system off':'Sistema de Cash desactivado'));
-    }
-  }
-  window._cashToggle=_cashToggle;
-
-  // ── Botón moneda flotante (PILOTO — reposiciona/integra a tu barra) ──
-  function _crearBoton(){
-    if(document.getElementById('btn-cash-mapa')) return;
-    var b=document.createElement('button');
-    b.id='btn-cash-mapa'; b.type='button'; b.title='Sistema de Cash'; b.textContent='🪙';
-    b.style.cssText='position:fixed;bottom:150px;right:14px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,0.3);background:rgba(0,0,0,0.55);color:#fff;font-size:20px;cursor:pointer;z-index:9998;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);-webkit-appearance:none';
-    b.addEventListener('click',_cashToggle);
-    document.body.appendChild(b);
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',_crearBoton);
-  else _crearBoton();
-})();
