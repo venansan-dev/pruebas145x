@@ -17,9 +17,11 @@ const STATIC_ASSETS = [
   '/manifest.json'
 ];
 
-// Imágenes POIs, ahora servidas desde el propio repo en /img/ (mismo origen).
+// Imágenes POIs, ahora servidas desde el propio repo en img/ (mismo origen).
+// Rutas RELATIVAS, como TRACK_URLS: así funcionan tanto en un dominio propio
+// como en un repositorio de proyecto de GitHub Pages (/usuario/repo/).
 // Sincronizado con las imágenes referenciadas en index.html.
-const POI_IMAGES = ['/img/hero8.png', '/img/descrip.webp', '/img/historia2.webp', '/img/IMG-0229.webp', '/img/historia3.webp', '/img/brujula2.webp', '/img/losaestrelladavid.webp', '/img/brujula3-2.webp', '/img/freixo.webp', '/img/IMG-0859.webp', '/img/etapas3.webp', '/img/asis3.webp', '/img/graffiticoia.webp', '/img/etapas2.webp', '/img/asistente2.webp', '/img/headr4.webp', '/img/fortalezacastro.webp', '/img/santamariadeguizan.webp', '/img/IMG-4705.webp', '/img/IMG-1026.webp', '/img/principal2.webp', '/img/balaidos.jpg', '/img/mipunto3.webp', '/img/mipunto2.webp', '/img/santacristinalavadores.webp', '/img/coiai.webp', '/img/IMG-1120.webp', '/img/alertas2.webp', '/img/torrelavandeira.webp', '/img/casaceta.webp', '/img/concatedral.webp', '/img/IMG-2940.webp', '/img/iglesiacastrelos.webp', '/img/laxe.webp', '/img/logohead.webp', '/img/casc6.webp', '/img/torrepadin.webp', '/img/bembrive.webp', '/img/alertas3.webp', '/img/bouzas.webp', '/img/vieira8.webp', '/img/escudos.webp', '/img/real.webp', '/img/iglesiateis.webp', '/img/olivo.webp', '/img/escudoamorcortes.webp', '/img/santiagodeparada.webp'];
+const POI_IMAGES = ['img/hero8.png', 'img/descrip.webp', 'img/historia2.webp', 'img/IMG-0229.webp', 'img/historia3.webp', 'img/brujula2.webp', 'img/losaestrelladavid.webp', 'img/brujula3-2.webp', 'img/freixo.webp', 'img/IMG-0859.webp', 'img/etapas3.webp', 'img/asis3.webp', 'img/graffiticoia.webp', 'img/etapas2.webp', 'img/asistente2.webp', 'img/headr4.webp', 'img/fortalezacastro.webp', 'img/santamariadeguizan.webp', 'img/IMG-4705.webp', 'img/IMG-1026.webp', 'img/principal2.webp', 'img/balaidos.jpg', 'img/mipunto3.webp', 'img/mipunto2.webp', 'img/santacristinalavadores.webp', 'img/coiai.webp', 'img/IMG-1120.webp', 'img/alertas2.webp', 'img/torrelavandeira.webp', 'img/casaceta.webp', 'img/concatedral.webp', 'img/IMG-2940.webp', 'img/iglesiacastrelos.webp', 'img/laxe.webp', 'img/logohead.webp', 'img/casc6.webp', 'img/torrepadin.webp', 'img/bembrive.webp', 'img/alertas3.webp', 'img/bouzas.webp', 'img/vieira8.webp', 'img/escudos.webp', 'img/real.webp', 'img/iglesiateis.webp', 'img/olivo.webp', 'img/escudoamorcortes.webp', 'img/santiagodeparada.webp'];
 
 // Librerías externas (Leaflet, markercluster, Firebase) necesarias para que
 // el mapa y la app funcionen sin conexión tras la primera carga.
@@ -203,10 +205,10 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // Imágenes propias en /img/ → cache first con auto-cache al vuelo.
+  // Imágenes propias en img/ → cache first con auto-cache al vuelo.
   // Al ser mismo origen no hay respuestas opacas ni redirecciones de CDN:
   // basta con guardar el 200 y servirlo desde IMG_CACHE mientras exista.
-  if (url.includes('/img/') && /\.(webp|png|jpe?g|gif|svg)$/i.test(url.split('?')[0])) {
+  if (url.indexOf('/img/') !== -1 && /\.(webp|png|jpe?g|gif|svg)$/i.test(url.split('?')[0])) {
     e.respondWith(
       caches.open(IMG_CACHE).then(function(c) {
         return c.match(e.request).then(function(cached) {
@@ -221,9 +223,8 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // Imágenes postimg → cache first. SE MANTIENE mientras pois.js siga
-  // apuntando a postimg.cc. Cuando pois.js esté migrado a /img/, este
-  // bloque entero se puede borrar.
+  // Imágenes postimg → cache first. Ya no queda ninguna referencia a
+  // postimg.cc en el proyecto; este bloque se puede borrar cuando quieras.
   // postimg.cc sirve desde una CDN que puede responder con redirecciones o
   // respuestas opacas (type:'opaque', status 0) en peticiones cross-origin.
   // Antes solo cacheábamos status===200, así que esas respuestas válidas no
